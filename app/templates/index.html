@@ -1,47 +1,38 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="row">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h1 class="display-4"><i class="bi bi-book"></i> Домашняя библиотека</h1>
-                <p class="lead text-muted">Управление коллекцией книг</p>
-            </div>
-            <div>
-                <a href="{{ url_for('main.init') }}" class="btn btn-outline-danger btn-lg" 
-                   onclick="return confirm('Вы уверены, что хотите выйти из приложения?')">
-                    <i class="bi bi-box-arrow-right"></i> Выйти
-                </a>
-            </div>
-        </div>
-        
-        <!-- Карточка книг -->
-        <div class="row justify-content-center mb-4">
-            <div class="col-md-6 col-lg-4">
-                <div class="card text-white text-center hover-lift card-bg-books">
-                    <div class="card-body">
-                        <i class="bi bi-book display-4"></i>
-                        <h3 class="mt-2">{{ total_books|default(0) }}</h3>
-                        <p class="mb-0">Книг</p>
-                        <a href="{{ url_for('main.book_list') }}" class="btn btn-outline-light btn-sm mt-2">
-                            <i class="bi bi-arrow-right"></i> Перейти
-                        </a>
-                    </div>
+<div class="container-fluid p-0 position-relative" style="min-height: 100vh;">
+    <!-- Фоновое изображение на весь экран -->
+    <div class="position-fixed top-0 start-0 w-100 h-100" style="z-index: -1; background: url(&quot;{{ url_for('static', filename='jpg/books.jpg') }}&quot;) center/cover no-repeat; filter: brightness(0.6);"></div>
+
+    <div class="row g-0 justify-content-center align-items-center" style="min-height: 100vh;">
+        <div class="col-12 col-lg-8 px-3">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 text-white">
+                <div class="text-center text-md-start">
+                    <h1 class="display-4 fw-bold text-shadow"><i class="bi bi-book"></i> Домашняя библиотека</h1>
+                    <p class="lead text-shadow opacity-75">Управление коллекцией книг</p>
+                </div>
+                <div class="mt-3 mt-md-0">
+                    <a href="{{ url_for('main.init') }}" class="btn btn-outline-light btn-lg px-4" 
+                       onclick="return confirm('Вы уверены, что хотите выйти из приложения?')">
+                        <i class="bi bi-box-arrow-right"></i> Выйти
+                    </a>
                 </div>
             </div>
-        </div>
-        
-        <!-- Быстрые действия -->
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0"><i class="bi bi-lightning"></i> Быстрые действия</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-flex flex-wrap gap-3 justify-content-center">
-                    <a href="{{ url_for('main.add_book') }}" class="btn btn-primary btn-lg">
-                        <i class="bi bi-plus-circle"></i> Добавить книгу
-                    </a>
+
+            <!-- Карточка статистики книг -->
+            <div class="row justify-content-center">
+                <div class="col-12 col-sm-8 col-md-6 col-lg-5">
+                    <div class="card text-white text-center bg-transparent border-0 shadow-lg" style="backdrop-filter: blur(4px); background: rgba(0,0,0,0.35) !important;">
+                        <div class="card-body py-5">
+                            <i class="bi bi-book display-2 text-shadow"></i>
+                            <h3 class="mt-3 display-5 fw-bold">{{ total_books|default(0) }}</h3>
+                            <p class="mb-3 fs-5">Книг</p>
+                            <a href="{{ url_for('main.book_list') }}" class="btn btn-outline-light btn-lg px-5">
+                                <i class="bi bi-arrow-right"></i> Список книг
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -49,114 +40,79 @@
 </div>
 
 <style>
-/* Стили для карточки с фоновым изображением */
-.card-bg-books {
-    background: url("{{ url_for('static', filename='jpg/books.jpg') }}") center/cover no-repeat;
-    border: none;
+/* Общие стили */
+body, html {
+    height: 100%;
+    margin: 0;
 }
 
-.card-bg-books .card-body {
-    background: rgba(0, 0, 0, 0.35);
-    border-radius: 12px;
-    padding: 1.5rem;
-    position: relative;
-    z-index: 1;
-    transition: background 0.3s ease;
-}
-
-.card-bg-books:hover .card-body {
-    background: rgba(0, 0, 0, 0.45);
+.text-shadow {
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
 }
 
 .card {
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    min-height: 180px;
+    border-radius: 20px;
     overflow: hidden;
-    position: relative;
+    transition: box-shadow 0.3s ease;
+    min-height: 220px;
 }
 
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-}
-
-.card .display-4 {
-    font-size: 3rem;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
-}
-
-.card h3 {
-    font-weight: 700;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
-}
-
-.card p {
-    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+.card .display-2 {
+    font-size: 4rem;
+    text-shadow: 0 4px 12px rgba(0,0,0,0.6);
 }
 
 .card .btn-outline-light {
     border-width: 2px;
     transition: all 0.3s ease;
-    text-shadow: none;
 }
-
 .card .btn-outline-light:hover {
     transform: scale(1.05);
     background: rgba(255,255,255,0.2);
 }
 
-/* Адаптивность для мобильных устройств */
-@media (max-width: 768px) {
-    .card {
-        min-height: 150px;
-    }
-    
-    .card .display-4 {
-        font-size: 2.5rem;
-    }
-    
-    .card h3 {
-        font-size: 1.5rem;
-    }
-    
-    .d-flex.justify-content-between {
-        flex-direction: column;
-        align-items: center !important;
-        gap: 1rem;
-    }
-    
-    .btn-outline-danger.btn-lg {
-        width: 100%;
-    }
-}
-
-/* Анимация появления карточки */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.card {
-    animation: fadeInUp 0.5s ease forwards;
-}
-
-/* Стили для кнопки выхода */
-.btn-outline-danger {
+.btn-outline-light {
     border-width: 2px;
     transition: all 0.3s ease;
 }
+.btn-outline-light:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255,255,255,0.2);
+}
 
-.btn-outline-danger:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+/* Адаптивность */
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 2.2rem;
+    }
+    .lead {
+        font-size: 1rem;
+    }
+    .card .display-2 {
+        font-size: 3rem;
+    }
+    .card h3 {
+        font-size: 1.8rem;
+    }
+    .btn-outline-light.btn-lg {
+        font-size: 1rem;
+        padding: 0.5rem 1.2rem;
+    }
+    .card .btn-outline-light.btn-lg {
+        padding: 0.5rem 1.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .display-4 {
+        font-size: 1.8rem;
+    }
+    .card .display-2 {
+        font-size: 2.5rem;
+    }
+    .card h3 {
+        font-size: 1.5rem;
+    }
 }
 </style>
 {% endblock %}
