@@ -3,21 +3,21 @@
 {% block content %}
 <div class="row">
     <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2><i class="bi bi-globe"></i> Список языков</h2>
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+            <div class="text-center text-md-start mb-3 mb-md-0">
+                <h2><i class="bi bi-people"></i> Список языков</h2>
                 <p class="text-muted mb-0">Всего языков: {{ total_languages }}</p>
             </div>
-            <div class="d-flex gap-2">
-                <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary">
-                    <i class="bi bi-house"></i> На главную
+            <div class="d-flex gap-2 flex-wrap justify-content-center">
+                <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary d-flex align-items-center">
+                    <i class="bi bi-house me-1"></i> На главную
                 </a>
-                <a href="{{ url_for('main.add_language') }}" class="btn btn-primary btn-lg">
-                    <i class="bi bi-plus-circle"></i> Добавить язык
+                <a href="{{ url_for('main.add_language') }}" class="btn btn-primary d-flex align-items-center">
+                    <i class="bi bi-plus-circle me-1"></i> Добавить язык
                 </a>
             </div>
         </div>
-        
+
         <!-- Поиск с HTMX -->
         <div class="card shadow-sm mb-4">
             <div class="card-body">
@@ -25,26 +25,18 @@
                     <div class="col-md-10">
                         <div class="input-group">
                             <span class="input-group-text"><i class="bi bi-search"></i></span>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="searchInput"
-                                   name="search"
-                                   placeholder="Поиск по названию или коду языка..." 
-                                   value="{{ search or '' }}"
-                                   hx-get="{{ url_for('main.language_list') }}"
-                                   hx-trigger="keyup changed delay:300ms"
-                                   hx-target="#languageGridContainer"
-                                   hx-indicator="#loadingIndicator"
-                                   hx-push-url="true"
-                                   hx-vals='{"page": 1}'>
+                            <input type="text" class="form-control" id="searchInput" name="search"
+                                placeholder="Поиск по названию или коду языка..." value="{{ search or '' }}"
+                                hx-get="{{ url_for('main.language_list') }}" hx-trigger="keyup changed delay:300ms"
+                                hx-target="#languageGridContainer" hx-indicator="#loadingIndicator" hx-push-url="true"
+                                hx-vals='{"page": 1}'>
                             <span class="input-group-text" id="loadingIndicator" style="display: none;">
                                 <span class="spinner-border spinner-border-sm" role="status"></span>
                             </span>
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <button class="btn btn-secondary w-100" 
-                                onclick="resetSearch()">
+                        <button class="btn btn-secondary w-100" onclick="resetSearch()">
                             <i class="bi bi-arrow-counterclockwise"></i> Сброс
                         </button>
                     </div>
@@ -56,7 +48,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Контейнер для сетки языков -->
         <div id="languageGridContainer">
             {% include 'partials/language_grid.html' %}
@@ -65,38 +57,38 @@
 </div>
 
 <script>
-function resetSearch() {
-    document.getElementById('searchInput').value = '';
-    
-    htmx.ajax('GET', '{{ url_for("main.language_list") }}', {
-        target: '#languageGridContainer',
-        values: { page: 1 }
-    });
-}
+    function resetSearch() {
+        document.getElementById('searchInput').value = '';
 
-document.body.addEventListener('htmx:afterSwap', function(evt) {
-    if (evt.detail.target.id === 'languageGridContainer') {
-        const totalLanguages = evt.detail.xhr.getResponseHeader('X-Total-Count');
-        const currentPage = evt.detail.xhr.getResponseHeader('X-Current-Page');
-        const totalPages = evt.detail.xhr.getResponseHeader('X-Total-Pages');
-        
-        if (totalLanguages) {
-            document.querySelector('.text-muted.mb-0').textContent = 'Всего языков: ' + totalLanguages;
+        htmx.ajax('GET', '{{ url_for("main.language_list") }}', {
+            target: '#languageGridContainer',
+            values: { page: 1 }
+        });
+    }
+
+    document.body.addEventListener('htmx:afterSwap', function (evt) {
+        if (evt.detail.target.id === 'languageGridContainer') {
+            const totalLanguages = evt.detail.xhr.getResponseHeader('X-Total-Count');
+            const currentPage = evt.detail.xhr.getResponseHeader('X-Current-Page');
+            const totalPages = evt.detail.xhr.getResponseHeader('X-Total-Pages');
+
+            if (totalLanguages) {
+                document.querySelector('.text-muted.mb-0').textContent = 'Всего языков: ' + totalLanguages;
+            }
+
+            const cards = document.querySelectorAll('#languageGridContainer .card.h-100').length;
+            document.getElementById('resultCount').textContent = 'Найдено: ' + (totalLanguages || cards);
         }
-        
-        const cards = document.querySelectorAll('#languageGridContainer .card.h-100').length;
-        document.getElementById('resultCount').textContent = 'Найдено: ' + (totalLanguages || cards);
-    }
-});
+    });
 
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('searchInput');
-    const urlParams = new URLSearchParams(window.location.search);
-    const search = urlParams.get('search');
-    
-    if (search) {
-        searchInput.value = search;
-    }
-});
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchInput');
+        const urlParams = new URLSearchParams(window.location.search);
+        const search = urlParams.get('search');
+
+        if (search) {
+            searchInput.value = search;
+        }
+    });
 </script>
 {% endblock %}
