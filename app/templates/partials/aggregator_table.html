@@ -1,0 +1,168 @@
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Название</th>
+                        <th>Код</th>
+                        <th>Иконка</th>
+                        <th>Шаблон URL</th>
+                        <th>Тип</th>
+                        <th>Статус</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for aggregator in aggregators %}
+                    <tr id="aggregator-row-{{ aggregator.id }}">
+                        <td><strong>{{ aggregator.name }}</strong></td>
+                        <td><code>{{ aggregator.code }}</code></td>
+                        <td><i class="bi {{ aggregator.icon or 'bi-box-seam' }}"></i></td>
+                        <td><code>{{ aggregator.url_template }}</code></td>
+                        <td>
+                            {% if aggregator.search_type == 'redirect' %}
+                                <span class="badge bg-warning text-dark">Редирект</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Стандартный</span>
+                            {% endif %}
+                        </td>
+                        <td id="status-{{ aggregator.id }}">
+                            {% if aggregator.is_active %}
+                                <span class="badge bg-success">Активен</span>
+                            {% else %}
+                                <span class="badge bg-danger">Неактивен</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="{{ url_for('main.edit_aggregator', aggregator_id=aggregator.id) }}" 
+                                   class="btn btn-outline-warning">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <!-- Кнопка переключения статуса через HTMX -->
+                                <button type="button" 
+                                        class="btn btn-outline-secondary toggle-btn" 
+                                        hx-post="{{ url_for('main.toggle_aggregator_htmx', aggregator_id=aggregator.id) }}"
+                                        hx-headers='{"X-CSRFToken": "{{ csrf_token() }}"}'
+                                        hx-target="#status-{{ aggregator.id }}"
+                                        hx-swap="outerHTML"
+                                        hx-indicator="#loading-{{ aggregator.id }}"
+                                        title="{% if aggregator.is_active %}Деактивировать{% else %}Активировать{% endif %}">
+                                    <i class="bi bi-{% if aggregator.is_active %}pause-circle{% else %}play-circle{% endif %}"></i>
+                                    <span id="loading-{{ aggregator.id }}" class="htmx-indicator">
+                                        <span class="spinner-border spinner-border-sm" role="status"></span>
+                                    </span>
+                                </button>
+                                <!-- Кнопка удаления с модальным окном -->
+                                <button type="button" class="btn btn-outline-danger" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#deleteAggregatorModal{{ aggregator.id }}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Модальное окно подтверждения удаления -->
+                            <div class="modal fade" id="deleteAggregatorModal{{ aggregator.id }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title"><i class="bi bi-exclamation-triangle text-danger"></i> Подтверждение удаления</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Вы уверены, что хотите удалить агрегатор <strong>"{{ aggregator.name }}"</strong>?</p>
+                                            <p class="text-muted small">Это действие необратимо!</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                            <button type="button" 
+                                                    class="btn btn-danger delete-btn"
+                                                    hx-delete="{{ url_for('main.delete_aggregator_htmx', aggregator_id=aggregator.id) }}"
+                                                    hx-headers='{"X-CSRFToken": "{{ csrf_token() }}"}'
+                                                    hx-target="#aggregator-row-{{ aggregator.id }}"
+                                                    hx-swap="outerHTML"
+                                                    hx-confirm="Вы уверены, что хотите удалить агрегатор &quot;{{ aggregator.name }}&quot;?"
+                                                    data-bs-dismiss="modal">
+                                                <i class="bi bi-trash"></i> Удалить
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr id="empty-row">
+                        <td colspan="7" class="text-center py-4">
+                            <i class="bi bi-link-45deg display-4 text-muted d-block"></i>
+                            <p class="text-muted mt-2">Агрегаторы не найдены</p>
+                            <a href="{{ url_for('main.add_aggregator') }}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Добавить первый агрегатор
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer bg-light">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="text-muted small">
+                <i class="bi bi-info-circle"></i> Всего агрегаторов: {{ aggregators|length }}
+            </div>
+            <div>
+                <a href="{{ url_for('main.index') }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-house"></i> На главную
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Стили для индикатора загрузки HTMX */
+.htmx-indicator {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}
+
+.htmx-request .htmx-indicator {
+    opacity: 1;
+}
+
+.htmx-request.htmx-indicator {
+    opacity: 1;
+}
+
+/* Анимация для удаления строки */
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+tr.htmx-swapping {
+    animation: fadeOut 0.3s ease-in;
+}
+
+/* Стили для кнопок в группе */
+.btn-group .btn {
+    transition: all 0.2s;
+}
+
+.btn-group .btn:hover {
+    transform: translateY(-1px);
+}
+
+/* Стили для бейджей */
+.badge {
+    font-weight: 500;
+    padding: 0.35rem 0.65rem;
+}
+
+/* Стили для иконок */
+.bi {
+    font-size: 1.1rem;
+}
+</style>

@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="bi bi-database"></i> Справочник источников информации</h2>
+                <p class="text-muted mb-0">Управление источниками данных для поиска книг</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-house"></i> На главную
+                </a>
+                <a href="{{ url_for('main.add_source') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Добавить источник
+                </a>
+            </div>
+        </div>
+        
+        <!-- Контейнер для таблицы с HTMX -->
+        <div id="sourceTable">
+            {% include 'partials/source_table.html' %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Обработка события обновления таблицы
+    document.body.addEventListener('htmx:afterSwap', function(evt) {
+        if (evt.detail.target.id === 'sourceTable') {
+            // Обновляем счетчик в футере
+            const rows = document.querySelectorAll('#sourceTable tbody tr:not(#empty-row)').length;
+            const footer = document.querySelector('.card-footer .text-muted');
+            if (footer) {
+                footer.textContent = `Всего источников: ${rows}`;
+            }
+        }
+    });
+
+    // Обработка ошибок HTMX
+    document.body.addEventListener('htmx:responseError', function(evt) {
+        console.error('HTMX Error:', evt.detail);
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+        alertDiv.innerHTML = `
+            <i class="bi bi-exclamation-triangle"></i>
+            Произошла ошибка при выполнении операции. Попробуйте обновить страницу.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.querySelector('.container').prepend(alertDiv);
+    });
+});
+</script>
+
+<style>
+/* Стили для выравнивания кнопок в таблицах */
+.table .btn-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.table .btn-group .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    min-height: 32px;
+    padding: 0.25rem 0.5rem;
+}
+
+.table .btn-group .btn i {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+/* Индикатор загрузки HTMX */
+.htmx-indicator {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}
+
+.htmx-request .htmx-indicator {
+    opacity: 1;
+}
+
+.htmx-request.htmx-indicator {
+    opacity: 1;
+}
+
+/* Анимация для удаления строки */
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+tr.htmx-swapping {
+    animation: fadeOut 0.3s ease-in;
+}
+
+/* Стили для бейджей */
+.badge {
+    font-weight: 500;
+    padding: 0.35rem 0.65rem;
+}
+
+/* Стили для иконок */
+.bi {
+    font-size: 1.1rem;
+}
+
+/* Стили для заголовка */
+.card-header {
+    border-bottom: none;
+    font-weight: 500;
+}
+
+.card-header i {
+    margin-right: 8px;
+}
+</style>
+{% endblock %}

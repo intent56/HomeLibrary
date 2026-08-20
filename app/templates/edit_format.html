@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="bi bi-pencil-square"></i> Редактирование формата</h2>
+                <h5 class="text-muted">{{ format_item.format }}</h5>
+            </div>
+            <a href="{{ url_for('main.format_list') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Назад к списку
+            </a>
+        </div>
+        
+        <form method="POST" action="{{ url_for('main.edit_format', format_id=format_item.id) }}" novalidate>
+            {{ form.csrf_token }}
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-aspect-ratio"></i> Информация о формате</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        {{ form.format.label(class="form-label fw-bold") }}
+                        <span class="text-danger">*</span>
+                        {{ form.format(class="form-control" + (" is-invalid" if form.format.errors else ""), 
+                                     placeholder="Например: A4, A5, B5") }}
+                        {% if form.format.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.format.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Код формата</div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.width.label(class="form-label fw-bold") }}
+                                {{ form.width(class="form-control" + (" is-invalid" if form.width.errors else ""), 
+                                            type="number", min="0", placeholder="210") }}
+                                {% if form.width.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.width.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Ширина в миллиметрах</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.height.label(class="form-label fw-bold") }}
+                                {{ form.height(class="form-control" + (" is-invalid" if form.height.errors else ""), 
+                                             type="number", min="0", placeholder="297") }}
+                                {% if form.height.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.height.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Высота в миллиметрах</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.comment.label(class="form-label fw-bold") }}
+                        {{ form.comment(class="form-control", rows="3", placeholder="Дополнительная информация о формате...") }}
+                        <div class="form-text">Комментарии, примечания</div>
+                    </div>
+                    
+                    {% if format_item.fmt_books %}
+                    <div class="alert alert-info mt-3">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Книг с этим форматом:</strong> {{ format_item.fmt_books|length }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <span class="text-muted">
+                                <i class="bi bi-info-circle"></i> 
+                                Поля с <span class="text-danger">*</span> обязательны для заполнения
+                            </span>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('main.format_list') }}" class="btn btn-secondary btn-lg">
+                                <i class="bi bi-x-circle"></i> Отмена
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-save"></i> Сохранить изменения
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.card-header {
+    border-bottom: none;
+    font-weight: 500;
+}
+
+.card-header i {
+    margin-right: 8px;
+}
+
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.form-text {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+.text-danger {
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 1rem;
+    }
+    
+    .btn-lg {
+        width: 100%;
+    }
+}
+
+.form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.btn {
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %}

@@ -1,0 +1,1018 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="bi bi-plus-circle"></i> Добавление новой книги</h2>
+                <span class="badge bg-info fs-6">Все поля необязательны, кроме отмеченных *</span>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-house"></i> На главную
+                </a>
+            </div>
+        </div>
+        
+        <!-- Поиск в интернете -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="bi bi-cloud-download"></i> Найти книгу в интернете</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label for="sourceSelect" class="form-label fw-bold">Источник</label>
+                        <select class="form-select" id="sourceSelect">
+                            <option value="">Все источники</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="searchQuery" class="form-label fw-bold">Поиск по названию или ISBN</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control" id="searchQuery" placeholder="Например: 'Война и мир' или '978-5-17-123456-7'">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">&nbsp;</label>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-success flex-grow-1" type="button" id="searchBtn">
+                                <i class="bi bi-search"></i> Найти
+                            </button>
+                            <button class="btn btn-secondary" type="button" id="clearSearchBtn">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <div id="searchStatus" class="form-text"></div>
+                </div>
+                
+                <!-- Результаты поиска -->
+                <div id="searchResults" class="mt-3" style="display: none;">
+                    <h6>Найденные книги:</h6>
+                    <div id="resultsList" class="list-group"></div>
+                </div>
+
+                <!-- Агрегаторы -->
+                <div class="row g-3 mt-2 pt-2 border-top">
+                    <div class="col-md-9">
+                        <label for="aggregatorSelect" class="form-label fw-bold">Поиск на сайтах-агрегаторах</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-link-45deg"></i></span>
+                            <select class="form-select" id="aggregatorSelect">
+                                <option value="">Выберите агрегатор...</option>
+                            </select>
+                            <input type="text" class="form-control" id="aggregatorSearchQuery" placeholder="Например: 'Война и мир'">
+                            <button class="btn btn-outline-secondary" type="button" id="searchAggregatorBtn">
+                                <i class="bi bi-search"></i> Найти
+                            </button>
+                        </div>
+                        <div id="aggregatorSearchStatus" class="form-text">Выберите агрегатор и введите запрос для поиска.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <form method="POST" action="{{ url_for('main.add_book') }}" enctype="multipart/form-data" novalidate>
+            {{ form.csrf_token }}
+            
+            <!-- Вкладки -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <ul class="nav nav-tabs card-header-tabs" id="bookTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="main-tab" data-bs-toggle="tab" data-bs-target="#main" type="button" role="tab">
+                                <i class="bi bi-info-circle"></i> Основное
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="series-tab" data-bs-toggle="tab" data-bs-target="#series" type="button" role="tab">
+                                <i class="bi bi-tags"></i> Серия
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="physical-tab" data-bs-toggle="tab" data-bs-target="#physical" type="button" role="tab">
+                                <i class="bi bi-box"></i> Характеристики
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="ids-tab" data-bs-toggle="tab" data-bs-target="#ids" type="button" role="tab">
+                                <i class="bi bi-upc-scan"></i> Идентификаторы
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="content-tab" data-bs-toggle="tab" data-bs-target="#content" type="button" role="tab">
+                                <i class="bi bi-text-paragraph"></i> Содержание
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="cover-tab" data-bs-toggle="tab" data-bs-target="#cover" type="button" role="tab">
+                                <i class="bi bi-image"></i> Обложка
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="bookTabsContent">
+                        <!-- Вкладка 1: Основная информация -->
+                        <div class="tab-pane fade show active" id="main" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.name.label(class="form-label fw-bold") }}
+                                        <span class="text-danger">*</span>
+                                        {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else ""), 
+                                                   placeholder="Например: 'Война и мир'", id="bookName") }}
+                                        {% if form.name.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.name.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <div class="form-text">Краткое название книги</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.location.label(class="form-label fw-bold") }}
+                                        <span class="text-danger">*</span>
+                                        {{ form.location(class="form-control" + (" is-invalid" if form.location.errors else ""), 
+                                                       placeholder="Например: 'Полка 3, Стеллаж 2'") }}
+                                        {% if form.location.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.location.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <div class="form-text">Место хранения книги в библиотеке</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                {{ form.fullname.label(class="form-label fw-bold") }}
+                                {{ form.fullname(class="form-control", placeholder="Например: 'Война и мир. Том 1'", id="bookFullname") }}
+                                <div class="form-text">Полное название, включая подзаголовок</div>
+                            </div>
+                            <div class="mb-3">
+                                {{ form.id_language.label(class="form-label fw-bold") }}
+                                {{ form.id_language(class="form-select" + (" is-invalid" if form.id_language.errors else "")) }}
+                                {% if form.id_language.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.id_language.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Язык, на котором написана книга</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Вкладка 2: Серия и издание -->
+                        <div class="tab-pane fade" id="series" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.seria_global.label(class="form-label fw-bold") }}
+                                        {{ form.seria_global(class="form-control", placeholder="Например: 'Русская классика'") }}
+                                        <div class="form-text">Глобальная серия (большой цикл)</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.seria_local.label(class="form-label fw-bold") }}
+                                        {{ form.seria_local(class="form-control", placeholder="Например: 'Романы-эпопеи'") }}
+                                        <div class="form-text">Локальная серия внутри глобальной</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        {{ form.edition.label(class="form-label fw-bold") }}
+                                        {{ form.edition(class="form-control", placeholder="Например: '3-е издание'") }}
+                                        <div class="form-text">Номер или название издания</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        {{ form.year_edition.label(class="form-label fw-bold") }}
+                                        {{ form.year_edition(class="form-control" + (" is-invalid" if form.year_edition.errors else ""), 
+                                                           type="number", min="1000", max="2100", 
+                                                           placeholder="Например: '2024'") }}
+                                        {% if form.year_edition.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.year_edition.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <div class="form-text">Год издания книги</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        {{ form.pages.label(class="form-label fw-bold") }}
+                                        {{ form.pages(class="form-control" + (" is-invalid" if form.pages.errors else ""), 
+                                                    type="number", min="0", placeholder="Например: '350'", id="bookPages") }}
+                                        {% if form.pages.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.pages.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <div class="form-text">Количество страниц</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Вкладка 3: Физические характеристики -->
+                        <div class="tab-pane fade" id="physical" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.id_cover.label(class="form-label fw-bold") }}
+                                        {{ form.id_cover(class="form-select" + (" is-invalid" if form.id_cover.errors else "")) }}
+                                        {% if form.id_cover.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.id_cover.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <div class="form-text">Тип переплета книги</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.id_format.label(class="form-label fw-bold") }}
+                                        {{ form.id_format(class="form-select" + (" is-invalid" if form.id_format.errors else "")) }}
+                                        {% if form.id_format.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.id_format.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <div class="form-text">Формат книги</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.circulation.label(class="form-label fw-bold") }}
+                                        {{ form.circulation(class="form-control" + (" is-invalid" if form.circulation.errors else ""), 
+                                                          type="number", min="0", placeholder="Например: '5000'") }}
+                                        {% if form.circulation.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.circulation.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <div class="form-text">Тираж книги</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.price.label(class="form-label fw-bold") }}
+                                        <div class="input-group">
+                                            {{ form.price(class="form-control" + (" is-invalid" if form.price.errors else ""), 
+                                                        type="number", step="0.01", min="0", placeholder="Например: '599.99'") }}
+                                            <span class="input-group-text">₽</span>
+                                        </div>
+                                        {% if form.price.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.price.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <div class="form-text">Цена книги</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Вкладка 4: Идентификаторы -->
+                        <div class="tab-pane fade" id="ids" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.barcode.label(class="form-label fw-bold") }}
+                                        {{ form.barcode(class="form-control", placeholder="Например: '978-5-17-123456-7'") }}
+                                        <div class="form-text">Штрих-код или артикул</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.isbn.label(class="form-label fw-bold") }}
+                                        {{ form.isbn(class="form-control", placeholder="Например: '978-5-17-123456-7'", id="bookIsbn") }}
+                                        <div class="form-text">Международный стандартный книжный номер</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Вкладка 5: Содержание -->
+                        <div class="tab-pane fade" id="content" role="tabpanel">
+                            <div class="mb-3">
+                                {{ form.summary.label(class="form-label fw-bold") }}
+                                {{ form.summary(class="form-control", rows="4", placeholder="Например: 'Краткая аннотация к книге...'", id="bookSummary") }}
+                                <div class="form-text">Краткое описание содержания книги</div>
+                            </div>
+                            <div class="mb-3">
+                                {{ form.content.label(class="form-label fw-bold") }}
+                                {{ form.content(class="form-control", rows="6", placeholder="Например: 'Подробное содержание или оглавление...'") }}
+                                <div class="form-text">Полное содержание или оглавление книги</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Вкладка 6: Обложка -->
+                        <div class="tab-pane fade" id="cover" role="tabpanel">
+                            <div class="mb-3">
+                                {{ form.cover.label(class="form-label fw-bold") }}
+                                {{ form.cover(class="form-control" + (" is-invalid" if form.cover.errors else ""), accept="image/*") }}
+                                {% if form.cover.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.cover.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Загрузите обложку книги (JPG, PNG, GIF, WEBP)</div>
+                                <div id="coverPreviewContainer" style="display: none;" class="mt-2">
+                                    <img id="coverPreview" src="" alt="Обложка книги" style="max-height: 150px; border-radius: 8px;">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                {{ form.add_info.label(class="form-label fw-bold") }}
+                                {{ form.add_info(class="form-control", rows="3", placeholder="Например: 'Любая дополнительная информация о книге...'", id="bookAddInfo") }}
+                                <div class="form-text">Примечания, пометки, дополнительная информация</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Кнопки действия -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <span class="text-muted">
+                                <i class="bi bi-info-circle"></i> 
+                                Поля с <span class="text-danger">*</span> обязательны для заполнения
+                            </span>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('main.index') }}" class="btn btn-secondary btn-lg">
+                                <i class="bi bi-x-circle"></i> Отмена
+                            </a>
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Загрузка списка источников
+function loadSources() {
+    const select = document.getElementById('sourceSelect');
+    select.innerHTML = '<option value="">Загрузка источников...</option>';
+    
+    fetch('/api/sources?type=books')
+        .then(response => {
+            if (!response.ok) throw new Error('Ошибка загрузки источников');
+            return response.json();
+        })
+        .then(sources => {
+            select.innerHTML = '<option value="">Все источники</option>';
+            sources.forEach(source => {
+                const option = document.createElement('option');
+                option.value = source.id;
+                option.textContent = source.name;
+                select.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки источников:', error);
+            select.innerHTML = '<option value="">Ошибка загрузки источников</option>';
+        });
+}
+
+// Загрузка агрегаторов
+function loadAggregators() {
+    const select = document.getElementById('aggregatorSelect');
+    select.innerHTML = '<option value="">Загрузка агрегаторов...</option>';
+    
+    fetch('/api/aggregators')
+        .then(response => {
+            if (!response.ok) throw new Error('Ошибка загрузки агрегаторов');
+            return response.json();
+        })
+        .then(aggregators => {
+            select.innerHTML = '<option value="">Выберите агрегатор...</option>';
+            aggregators.forEach(agg => {
+                const option = document.createElement('option');
+                option.value = agg.id;
+                option.dataset.urlTemplate = agg.url_template;
+                option.dataset.searchType = agg.search_type || 'standard';
+                option.dataset.icon = agg.icon || 'bi-box-seam';
+                option.textContent = agg.name;
+                select.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки агрегаторов:', error);
+            select.innerHTML = '<option value="">Ошибка загрузки агрегаторов</option>';
+        });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Загружаем источники и агрегаторы
+    loadSources();
+    loadAggregators();
+    
+    // --- Предпросмотр обложки ---
+    const coverInput = document.getElementById('cover');
+    if (coverInput) {
+        coverInput.addEventListener('change', function(e) {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('coverPreview');
+                    const container = document.getElementById('coverPreviewContainer');
+                    preview.src = e.target.result;
+                    container.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    
+    // --- Универсальный поиск ---
+    document.getElementById('searchBtn').addEventListener('click', function() {
+        const sourceId = document.getElementById('sourceSelect').value;
+        const query = document.getElementById('searchQuery').value.trim();
+        const statusDiv = document.getElementById('searchStatus');
+        const resultsDiv = document.getElementById('searchResults');
+        const resultsList = document.getElementById('resultsList');
+        const btn = this;
+
+        if (!query) {
+            statusDiv.textContent = 'Введите название или ISBN для поиска.';
+            statusDiv.className = 'form-text text-warning';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
+
+        statusDiv.textContent = 'Поиск...';
+        statusDiv.className = 'form-text text-primary';
+        resultsDiv.style.display = 'none';
+
+        let url = `/api/search?type=book`;
+        if (sourceId) {
+            url += `&source_id=${sourceId}`;
+        }
+        // Проверяем, является ли запрос ISBN (цифры и дефисы)
+        const isISBN = /^[\d-]+$/.test(query.replace(/\s/g, ''));
+        if (isISBN && query.replace(/-/g, '').length >= 10) {
+            url += `&isbn=${encodeURIComponent(query)}`;
+        } else {
+            url += `&query=${encodeURIComponent(query)}`;
+        }
+
+        fetch(url)
+            .then(response => {
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Сервер вернул не JSON ответ.');
+                }
+                if (response.status === 429) {
+                    throw new Error('Превышен лимит запросов. Попробуйте позже.');
+                }
+                if (!response.ok) {
+                    return response.json().then(err => { 
+                        throw new Error(err.error || 'Ошибка запроса'); 
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                // Если это список результатов
+                if (Array.isArray(data)) {
+                    if (data.length === 0) {
+                        statusDiv.textContent = 'Книги не найдены.';
+                        statusDiv.className = 'form-text text-warning';
+                        return;
+                    }
+                    showSearchResults(data);
+                    statusDiv.textContent = `Найдено ${data.length} книг. Выберите нужную.`;
+                    statusDiv.className = 'form-text text-success';
+                } else {
+                    // Единичный результат
+                    statusDiv.innerHTML = '✅ Книга найдена! Поля заполнены.';
+                    statusDiv.className = 'form-text text-success';
+                    fillBookForm(data);
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка поиска:', error);
+                statusDiv.innerHTML = `
+                    <span class="text-danger">❌ ${error.message}</span>
+                    <br>
+                    <button class="btn btn-sm btn-outline-secondary mt-1" onclick="manualEntry()">
+                        <i class="bi bi-pencil"></i> Ввести данные вручную
+                    </button>
+                `;
+                statusDiv.className = 'form-text';
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-search"></i> Найти';
+            });
+    });
+
+    // --- Поиск на агрегаторе ---
+    document.getElementById('searchAggregatorBtn').addEventListener('click', function() {
+        const aggregatorId = document.getElementById('aggregatorSelect').value;
+        const query = document.getElementById('aggregatorSearchQuery').value.trim();
+        const statusDiv = document.getElementById('aggregatorSearchStatus');
+        const btn = this;
+
+        if (!aggregatorId) {
+            statusDiv.textContent = 'Пожалуйста, выберите агрегатор.';
+            statusDiv.className = 'form-text text-warning';
+            return;
+        }
+
+        if (!query) {
+            statusDiv.textContent = 'Пожалуйста, введите название или ISBN для поиска.';
+            statusDiv.className = 'form-text text-warning';
+            return;
+        }
+
+        // Получаем данные из выбранной опции
+        const select = document.getElementById('aggregatorSelect');
+        const selectedOption = select.options[select.selectedIndex];
+        const urlTemplate = selectedOption.dataset.urlTemplate;
+        const searchType = selectedOption.dataset.searchType || 'standard';
+
+        if (!urlTemplate) {
+            statusDiv.textContent = 'Ошибка: шаблон URL не найден.';
+            statusDiv.className = 'form-text text-danger';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
+
+        const encodedQuery = encodeURIComponent(query);
+
+        if (searchType === 'redirect') {
+            // Для Alib.ru используем серверный редирект с перекодировкой
+            window.open(`/go/alib?q=${encodedQuery}`, '_blank');
+            statusDiv.textContent = `Поиск "${query}" выполняется на ${selectedOption.textContent}...`;
+            statusDiv.className = 'form-text text-success';
+        } else {
+            // Для стандартных агрегаторов открываем URL
+            const url = urlTemplate.replace('{query}', encodedQuery);
+            window.open(url, '_blank');
+            statusDiv.textContent = `Поиск "${query}" открыт на ${selectedOption.textContent}.`;
+            statusDiv.className = 'form-text text-success';
+        }
+        
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-search"></i> Найти';
+    });
+
+    // --- Функция отображения результатов поиска ---
+    function showSearchResults(books) {
+        const resultsDiv = document.getElementById('searchResults');
+        const resultsList = document.getElementById('resultsList');
+        
+        resultsList.innerHTML = '';
+        books.forEach(book => {
+            const item = document.createElement('a');
+            item.href = '#';
+            item.className = 'list-group-item list-group-item-action';
+            item.innerHTML = `
+                <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">${book.title || 'Без названия'}</h6>
+                    <small>${book.authors || 'Автор не указан'}</small>
+                </div>
+                <p class="mb-1 small text-muted">${book.publisher || 'Издатель не указан'} ${book.published_date ? `(${book.published_date})` : ''}</p>
+                ${book.source ? `<small class="text-muted">Источник: ${book.source}</small>` : ''}
+            `;
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                fillBookForm(book);
+                resultsDiv.style.display = 'none';
+                document.getElementById('searchStatus').innerHTML = '✅ Книга выбрана! Поля заполнены.';
+                document.getElementById('searchStatus').className = 'form-text text-success';
+            });
+            resultsList.appendChild(item);
+        });
+        resultsDiv.style.display = 'block';
+    }
+
+    // --- Ручной ввод ---
+    window.manualEntry = function() {
+        const statusDiv = document.getElementById('searchStatus');
+        statusDiv.innerHTML = '📝 Введите данные вручную в форму ниже.';
+        statusDiv.className = 'form-text text-muted';
+        document.querySelector('form').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    // --- Очистка результатов ---
+    document.getElementById('clearSearchBtn').addEventListener('click', function() {
+        document.getElementById('searchResults').style.display = 'none';
+        document.getElementById('searchStatus').textContent = '';
+        document.getElementById('searchStatus').className = 'form-text';
+        document.getElementById('searchQuery').value = '';
+        document.getElementById('aggregatorSearchQuery').value = '';
+        document.getElementById('aggregatorSearchStatus').textContent = 'Выберите агрегатор и введите запрос для поиска.';
+        document.getElementById('aggregatorSearchStatus').className = 'form-text';
+        document.getElementById('coverPreviewContainer').style.display = 'none';
+        // Сбрасываем input файла
+        const coverInput = document.getElementById('cover');
+        if (coverInput) coverInput.value = '';
+    });
+
+    // --- Функция заполнения формы ---
+    function fillBookForm(data) {
+        // Основные поля
+        document.getElementById('bookName').value = data.title || '';
+        document.getElementById('bookFullname').value = data.subtitle || '';
+        document.getElementById('bookPages').value = data.page_count || '';
+        document.getElementById('bookSummary').value = data.description || '';
+        document.getElementById('bookAddInfo').value = data.categories || '';
+        if (data.isbn) {
+            document.getElementById('bookIsbn').value = data.isbn;
+        }
+
+        // Год издания
+        if (data.published_date) {
+            const year = data.published_date.substring(0, 4);
+            const yearInput = document.querySelector('input[name="year_edition"]');
+            if (yearInput && year > 1000 && year < 2100) {
+                yearInput.value = year;
+            }
+        }
+
+        // Язык
+        if (data.language) {
+            const langSelect = document.querySelector('select[name="id_language"]');
+            if (langSelect) {
+                const options = langSelect.options;
+                for (let i = 0; i < options.length; i++) {
+                    const langText = options[i].text.toLowerCase();
+                    const searchLang = data.language.toLowerCase();
+                    if (langText.includes(searchLang) || searchLang.includes(langText)) {
+                        langSelect.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Обложка (если есть ссылка на изображение)
+        if (data.cover_image) {
+            const statusDiv = document.getElementById('searchStatus');
+            statusDiv.innerHTML += `<br><span class="text-muted small">Обложка доступна по ссылке: ${data.cover_image}</span>`;
+        }
+
+        // Источник
+        if (data.source) {
+            const statusDiv = document.getElementById('searchStatus');
+            statusDiv.innerHTML += `<br><span class="text-muted small">Источник: ${data.source}</span>`;
+        }
+
+        // Авторы (выводим в консоль для дальнейшей обработки)
+        if (data.authors) {
+            console.log('Найденные авторы:', data.authors);
+            const authorsList = data.authors.split(', ');
+            showAuthorsSuggestion(authorsList);
+        }
+
+        // Издатель
+        if (data.publisher) {
+            console.log('Издатель:', data.publisher);
+            showPublisherSuggestion(data.publisher);
+        }
+    }
+
+    // --- Предложение авторов ---
+    function showAuthorsSuggestion(authors) {
+        const statusDiv = document.getElementById('searchStatus');
+        let html = '<span class="text-success">✅ Найдены авторы: </span>';
+        authors.forEach(author => {
+            html += `<span class="badge bg-primary me-1">${author}</span>`;
+        });
+        html += '<br><small class="text-muted">Вы можете добавить их вручную в соответствующем разделе.</small>';
+        statusDiv.innerHTML = html;
+        statusDiv.className = 'form-text';
+    }
+
+    // --- Предложение издателя ---
+    function showPublisherSuggestion(publisher) {
+        const statusDiv = document.getElementById('searchStatus');
+        statusDiv.innerHTML += `<br><span class="text-success">✅ Найден издатель: </span><span class="badge bg-secondary">${publisher}</span>`;
+        statusDiv.className = 'form-text';
+    }
+
+    // --- Валидация полей ---
+    document.querySelector('input[name="pages"]')?.addEventListener('change', function() {
+        if (this.value < 0) this.value = 0;
+    });
+
+    document.querySelector('input[name="year_edition"]')?.addEventListener('change', function() {
+        const year = parseInt(this.value);
+        if (year < 1000) this.value = 1000;
+        else if (year > 2100) this.value = 2100;
+    });
+
+    document.querySelector('input[name="price"]')?.addEventListener('blur', function() {
+        if (this.value) this.value = parseFloat(this.value).toFixed(2);
+    });
+
+    // --- Обработка Enter в полях поиска ---
+    document.getElementById('searchQuery').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            document.getElementById('searchBtn').click();
+        }
+    });
+
+    document.getElementById('aggregatorSearchQuery').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            document.getElementById('searchAggregatorBtn').click();
+        }
+    });
+
+    // --- Сохранение активной вкладки при обновлении ---
+    const tabs = document.querySelectorAll('#bookTabs button[data-bs-toggle="tab"]');
+    tabs.forEach(tab => {
+        tab.addEventListener('shown.bs.tab', function(e) {
+            localStorage.setItem('activeTab', e.target.id);
+        });
+    });
+    
+    // Восстанавливаем активную вкладку при загрузке
+    const activeTab = localStorage.getItem('activeTab');
+    if (activeTab) {
+        const tabElement = document.getElementById(activeTab);
+        if (tabElement) {
+            const tab = new bootstrap.Tab(tabElement);
+            tab.show();
+        }
+    }
+});
+</script>
+
+<style>
+/* Стили для вкладок */
+.nav-tabs .nav-link {
+    color: rgba(255,255,255,0.8);
+    border: none;
+    padding: 0.5rem 1rem;
+}
+
+.nav-tabs .nav-link:hover {
+    border-color: transparent;
+    background-color: rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+.nav-tabs .nav-link.active {
+    color: #fff;
+    background-color: rgba(255,255,255,0.2);
+    border-bottom: 2px solid #fff;
+}
+
+.nav-tabs .nav-link i {
+    margin-right: 6px;
+}
+
+.card-header-tabs {
+    margin-right: -0.625rem;
+    margin-bottom: -0.75rem;
+    margin-left: -0.625rem;
+    border-bottom: 0;
+}
+
+.tab-pane {
+    padding-top: 1rem;
+}
+
+/* Стили для полей ввода с placeholder */
+.form-control::placeholder {
+    color: #adb5bd;
+    font-style: italic;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+/* Стили для заполненных полей */
+.form-control:not(:placeholder-shown) {
+    color: #212529;
+    font-weight: 500;
+    border-color: #86b7fe;
+    background-color: #f8f9fa;
+}
+
+.form-control:not(:placeholder-shown):focus {
+    background-color: #ffffff;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Стили для textarea */
+textarea.form-control::placeholder {
+    color: #adb5bd;
+    font-style: italic;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+textarea.form-control:not(:placeholder-shown) {
+    color: #212529;
+    font-weight: 500;
+    border-color: #86b7fe;
+    background-color: #f8f9fa;
+}
+
+/* Стили для select */
+.form-select:not([value=""]) {
+    color: #212529;
+    font-weight: 500;
+    border-color: #86b7fe;
+    background-color: #f8f9fa;
+}
+
+/* Анимация для полей при фокусе */
+.form-control:focus::placeholder {
+    opacity: 0.4;
+    transition: opacity 0.2s ease;
+}
+
+/* Стили для обязательных полей */
+.form-control:required:not(:placeholder-shown):valid {
+    border-color: #198754;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    padding-right: calc(1.5em + 0.75rem);
+}
+
+/* Стили для карточек */
+.card {
+    border: none;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.card-header {
+    border-bottom: none;
+    font-weight: 500;
+}
+
+.card-header i {
+    margin-right: 8px;
+}
+
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.form-text {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+.text-danger {
+    font-weight: bold;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 1rem;
+    }
+    
+    .btn-lg {
+        width: 100%;
+    }
+    
+    .nav-tabs .nav-link {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.7rem;
+    }
+    
+    .nav-tabs .nav-link i {
+        margin-right: 4px;
+    }
+}
+
+.badge {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+}
+
+.btn {
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.alert {
+    border-radius: 8px;
+}
+
+.alert i {
+    margin-right: 8px;
+}
+
+#coverPreviewContainer {
+    display: none;
+}
+
+#coverPreview {
+    max-height: 150px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Стили для результатов поиска */
+#searchResults {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#searchResults .list-group-item {
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#searchResults .list-group-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(4px);
+}
+
+.btn .spinner-border {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Анимация для статуса */
+#searchStatus, #aggregatorSearchStatus {
+    min-height: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+#searchStatus .btn {
+    margin-right: 0.5rem;
+}
+
+.border-top {
+    border-top: 1px solid #dee2e6 !important;
+}
+</style>
+{% endblock %}

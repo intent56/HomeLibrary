@@ -1,0 +1,209 @@
+<div class="row" id="interpreterGrid">
+    {% for interpreter in interpreters %}
+    <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+        <div class="card h-100 shadow-sm hover-lift">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    {% if interpreter.photo %}
+                        <img src="data:image/jpeg;base64,{{ interpreter.photo|b64encode }}" 
+                             alt="{{ interpreter.fio }}" 
+                             class="rounded-circle img-thumbnail" 
+                             style="width: 100px; height: 100px; object-fit: cover;">
+                    {% else %}
+                        <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center" 
+                             style="width: 100px; height: 100px;">
+                            <i class="bi bi-person-circle display-1 text-muted"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                <h5 class="card-title">{{ interpreter.fio }}</h5>
+                <p class="card-text text-muted small">
+                    <i class="bi bi-person"></i> {{ interpreter.lastname }}
+                    {% if interpreter.firstname %}
+                        <br><i class="bi bi-person"></i> {{ interpreter.firstname }}
+                        {% if interpreter.secondname %}
+                            {{ interpreter.secondname }}
+                        {% endif %}
+                    {% endif %}
+                </p>
+                <p class="card-text">
+                    <span class="badge bg-success">
+                        <i class="bi bi-book"></i> {{ interpreter.interpreter_books|length }} книг
+                    </span>
+                </p>
+                {% if interpreter.lang_interpreters %}
+                    <p class="card-text">
+                        <span class="badge bg-info">
+                            <i class="bi bi-globe"></i> Языки:
+                        </span>
+                        {% for lang in interpreter.lang_interpreters %}
+                            <span class="badge bg-secondary">{{ lang.name }}</span>
+                        {% endfor %}
+                    </p>
+                {% else %}
+                    <p class="card-text text-muted small">
+                        <i class="bi bi-globe"></i> Языки не указаны
+                    </p>
+                {% endif %}
+                {% if interpreter.comment %}
+                    <p class="card-text small text-muted">
+                        <i class="bi bi-chat"></i> {{ interpreter.comment|truncate(50) }}
+                    </p>
+                {% endif %}
+            </div>
+            <div class="card-footer bg-transparent border-top-0">
+                <div class="d-flex justify-content-center gap-2">
+                    <a href="{{ url_for('main.interpreter_card', interpreter_id=interpreter.id) }}" 
+                       class="btn btn-outline-info btn-sm" title="Просмотр карточки">
+                        <i class="bi bi-eye"></i>
+                    </a>
+                    <a href="{{ url_for('main.edit_interpreter', interpreter_id=interpreter.id) }}" 
+                       class="btn btn-outline-warning btn-sm" title="Редактировать переводчика">
+                    </a>
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="{{ url_for('main.select_interpreter_languages', interpreter_id=interpreter.id) }}" 
+                       class="btn btn-outline-info btn-sm" title="Редактировать языки">
+                        <i class="bi bi-globe"></i>
+                    </a>
+                    <button type="button" class="btn btn-outline-danger btn-sm" title="Удалить переводчика"
+                            data-bs-toggle="modal" data-bs-target="#deleteInterpreterModal{{ interpreter.id }}">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно подтверждения удаления -->
+    <div class="modal fade" id="deleteInterpreterModal{{ interpreter.id }}" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle text-danger"></i> Подтверждение удаления</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Вы уверены, что хотите удалить переводчика <strong>"{{ interpreter.fio }}"</strong>?</p>
+                    {% if interpreter.interpreter_books %}
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            Переводчик привязан к {{ interpreter.interpreter_books|length }} книг(е/ам). Удаление может нарушить связи!
+                        </div>
+                    {% endif %}
+                    <p class="text-muted small">Это действие необратимо!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <form method="POST" action="{{ url_for('main.delete_interpreter', interpreter_id=interpreter.id) }}" style="display: inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="page" value="{{ pagination.page }}">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Удалить
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="text-center py-5">
+            <i class="bi bi-translate display-1 text-muted"></i>
+            <p class="text-muted mt-3">Переводчики не найдены</p>
+            <a href="{{ url_for('main.add_interpreter') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Добавить первого переводчика
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Пагинация -->
+{% if pagination and pagination.pages > 1 %}
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow-sm mt-4">
+            <div class="card-body">
+                <nav aria-label="Навигация по страницам">
+                    <ul class="pagination pagination-sm justify-content-center mb-0">
+                        <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
+                            <a class="page-link" href="#"
+                               hx-get="{{ url_for('main.interpreter_list') }}"
+                               hx-target="#interpreterGridContainer"
+                               hx-indicator="#loadingIndicator"
+                               hx-push-url="true"
+                               hx-vals='{"page": 1, "search": "{{ search or '' }}"}'>
+                                <i class="bi bi-chevron-double-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
+                            <a class="page-link" href="#"
+                               hx-get="{{ url_for('main.interpreter_list') }}"
+                               hx-target="#interpreterGridContainer"
+                               hx-indicator="#loadingIndicator"
+                               hx-push-url="true"
+                               hx-vals='{"page": {{ pagination.prev_num }}, "search": "{{ search or '' }}"}'>
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                        
+                        {% set left = pagination.page - 2 %}
+                        {% set right = pagination.page + 2 %}
+                        {% if left < 1 %}{% set left = 1 %}{% endif %}
+                        {% if right > pagination.pages %}{% set right = pagination.pages %}{% endif %}
+                        
+                        {% if left > 1 %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+                        
+                        {% for p in range(left, right + 1) %}
+                            <li class="page-item {% if p == pagination.page %}active{% endif %}">
+                                <a class="page-link" href="#"
+                                   hx-get="{{ url_for('main.interpreter_list') }}"
+                                   hx-target="#interpreterGridContainer"
+                                   hx-indicator="#loadingIndicator"
+                                   hx-push-url="true"
+                                   hx-vals='{"page": {{ p }}, "search": "{{ search or '' }}"}'>
+                                    {{ p }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                        
+                        {% if right < pagination.pages %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+                        
+                        <li class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}">
+                            <a class="page-link" href="#"
+                               hx-get="{{ url_for('main.interpreter_list') }}"
+                               hx-target="#interpreterGridContainer"
+                               hx-indicator="#loadingIndicator"
+                               hx-push-url="true"
+                               hx-vals='{"page": {{ pagination.next_num }}, "search": "{{ search or '' }}"}'>
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}">
+                            <a class="page-link" href="#"
+                               hx-get="{{ url_for('main.interpreter_list') }}"
+                               hx-target="#interpreterGridContainer"
+                               hx-indicator="#loadingIndicator"
+                               hx-push-url="true"
+                               hx-vals='{"page": {{ pagination.pages }}, "search": "{{ search or '' }}"}'>
+                                <i class="bi bi-chevron-double-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                
+                <div class="text-center text-muted small mt-2">
+                    Показано: {{ pagination.items|length }} из {{ pagination.total }} записей
+                    <span class="mx-2">|</span>
+                    Страница {{ pagination.page }} из {{ pagination.pages }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="bi bi-link-45deg"></i> Справочник агрегаторов</h2>
+                <p class="text-muted mb-0">Управление сайтами-агрегаторами для поиска книг</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-house"></i> На главную
+                </a>
+                <a href="{{ url_for('main.add_aggregator') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Добавить агрегатор
+                </a>
+            </div>
+        </div>
+        
+        <!-- Контейнер для таблицы с HTMX -->
+        <div id="aggregatorTable">
+            {% include 'partials/aggregator_table.html' %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Обработка события обновления таблицы
+    document.body.addEventListener('htmx:afterSwap', function(evt) {
+        if (evt.detail.target.id === 'aggregatorTable') {
+            // Обновляем счетчик в футере
+            const rows = document.querySelectorAll('#aggregatorTable tbody tr:not(#empty-row)').length;
+            const footer = document.querySelector('.card-footer .text-muted');
+            if (footer) {
+                footer.textContent = `Всего агрегаторов: ${rows}`;
+            }
+        }
+    });
+
+    // Обработка ошибок HTMX
+    document.body.addEventListener('htmx:responseError', function(evt) {
+        console.error('HTMX Error:', evt.detail);
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+        alertDiv.innerHTML = `
+            <i class="bi bi-exclamation-triangle"></i>
+            Произошла ошибка при выполнении операции. Попробуйте обновить страницу.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.querySelector('.container').prepend(alertDiv);
+    });
+});
+</script>
+{% endblock %}

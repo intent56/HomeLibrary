@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="bi bi-book"></i> Список книг</h2>
+                <p class="text-muted mb-0">Всего книг: {{ total_books }}</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-house"></i> На главную
+                </a>
+                <a href="{{ url_for('main.add_book') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Добавить книгу
+                </a>
+            </div>
+        </div>
+        
+        <!-- Поиск с HTMX -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-book"></i></span>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="searchInput" 
+                                   name="search"
+                                   placeholder="По названию..." 
+                                   value="{{ search or '' }}"
+                                   hx-get="{{ url_for('main.book_list') }}"
+                                   hx-trigger="keyup changed delay:300ms"
+                                   hx-target="#bookTableContainer"
+                                   hx-indicator="#loadingIndicator"
+                                   hx-push-url="true"
+                                   hx-vals='{"page": 1}'>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="authorSearchInput" 
+                                   name="author_search"
+                                   placeholder="По автору..." 
+                                   value="{{ author_search or '' }}"
+                                   hx-get="{{ url_for('main.book_list') }}"
+                                   hx-trigger="keyup changed delay:300ms"
+                                   hx-target="#bookTableContainer"
+                                   hx-indicator="#loadingIndicator"
+                                   hx-push-url="true"
+                                   hx-vals='{"page": 1}'>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-translate"></i></span>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="interpreterSearchInput" 
+                                   name="interpreter_search"
+                                   placeholder="По переводчику..." 
+                                   value="{{ interpreter_search or '' }}"
+                                   hx-get="{{ url_for('main.book_list') }}"
+                                   hx-trigger="keyup changed delay:300ms"
+                                   hx-target="#bookTableContainer"
+                                   hx-indicator="#loadingIndicator"
+                                   hx-push-url="true"
+                                   hx-vals='{"page": 1}'>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-tag"></i></span>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="genreSearchInput" 
+                                   name="genre_search"
+                                   placeholder="По жанру..." 
+                                   value="{{ genre_search or '' }}"
+                                   hx-get="{{ url_for('main.book_list') }}"
+                                   hx-trigger="keyup changed delay:300ms"
+                                   hx-target="#bookTableContainer"
+                                   hx-indicator="#loadingIndicator"
+                                   hx-push-url="true"
+                                   hx-vals='{"page": 1}'>
+                            <span class="input-group-text" id="loadingIndicator" style="display: none;">
+                                <span class="spinner-border spinner-border-sm" role="status"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-secondary w-100" 
+                                onclick="resetSearch()">
+                            <i class="bi bi-arrow-counterclockwise"></i> Сброс
+                        </button>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <span class="text-muted small" id="resultCount">
+                        Найдено: {{ total_books }} книг
+                    </span>
+                    {% if search %}
+                        <span class="text-muted small ms-3">
+                            <i class="bi bi-filter"></i> По названию: "{{ search }}"
+                        </span>
+                    {% endif %}
+                    {% if author_search %}
+                        <span class="text-muted small ms-3">
+                            <i class="bi bi-filter"></i> По автору: "{{ author_search }}"
+                        </span>
+                    {% endif %}
+                    {% if interpreter_search %}
+                        <span class="text-muted small ms-3">
+                            <i class="bi bi-filter"></i> По переводчику: "{{ interpreter_search }}"
+                        </span>
+                    {% endif %}
+                    {% if genre_search %}
+                        <span class="text-muted small ms-3">
+                            <i class="bi bi-filter"></i> По жанру: "{{ genre_search }}"
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Контейнер для таблицы книг -->
+        <div id="bookTableContainer">
+            {% include 'partials/book_table.html' %}
+        </div>
+    </div>
+</div>
+
+<script>
+function resetSearch() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('authorSearchInput').value = '';
+    document.getElementById('interpreterSearchInput').value = '';
+    document.getElementById('genreSearchInput').value = '';
+    
+    htmx.ajax('GET', '{{ url_for("main.book_list") }}', {
+        target: '#bookTableContainer',
+        values: { page: 1 }
+    });
+}
+
+document.body.addEventListener('htmx:afterSwap', function(evt) {
+    if (evt.detail.target.id === 'bookTableContainer') {
+        const totalElement = document.querySelector('#bookTableContainer .card-footer .text-muted');
+        if (totalElement) {
+            const match = totalElement.textContent.match(/(\d+)/g);
+            if (match && match.length >= 2) {
+                document.getElementById('resultCount').textContent = 'Найдено: ' + match[1] + ' книг';
+            }
+        }
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const authorSearchInput = document.getElementById('authorSearchInput');
+    const interpreterSearchInput = document.getElementById('interpreterSearchInput');
+    const genreSearchInput = document.getElementById('genreSearchInput');
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const search = urlParams.get('search');
+    const authorSearch = urlParams.get('author_search');
+    const interpreterSearch = urlParams.get('interpreter_search');
+    const genreSearch = urlParams.get('genre_search');
+    
+    if (search) searchInput.value = search;
+    if (authorSearch) authorSearchInput.value = authorSearch;
+    if (interpreterSearch) interpreterSearchInput.value = interpreterSearch;
+    if (genreSearch) genreSearchInput.value = genreSearch;
+});
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        const activeElement = document.activeElement;
+        if (activeElement.id === 'searchInput' || 
+            activeElement.id === 'authorSearchInput' || 
+            activeElement.id === 'interpreterSearchInput' || 
+            activeElement.id === 'genreSearchInput') {
+            e.preventDefault();
+            htmx.trigger(activeElement, 'keyup');
+        }
+    }
+});
+</script>
+{% endblock %}

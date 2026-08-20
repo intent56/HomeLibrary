@@ -1,0 +1,199 @@
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 8%">Обложка</th>
+                        <th style="width: 20%">Название</th>
+                        <th style="width: 22%">Авторы</th>
+                        <th style="width: 22%">Переводчики</th>
+                        <th style="width: 13%">Жанры</th>
+                        <th style="width: 8%">Год</th>
+                        <th style="width: 7%">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                    <tr>
+                        <td>
+                            {% if book.cover %}
+                                <img src="data:image/jpeg;base64,{{ book.cover|b64encode }}" 
+                                     alt="{{ book.name }}" 
+                                     class="img-thumbnail book-cover" 
+                                     style="width: 50px; height: 70px; object-fit: cover;"
+                                     onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'50\' height=\'70\' viewBox=\'0 0 50 70\'%3E%3Crect width=\'50\' height=\'70\' fill=\'%23f8f9fa\'/%3E%3Ctext x=\'25\' y=\'35\' font-family=\'Arial\' font-size=\'10\' fill=\'%236c757d\' text-anchor=\'middle\'%3EНет%3C/text%3E%3Ctext x=\'25\' y=\'48\' font-family=\'Arial\' font-size=\'10\' fill=\'%236c757d\' text-anchor=\'middle\'%3Eобложки%3C/text%3E%3C/svg%3E';">
+                            {% else %}
+                                <div class="bg-light d-inline-flex align-items-center justify-content-center img-thumbnail" 
+                                     style="width: 50px; height: 70px;">
+                                    <i class="bi bi-book text-muted" style="font-size: 1.5rem;"></i>
+                                </div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <strong>{{ book.name }}</strong>
+                            {% if book.fullname %}
+                                <br><small class="text-muted">{{ book.fullname }}</small>
+                            {% endif %}
+                            {% if book.pages %}
+                                <br><span class="badge bg-info">{{ book.pages }} стр.</span>
+                            {% endif %}
+                            {% if book.price %}
+                                <span class="badge bg-success">{{ "%.2f"|format(book.price) }} ₽</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if book.author_books %}
+                                {% for author in book.author_books %}
+                                    <a href="{{ url_for('main.author_view', author_id=author.id) }}" 
+                                       class="badge bg-primary mb-1 d-block text-decoration-none" 
+                                       style="font-size: 0.85rem; cursor: pointer;"
+                                       title="Просмотр карточки автора">
+                                        <i class="bi bi-person"></i> {{ author.fio }}
+                                    </a>
+                                {% endfor %}
+                            {% else %}
+                                <span class="text-muted"><i class="bi bi-person-x"></i> Нет авторов</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if book.interpreter_books %}
+                                {% for interpreter in book.interpreter_books %}
+                                    <a href="{{ url_for('main.interpreter_view', interpreter_id=interpreter.id) }}" 
+                                       class="badge bg-success mb-1 d-block text-decoration-none" 
+                                       style="font-size: 0.85rem; cursor: pointer;"
+                                       title="Просмотр карточки переводчика">
+                                        <i class="bi bi-translate"></i> {{ interpreter.fio }}
+                                    </a>
+                                {% endfor %}
+                            {% else %}
+                                <span class="text-muted"><i class="bi bi-translate"></i> Нет переводчиков</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if book.genre_books %}
+                                {% for genre in book.genre_books %}
+                                    <a href="{{ url_for('main.genre_card', genre_id=genre.id) }}" 
+                                       class="badge bg-warning text-dark mb-1 d-block text-decoration-none" 
+                                       style="font-size: 0.85rem; cursor: pointer;"
+                                       title="Просмотр карточки жанра">
+                                        <i class="bi bi-tag"></i> {{ genre.name }}
+                                    </a>
+                                {% endfor %}
+                            {% else %}
+                                <span class="text-muted"><i class="bi bi-tag"></i> Нет жанров</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if book.year_edition %}
+                                <span class="badge bg-secondary">{{ book.year_edition }}</span>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('main.book_detail', book_id=book.id) }}" 
+                               class="btn btn-primary btn-sm" title="Просмотр и редактирование">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr class="empty-row">
+                        <td colspan="7" class="text-center py-4">
+                            <i class="bi bi-book display-4 text-muted d-block"></i>
+                            <p class="text-muted mt-2">Книг не найдено</p>
+                            <a href="{{ url_for('main.add_book') }}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Добавить первую книгу
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Пагинация -->
+    {% if pagination and pagination.pages > 1 %}
+    <div class="card-footer bg-light">
+        <nav aria-label="Навигация по страницам">
+            <ul class="pagination pagination-sm justify-content-center mb-0">
+                <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
+                    <a class="page-link" href="#"
+                       hx-get="{{ url_for('main.book_list') }}"
+                       hx-target="#bookTableContainer"
+                       hx-indicator="#loadingIndicator"
+                       hx-push-url="true"
+                       hx-vals='{"page": 1, "search": "{{ search or '' }}", "author_search": "{{ author_search or '' }}", "interpreter_search": "{{ interpreter_search or '' }}", "genre_search": "{{ genre_search or '' }}"}'>
+                        <i class="bi bi-chevron-double-left"></i>
+                    </a>
+                </li>
+                <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
+                    <a class="page-link" href="#"
+                       hx-get="{{ url_for('main.book_list') }}"
+                       hx-target="#bookTableContainer"
+                       hx-indicator="#loadingIndicator"
+                       hx-push-url="true"
+                       hx-vals='{"page": {{ pagination.prev_num }}, "search": "{{ search or '' }}", "author_search": "{{ author_search or '' }}", "interpreter_search": "{{ interpreter_search or '' }}", "genre_search": "{{ genre_search or '' }}"}'>
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+                
+                {% set left = pagination.page - 2 %}
+                {% set right = pagination.page + 2 %}
+                {% if left < 1 %}{% set left = 1 %}{% endif %}
+                {% if right > pagination.pages %}{% set right = pagination.pages %}{% endif %}
+                
+                {% if left > 1 %}
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                {% endif %}
+                
+                {% for p in range(left, right + 1) %}
+                    <li class="page-item {% if p == pagination.page %}active{% endif %}">
+                        <a class="page-link" href="#"
+                           hx-get="{{ url_for('main.book_list') }}"
+                           hx-target="#bookTableContainer"
+                           hx-indicator="#loadingIndicator"
+                           hx-push-url="true"
+                           hx-vals='{"page": {{ p }}, "search": "{{ search or '' }}", "author_search": "{{ author_search or '' }}", "interpreter_search": "{{ interpreter_search or '' }}", "genre_search": "{{ genre_search or '' }}"}'>
+                            {{ p }}
+                        </a>
+                    </li>
+                {% endfor %}
+                
+                {% if right < pagination.pages %}
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                {% endif %}
+                
+                <li class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}">
+                    <a class="page-link" href="#"
+                       hx-get="{{ url_for('main.book_list') }}"
+                       hx-target="#bookTableContainer"
+                       hx-indicator="#loadingIndicator"
+                       hx-push-url="true"
+                       hx-vals='{"page": {{ pagination.next_num }}, "search": "{{ search or '' }}", "author_search": "{{ author_search or '' }}", "interpreter_search": "{{ interpreter_search or '' }}", "genre_search": "{{ genre_search or '' }}"}'>
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+                <li class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}">
+                    <a class="page-link" href="#"
+                       hx-get="{{ url_for('main.book_list') }}"
+                       hx-target="#bookTableContainer"
+                       hx-indicator="#loadingIndicator"
+                       hx-push-url="true"
+                       hx-vals='{"page": {{ pagination.pages }}, "search": "{{ search or '' }}", "author_search": "{{ author_search or '' }}", "interpreter_search": "{{ interpreter_search or '' }}", "genre_search": "{{ genre_search or '' }}"}'>
+                        <i class="bi bi-chevron-double-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <div class="text-center text-muted small mt-2">
+            Показано: {{ pagination.items|length }} из {{ pagination.total }} записей
+            <span class="mx-2">|</span>
+            Страница {{ pagination.page }} из {{ pagination.pages }}
+        </div>
+    </div>
+    {% endif %}
+</div>

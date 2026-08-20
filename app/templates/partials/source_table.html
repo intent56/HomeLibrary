@@ -1,0 +1,236 @@
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Название</th>
+                        <th>Код</th>
+                        <th>Статус</th>
+                        <th>Поиск книг</th>
+                        <th>Поиск авторов</th>
+                        <th>Поиск переводчиков</th>
+                        <th>Комментарий</th>
+                        <th style="min-width: 120px;">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for source in sources %}
+                    <tr id="source-row-{{ source.id }}">
+                        <td><strong>{{ source.name }}</strong></td>
+                        <td><code>{{ source.code }}</code></td>
+                        <td id="source-status-{{ source.id }}">
+                            {% if source.is_active %}
+                                <span class="badge bg-success">Активен</span>
+                            {% else %}
+                                <span class="badge bg-danger">Неактивен</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if source.chk_books %}
+                                <span class="badge bg-primary"><i class="bi bi-check-circle"></i></span>
+                            {% else %}
+                                <span class="badge bg-secondary"><i class="bi bi-x-circle"></i></span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if source.chk_authors %}
+                                <span class="badge bg-primary"><i class="bi bi-check-circle"></i></span>
+                            {% else %}
+                                <span class="badge bg-secondary"><i class="bi bi-x-circle"></i></span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if source.chk_interpreters %}
+                                <span class="badge bg-primary"><i class="bi bi-check-circle"></i></span>
+                            {% else %}
+                                <span class="badge bg-secondary"><i class="bi bi-x-circle"></i></span>
+                            {% endif %}
+                        </td>
+                        <td>{{ source.comment or '-' }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="{{ url_for('main.edit_source', source_id=source.id) }}" 
+                                   class="btn btn-outline-warning" title="Редактировать">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <button type="button" 
+                                        class="btn btn-outline-secondary toggle-btn" 
+                                        hx-post="{{ url_for('main.toggle_source_htmx', source_id=source.id) }}"
+                                        hx-headers='{"X-CSRFToken": "{{ csrf_token() }}"}'
+                                        hx-target="#source-status-{{ source.id }}"
+                                        hx-swap="outerHTML"
+                                        hx-indicator="#source-loading-{{ source.id }}"
+                                        title="{% if source.is_active %}Деактивировать{% else %}Активировать{% endif %}">
+                                    <i class="bi bi-{% if source.is_active %}pause-circle{% else %}play-circle{% endif %}"></i>
+                                    <span id="source-loading-{{ source.id }}" class="htmx-indicator">
+                                        <span class="spinner-border spinner-border-sm" role="status"></span>
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-outline-danger" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#deleteSourceModal{{ source.id }}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Модальное окно подтверждения удаления -->
+                            <div class="modal fade" id="deleteSourceModal{{ source.id }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title"><i class="bi bi-exclamation-triangle text-danger"></i> Подтверждение удаления</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Вы уверены, что хотите удалить источник <strong>"{{ source.name }}"</strong>?</p>
+                                            <p class="text-muted small">Это действие необратимо!</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                            <button type="button" 
+                                                    class="btn btn-danger delete-btn"
+                                                    hx-delete="{{ url_for('main.delete_source_htmx', source_id=source.id) }}"
+                                                    hx-headers='{"X-CSRFToken": "{{ csrf_token() }}"}'
+                                                    hx-target="#source-row-{{ source.id }}"
+                                                    hx-swap="outerHTML"
+                                                    hx-confirm="Вы уверены, что хотите удалить источник &quot;{{ source.name }}&quot;?"
+                                                    data-bs-dismiss="modal">
+                                                <i class="bi bi-trash"></i> Удалить
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr id="empty-row">
+                        <td colspan="8" class="text-center py-4">
+                            <i class="bi bi-database display-4 text-muted d-block"></i>
+                            <p class="text-muted mt-2">Источники не найдены</p>
+                            <a href="{{ url_for('main.add_source') }}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Добавить первый источник
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer bg-light">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="text-muted small">
+                <i class="bi bi-info-circle"></i> Всего источников: {{ sources|length }}
+            </div>
+            <div>
+                <a href="{{ url_for('main.index') }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-house"></i> На главную
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Стили для выравнивания кнопок в таблицах */
+.table .btn-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.table .btn-group .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    min-height: 32px;
+    padding: 0.25rem 0.5rem;
+}
+
+.table .btn-group .btn i {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+/* Индикатор загрузки HTMX */
+.htmx-indicator {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}
+
+.htmx-request .htmx-indicator {
+    opacity: 1;
+}
+
+.htmx-request.htmx-indicator {
+    opacity: 1;
+}
+
+/* Анимация для удаления строки */
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+tr.htmx-swapping {
+    animation: fadeOut 0.3s ease-in;
+}
+
+/* Стили для бейджей */
+.badge {
+    font-weight: 500;
+    padding: 0.35rem 0.65rem;
+}
+
+/* Стили для иконок */
+.bi {
+    font-size: 1.1rem;
+}
+
+/* Стили для кнопок в модальном окне */
+.modal-footer .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+}
+
+.modal-footer .btn i {
+    font-size: 1rem;
+}
+
+/* Стили для заголовка таблицы */
+.table thead th {
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
+    padding: 0.75rem;
+}
+
+.table td {
+    vertical-align: middle;
+    padding: 0.75rem;
+}
+
+/* Стили для кода */
+code {
+    background: #f8f9fa;
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+/* Стили для пустого состояния */
+.text-center.py-4 i {
+    opacity: 0.5;
+}
+
+.text-center.py-4 {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 2rem !important;
+}
+</style>

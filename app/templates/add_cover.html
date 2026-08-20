@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="bi bi-plus-circle"></i> Добавление типа переплета</h2>
+                <h5 class="text-muted">Заполните информацию о переплете</h5>
+            </div>
+            <a href="{{ url_for('main.cover_list') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Назад к списку
+            </a>
+        </div>
+        
+        <form method="POST" action="{{ url_for('main.add_cover') }}" novalidate>
+            {{ form.csrf_token }}
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-bookmark"></i> Информация о переплете</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.code.label(class="form-label fw-bold") }}
+                                <span class="text-danger">*</span>
+                                {{ form.code(class="form-control" + (" is-invalid" if form.code.errors else ""), 
+                                           placeholder="Например: 'ТП'") }}
+                                {% if form.code.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.code.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Код типа переплета (должен быть уникальным)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.name.label(class="form-label fw-bold") }}
+                                <span class="text-danger">*</span>
+                                {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else ""), 
+                                           placeholder="Например: 'Твердый переплет'") }}
+                                {% if form.name.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.name.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Название типа переплета</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.comment.label(class="form-label fw-bold") }}
+                        {{ form.comment(class="form-control", rows="3", placeholder="Например: 'Стандартный твердый переплет'") }}
+                        <div class="form-text">Комментарии, примечания (можно использовать HTML-разметку)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <span class="text-muted">
+                                <i class="bi bi-info-circle"></i> 
+                                Поля с <span class="text-danger">*</span> обязательны для заполнения
+                            </span>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('main.cover_list') }}" class="btn btn-secondary btn-lg">
+                                <i class="bi bi-x-circle"></i> Отмена
+                            </a>
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+/* Стили для полей ввода с placeholder */
+.form-control::placeholder {
+    color: #adb5bd;
+    font-style: italic;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+/* Стили для заполненных полей */
+.form-control:not(:placeholder-shown) {
+    color: #212529;
+    font-weight: 500;
+    border-color: #86b7fe;
+    background-color: #f8f9fa;
+}
+
+.form-control:not(:placeholder-shown):focus {
+    background-color: #ffffff;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Стили для textarea */
+textarea.form-control::placeholder {
+    color: #adb5bd;
+    font-style: italic;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+textarea.form-control:not(:placeholder-shown) {
+    color: #212529;
+    font-weight: 500;
+    border-color: #86b7fe;
+    background-color: #f8f9fa;
+}
+
+/* Анимация для полей при фокусе */
+.form-control:focus::placeholder {
+    opacity: 0.4;
+    transition: opacity 0.2s ease;
+}
+
+/* Стили для карточек */
+.card {
+    border: none;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.card-header {
+    border-bottom: none;
+    font-weight: 500;
+}
+
+.card-header i {
+    margin-right: 8px;
+}
+
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.form-text {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+.text-danger {
+    font-weight: bold;
+}
+
+.form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 1rem;
+    }
+    
+    .btn-lg {
+        width: 100%;
+    }
+}
+
+.btn {
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %}

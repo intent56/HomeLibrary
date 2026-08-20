@@ -1,0 +1,532 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="bi bi-book"></i> Карточка книги</h2>
+                <h5 class="text-muted">"{{ book.name }}"</h5>
+            </div>
+            <div>
+                <a href="{{ url_for('main.book_list') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Назад к списку
+                </a>
+            </div>
+        </div>
+        
+        <!-- Вкладки -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <ul class="nav nav-tabs card-header-tabs" id="bookDetailTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab">
+                            <i class="bi bi-info-circle"></i> Основное
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="authors-tab" data-bs-toggle="tab" data-bs-target="#authors" type="button" role="tab">
+                            <i class="bi bi-people"></i> Авторы
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="interpreters-tab" data-bs-toggle="tab" data-bs-target="#interpreters" type="button" role="tab">
+                            <i class="bi bi-translate"></i> Переводчики
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="publishers-tab" data-bs-toggle="tab" data-bs-target="#publishers" type="button" role="tab">
+                            <i class="bi bi-building"></i> Издатели
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="genres-tab" data-bs-toggle="tab" data-bs-target="#genres" type="button" role="tab">
+                            <i class="bi bi-tags"></i> Жанры
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="content-tab" data-bs-toggle="tab" data-bs-target="#content" type="button" role="tab">
+                            <i class="bi bi-text-paragraph"></i> Содержание
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="cover-tab" data-bs-toggle="tab" data-bs-target="#cover" type="button" role="tab">
+                            <i class="bi bi-image"></i> Обложка
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content" id="bookDetailTabsContent">
+                    <!-- Вкладка 1: Основная информация -->
+                    <div class="tab-pane fade show active" id="info" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <th style="width: 20%">Название:</th>
+                                        <td><strong>{{ book.name }}</strong></td>
+                                    </tr>
+                                    {% if book.fullname %}
+                                    <tr>
+                                        <th>Полное название:</th>
+                                        <td>{{ book.fullname }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    <tr>
+                                        <th>Местоположение:</th>
+                                        <td><span class="badge bg-info">{{ book.location }}</span></td>
+                                    </tr>
+                                    {% if book.year_edition %}
+                                    <tr>
+                                        <th>Год издания:</th>
+                                        <td>{{ book.year_edition }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if book.pages %}
+                                    <tr>
+                                        <th>Страниц:</th>
+                                        <td>{{ book.pages }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if book.price %}
+                                    <tr>
+                                        <th>Цена:</th>
+                                        <td>{{ "%.2f"|format(book.price) }} ₽</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if book.circulation %}
+                                    <tr>
+                                        <th>Тираж:</th>
+                                        <td>{{ book.circulation }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if book.isbn %}
+                                    <tr>
+                                        <th>ISBN:</th>
+                                        <td>{{ book.isbn }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if book.barcode %}
+                                    <tr>
+                                        <th>Штрих-код:</th>
+                                        <td>{{ book.barcode }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if book.seria_global %}
+                                    <tr>
+                                        <th>Глобальная серия:</th>
+                                        <td>{{ book.seria_global }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if book.seria_local %}
+                                    <tr>
+                                        <th>Локальная серия:</th>
+                                        <td>{{ book.seria_local }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if book.edition %}
+                                    <tr>
+                                        <th>Издание:</th>
+                                        <td>{{ book.edition }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if book.lang %}
+                                    <tr>
+                                        <th>Язык:</th>
+                                        <td>
+                                            <span class="badge bg-info">
+                                                <i class="bi bi-globe"></i> {{ book.lang.name }}
+                                                <span class="badge bg-light text-dark ms-1">{{ book.lang.code }}</span>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if book.cvr %}
+                                    <tr>
+                                        <th>Переплет:</th>
+                                        <td>{{ book.cvr.name }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if book.fmt %}
+                                    <tr>
+                                        <th>Формат:</th>
+                                        <td>{{ book.fmt.name }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if book.add_info %}
+                                    <tr>
+                                        <th>Дополнительная информация:</th>
+                                        <td>{{ book.add_info }}</td>
+                                    </tr>
+                                    {% endif %}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Вкладка 2: Авторы -->
+                    <div class="tab-pane fade" id="authors" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold"><i class="bi bi-people"></i> Авторы книги</h5>
+                            <a href="{{ url_for('main.select_authors', book_id=book.id) }}" class="btn btn-primary btn-sm">
+                                <i class="bi bi-pencil"></i> Редактировать
+                            </a>
+                        </div>
+                        {% if book.author_books %}
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for author in book.author_books %}
+                                    <div class="card p-3" style="min-width: 200px; flex: 1;">
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-3">
+                                                {% if author.photo %}
+                                                    <img src="data:image/jpeg;base64,{{ author.photo|b64encode }}" 
+                                                         alt="{{ author.fio }}" 
+                                                         class="rounded-circle" 
+                                                         style="width: 50px; height: 50px; object-fit: cover;">
+                                                {% else %}
+                                                    <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" 
+                                                         style="width: 50px; height: 50px;">
+                                                        <i class="bi bi-person text-muted" style="font-size: 1.5rem;"></i>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <strong>{{ author.fio }}</strong>
+                                                <br>
+                                                <small class="text-muted">
+                                                    <a href="{{ url_for('main.author_card', author_id=author.id) }}" class="text-decoration-none">
+                                                        <i class="bi bi-eye"></i> Просмотр
+                                                    </a>
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle"></i>
+                                У книги пока нет авторов. 
+                                <a href="{{ url_for('main.select_authors', book_id=book.id) }}" class="alert-link">
+                                    Добавить авторов
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Вкладка 3: Переводчики -->
+                    <div class="tab-pane fade" id="interpreters" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold"><i class="bi bi-translate"></i> Переводчики книги</h5>
+                            <a href="{{ url_for('main.select_interpreters', book_id=book.id) }}" class="btn btn-success btn-sm">
+                                <i class="bi bi-pencil"></i> Редактировать
+                            </a>
+                        </div>
+                        {% if book.interpreter_books %}
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for interpreter in book.interpreter_books %}
+                                    <div class="card p-3" style="min-width: 200px; flex: 1;">
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-3">
+                                                {% if interpreter.photo %}
+                                                    <img src="data:image/jpeg;base64,{{ interpreter.photo|b64encode }}" 
+                                                         alt="{{ interpreter.fio }}" 
+                                                         class="rounded-circle" 
+                                                         style="width: 50px; height: 50px; object-fit: cover;">
+                                                {% else %}
+                                                    <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" 
+                                                         style="width: 50px; height: 50px;">
+                                                        <i class="bi bi-person text-muted" style="font-size: 1.5rem;"></i>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <strong>{{ interpreter.fio }}</strong>
+                                                <br>
+                                                <small class="text-muted">
+                                                    <a href="{{ url_for('main.interpreter_card', interpreter_id=interpreter.id) }}" class="text-decoration-none">
+                                                        <i class="bi bi-eye"></i> Просмотр
+                                                    </a>
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle"></i>
+                                У книги пока нет переводчиков. 
+                                <a href="{{ url_for('main.select_interpreters', book_id=book.id) }}" class="alert-link">
+                                    Добавить переводчиков
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Вкладка 4: Издатели -->
+                    <div class="tab-pane fade" id="publishers" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold"><i class="bi bi-building"></i> Издатели книги</h5>
+                            <a href="{{ url_for('main.select_publishers', book_id=book.id) }}" class="btn btn-primary btn-sm">
+                                <i class="bi bi-pencil"></i> Редактировать
+                            </a>
+                        </div>
+                        {% if book.publisher_books %}
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for publisher in book.publisher_books %}
+                                    <span class="badge bg-secondary" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                                        <i class="bi bi-building"></i> {{ publisher.name }}
+                                        <a href="{{ url_for('main.publisher_view', publisher_id=publisher.id) }}" 
+                                           class="text-white text-decoration-none ms-1">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle"></i>
+                                У книги пока нет издателей. 
+                                <a href="{{ url_for('main.select_publishers', book_id=book.id) }}" class="alert-link">
+                                    Добавить издателей
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Вкладка 5: Жанры -->
+                    <div class="tab-pane fade" id="genres" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold"><i class="bi bi-tags"></i> Жанры книги</h5>
+                            <a href="{{ url_for('main.select_genres', book_id=book.id) }}" class="btn btn-primary btn-sm">
+                                <i class="bi bi-pencil"></i> Редактировать
+                            </a>
+                        </div>
+                        {% if book.genre_books %}
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for genre in book.genre_books %}
+                                    <span class="badge bg-warning text-dark" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                                        <i class="bi bi-tag"></i> {{ genre.name }}
+                                        <a href="{{ url_for('main.genre_card', genre_id=genre.id) }}" 
+                                           class="text-dark text-decoration-none ms-1">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="alert alert-warning">
+                                <i class="bi bi-exclamation-triangle"></i>
+                                У книги пока нет жанров. 
+                                <a href="{{ url_for('main.select_genres', book_id=book.id) }}" class="alert-link">
+                                    Добавить жанры
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Вкладка 6: Содержание -->
+                    <div class="tab-pane fade" id="content" role="tabpanel">
+                        {% if book.summary %}
+                            <div class="mb-4">
+                                <h5 class="fw-bold"><i class="bi bi-chat"></i> Аннотация</h5>
+                                <div class="p-3 bg-light rounded">
+                                    {{ book.summary }}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if book.content %}
+                            <div>
+                                <h5 class="fw-bold"><i class="bi bi-text-paragraph"></i> Содержание</h5>
+                                <div class="p-3 bg-light rounded">
+                                    {{ book.content }}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if not book.summary and not book.content %}
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i>
+                                Нет информации о содержании книги
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Вкладка 7: Обложка -->
+                    <div class="tab-pane fade" id="cover" role="tabpanel">
+                        <div class="text-center">
+                            {% if book.cover %}
+                                <img src="data:image/jpeg;base64,{{ book.cover|b64encode }}" 
+                                     alt="{{ book.name }}" 
+                                     class="img-fluid rounded shadow-sm" 
+                                     style="max-height: 400px;">
+                                <p class="text-muted mt-2">
+                                    <i class="bi bi-image"></i> Обложка книги
+                                </p>
+                            {% else %}
+                                <div class="bg-light d-flex align-items-center justify-content-center rounded shadow-sm" 
+                                     style="height: 300px;">
+                                    <div>
+                                        <i class="bi bi-book display-1 text-muted"></i>
+                                        <p class="text-muted mt-2">Обложка не загружена</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <div class="mt-3">
+                                <a href="{{ url_for('main.edit_book', book_id=book.id) }}" class="btn btn-warning">
+                                    <i class="bi bi-pencil"></i> Редактировать книгу
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-light">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <span class="text-muted">
+                            <i class="bi bi-info-circle"></i> ID: {{ book.id }}
+                        </span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('main.edit_book', book_id=book.id) }}" class="btn btn-warning btn-sm">
+                            <i class="bi bi-pencil"></i> Редактировать книгу
+                        </a>
+                        <a href="{{ url_for('main.book_list') }}" class="btn btn-secondary btn-sm">
+                            <i class="bi bi-arrow-left"></i> Назад
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Сохранение активной вкладки при обновлении
+    const tabs = document.querySelectorAll('#bookDetailTabs button[data-bs-toggle="tab"]');
+    tabs.forEach(tab => {
+        tab.addEventListener('shown.bs.tab', function(e) {
+            localStorage.setItem('activeBookDetailTab', e.target.id);
+        });
+    });
+    
+    // Восстанавливаем активную вкладку при загрузке
+    const activeTab = localStorage.getItem('activeBookDetailTab');
+    if (activeTab) {
+        const tabElement = document.getElementById(activeTab);
+        if (tabElement) {
+            const tab = new bootstrap.Tab(tabElement);
+            tab.show();
+        }
+    }
+});
+</script>
+
+<style>
+/* Стили для вкладок */
+.nav-tabs .nav-link {
+    color: rgba(255,255,255,0.8);
+    border: none;
+    padding: 0.5rem 1rem;
+}
+
+.nav-tabs .nav-link:hover {
+    border-color: transparent;
+    background-color: rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+.nav-tabs .nav-link.active {
+    color: #fff;
+    background-color: rgba(255,255,255,0.2);
+    border-bottom: 2px solid #fff;
+}
+
+.nav-tabs .nav-link i {
+    margin-right: 6px;
+}
+
+.card-header-tabs {
+    margin-right: -0.625rem;
+    margin-bottom: -0.75rem;
+    margin-left: -0.625rem;
+    border-bottom: 0;
+}
+
+.tab-pane {
+    padding-top: 1rem;
+}
+
+.card {
+    border: none;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.card-header {
+    border-bottom: none;
+    font-weight: 500;
+}
+
+.card-header i {
+    margin-right: 8px;
+}
+
+.table td, .table th {
+    padding: 0.5rem 0.5rem 0.5rem 0;
+    border: none;
+}
+
+.table th {
+    font-weight: 600;
+    color: #495057;
+}
+
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .table td, .table th {
+        padding: 0.3rem 0.3rem 0.3rem 0;
+    }
+    
+    .nav-tabs .nav-link {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.7rem;
+    }
+    
+    .nav-tabs .nav-link i {
+        margin-right: 4px;
+    }
+}
+
+.badge {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+}
+
+.btn {
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.alert {
+    border-radius: 8px;
+}
+
+.alert i {
+    margin-right: 8px;
+}
+</style>
+{% endblock %}

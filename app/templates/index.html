@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="display-4"><i class="bi bi-book"></i> Домашняя библиотека</h1>
+                <p class="lead text-muted">Управление коллекцией книг</p>
+            </div>
+            <div>
+                <a href="{{ url_for('main.init') }}" class="btn btn-outline-danger btn-lg" 
+                   onclick="return confirm('Вы уверены, что хотите выйти из приложения?')">
+                    <i class="bi bi-box-arrow-right"></i> Выйти
+                </a>
+            </div>
+        </div>
+        
+        <!-- Карточка книг -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="card text-white text-center hover-lift card-bg-books">
+                    <div class="card-body">
+                        <i class="bi bi-book display-4"></i>
+                        <h3 class="mt-2">{{ total_books|default(0) }}</h3>
+                        <p class="mb-0">Книг</p>
+                        <a href="{{ url_for('main.book_list') }}" class="btn btn-outline-light btn-sm mt-2">
+                            <i class="bi bi-arrow-right"></i> Перейти
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Быстрые действия -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-lightning"></i> Быстрые действия</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap gap-3 justify-content-center">
+                    <a href="{{ url_for('main.add_book') }}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-plus-circle"></i> Добавить книгу
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Стили для карточки с фоновым изображением */
+.card-bg-books {
+    background: url("{{ url_for('static', filename='jpg/books.jpg') }}") center/cover no-repeat;
+    border: none;
+}
+
+.card-bg-books .card-body {
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 12px;
+    padding: 1.5rem;
+    position: relative;
+    z-index: 1;
+    transition: background 0.3s ease;
+}
+
+.card-bg-books:hover .card-body {
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.card {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    min-height: 180px;
+    overflow: hidden;
+    position: relative;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.card .display-4 {
+    font-size: 3rem;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.card h3 {
+    font-weight: 700;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.card p {
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.card .btn-outline-light {
+    border-width: 2px;
+    transition: all 0.3s ease;
+    text-shadow: none;
+}
+
+.card .btn-outline-light:hover {
+    transform: scale(1.05);
+    background: rgba(255,255,255,0.2);
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .card {
+        min-height: 150px;
+    }
+    
+    .card .display-4 {
+        font-size: 2.5rem;
+    }
+    
+    .card h3 {
+        font-size: 1.5rem;
+    }
+    
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        align-items: center !important;
+        gap: 1rem;
+    }
+    
+    .btn-outline-danger.btn-lg {
+        width: 100%;
+    }
+}
+
+/* Анимация появления карточки */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+/* Стили для кнопки выхода */
+.btn-outline-danger {
+    border-width: 2px;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+</style>
+{% endblock %}

@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2>👥 Выбор авторов для книги</h2>
+                <h5 class="text-muted">"{{ book.name }}"</h5>
+            </div>
+            <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> На главную
+            </a>
+        </div>
+        
+        <!-- Поиск авторов -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-search"></i> Поиск и добавление авторов</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="authorSearch" class="form-label fw-bold">Введите фамилию, имя или ФИО автора</label>
+                    <form hx-get="{{ url_for('main.search_authors') }}"
+                          hx-trigger="keyup changed delay:300ms from:#authorSearch"
+                          hx-target="#searchResults"
+                          hx-indicator="#loading"
+                          hx-select="#searchResults">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="authorSearch" 
+                                   name="q"
+                                   placeholder="Начните вводить фамилию автора..."
+                                   autocomplete="off">
+                            <span class="input-group-text" id="loading" style="display: none;">
+                                <span class="spinner-border spinner-border-sm" role="status"></span>
+                            </span>
+                        </div>
+                        <div class="form-text">Введите минимум 2 символа для поиска</div>
+                    </form>
+                </div>
+                
+                <div id="searchResults" class="mt-3"></div>
+                
+                <div class="mt-3">
+                    <a href="{{ url_for('main.add_author') }}?book_id={{ book.id }}" class="btn btn-warning">
+                        <i class="bi bi-plus-circle"></i> Добавить нового автора
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Выбранные авторы -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-person-check"></i> Выбранные авторы</h5>
+                <span class="badge bg-light text-dark">{{ selected_authors|length }} авторов</span>
+            </div>
+            <div class="card-body">
+                {% if selected_authors %}
+                    <div class="list-group">
+                        {% for author in selected_authors %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="bi bi-person-circle text-primary me-2"></i>
+                                    <strong>{{ author.fio }}</strong>
+                                    {% if author.firstname %}
+                                        <span class="text-muted">({{ author.firstname }}{% if author.secondname %} {{ author.secondname }}{% endif %})</span>
+                                    {% endif %}
+                                </div>
+                                <form method="POST" action="{{ url_for('main.remove_author_from_book', book_id=book.id, author_id=author.id) }}" 
+                                      style="display: inline;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="bi bi-trash"></i> Удалить
+                                    </button>
+                                </form>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-person-x display-4 text-muted"></i>
+                        <p class="text-muted mt-2">Авторы не выбраны</p>
+                        <p class="text-muted small">Используйте поиск выше, чтобы добавить авторов</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Кнопки действия -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <span class="text-muted">
+                            <i class="bi bi-info-circle"></i> 
+                            Книга будет сохранена с выбранными авторами
+                        </span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('main.index') }}" class="btn btn-success btn-lg">
+                            <i class="bi bi-check-circle"></i> Готово
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+// Функция для добавления автора через AJAX
+function addAuthor(authorId) {
+    const button = document.querySelector(`.add-author-btn[data-author-id="${authorId}"]`);
+    if (button) {
+        button.disabled = true;
+        button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
+    }
+    
+    fetch('{{ url_for("main.add_author_to_book", book_id=book.id) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'author_id=' + authorId + '&csrf_token={{ csrf_token() }}'
+    })
+    .then(response => {
+        if (response.ok) {
+            // Обновляем страницу для отображения изменений
+            location.reload();
+        } else {
+            alert('Ошибка при добавлении автора');
+            if (button) {
+                button.disabled = false;
+                button.innerHTML = 'Добавить';
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Ошибка при добавлении автора');
+        if (button) {
+            button.disabled = false;
+            button.innerHTML = 'Добавить';
+        }
+    });
+}
+
+// Обработка результатов поиска от HTMX
+document.body.addEventListener('htmx:afterSwap', function(evt) {
+    if (evt.detail.target.id === 'searchResults') {
+        // Добавляем обработчики для кнопок добавления
+        document.querySelectorAll('.add-author-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const authorId = this.dataset.authorId;
+                if (authorId) {
+                    addAuthor(authorId);
+                }
+            });
+        });
+    }
+});
+
+// Очистка поиска при потере фокуса
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('authorSearch');
+    if (searchInput) {
+        searchInput.addEventListener('blur', function() {
+            setTimeout(() => {
+                // Не очищаем, чтобы пользователь мог видеть результаты
+            }, 300);
+        });
+    }
+});
+</script>
+
+<style>
+/* Дополнительные стили */
+.list-group-item {
+    transition: all 0.2s;
+    border-left: 4px solid transparent;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+    border-left-color: #0d6efd;
+    transform: translateX(4px);
+}
+
+.list-group-item .btn-danger {
+    transition: all 0.2s;
+}
+
+.list-group-item .btn-danger:hover {
+    transform: scale(1.05);
+}
+
+#searchResults .list-group-item {
+    border-left-color: #ffc107;
+}
+
+#searchResults .list-group-item:hover {
+    border-left-color: #0d6efd;
+}
+
+.btn-warning i {
+    margin-right: 6px;
+}
+
+/* Анимация для результатов поиска */
+#searchResults {
+    min-height: 50px;
+    transition: all 0.3s ease;
+}
+
+/* Стили для пустого состояния */
+.text-center.py-4 i {
+    opacity: 0.5;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 1rem;
+    }
+    
+    .btn-lg {
+        width: 100%;
+    }
+    
+    .list-group-item {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 0.5rem;
+    }
+    
+    .list-group-item .btn {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
+{% endblock %}

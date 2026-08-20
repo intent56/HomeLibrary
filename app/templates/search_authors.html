@@ -1,0 +1,48 @@
+<div id="searchResults">
+    {% if authors %}
+        <div class="list-group">
+            {% for author in authors %}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="bi bi-person-circle text-primary me-2"></i>
+                        <div class="d-inline-block">
+                            <strong>{{ author.fio }}</strong>
+                            {% if author.firstname %}
+                                <span class="text-muted ms-2">
+                                    <i class="bi bi-person"></i> {{ author.firstname }}
+                                    {% if author.secondname %}
+                                        {{ author.secondname }}
+                                    {% endif %}
+                                </span>
+                            {% endif %}
+                            {% if author.lastname %}
+                                <span class="text-muted ms-2 small">
+                                    <i class="bi bi-card-text"></i> {{ author.lastname }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-sm add-author-btn" 
+                            data-author-id="{{ author.id }}">
+                        <i class="bi bi-plus-circle"></i> Добавить
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="mt-2 text-muted small">
+            <i class="bi bi-info-circle"></i> Найдено авторов: {{ authors|length }}
+        </div>
+    {% else %}
+        <div class="alert alert-info mt-2" role="alert">
+            <i class="bi bi-info-circle"></i>
+            <strong>Авторы не найдены</strong>
+            <p class="mb-0 mt-1">
+                Попробуйте изменить поисковый запрос или 
+                <a href="{{ url_for('main.add_author') }}?book_id={{ request.args.get('book_id', 0) }}" 
+                   class="alert-link">
+                    <i class="bi bi-plus-circle"></i> Добавить нового автора
+                </a>
+            </p>
+        </div>
+    {% endif %}
+</div>

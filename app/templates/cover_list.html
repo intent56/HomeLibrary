@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="bi bi-bookmark"></i> Справочник переплетов</h2>
+                <p class="text-muted mb-0">Всего типов: {{ total_covers }}</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-house"></i> На главную
+                </a>
+                <a href="{{ url_for('main.add_cover') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Добавить переплет
+                </a>
+            </div>
+        </div>
+        
+        <!-- Карточки статистики -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h6 class="card-title">Всего типов переплетов</h6>
+                        <h2 class="mb-0">{{ total_covers }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h6 class="card-title">Книг с переплетами</h6>
+                        <h2 class="mb-0">{{ total_books_with_covers }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h6 class="card-title">На странице</h6>
+                        <h2 class="mb-0">{{ covers|length }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Сетка типов обложек -->
+        <div class="row">
+            {% for cover in covers %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header {% if loop.index % 2 == 0 %}bg-primary{% else %}bg-success{% endif %} text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <span class="badge bg-light text-dark">{{ cover.code }}</span>
+                            {{ cover.name }}
+                        </h5>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a href="{{ url_for('main.cover_card', cover_id=cover.id) }}" 
+                               class="btn btn-outline-light" title="Просмотр">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{{ url_for('main.edit_cover', cover_id=cover.id) }}" 
+                               class="btn btn-outline-light" title="Редактировать">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <button type="button" class="btn btn-outline-light" title="Удалить"></button> 
+                                    data-bs-toggle="modal" data-bs-target="#deleteCoverModal{{ cover.id }}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-light p-3 rounded-circle me-3">
+                                <i class="bi bi-bookmark display-6 text-primary"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Код: <span class="badge bg-secondary">{{ cover.code }}</span></h6>
+                                <span class="badge bg-info">
+                                    <i class="bi bi-book"></i> {{ cover.cvr_books|length }} книг
+                                </span>
+                            </div>
+                        </div>
+                        <!-- Краткая информация о переплете -->
+                        <p class="card-text text-muted small">
+                            <i class="bi bi-info-circle"></i> 
+                            {% if cover.cvr_books %}
+                                Используется в {{ cover.cvr_books|length }} книгах
+                            {% else %}
+                                Не используется в книгах
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Модальное окно подтверждения удаления -->
+            <div class="modal fade" id="deleteCoverModal{{ cover.id }}" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"><i class="bi bi-exclamation-triangle text-danger"></i> Подтверждение удаления</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Вы уверены, что хотите удалить тип переплета <strong>"{{ cover.name }}"</strong>?</p>
+                            {% if cover.cvr_books %}
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                    Переплет используется в {{ cover.cvr_books|length }} книгах. Удаление невозможно!
+                                </div>
+                            {% endif %}
+                            <p class="text-muted small">Это действие необратимо!</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                            {% if not cover.cvr_books %}
+                            <form method="POST" action="{{ url_for('main.delete_cover', cover_id=cover.id) }}" style="display: inline;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-trash"></i> Удалить
+                                </button>
+                            </form>
+                            {% else %}
+                            <button type="button" class="btn btn-secondary" disabled>
+                                <i class="bi bi-lock"></i> Используется в книгах
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

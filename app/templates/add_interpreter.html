@@ -1,0 +1,748 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="bi bi-translate"></i> Добавление переводчика</h2>
+                <h5 class="text-muted">Заполните информацию о переводчике</h5>
+            </div>
+            <a href="{{ url_for('main.interpreter_list') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Назад к списку
+            </a>
+        </div>
+        
+        <!-- Поиск переводчика в интернете -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="bi bi-cloud-download"></i> Найти переводчика в интернете</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label for="interpreterSourceSelect" class="form-label fw-bold">Источник</label>
+                        <select class="form-select" id="interpreterSourceSelect">
+                            <option value="">Все источники</option>
+                        </select>
+                    </div>
+                    <div class="col-md-7">
+                        <label for="interpreterSearchQuery" class="form-label fw-bold">Имя переводчика</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" class="form-control" id="interpreterSearchQuery" placeholder="Например: 'Нора Галь'">
+                            <button class="btn btn-success" type="button" id="searchInterpreterBtn">
+                                <i class="bi bi-search"></i> Найти
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">&nbsp;</label>
+                        <button class="btn btn-secondary w-100" type="button" id="clearInterpreterSearchBtn">
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <div id="interpreterSearchStatus" class="form-text"></div>
+                </div>
+                
+                <!-- Результаты поиска -->
+                <div id="interpreterSearchResults" class="mt-3" style="display: none;">
+                    <h6>Найденные переводчики:</h6>
+                    <div id="interpreterResultsList" class="list-group"></div>
+                </div>
+            </div>
+        </div>
+        
+        <form method="POST" action="{{ url_for('main.add_interpreter') }}" enctype="multipart/form-data" novalidate>
+            {{ form.csrf_token }}
+            <input type="hidden" name="book_id" value="{{ book_id }}">
+            
+            <!-- Вкладки -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <ul class="nav nav-tabs card-header-tabs" id="interpreterTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="main-tab" data-bs-toggle="tab" data-bs-target="#main" type="button" role="tab">
+                                <i class="bi bi-person-badge"></i> Основное
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="languages-tab" data-bs-toggle="tab" data-bs-target="#languages" type="button" role="tab">
+                                <i class="bi bi-globe"></i> Языки
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="interpreterTabsContent">
+                        <!-- Вкладка 1: Основная информация -->
+                        <div class="tab-pane fade show active" id="main" role="tabpanel">
+                            <!-- ФИО переводчика -->
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        {{ form.lastname.label(class="form-label fw-bold") }}
+                                        <span class="text-danger">*</span>
+                                        {{ form.lastname(class="form-control" + (" is-invalid" if form.lastname.errors else ""), 
+                                                       placeholder="Например: 'Галь'", id="interpreterLastname") }}
+                                        {% if form.lastname.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.lastname.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <div class="form-text">Фамилия переводчика</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        {{ form.firstname.label(class="form-label fw-bold") }}
+                                        {{ form.firstname(class="form-control", placeholder="Например: 'Нора'", id="interpreterFirstname") }}
+                                        <div class="form-text">Имя переводчика</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        {{ form.secondname.label(class="form-label fw-bold") }}
+                                        {{ form.secondname(class="form-control", placeholder="Например: 'Яковлевна'", id="interpreterSecondname") }}
+                                        <div class="form-text">Отчество переводчика</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i>
+                                <strong>ФИО будет сформировано автоматически:</strong>
+                                <span id="fioPreviewInterpreter" class="fw-bold ms-2 text-primary">Не указано</span>
+                            </div>
+                            
+                            <!-- Ссылки и дополнительная информация -->
+                            <div class="mt-3">
+                                <div class="mb-3">
+                                    {{ form.ref_interpreter.label(class="form-label fw-bold") }}
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-globe"></i></span>
+                                        {{ form.ref_interpreter(class="form-control", placeholder="Например: 'https://ru.wikipedia.org/wiki/Галь_Нора_Яковлевна'", id="interpreterRef") }}
+                                    </div>
+                                    <div class="form-text">Ссылка на страницу с информацией о переводчике</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="interpreterPhoto" class="form-label fw-bold">Фото переводчика</label>
+                                    <input type="file" class="form-control" id="interpreterPhoto" name="photo" accept="image/*">
+                                    <div class="form-text">Загрузите фотографию переводчика (JPG, PNG, GIF)</div>
+                                    <div id="photoPreviewContainer" style="display: none;" class="mt-2">
+                                        <img id="photoPreview" src="" alt="Фото переводчика" style="max-height: 150px; border-radius: 8px;">
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    {{ form.comment.label(class="form-label fw-bold") }}
+                                    {{ form.comment(class="form-control", rows="4", placeholder="Например: 'Выдающийся переводчик, литературовед'", id="interpreterComment") }}
+                                    <div class="form-text">Комментарии, примечания, дополнительная информация</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Вкладка 2: Языки -->
+                        <div class="tab-pane fade" id="languages" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fw-bold"><i class="bi bi-globe"></i> Языки переводчика</h5>
+                            </div>
+                            
+                            <!-- Выбор языков -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Добавить язык</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                    <select class="form-select" id="languageSelect">
+                                        <option value="">Выберите язык...</option>
+                                        {% for language in languages %}
+                                            <option value="{{ language.id }}">{{ language.name }} ({{ language.code }})</option>
+                                        {% endfor %}
+                                    </select>
+                                    <button class="btn btn-success" type="button" id="addLanguageBtn">
+                                        <i class="bi bi-plus-circle"></i> Добавить
+                                    </button>
+                                </div>
+                                <div class="form-text">Выберите язык из списка и нажмите "Добавить"</div>
+                            </div>
+                            
+                            <!-- Список выбранных языков -->
+                            <div id="selectedLanguagesContainer">
+                                <div class="alert alert-info" id="noLanguagesMessage">
+                                    <i class="bi bi-info-circle"></i> Языки не выбраны
+                                </div>
+                                <div id="selectedLanguagesList" class="d-flex flex-wrap gap-2" style="display: none;"></div>
+                            </div>
+                            
+                            <!-- Информация о языках -->
+                            <div class="alert alert-info mt-3">
+                                <i class="bi bi-info-circle"></i>
+                                <strong>Примечание:</strong> Выбранные языки будут связаны с переводчиком после сохранения
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Скрытое поле для ID языков -->
+            <input type="hidden" name="language_ids" id="languageIds" value="">
+            
+            <!-- Кнопки действия -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <span class="text-muted">
+                                <i class="bi bi-info-circle"></i> 
+                                Поля с <span class="text-danger">*</span> обязательны для заполнения
+                            </span>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('main.interpreter_list') }}" class="btn btn-secondary btn-lg">
+                                <i class="bi bi-x-circle"></i> Отмена
+                            </a>
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Загрузка источников для переводчиков
+function loadInterpreterSources() {
+    const select = document.getElementById('interpreterSourceSelect');
+    select.innerHTML = '<option value="">Загрузка источников...</option>';
+    
+    fetch('/api/sources?type=interpreters')
+        .then(response => {
+            if (!response.ok) throw new Error('Ошибка загрузки источников');
+            return response.json();
+        })
+        .then(sources => {
+            select.innerHTML = '<option value="">Все источники</option>';
+            sources.forEach(source => {
+                const option = document.createElement('option');
+                option.value = source.id;
+                option.textContent = source.name;
+                select.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки источников:', error);
+            select.innerHTML = '<option value="">Ошибка загрузки источников</option>';
+        });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Загружаем источники для переводчиков
+    loadInterpreterSources();
+    
+    // --- Предпросмотр фото ---
+    document.getElementById('interpreterPhoto').addEventListener('change', function(e) {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('photoPreview');
+                const container = document.getElementById('photoPreviewContainer');
+                preview.src = e.target.result;
+                container.style.display = 'block';
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    // --- Работа с языками ---
+    const selectedLanguages = [];
+    const languageSelect = document.getElementById('languageSelect');
+    const addLanguageBtn = document.getElementById('addLanguageBtn');
+    const selectedLanguagesList = document.getElementById('selectedLanguagesList');
+    const noLanguagesMessage = document.getElementById('noLanguagesMessage');
+    const languageIdsInput = document.getElementById('languageIds');
+    
+    function updateLanguagesDisplay() {
+        if (selectedLanguages.length === 0) {
+            noLanguagesMessage.style.display = 'block';
+            selectedLanguagesList.style.display = 'none';
+        } else {
+            noLanguagesMessage.style.display = 'none';
+            selectedLanguagesList.style.display = 'flex';
+            selectedLanguagesList.innerHTML = '';
+            selectedLanguages.forEach(lang => {
+                const badge = document.createElement('span');
+                badge.className = 'badge bg-info d-flex align-items-center gap-2 p-2';
+                badge.innerHTML = `
+                    <i class="bi bi-globe"></i> ${lang.name}
+                    <button type="button" class="btn-close btn-close-white" 
+                            style="font-size: 0.6rem;" 
+                            data-language-id="${lang.id}"
+                            onclick="removeLanguage(${lang.id})"></button>
+                `;
+                selectedLanguagesList.appendChild(badge);
+            });
+        }
+        
+        // Обновляем скрытое поле с ID языков
+        const languageIds = selectedLanguages.map(lang => lang.id).join(',');
+        languageIdsInput.value = languageIds;
+        console.log('Selected language IDs:', languageIds);
+    }
+    
+    // Добавление языка
+    addLanguageBtn.addEventListener('click', function() {
+        const selectedOption = languageSelect.options[languageSelect.selectedIndex];
+        const languageId = parseInt(selectedOption.value);
+        const languageName = selectedOption.text;
+        
+        if (!languageId) {
+            alert('Пожалуйста, выберите язык из списка.');
+            return;
+        }
+        
+        // Проверяем, не добавлен ли уже этот язык
+        if (selectedLanguages.some(lang => lang.id === languageId)) {
+            alert('Этот язык уже добавлен.');
+            return;
+        }
+        
+        // Добавляем язык
+        selectedLanguages.push({
+            id: languageId,
+            name: languageName
+        });
+        
+        // Обновляем отображение
+        updateLanguagesDisplay();
+        
+        // Сбрасываем выбор
+        languageSelect.value = '';
+    });
+    
+    // Удаление языка (глобальная функция)
+    window.removeLanguage = function(languageId) {
+        const index = selectedLanguages.findIndex(lang => lang.id === languageId);
+        if (index !== -1) {
+            selectedLanguages.splice(index, 1);
+            updateLanguagesDisplay();
+        }
+    };
+    
+    // --- Поиск переводчика ---
+    document.getElementById('searchInterpreterBtn').addEventListener('click', function() {
+        const sourceId = document.getElementById('interpreterSourceSelect').value;
+        const query = document.getElementById('interpreterSearchQuery').value.trim();
+        const statusDiv = document.getElementById('interpreterSearchStatus');
+        const resultsDiv = document.getElementById('interpreterSearchResults');
+        const resultsList = document.getElementById('interpreterResultsList');
+        const btn = this;
+
+        if (!query) {
+            statusDiv.textContent = 'Введите имя переводчика для поиска.';
+            statusDiv.className = 'form-text text-warning';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
+
+        statusDiv.textContent = 'Поиск...';
+        statusDiv.className = 'form-text text-primary';
+        resultsDiv.style.display = 'none';
+
+        let url = `/api/search?type=interpreter&query=${encodeURIComponent(query)}`;
+        if (sourceId) {
+            url += `&source_id=${sourceId}`;
+        }
+
+        fetch(url)
+            .then(response => {
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Сервер вернул не JSON ответ.');
+                }
+                if (response.status === 429) {
+                    throw new Error('Превышен лимит запросов. Попробуйте позже.');
+                }
+                if (!response.ok) {
+                    return response.json().then(err => { 
+                        throw new Error(err.error || 'Ошибка запроса'); 
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                if (!data || data.length === 0) {
+                    statusDiv.textContent = 'Переводчики не найдены.';
+                    statusDiv.className = 'form-text text-warning';
+                    return;
+                }
+                
+                statusDiv.textContent = `Найдено ${data.length} переводчиков. Выберите нужного:`;
+                statusDiv.className = 'form-text text-success';
+                
+                resultsList.innerHTML = '';
+                data.forEach(interpreter => {
+                    const item = document.createElement('a');
+                    item.href = '#';
+                    item.className = 'list-group-item list-group-item-action';
+                    item.innerHTML = `
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">${interpreter.name}</h6>
+                            <small class="text-muted">${interpreter.source || 'Источник неизвестен'}</small>
+                        </div>
+                        ${interpreter.book ? `<p class="mb-1 small text-muted">Книга: ${interpreter.book}</p>` : ''}
+                    `;
+                    item.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        fillInterpreterForm(interpreter);
+                        resultsDiv.style.display = 'none';
+                        document.getElementById('interpreterSearchStatus').innerHTML = '✅ Переводчик выбран! Поля заполнены.';
+                        document.getElementById('interpreterSearchStatus').className = 'form-text text-success';
+                    });
+                    resultsList.appendChild(item);
+                });
+                resultsDiv.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Ошибка поиска:', error);
+                statusDiv.innerHTML = `
+                    <span class="text-danger">❌ ${error.message}</span>
+                    <br>
+                    <button class="btn btn-sm btn-outline-secondary mt-1" onclick="manualInterpreterEntry()">
+                        <i class="bi bi-pencil"></i> Ввести данные вручную
+                    </button>
+                `;
+                statusDiv.className = 'form-text';
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-search"></i> Найти';
+            });
+    });
+
+    // --- Функция заполнения формы переводчика ---
+    function fillInterpreterForm(interpreter) {
+        // Разделяем имя на части
+        const parts = interpreter.name.split(' ');
+        const lastname = parts[0] || '';
+        const firstname = parts.slice(1).join(' ') || '';
+        
+        document.getElementById('interpreterLastname').value = lastname;
+        document.getElementById('interpreterFirstname').value = firstname;
+        document.getElementById('interpreterSecondname').value = '';
+        
+        // Ссылка
+        document.getElementById('interpreterRef').value = `https://www.google.com/search?q=${encodeURIComponent(interpreter.name)}+переводчик`;
+        
+        // Комментарий
+        const comment = document.getElementById('interpreterComment');
+        const sourceInfo = `Найден через ${interpreter.source || 'неизвестный источник'}${interpreter.book ? `, книга: ${interpreter.book}` : ''}`;
+        if (comment.value) {
+            comment.value = comment.value + '\n' + sourceInfo;
+        } else {
+            comment.value = sourceInfo;
+        }
+        
+        // Обновляем предпросмотр ФИО
+        updateFioPreviewInterpreter();
+    }
+
+    // --- Ручной ввод переводчика ---
+    window.manualInterpreterEntry = function() {
+        const statusDiv = document.getElementById('interpreterSearchStatus');
+        statusDiv.innerHTML = '📝 Введите данные переводчика вручную в форму ниже.';
+        statusDiv.className = 'form-text text-muted';
+        document.querySelector('form').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    // --- Очистка результатов поиска переводчиков ---
+    document.getElementById('clearInterpreterSearchBtn').addEventListener('click', function() {
+        document.getElementById('interpreterSearchResults').style.display = 'none';
+        document.getElementById('interpreterSearchStatus').textContent = '';
+        document.getElementById('interpreterSearchStatus').className = 'form-text';
+        document.getElementById('interpreterSearchQuery').value = '';
+    });
+
+    // --- Предпросмотр ФИО ---
+    function updateFioPreviewInterpreter() {
+        const lastname = document.getElementById('interpreterLastname').value;
+        const firstname = document.getElementById('interpreterFirstname').value;
+        const secondname = document.getElementById('interpreterSecondname').value;
+        const preview = document.getElementById('fioPreviewInterpreter');
+        
+        const parts = [];
+        if (lastname) parts.push(lastname);
+        if (firstname) parts.push(firstname);
+        if (secondname) parts.push(secondname);
+        
+        preview.textContent = parts.length ? parts.join(' ') : 'Не указано';
+        preview.className = 'fw-bold ms-2 ' + (parts.length ? 'text-primary' : 'text-muted');
+    }
+
+    // --- Обработчики для обновления предпросмотра ФИО ---
+    document.getElementById('interpreterLastname').addEventListener('input', updateFioPreviewInterpreter);
+    document.getElementById('interpreterFirstname').addEventListener('input', updateFioPreviewInterpreter);
+    document.getElementById('interpreterSecondname').addEventListener('input', updateFioPreviewInterpreter);
+
+    // --- Валидация URL ---
+    const urlInputs = document.querySelectorAll('input[type="text"][name*="ref_"]');
+    urlInputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.value && !this.value.startsWith('http://') && !this.value.startsWith('https://')) {
+                this.classList.add('is-invalid');
+                let feedback = this.parentElement.querySelector('.invalid-feedback');
+                if (!feedback) {
+                    feedback = document.createElement('div');
+                    feedback.className = 'invalid-feedback d-block';
+                    feedback.textContent = 'Введите корректный URL (начинается с http:// или https://)';
+                    this.parentElement.appendChild(feedback);
+                }
+            } else {
+                this.classList.remove('is-invalid');
+                const feedback = this.parentElement.querySelector('.invalid-feedback');
+                if (feedback) feedback.remove();
+            }
+        });
+    });
+
+    // --- Автоматическая капитализация фамилии ---
+    document.getElementById('interpreterLastname').addEventListener('blur', function() {
+        if (this.value) {
+            this.value = this.value.charAt(0).toUpperCase() + this.value.slice(1).toLowerCase();
+            updateFioPreviewInterpreter();
+        }
+    });
+
+    // --- Обработка Enter ---
+    document.getElementById('interpreterSearchQuery').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            document.getElementById('searchInterpreterBtn').click();
+        }
+    });
+
+    // --- Сохранение активной вкладки ---
+    const tabs = document.querySelectorAll('#interpreterTabs button[data-bs-toggle="tab"]');
+    tabs.forEach(tab => {
+        tab.addEventListener('shown.bs.tab', function(e) {
+            localStorage.setItem('activeAddInterpreterTab', e.target.id);
+        });
+    });
+    
+    const activeTab = localStorage.getItem('activeAddInterpreterTab');
+    if (activeTab) {
+        const tabElement = document.getElementById(activeTab);
+        if (tabElement) {
+            const tab = new bootstrap.Tab(tabElement);
+            tab.show();
+        }
+    }
+});
+
+// Инициализация предпросмотра при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(updateFioPreviewInterpreter, 100);
+});
+</script>
+
+<style>
+/* Стили для вкладок */
+.nav-tabs .nav-link {
+    color: rgba(255,255,255,0.8);
+    border: none;
+    padding: 0.5rem 1rem;
+}
+
+.nav-tabs .nav-link:hover {
+    border-color: transparent;
+    background-color: rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+.nav-tabs .nav-link.active {
+    color: #fff;
+    background-color: rgba(255,255,255,0.2);
+    border-bottom: 2px solid #fff;
+}
+
+.nav-tabs .nav-link i {
+    margin-right: 6px;
+}
+
+.card-header-tabs {
+    margin-right: -0.625rem;
+    margin-bottom: -0.75rem;
+    margin-left: -0.625rem;
+    border-bottom: 0;
+}
+
+.tab-pane {
+    padding-top: 1rem;
+}
+
+/* Стили для полей ввода с placeholder */
+.form-control::placeholder {
+    color: #adb5bd;
+    font-style: italic;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+.form-control:not(:placeholder-shown) {
+    color: #212529;
+    font-weight: 500;
+    border-color: #86b7fe;
+    background-color: #f8f9fa;
+}
+
+.form-control:not(:placeholder-shown):focus {
+    background-color: #ffffff;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+textarea.form-control::placeholder {
+    color: #adb5bd;
+    font-style: italic;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+textarea.form-control:not(:placeholder-shown) {
+    color: #212529;
+    font-weight: 500;
+    border-color: #86b7fe;
+    background-color: #f8f9fa;
+}
+
+.form-control:focus::placeholder {
+    opacity: 0.4;
+    transition: opacity 0.2s ease;
+}
+
+#interpreterSearchResults {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#interpreterSearchResults .list-group-item {
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#interpreterSearchResults .list-group-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(4px);
+}
+
+.btn .spinner-border {
+    width: 1rem;
+    height: 1rem;
+}
+
+#interpreterSearchStatus {
+    min-height: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+#photoPreviewContainer {
+    display: none;
+}
+
+#photoPreview {
+    max-height: 150px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Стили для языков */
+#selectedLanguagesList .badge {
+    font-size: 1rem;
+    padding: 0.5rem 0.75rem;
+}
+
+#selectedLanguagesList .badge .btn-close {
+    margin-left: 0.5rem;
+    width: 0.6rem;
+    height: 0.6rem;
+}
+
+#selectedLanguagesList .badge .btn-close:hover {
+    opacity: 1;
+}
+
+/* Стили для карточек */
+.card {
+    border: none;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.card-header {
+    border-bottom: none;
+    font-weight: 500;
+}
+
+.card-header i {
+    margin-right: 8px;
+}
+
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.form-text {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+.text-danger {
+    font-weight: bold;
+}
+
+.form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 1rem;
+    }
+    
+    .btn-lg {
+        width: 100%;
+    }
+}
+
+.btn {
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %}
