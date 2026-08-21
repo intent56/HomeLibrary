@@ -252,13 +252,7 @@ def search_authors():
                              authors=[], 
                              book_id=book_id)
     
-    authors = Author.query.filter(
-        or_(
-            Author.fio.ilike(f'%{query}%'),
-            Author.lastname.ilike(f'%{query}%'),
-            Author.firstname.ilike(f'%{query}%')
-        )
-    ).limit(10).all()
+    authors = Author.query.filter( Author.lastname.ilike(f'%{query}%')).limit(10).all()
     
     if request.headers.get('HX-Request'):
         # Для HTMX запросов возвращаем HTML
@@ -384,38 +378,17 @@ def book_list():
     # Поиск по названию
     if search:
         search_pattern = f'%{search}%'
-        query = query.filter(
-            or_(
-                Book.name.ilike(search_pattern),
-                Book.fullname.ilike(search_pattern)
-            )
-        )
+        query = query.filter(Book.name.ilike(search_pattern))
     
     # Поиск по автору
     if author_search:
         author_pattern = f'%{author_search}%'
-        query = query.filter(
-            Book.author_books.any(
-                or_(
-                    Author.fio.ilike(author_pattern),
-                    Author.lastname.ilike(author_pattern),
-                    Author.firstname.ilike(author_pattern)
-                )
-            )
-        )
+        query = query.filter(Book.author_books.any(Author.lastname.ilike(author_pattern)))
     
     # Поиск по переводчику
     if interpreter_search:
         interpreter_pattern = f'%{interpreter_search}%'
-        query = query.filter(
-            Book.interpreter_books.any(
-                or_(
-                    Interpreter.fio.ilike(interpreter_pattern),
-                    Interpreter.lastname.ilike(interpreter_pattern),
-                    Interpreter.firstname.ilike(interpreter_pattern)
-                )
-            )
-        )
+        query = query.filter(Book.interpreter_books.any(Interpreter.lastname.ilike(interpreter_pattern)))
     
     # Поиск по жанру
     if genre_search:
@@ -480,14 +453,7 @@ def interpreter_list():
     
     if search:
         search_pattern = f'%{search}%'
-        query = query.filter(
-            or_(
-                Interpreter.fio.ilike(search_pattern),
-                Interpreter.lastname.ilike(search_pattern),
-                Interpreter.firstname.ilike(search_pattern),
-                Interpreter.secondname.ilike(search_pattern)
-            )
-        )
+        query = query.filter(Interpreter.lastname.ilike(search_pattern))
     
     query = query.order_by(Interpreter.fio)
     
@@ -629,13 +595,7 @@ def search_interpreters():
     if len(query) < 2:
         return render_template('search_interpreters.html', interpreters=[], book_id=book_id)
     
-    interpreters = Interpreter.query.filter(
-        or_(
-            Interpreter.fio.ilike(f'%{query}%'),
-            Interpreter.lastname.ilike(f'%{query}%'),
-            Interpreter.firstname.ilike(f'%{query}%')
-        )
-    ).limit(10).all()
+    interpreters = Interpreter.query.filter(Interpreter.lastname.ilike(f'%{query}%')).limit(10).all()
     
     if request.headers.get('HX-Request'):
         return render_template('search_interpreters.html', interpreters=interpreters, book_id=book_id)
@@ -657,11 +617,7 @@ def genre_list():
     
     if search:
         search_pattern = f'%{search}%'
-        query = query.filter(
-            or_(
-                Genre.name.ilike(search_pattern)
-            )
-        )
+        query = query.filter(Genre.name.ilike(search_pattern))
     
     query = query.order_by(Genre.name)
     
@@ -804,11 +760,7 @@ def publisher_list():
     
     if search:
         search_pattern = f'%{search}%'
-        query = query.filter(
-            or_(
-                Publisher.name.ilike(search_pattern)
-            )
-        )
+        query = query.filter(Publisher.name.ilike(search_pattern))
     
     query = query.order_by(Publisher.name)
     
