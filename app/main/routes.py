@@ -17,6 +17,7 @@ from flask import (
     redirect,
     flash,
     jsonify,
+    session,
 )
 from app.extensions import db
 from app.models.main import (
@@ -181,53 +182,150 @@ def edit_book(book_id):
 @bp.route('/book/<int:book_id>/authors', methods=['GET'])
 def select_authors(book_id):
     book = Book.query.get_or_404(book_id)
-    selected_authors = book.author_books
-    return render_template('select_authors.html', book=book, selected_authors=selected_authors)
-
+    
+    # Инициализируем сессионные списки изменений
+    session_key = f'book_{book_id}_authors_changes'
+    if session_key not in session:
+        session[session_key] = {
+            'added': [],
+            'removed': []
+        }
+    
+    # Получаем текущий список авторов из БД
+    current_authors = book.author_books
+    
+    # Применяем изменения из сессии
+    added_ids = session[session_key]['added']
+    removed_ids = session[session_key]['removed']
+    
+    # Формируем финальный список для отображения
+    final_authors = []
+    for author in current_authors:
+        if author.id not in removed_ids:
+            final_authors.append(author)
+    
+    # Добавляем новых авторов (временные объекты только для отображения)
+    for author_id in added_ids:
+        if author_id not in [a.id for a in current_authors]:
+            author = Author.query.get(author_id)
+            if author and author.id not in removed_ids:
+                final_authors.append(author)
+    
+    return render_template('select_authors.html', 
+                         book=book, 
+                         selected_authors=final_authors,
+                         has_changes=bool(session[session_key]['added'] or session[session_key]['removed']))
 
 @bp.route('/book/<int:book_id>/authors/add', methods=['POST'])
-def add_author_to_book(book_id):
+def add_author_to_book_session(book_id):
+    """Добавляет автора во временный список сессии"""
     book = Book.query.get_or_404(book_id)
     author_id = request.form.get('author_id', type=int)
     
     if not author_id:
-        flash('Не указан автор', 'warning')
-        return redirect(url_for('main.select_authors', book_id=book_id))
+        return jsonify({'error': 'Не указан автор'}), 400
     
-    try:
-        author = Author.query.get(author_id)
-        if not author:
-            flash('Автор не найден', 'danger')
-            return redirect(url_for('main.select_authors', book_id=book_id))
+    author = Author.query.get(author_id)
+    if not author:
+        return jsonify({'error': 'Автор не найден'}), 404
+    
+    session_key = f'book_{book_id}_authors_changes'
+    if session_key not in session:
+        session[session_key] = {'added': [], 'removed': []}
+    
+    # Если автор был в списке удаленных, убираем его оттуда
+    if author_id in session[session_key]['removed']:
+        session[session_key]['removed'].remove(author_id)
+    # Иначе добавляем в список добавленных (если еще не добавлен)
+    elif author_id not in session[session_key]['added']:
+        # Проверяем, не существует ли уже связь в БД
+        exists = db.session.query(book_authors).filter_by(
+            id_book=book_id, 
+            id_author=author_id
+        ).first() is not None
         
-        # Используем try/except для обработки нарушения уникальности
-        try:
-            book.author_books.append(author)
-            db.session.commit()
-            flash(f'Автор {author.fio} добавлен к книге', 'success')
-        except IntegrityError:
-            db.session.rollback()
-            flash(f'Автор {author.fio} уже добавлен к книге', 'warning')
-            
-    except SQLAlchemyError as e:
-        db.session.rollback()
-        logger.error(f"Ошибка при добавлении автора к книге {book_id}: {str(e)}")
-        flash(f'Ошибка при добавлении автора: {str(e)}', 'danger')
+        if not exists:
+            session[session_key]['added'].append(author_id)
+        else:
+            # Если связь уже есть в БД, ничего не делаем
+            return jsonify({'warning': 'Автор уже добавлен к книге'}), 200
     
-    return redirect(url_for('main.select_authors', book_id=book_id))
-
+    session.modified = True
+    return jsonify({'success': True, 'author_id': author_id})
 
 @bp.route('/book/<int:book_id>/authors/remove/<int:author_id>', methods=['POST'])
-def remove_author_from_book(book_id, author_id):
+def remove_author_from_book_session(book_id, author_id):
+    """Удаляет автора из временного списка сессии"""
     book = Book.query.get_or_404(book_id)
-    author = Author.query.get_or_404(author_id)
     
-    if author in book.author_books:
-        book.author_books.remove(author)
+    session_key = f'book_{book_id}_authors_changes'
+    if session_key not in session:
+        session[session_key] = {'added': [], 'removed': []}
+    
+    # Если автор был в списке добавленных, просто убираем его оттуда
+    if author_id in session[session_key]['added']:
+        session[session_key]['added'].remove(author_id)
+    else:
+        # Иначе добавляем в список удаленных
+        if author_id not in session[session_key]['removed']:
+            session[session_key]['removed'].append(author_id)
+    
+    session.modified = True
+    return jsonify({'success': True})
+
+@bp.route('/book/<int:book_id>/authors/save', methods=['POST'])
+def save_authors_changes(book_id):
+    """Сохраняет все изменения в БД"""
+    book = Book.query.get_or_404(book_id)
+    session_key = f'book_{book_id}_authors_changes'
+    
+    if session_key not in session:
+        flash('Нет изменений для сохранения', 'info')
+        return redirect(url_for('main.book_list'))
+    
+    changes = session[session_key]
+    
+    try:
+        # Применяем удаления
+        for author_id in changes['removed']:
+            author = Author.query.get(author_id)
+            if author and author in book.author_books:
+                book.author_books.remove(author)
+        
+        # Применяем добавления
+        for author_id in changes['added']:
+            # Проверяем, не была ли связь уже создана в БД (на случай параллельных изменений)
+            exists = db.session.query(book_authors).filter_by(
+                id_book=book_id, 
+                id_author=author_id
+            ).first() is not None
+            
+            if not exists:
+                author = Author.query.get(author_id)
+                if author and author not in book.author_books:
+                    book.author_books.append(author)
+        
         db.session.commit()
-        flash(f'Автор {author.fio} удален из книги', 'info')
+        
+        # Очищаем сессию
+        session.pop(session_key, None)
+        session.modified = True
+        
+        flash('Изменения успешно сохранены!', 'success')
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        flash(f'Ошибка при сохранении изменений: {str(e)}', 'danger')
     
-    return redirect(url_for('main.select_authors', book_id=book_id))
+    return redirect(url_for('main.book_list'))
+
+@bp.route('/book/<int:book_id>/authors/cancel', methods=['POST'])
+def cancel_authors_changes(book_id):
+    """Отменяет все изменения"""
+    session_key = f'book_{book_id}_authors_changes'
+    session.pop(session_key, None)
+    session.modified = True
+    flash('Изменения отменены', 'info')
+    return redirect(url_for('main.book_list'))
 
 
 @bp.route('/author/add', methods=['GET', 'POST'])
