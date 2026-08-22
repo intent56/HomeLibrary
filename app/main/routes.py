@@ -689,24 +689,165 @@ def add_interpreter():
     return render_template('add_interpreter.html', form=form, book_id=request.args.get('book_id', 0), languages=languages)
 
 
-@bp.route('/book/<int:book_id>/interpreters/remove/<int:interpreter_id>', methods=['POST'])
-def remove_interpreter_from_book(book_id, interpreter_id):
-    book = Book.query.get_or_404(book_id)
-    interpreter = Interpreter.query.get_or_404(interpreter_id)
-    
-    if interpreter in book.interpreter_books:
-        book.interpreter_books.remove(interpreter)
-        db.session.commit()
-        flash(f'Переводчик {interpreter.fio} удален из книги', 'info')
-    
-    return redirect(url_for('main.select_interpreters', book_id=book_id))
-
-
 @bp.route('/book/<int:book_id>/interpreters', methods=['GET'])
 def select_interpreters(book_id):
+    """Страница выбора переводчиков для книги."""
     book = Book.query.get_or_404(book_id)
-    selected_interpreters = book.interpreter_books
-    return render_template('select_interpreters.html', book=book, selected_interpreters=selected_interpreters)
+    
+    # Получаем исходный список переводчиков из БД
+    original_interpreters = book.interpreter_books
+    original_interpreter_ids = [i.id for i in original_interpreters]
+    
+    # Инициализируем сессионные списки изменений
+    session_key = f'book_{book_id}_interpreters_changes'
+    if session_key not in session:
+        session[session_key] = {
+            'added': [],
+            'removed': []
+        }
+    
+    # Применяем изменения из сессии
+    added_ids = session[session_key]['added']
+    removed_ids = session[session_key]['removed']
+    
+    # Формируем финальный список для отображения
+    final_interpreters = []
+    for interpreter in original_interpreters:
+        if interpreter.id not in removed_ids:
+            final_interpreters.append(interpreter)
+    
+    # Добавляем новых переводчиков (временные объекты только для отображения)
+    for interpreter_id in added_ids:
+        if interpreter_id not in original_interpreter_ids:
+            interpreter = Interpreter.query.get(interpreter_id)
+            if interpreter and interpreter.id not in removed_ids:
+                final_interpreters.append(interpreter)
+    
+    # Проверяем, есть ли реальные изменения
+    has_changes = bool(added_ids) or bool(removed_ids)
+    
+    return render_template('select_interpreters.html', 
+                         book=book, 
+                         selected_interpreters=final_interpreters,
+                         original_interpreter_ids=original_interpreter_ids,
+                         pending_added=added_ids,
+                         pending_removed=removed_ids,
+                         has_changes=has_changes)
+
+
+@bp.route('/book/<int:book_id>/interpreters/add', methods=['POST'])
+def add_interpreter_to_book_session(book_id):
+    """Добавляет переводчика во временный список сессии."""
+    book = Book.query.get_or_404(book_id)
+    interpreter_id = request.form.get('interpreter_id', type=int)
+    
+    if not interpreter_id:
+        return jsonify({'error': 'Не указан переводчик'}), 400
+    
+    interpreter = Interpreter.query.get(interpreter_id)
+    if not interpreter:
+        return jsonify({'error': 'Переводчик не найден'}), 404
+    
+    session_key = f'book_{book_id}_interpreters_changes'
+    if session_key not in session:
+        session[session_key] = {'added': [], 'removed': []}
+    
+    # Если переводчик был в списке удаленных, убираем его оттуда
+    if interpreter_id in session[session_key]['removed']:
+        session[session_key]['removed'].remove(interpreter_id)
+    # Иначе добавляем в список добавленных (если еще не добавлен)
+    elif interpreter_id not in session[session_key]['added']:
+        # Проверяем, не существует ли уже связь в БД
+        exists = db.session.query(book_interpreters).filter_by(
+            id_book=book_id, 
+            id_interpreter=interpreter_id
+        ).first() is not None
+        
+        if not exists:
+            session[session_key]['added'].append(interpreter_id)
+        else:
+            # Если связь уже есть в БД, ничего не делаем
+            return jsonify({'warning': 'Переводчик уже добавлен к книге'}), 200
+    
+    session.modified = True
+    return jsonify({'success': True, 'interpreter_id': interpreter_id})
+
+
+@bp.route('/book/<int:book_id>/interpreters/remove/<int:interpreter_id>', methods=['POST'])
+def remove_interpreter_from_book_session(book_id, interpreter_id):
+    """Удаляет переводчика из временного списка сессии."""
+    book = Book.query.get_or_404(book_id)
+    
+    session_key = f'book_{book_id}_interpreters_changes'
+    if session_key not in session:
+        session[session_key] = {'added': [], 'removed': []}
+    
+    # Если переводчик был в списке добавленных, просто убираем его оттуда
+    if interpreter_id in session[session_key]['added']:
+        session[session_key]['added'].remove(interpreter_id)
+    else:
+        # Иначе добавляем в список удаленных
+        if interpreter_id not in session[session_key]['removed']:
+            session[session_key]['removed'].append(interpreter_id)
+    
+    session.modified = True
+    return jsonify({'success': True})
+
+
+@bp.route('/book/<int:book_id>/interpreters/save', methods=['POST'])
+def save_interpreters_changes(book_id):
+    """Сохраняет все изменения переводчиков в БД."""
+    book = Book.query.get_or_404(book_id)
+    session_key = f'book_{book_id}_interpreters_changes'
+    
+    if session_key not in session:
+        flash('Нет изменений для сохранения', 'info')
+        return redirect(url_for('main.book_detail', book_id=book_id))
+    
+    changes = session[session_key]
+    
+    try:
+        # Применяем удаления
+        for interpreter_id in changes['removed']:
+            interpreter = Interpreter.query.get(interpreter_id)
+            if interpreter and interpreter in book.interpreter_books:
+                book.interpreter_books.remove(interpreter)
+        
+        # Применяем добавления
+        for interpreter_id in changes['added']:
+            # Проверяем, не была ли связь уже создана в БД
+            exists = db.session.query(book_interpreters).filter_by(
+                id_book=book_id, 
+                id_interpreter=interpreter_id
+            ).first() is not None
+            
+            if not exists:
+                interpreter = Interpreter.query.get(interpreter_id)
+                if interpreter and interpreter not in book.interpreter_books:
+                    book.interpreter_books.append(interpreter)
+        
+        db.session.commit()
+        
+        # Очищаем сессию
+        session.pop(session_key, None)
+        session.modified = True
+        
+        flash('Изменения переводчиков успешно сохранены!', 'success')
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        flash(f'Ошибка при сохранении изменений переводчиков: {str(e)}', 'danger')
+    
+    return redirect(url_for('main.book_detail', book_id=book_id))
+
+
+@bp.route('/book/<int:book_id>/interpreters/cancel', methods=['POST'])
+def cancel_interpreters_changes(book_id):
+    """Отменяет все изменения переводчиков."""
+    session_key = f'book_{book_id}_interpreters_changes'
+    session.pop(session_key, None)
+    session.modified = True
+    flash('Изменения переводчиков отменены', 'info')
+    return redirect(url_for('main.book_detail', book_id=book_id))
 
 
 @bp.route('/search/interpreters')
