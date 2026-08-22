@@ -939,37 +939,162 @@ def delete_genre(genre_id):
 
 @bp.route('/book/<int:book_id>/genres', methods=['GET'])
 def select_genres(book_id):
+    """Страница выбора жанров для книги."""
     book = Book.query.get_or_404(book_id)
-    selected_genres = book.genre_books
-    return render_template('select_genres.html', book=book, selected_genres=selected_genres)
+    
+    # Получаем исходный список жанров из БД
+    original_genres = book.genre_books
+    original_genre_ids = [g.id for g in original_genres]
+    
+    # Инициализируем сессионные списки изменений
+    session_key = f'book_{book_id}_genres_changes'
+    if session_key not in session:
+        session[session_key] = {
+            'added': [],
+            'removed': []
+        }
+    
+    # Применяем изменения из сессии
+    added_ids = session[session_key]['added']
+    removed_ids = session[session_key]['removed']
+    
+    # Формируем финальный список для отображения
+    final_genres = []
+    for genre in original_genres:
+        if genre.id not in removed_ids:
+            final_genres.append(genre)
+    
+    # Добавляем новые жанры (временные объекты только для отображения)
+    for genre_id in added_ids:
+        if genre_id not in original_genre_ids:
+            genre = Genre.query.get(genre_id)
+            if genre and genre.id not in removed_ids:
+                final_genres.append(genre)
+    
+    # Проверяем, есть ли реальные изменения
+    has_changes = bool(added_ids) or bool(removed_ids)
+    
+    return render_template('select_genres.html', 
+                         book=book, 
+                         selected_genres=final_genres,
+                         original_genre_ids=original_genre_ids,
+                         pending_added=added_ids,
+                         pending_removed=removed_ids,
+                         has_changes=has_changes)
 
 
 @bp.route('/book/<int:book_id>/genres/add', methods=['POST'])
-def add_genre_to_book(book_id):
+def add_genre_to_book_session(book_id):
+    """Добавляет жанр во временный список сессии."""
     book = Book.query.get_or_404(book_id)
     genre_id = request.form.get('genre_id', type=int)
     
-    if genre_id:
-        genre = Genre.query.get(genre_id)
-        if genre and genre not in book.genre_books:
-            book.genre_books.append(genre)
-            db.session.commit()
-            flash(f'Жанр {genre.name} добавлен к книге', 'success')
+    if not genre_id:
+        return jsonify({'error': 'Не указан жанр'}), 400
     
-    return redirect(url_for('main.select_genres', book_id=book_id))
+    genre = Genre.query.get(genre_id)
+    if not genre:
+        return jsonify({'error': 'Жанр не найден'}), 404
+    
+    session_key = f'book_{book_id}_genres_changes'
+    if session_key not in session:
+        session[session_key] = {'added': [], 'removed': []}
+    
+    # Если жанр был в списке удаленных, убираем его оттуда
+    if genre_id in session[session_key]['removed']:
+        session[session_key]['removed'].remove(genre_id)
+    # Иначе добавляем в список добавленных (если еще не добавлен)
+    elif genre_id not in session[session_key]['added']:
+        # Проверяем, не существует ли уже связь в БД
+        exists = db.session.query(book_genres).filter_by(
+            id_book=book_id, 
+            id_genre=genre_id
+        ).first() is not None
+        
+        if not exists:
+            session[session_key]['added'].append(genre_id)
+        else:
+            # Если связь уже есть в БД, ничего не делаем
+            return jsonify({'warning': 'Жанр уже добавлен к книге'}), 200
+    
+    session.modified = True
+    return jsonify({'success': True, 'genre_id': genre_id})
 
 
 @bp.route('/book/<int:book_id>/genres/remove/<int:genre_id>', methods=['POST'])
-def remove_genre_from_book(book_id, genre_id):
+def remove_genre_from_book_session(book_id, genre_id):
+    """Удаляет жанр из временного списка сессии."""
     book = Book.query.get_or_404(book_id)
-    genre = Genre.query.get_or_404(genre_id)
     
-    if genre in book.genre_books:
-        book.genre_books.remove(genre)
+    session_key = f'book_{book_id}_genres_changes'
+    if session_key not in session:
+        session[session_key] = {'added': [], 'removed': []}
+    
+    # Если жанр был в списке добавленных, просто убираем его оттуда
+    if genre_id in session[session_key]['added']:
+        session[session_key]['added'].remove(genre_id)
+    else:
+        # Иначе добавляем в список удаленных
+        if genre_id not in session[session_key]['removed']:
+            session[session_key]['removed'].append(genre_id)
+    
+    session.modified = True
+    return jsonify({'success': True})
+
+
+@bp.route('/book/<int:book_id>/genres/save', methods=['POST'])
+def save_genres_changes(book_id):
+    """Сохраняет все изменения жанров в БД."""
+    book = Book.query.get_or_404(book_id)
+    session_key = f'book_{book_id}_genres_changes'
+    
+    if session_key not in session:
+        flash('Нет изменений для сохранения', 'info')
+        return redirect(url_for('main.book_detail', book_id=book_id))
+    
+    changes = session[session_key]
+    
+    try:
+        # Применяем удаления
+        for genre_id in changes['removed']:
+            genre = Genre.query.get(genre_id)
+            if genre and genre in book.genre_books:
+                book.genre_books.remove(genre)
+        
+        # Применяем добавления
+        for genre_id in changes['added']:
+            # Проверяем, не была ли связь уже создана в БД
+            exists = db.session.query(book_genres).filter_by(
+                id_book=book_id, 
+                id_genre=genre_id
+            ).first() is not None
+            
+            if not exists:
+                genre = Genre.query.get(genre_id)
+                if genre and genre not in book.genre_books:
+                    book.genre_books.append(genre)
+        
         db.session.commit()
-        flash(f'Жанр {genre.name} удален из книги', 'info')
+        
+        # Очищаем сессию
+        session.pop(session_key, None)
+        session.modified = True
+        
+        flash('Изменения жанров успешно сохранены!', 'success')
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        flash(f'Ошибка при сохранении изменений жанров: {str(e)}', 'danger')
     
-    return redirect(url_for('main.select_genres', book_id=book_id))
+    return redirect(url_for('main.book_detail', book_id=book_id))
+
+@bp.route('/book/<int:book_id>/genres/cancel', methods=['POST'])
+def cancel_genres_changes(book_id):
+    """Отменяет все изменения жанров."""
+    session_key = f'book_{book_id}_genres_changes'
+    session.pop(session_key, None)
+    session.modified = True
+    flash('Изменения жанров отменены', 'info')
+    return redirect(url_for('main.book_detail', book_id=book_id))
 
 
 @bp.route('/genre/add', methods=['GET', 'POST'])
