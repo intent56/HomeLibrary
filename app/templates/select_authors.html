@@ -114,35 +114,39 @@
 {% block scripts %}
 <script>
 // Функция для добавления автора через AJAX
+// Добавляем защиту от повторных нажатий
 function addAuthor(authorId) {
     const button = document.querySelector(`.add-author-btn[data-author-id="${authorId}"]`);
     if (button) {
+        // Блокируем кнопку, чтобы предотвратить повторные нажатия
+        if (button.disabled) return;
         button.disabled = true;
         button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
     }
-    
+
     fetch('{{ url_for("main.add_author_to_book", book_id=book.id) }}', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
         },
         body: 'author_id=' + authorId + '&csrf_token={{ csrf_token() }}'
     })
     .then(response => {
         if (response.ok) {
-            // Обновляем страницу для отображения изменений
+            // Обновляем страницу или удаляем найденного автора из результатов поиска
             location.reload();
         } else {
-            alert('Ошибка при добавлении автора');
-            if (button) {
-                button.disabled = false;
-                button.innerHTML = 'Добавить';
-            }
+            return response.text().then(text => {
+                alert('Ошибка при добавлении автора: ' + text);
+            });
         }
     })
     .catch(error => {
         console.error('Error:', error);
         alert('Ошибка при добавлении автора');
+    })
+    .finally(() => {
         if (button) {
             button.disabled = false;
             button.innerHTML = 'Добавить';
@@ -153,18 +157,21 @@ function addAuthor(authorId) {
 // Обработка результатов поиска от HTMX
 document.body.addEventListener('htmx:afterSwap', function(evt) {
     if (evt.detail.target.id === 'searchResults') {
-        // Добавляем обработчики для кнопок добавления
         document.querySelectorAll('.add-author-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                const authorId = this.dataset.authorId;
-                if (authorId) {
-                    addAuthor(authorId);
-                }
-            });
+            // Удаляем старые обработчики, чтобы избежать дублирования
+            btn.removeEventListener('click', handleAddClick);
+            btn.addEventListener('click', handleAddClick);
         });
     }
 });
+
+function handleAddClick(e) {
+    e.preventDefault();
+    const authorId = this.dataset.authorId;
+    if (authorId) {
+        addAuthor(authorId);
+    }
+}
 
 // Очистка поиска при потере фокуса
 document.addEventListener('DOMContentLoaded', function() {

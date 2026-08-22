@@ -3,7 +3,7 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 from sqlalchemy import and_, or_
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 import logging
 import urllib.parse
 import base64
@@ -190,12 +190,29 @@ def add_author_to_book(book_id):
     book = Book.query.get_or_404(book_id)
     author_id = request.form.get('author_id', type=int)
     
-    if author_id:
+    if not author_id:
+        flash('Не указан автор', 'warning')
+        return redirect(url_for('main.select_authors', book_id=book_id))
+    
+    try:
         author = Author.query.get(author_id)
-        if author and author not in book.author_books:
+        if not author:
+            flash('Автор не найден', 'danger')
+            return redirect(url_for('main.select_authors', book_id=book_id))
+        
+        # Используем try/except для обработки нарушения уникальности
+        try:
             book.author_books.append(author)
             db.session.commit()
             flash(f'Автор {author.fio} добавлен к книге', 'success')
+        except IntegrityError:
+            db.session.rollback()
+            flash(f'Автор {author.fio} уже добавлен к книге', 'warning')
+            
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        logger.error(f"Ошибка при добавлении автора к книге {book_id}: {str(e)}")
+        flash(f'Ошибка при добавлении автора: {str(e)}', 'danger')
     
     return redirect(url_for('main.select_authors', book_id=book_id))
 
