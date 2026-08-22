@@ -1429,10 +1429,10 @@ def cover_list():
 def format_list():
     page = request.args.get('page', 1, type=int)
     search = request.args.get('search', '').strip()
-    
+
     # Базовый запрос
     query = Format.query
-    
+
     # Поиск по названию формата
     if search:
         search_pattern = f'%{search}%'
@@ -1442,21 +1442,21 @@ def format_list():
                 Format.comment.ilike(search_pattern)
             )
         )
-    
+
     # Сортировка по названию формата
     query = query.order_by(Format.format)
-    
+
     # Пагинация
     pagination = query.paginate(
         page=page, 
         per_page=Config.ITEMS_PER_PAGE_FORMAT, 
         error_out=False
     )
-    
+
     # Общая статистика (все форматы без пагинации)
     total_formats = Format.query.count()
     total_books_with_formats = sum(len(f.fmt_books) for f in Format.query.all())
-    
+
     if request.headers.get('HX-Request'):
         return render_template('partials/format_table.html',
                              formats=pagination.items,
@@ -1464,7 +1464,7 @@ def format_list():
                              total_formats=total_formats,
                              total_books_with_formats=total_books_with_formats,
                              search=search)
-    
+
     return render_template('format_list.html',
                          formats=pagination.items,
                          pagination=pagination,
