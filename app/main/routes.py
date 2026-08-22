@@ -183,6 +183,10 @@ def edit_book(book_id):
 def select_authors(book_id):
     book = Book.query.get_or_404(book_id)
     
+    # Получаем исходный список авторов из БД
+    original_authors = book.author_books
+    original_author_ids = [a.id for a in original_authors]
+    
     # Инициализируем сессионные списки изменений
     session_key = f'book_{book_id}_authors_changes'
     if session_key not in session:
@@ -191,30 +195,33 @@ def select_authors(book_id):
             'removed': []
         }
     
-    # Получаем текущий список авторов из БД
-    current_authors = book.author_books
-    
     # Применяем изменения из сессии
     added_ids = session[session_key]['added']
     removed_ids = session[session_key]['removed']
     
     # Формируем финальный список для отображения
     final_authors = []
-    for author in current_authors:
+    for author in original_authors:
         if author.id not in removed_ids:
             final_authors.append(author)
     
     # Добавляем новых авторов (временные объекты только для отображения)
     for author_id in added_ids:
-        if author_id not in [a.id for a in current_authors]:
+        if author_id not in original_author_ids:
             author = Author.query.get(author_id)
             if author and author.id not in removed_ids:
                 final_authors.append(author)
     
+    # Проверяем, есть ли реальные изменения
+    has_changes = bool(added_ids) or bool(removed_ids)
+    
     return render_template('select_authors.html', 
                          book=book, 
                          selected_authors=final_authors,
-                         has_changes=bool(session[session_key]['added'] or session[session_key]['removed']))
+                         original_author_ids=original_author_ids,
+                         pending_added=added_ids,
+                         pending_removed=removed_ids,
+                         has_changes=has_changes)
 
 @bp.route('/book/<int:book_id>/authors/add', methods=['POST'])
 def add_author_to_book_session(book_id):

@@ -14,8 +14,8 @@
                 {% endif %}
             </div>
             <div>
-                <a href="{{ url_for('main.book_list') }}" class="btn btn-outline-secondary" id="cancelBtn">
-                    <i class="bi bi-x-circle"></i> Отмена
+                <a href="{{ url_for('main.book_detail', book_id=book.id) }}" class="btn btn-outline-secondary" id="cancelBtn">
+                    <i class="bi bi-book"></i> Карточка книги
                 </a>
             </div>
         </div>
@@ -76,6 +76,12 @@
                                     {% if author.firstname %}
                                         <span class="text-muted">({{ author.firstname }}{% if author.secondname %} {{ author.secondname }}{% endif %})</span>
                                     {% endif %}
+                                    {% if author.id in pending_added %}
+                                        <span class="badge bg-warning text-dark ms-2">будет добавлен</span>
+                                    {% endif %}
+                                    {% if author.id in pending_removed %}
+                                        <span class="badge bg-danger text-white ms-2">будет удален</span>
+                                    {% endif %}
                                 </div>
                                 <button type="button" class="btn btn-danger btn-sm remove-author-btn" data-author-id="{{ author.id }}">
                                     <i class="bi bi-trash"></i> Удалить
@@ -103,23 +109,22 @@
                             {% if has_changes %}
                                 <span class="text-warning">Есть несохраненные изменения. Нажмите "Готово" для сохранения.</span>
                             {% else %}
-                                Изменения не сохранены. Нажмите "Готово" для подтверждения.
+                                Нет изменений для сохранения
                             {% endif %}
                         </span>
                     </div>
                     <div class="d-flex gap-2">
-                        <form method="POST" action="{{ url_for('main.save_authors_changes', book_id=book.id) }}">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <button type="submit" class="btn btn-success btn-lg" id="saveBtn" {% if not has_changes %}disabled{% endif %}>
-                                <i class="bi bi-check-circle"></i> Готово
-                            </button>
-                        </form>
-                        <form method="POST" action="{{ url_for('main.cancel_authors_changes', book_id=book.id) }}">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <button type="submit" class="btn btn-secondary btn-lg" id="cancelChangesBtn">
-                                <i class="bi bi-arrow-counterclockwise"></i> Отменить изменения
-                            </button>
-                        </form>
+                        <!-- Кнопка "Готово" всегда активна, но при отсутствии изменений просто переходит на book_detail -->
+                        <a href="{{ url_for('main.book_detail', book_id=book.id) }}" 
+                           class="btn btn-success btn-lg" 
+                           id="saveBtn">
+                            <i class="bi bi-check-circle"></i> Готово
+                        </a>
+                        <a href="{{ url_for('main.book_detail', book_id=book.id) }}" 
+                           class="btn btn-secondary btn-lg" 
+                           id="cancelChangesBtn">
+                            <i class="bi bi-arrow-counterclockwise"></i> Отмена
+                        </a>
                     </div>
                 </div>
             </div>
@@ -129,7 +134,22 @@
 
 {% block scripts %}
 <script>
-let hasUnsavedChanges = {{ 'true' if has_changes else 'false' }};
+// Получаем исходный список авторов из БД
+const originalAuthorIds = {{ original_author_ids|tojson }};
+let currentAuthorIds = [...originalAuthorIds];
+let pendingChanges = {
+    added: {{ pending_added|tojson }},
+    removed: {{ pending_removed|tojson }}
+};
+
+// Проверяем, есть ли реальные изменения
+function hasRealChanges() {
+    // Если есть добавленные или удаленные авторы
+    if (pendingChanges.added.length > 0 || pendingChanges.removed.length > 0) {
+        return true;
+    }
+    return false;
+}
 
 // Функция для добавления автора
 function addAuthor(authorId) {
@@ -151,9 +171,17 @@ function addAuthor(authorId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            hasUnsavedChanges = true;
+            // Обновляем локальное состояние
+            if (!currentAuthorIds.includes(authorId)) {
+                currentAuthorIds.push(authorId);
+            }
+            // Убираем из удаленных, если был там
+            pendingChanges.removed = pendingChanges.removed.filter(id => id !== authorId);
+            // Добавляем в добавленные, если еще не добавлен
+            if (!pendingChanges.added.includes(authorId)) {
+                pendingChanges.added.push(authorId);
+            }
             updateUI();
-            // Перезагружаем страницу для обновления списка
             location.reload();
         } else if (data.warning) {
             alert(data.warning);
@@ -194,7 +222,14 @@ function removeAuthor(authorId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            hasUnsavedChanges = true;
+            // Обновляем локальное состояние
+            currentAuthorIds = currentAuthorIds.filter(id => id !== authorId);
+            // Убираем из добавленных, если был там
+            pendingChanges.added = pendingChanges.added.filter(id => id !== authorId);
+            // Добавляем в удаленные, если еще не удален
+            if (!pendingChanges.removed.includes(authorId)) {
+                pendingChanges.removed.push(authorId);
+            }
             updateUI();
             location.reload();
         } else {
@@ -215,25 +250,34 @@ function removeAuthor(authorId) {
 
 // Обновление UI
 function updateUI() {
+    const hasChanges = hasRealChanges();
     const saveBtn = document.getElementById('saveBtn');
-    if (saveBtn) {
-        saveBtn.disabled = !hasUnsavedChanges;
-    }
+    const cancelBtn = document.getElementById('cancelChangesBtn');
     
     // Обновляем индикатор изменений
     const indicator = document.querySelector('.badge.bg-warning');
     if (indicator) {
-        if (hasUnsavedChanges) {
+        if (hasChanges) {
             indicator.style.display = 'inline';
+            indicator.textContent = '🔔 Есть несохраненные изменения';
         } else {
             indicator.style.display = 'none';
         }
     }
+    
+    // Обновляем текст кнопок
+    if (saveBtn) {
+        if (hasChanges) {
+            saveBtn.innerHTML = '<i class="bi bi-check-circle"></i> Сохранить';
+        } else {
+            saveBtn.innerHTML = '<i class="bi bi-check-circle"></i> Готово';
+        }
+    }
 }
 
-// Защита от ухода со страницы
+// Защита от ухода со страницы (только если есть реальные изменения)
 window.addEventListener('beforeunload', function(e) {
-    if (hasUnsavedChanges) {
+    if (hasRealChanges()) {
         e.preventDefault();
         e.returnValue = 'У вас есть несохраненные изменения. Вы уверены, что хотите покинуть страницу?';
         return e.returnValue;
@@ -252,6 +296,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+    
+    // Обновляем UI
+    updateUI();
 });
 
 // Обработка результатов поиска от HTMX
@@ -275,10 +322,10 @@ function handleAddClick(e) {
 // Перехват кликов по ссылкам для проверки изменений
 document.addEventListener('click', function(e) {
     const link = e.target.closest('a');
-    if (link && hasUnsavedChanges) {
+    if (link && hasRealChanges()) {
         const href = link.getAttribute('href');
-        // Проверяем, не является ли ссылка кнопкой отмены или сохранения
-        if (href && !href.includes('cancel_authors_changes') && !href.includes('save_authors_changes')) {
+        // Проверяем, не является ли ссылка кнопкой "Карточка книги" или "Готово/Отмена"
+        if (href && !href.includes('book_detail') && !href.includes('save_authors_changes') && !href.includes('cancel_authors_changes')) {
             if (!confirm('У вас есть несохраненные изменения. Вы уверены, что хотите покинуть страницу?')) {
                 e.preventDefault();
             }
@@ -286,16 +333,24 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// Обработка отправки формы
+// Обработка отправки формы (исключаем формы "Готово" и "Отменить изменения")
 document.addEventListener('submit', function(e) {
     const form = e.target;
-    if (form && hasUnsavedChanges) {
+    if (form && hasRealChanges()) {
         const action = form.getAttribute('action');
-        // Пропускаем формы сохранения и отмены
         if (action && !action.includes('save_authors_changes') && !action.includes('cancel_authors_changes')) {
             if (!confirm('У вас есть несохраненные изменения. Вы уверены, что хотите покинуть страницу?')) {
                 e.preventDefault();
             }
+        }
+    }
+});
+
+// Перехват клика по кнопке "Карточка книги"
+document.getElementById('cancelBtn')?.addEventListener('click', function(e) {
+    if (hasRealChanges()) {
+        if (!confirm('У вас есть несохраненные изменения. Вы уверены, что хотите покинуть страницу?')) {
+            e.preventDefault();
         }
     }
 });
@@ -322,6 +377,20 @@ document.addEventListener('submit', function(e) {
 .btn-danger:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+/* Стили для улучшения UX */
+.btn-outline-secondary:hover {
+    background-color: #f8f9fa;
+}
+
+.card-header .badge {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+}
+
+.badge.bg-warning {
+    color: #856404;
 }
 </style>
 {% endblock %}
