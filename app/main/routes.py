@@ -120,32 +120,41 @@ def books_children():
 @bp.route('/book/add', methods=['GET', 'POST'])
 def add_book():
     form = FormBook()
-    
+
     if form.validate_on_submit():
         try:
             book = Book()
             form.populate_obj(book)
-            
+
             if book.id_cover == 0:
                 book.id_cover = None
             if book.id_format == 0:
                 book.id_format = None
-            
+
+            # === ИСПРАВЛЕННАЯ ОБРАБОТКА ОБЛОЖКИ ===
             # Обработка загрузки обложки
             if 'cover' in request.files:
                 file = request.files['cover']
+                # Проверяем, что файл выбран и имеет имя
                 if file and file.filename:
+                    # Читаем содержимое файла в bytes
                     book.cover = file.read()
-            
+                else:
+                    # Если файл не выбран, явно устанавливаем None
+                    book.cover = None
+
             db.session.add(book)
             db.session.commit()
-            
+
             flash('Книга успешно добавлена!', 'success')
             return redirect(url_for('main.select_authors', book_id=book.id))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(f'Ошибка при добавлении книги: {str(e)}', 'danger')
-    
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Неожиданная ошибка: {str(e)}', 'danger')
+
     return render_template('add_book.html', form=form)
 
 
@@ -153,29 +162,39 @@ def add_book():
 def edit_book(book_id):
     book = Book.query.get_or_404(book_id)
     form = FormBook(obj=book)
-    
+
     if form.validate_on_submit():
         try:
             form.populate_obj(book)
-            
+
             if book.id_cover == 0:
                 book.id_cover = None
             if book.id_format == 0:
                 book.id_format = None
-            
+
+            # === ИСПРАВЛЕННАЯ ОБРАБОТКА ОБЛОЖКИ ===
             # Обработка загрузки новой обложки
             if 'cover' in request.files:
                 file = request.files['cover']
+                # Проверяем, что файл выбран и имеет имя
                 if file and file.filename:
+                    # Читаем содержимое файла в bytes
                     book.cover = file.read()
-            
+                else:
+                    # Если файл не выбран, оставляем существующую обложку
+                    # (НЕ устанавливаем None, чтобы не удалять существующую)
+                    pass
+
             db.session.commit()
             flash('Книга успешно обновлена!', 'success')
             return redirect(url_for('main.book_list'))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(f'Ошибка при обновлении книги: {str(e)}', 'danger')
-    
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Неожиданная ошибка: {str(e)}', 'danger')
+
     return render_template('edit_book.html', form=form, book=book)
 
 
