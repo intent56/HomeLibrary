@@ -1082,37 +1082,163 @@ def delete_publisher(publisher_id):
 
 @bp.route('/book/<int:book_id>/publishers', methods=['GET'])
 def select_publishers(book_id):
+    """Страница выбора издателей для книги."""
     book = Book.query.get_or_404(book_id)
-    selected_publishers = book.publisher_books
-    return render_template('select_publishers.html', book=book, selected_publishers=selected_publishers)
+    
+    # Получаем исходный список издателей из БД
+    original_publishers = book.publisher_books
+    original_publisher_ids = [p.id for p in original_publishers]
+    
+    # Инициализируем сессионные списки изменений
+    session_key = f'book_{book_id}_publishers_changes'
+    if session_key not in session:
+        session[session_key] = {
+            'added': [],
+            'removed': []
+        }
+    
+    # Применяем изменения из сессии
+    added_ids = session[session_key]['added']
+    removed_ids = session[session_key]['removed']
+    
+    # Формируем финальный список для отображения
+    final_publishers = []
+    for publisher in original_publishers:
+        if publisher.id not in removed_ids:
+            final_publishers.append(publisher)
+    
+    # Добавляем новых издателей (временные объекты только для отображения)
+    for publisher_id in added_ids:
+        if publisher_id not in original_publisher_ids:
+            publisher = Publisher.query.get(publisher_id)
+            if publisher and publisher.id not in removed_ids:
+                final_publishers.append(publisher)
+    
+    # Проверяем, есть ли реальные изменения
+    has_changes = bool(added_ids) or bool(removed_ids)
+    
+    return render_template('select_publishers.html', 
+                         book=book, 
+                         selected_publishers=final_publishers,
+                         original_publisher_ids=original_publisher_ids,
+                         pending_added=added_ids,
+                         pending_removed=removed_ids,
+                         has_changes=has_changes)
 
 
 @bp.route('/book/<int:book_id>/publishers/add', methods=['POST'])
-def add_publisher_to_book(book_id):
+def add_publisher_to_book_session(book_id):
+    """Добавляет издателя во временный список сессии."""
     book = Book.query.get_or_404(book_id)
     publisher_id = request.form.get('publisher_id', type=int)
     
-    if publisher_id:
-        publisher = Publisher.query.get(publisher_id)
-        if publisher and publisher not in book.publisher_books:
-            book.publisher_books.append(publisher)
-            db.session.commit()
-            flash(f'Издатель {publisher.name} добавлен к книге', 'success')
+    if not publisher_id:
+        return jsonify({'error': 'Не указан издатель'}), 400
     
-    return redirect(url_for('main.select_publishers', book_id=book_id))
+    publisher = Publisher.query.get(publisher_id)
+    if not publisher:
+        return jsonify({'error': 'Издатель не найден'}), 404
+    
+    session_key = f'book_{book_id}_publishers_changes'
+    if session_key not in session:
+        session[session_key] = {'added': [], 'removed': []}
+    
+    # Если издатель был в списке удаленных, убираем его оттуда
+    if publisher_id in session[session_key]['removed']:
+        session[session_key]['removed'].remove(publisher_id)
+    # Иначе добавляем в список добавленных (если еще не добавлен)
+    elif publisher_id not in session[session_key]['added']:
+        # Проверяем, не существует ли уже связь в БД
+        exists = db.session.query(book_publishers).filter_by(
+            id_book=book_id, 
+            id_publisher=publisher_id
+        ).first() is not None
+        
+        if not exists:
+            session[session_key]['added'].append(publisher_id)
+        else:
+            # Если связь уже есть в БД, ничего не делаем
+            return jsonify({'warning': 'Издатель уже добавлен к книге'}), 200
+    
+    session.modified = True
+    return jsonify({'success': True, 'publisher_id': publisher_id})
 
 
 @bp.route('/book/<int:book_id>/publishers/remove/<int:publisher_id>', methods=['POST'])
-def remove_publisher_from_book(book_id, publisher_id):
+def remove_publisher_from_book_session(book_id, publisher_id):
+    """Удаляет издателя из временного списка сессии."""
     book = Book.query.get_or_404(book_id)
-    publisher = Publisher.query.get_or_404(publisher_id)
     
-    if publisher in book.publisher_books:
-        book.publisher_books.remove(publisher)
+    session_key = f'book_{book_id}_publishers_changes'
+    if session_key not in session:
+        session[session_key] = {'added': [], 'removed': []}
+    
+    # Если издатель был в списке добавленных, просто убираем его оттуда
+    if publisher_id in session[session_key]['added']:
+        session[session_key]['added'].remove(publisher_id)
+    else:
+        # Иначе добавляем в список удаленных
+        if publisher_id not in session[session_key]['removed']:
+            session[session_key]['removed'].append(publisher_id)
+    
+    session.modified = True
+    return jsonify({'success': True})
+
+
+@bp.route('/book/<int:book_id>/publishers/save', methods=['POST'])
+def save_publishers_changes(book_id):
+    """Сохраняет все изменения издателей в БД."""
+    book = Book.query.get_or_404(book_id)
+    session_key = f'book_{book_id}_publishers_changes'
+    
+    if session_key not in session:
+        flash('Нет изменений для сохранения', 'info')
+        return redirect(url_for('main.book_detail', book_id=book_id))
+    
+    changes = session[session_key]
+    
+    try:
+        # Применяем удаления
+        for publisher_id in changes['removed']:
+            publisher = Publisher.query.get(publisher_id)
+            if publisher and publisher in book.publisher_books:
+                book.publisher_books.remove(publisher)
+        
+        # Применяем добавления
+        for publisher_id in changes['added']:
+            # Проверяем, не была ли связь уже создана в БД
+            exists = db.session.query(book_publishers).filter_by(
+                id_book=book_id, 
+                id_publisher=publisher_id
+            ).first() is not None
+            
+            if not exists:
+                publisher = Publisher.query.get(publisher_id)
+                if publisher and publisher not in book.publisher_books:
+                    book.publisher_books.append(publisher)
+        
         db.session.commit()
-        flash(f'Издатель {publisher.name} удален из книги', 'info')
+        
+        # Очищаем сессию
+        session.pop(session_key, None)
+        session.modified = True
+        
+        flash('Изменения издателей успешно сохранены!', 'success')
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        flash(f'Ошибка при сохранении изменений издателей: {str(e)}', 'danger')
     
-    return redirect(url_for('main.select_publishers', book_id=book_id))
+    return redirect(url_for('main.book_detail', book_id=book_id))
+
+
+@bp.route('/book/<int:book_id>/publishers/cancel', methods=['POST'])
+def cancel_publishers_changes(book_id):
+    """Отменяет все изменения издателей."""
+    session_key = f'book_{book_id}_publishers_changes'
+    session.pop(session_key, None)
+    session.modified = True
+    flash('Изменения издателей отменены', 'info')
+    return redirect(url_for('main.book_detail', book_id=book_id))
 
 
 @bp.route('/search/publishers')

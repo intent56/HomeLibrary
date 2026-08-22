@@ -5,14 +5,21 @@
     <div class="col-lg-10 mx-auto">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h2><i class="bi bi-building"></i> Выбор издателей для книги</h2>
+                <h2>🏢 Выбор издателей для книги</h2>
                 <h5 class="text-muted">"{{ book.name }}"</h5>
+                {% if has_changes %}
+                    <span class="badge bg-warning text-dark mt-1">
+                        <i class="bi bi-pencil"></i> Есть несохраненные изменения
+                    </span>
+                {% endif %}
             </div>
-            <a href="{{ url_for('main.book_list') }}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left"></i> На главную
-            </a>
+            <div>
+                <a href="{{ url_for('main.book_detail', book_id=book.id) }}" class="btn btn-outline-secondary" id="cancelBtn">
+                    <i class="bi bi-book"></i> Карточка книги
+                </a>
+            </div>
         </div>
-        
+
         <!-- Поиск издателей -->
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-primary text-white">
@@ -41,9 +48,9 @@
                         <div class="form-text">Введите минимум 2 символа для поиска</div>
                     </form>
                 </div>
-                
+
                 <div id="searchResults" class="mt-3"></div>
-                
+
                 <div class="mt-3">
                     <a href="{{ url_for('main.add_publisher') }}?book_id={{ book.id }}" class="btn btn-warning">
                         <i class="bi bi-plus-circle"></i> Добавить нового издателя
@@ -51,45 +58,44 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Выбранные издатели -->
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0"><i class="bi bi-building-check"></i> Выбранные издатели</h5>
-                <span class="badge bg-light text-dark">{{ selected_publishers|length }} издателей</span>
+                <span class="badge bg-light text-dark" id="publisherCount">{{ selected_publishers|length }} издателей</span>
             </div>
-            <div class="card-body">
+            <div class="card-body" id="publisherList">
                 {% if selected_publishers %}
                     <div class="list-group">
                         {% for publisher in selected_publishers %}
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="list-group-item d-flex justify-content-between align-items-center publisher-item" data-publisher-id="{{ publisher.id }}">
                                 <div>
                                     <i class="bi bi-building text-primary me-2"></i>
                                     <strong>{{ publisher.name }}</strong>
-                                    {% if publisher.comment %}
-                                        <span class="text-muted ms-2 small">({{ publisher.comment }})</span>
+                                    {% if publisher.id in pending_added %}
+                                        <span class="badge bg-warning text-dark ms-2">будет добавлен</span>
+                                    {% endif %}
+                                    {% if publisher.id in pending_removed %}
+                                        <span class="badge bg-danger text-white ms-2">будет удален</span>
                                     {% endif %}
                                 </div>
-                                <form method="POST" action="{{ url_for('main.remove_publisher_from_book', book_id=book.id, publisher_id=publisher.id) }}" 
-                                      style="display: inline;">
-                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                    <button type="submit" class="btn btn-danger btn-sm">
-                                        <i class="bi bi-trash"></i> Удалить
-                                    </button>
-                                </form>
+                                <button type="button" class="btn btn-danger btn-sm remove-publisher-btn" data-publisher-id="{{ publisher.id }}">
+                                    <i class="bi bi-trash"></i> Удалить
+                                </button>
                             </div>
                         {% endfor %}
                     </div>
                 {% else %}
                     <div class="text-center py-4">
-                        <i class="bi bi-building display-4 text-muted"></i>
+                        <i class="bi bi-building-x display-4 text-muted"></i>
                         <p class="text-muted mt-2">Издатели не выбраны</p>
                         <p class="text-muted small">Используйте поиск выше, чтобы добавить издателей</p>
                     </div>
                 {% endif %}
             </div>
         </div>
-        
+
         <!-- Кнопки действия -->
         <div class="card shadow-sm mb-4">
             <div class="card-body">
@@ -97,12 +103,26 @@
                     <div>
                         <span class="text-muted">
                             <i class="bi bi-info-circle"></i> 
-                            Книга будет сохранена с выбранными издателями
+                            {% if has_changes %}
+                                <span class="text-warning">Есть несохраненные изменения. Нажмите "Готово" для сохранения.</span>
+                            {% else %}
+                                Нет изменений для сохранения
+                            {% endif %}
                         </span>
                     </div>
                     <div class="d-flex gap-2">
-                        <a href="{{ url_for('main.book_list') }}" class="btn btn-success btn-lg">
-                            <i class="bi bi-check-circle"></i> Готово
+                        <!-- Кнопка "Готово" -->
+                        <a href="{{ url_for('main.save_publishers_changes', book_id=book.id) }}" 
+                           class="btn btn-success btn-lg" 
+                           id="saveBtn">
+                            <i class="bi bi-check-circle"></i> 
+                            {% if has_changes %}Сохранить{% else %}Готово{% endif %}
+                        </a>
+                        <!-- Кнопка "Отмена" -->
+                        <a href="{{ url_for('main.cancel_publishers_changes', book_id=book.id) }}" 
+                           class="btn btn-secondary btn-lg" 
+                           id="cancelChangesBtn">
+                            <i class="bi bi-arrow-counterclockwise"></i> Отмена
                         </a>
                     </div>
                 </div>
@@ -111,35 +131,63 @@
     </div>
 </div>
 
+{% block scripts %}
 <script>
+// Получаем исходный список издателей из БД
+const originalPublisherIds = {{ original_publisher_ids|tojson }};
+let pendingChanges = {
+    added: {{ pending_added|tojson }},
+    removed: {{ pending_removed|tojson }}
+};
+
+// Проверяем, есть ли реальные изменения
+function hasRealChanges() {
+    return pendingChanges.added.length > 0 || pendingChanges.removed.length > 0;
+}
+
+// Функция для добавления издателя
 function addPublisher(publisherId) {
     const button = document.querySelector(`.add-publisher-btn[data-publisher-id="${publisherId}"]`);
     if (button) {
+        if (button.disabled) return;
         button.disabled = true;
         button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
     }
-    
-    fetch('{{ url_for("main.add_publisher_to_book", book_id=book.id) }}', {
+
+    fetch('{{ url_for("main.add_publisher_to_book_session", book_id=book.id) }}', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
         },
         body: 'publisher_id=' + publisherId + '&csrf_token={{ csrf_token() }}'
     })
-    .then(response => {
-        if (response.ok) {
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Обновляем локальное состояние
+            if (!originalPublisherIds.includes(publisherId)) {
+                originalPublisherIds.push(publisherId);
+            }
+            // Убираем из удаленных, если был там
+            pendingChanges.removed = pendingChanges.removed.filter(id => id !== publisherId);
+            // Добавляем в добавленные, если еще не добавлен
+            if (!pendingChanges.added.includes(publisherId)) {
+                pendingChanges.added.push(publisherId);
+            }
+            updateUI();
             location.reload();
+        } else if (data.warning) {
+            alert(data.warning);
         } else {
             alert('Ошибка при добавлении издателя');
-            if (button) {
-                button.disabled = false;
-                button.innerHTML = 'Добавить';
-            }
         }
     })
     .catch(error => {
         console.error('Error:', error);
         alert('Ошибка при добавлении издателя');
+    })
+    .finally(() => {
         if (button) {
             button.disabled = false;
             button.innerHTML = 'Добавить';
@@ -147,60 +195,200 @@ function addPublisher(publisherId) {
     });
 }
 
+// Функция для удаления издателя
+function removePublisher(publisherId) {
+    if (!confirm('Удалить этого издателя из книги?')) return;
+    
+    const button = document.querySelector(`.remove-publisher-btn[data-publisher-id="${publisherId}"]`);
+    if (button) {
+        button.disabled = true;
+        button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
+    }
+
+    fetch('{{ url_for("main.remove_publisher_from_book_session", book_id=book.id, publisher_id=0) }}'.replace('/0', '/' + publisherId), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: 'csrf_token={{ csrf_token() }}'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Обновляем локальное состояние
+            const index = originalPublisherIds.indexOf(publisherId);
+            if (index > -1) {
+                originalPublisherIds.splice(index, 1);
+            }
+            // Убираем из добавленных, если был там
+            pendingChanges.added = pendingChanges.added.filter(id => id !== publisherId);
+            // Добавляем в удаленные, если еще не удален
+            if (!pendingChanges.removed.includes(publisherId)) {
+                pendingChanges.removed.push(publisherId);
+            }
+            updateUI();
+            location.reload();
+        } else {
+            alert('Ошибка при удалении издателя');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Ошибка при удалении издателя');
+    })
+    .finally(() => {
+        if (button) {
+            button.disabled = false;
+            button.innerHTML = '<i class="bi bi-trash"></i> Удалить';
+        }
+    });
+}
+
+// Обновление UI
+function updateUI() {
+    const hasChanges = hasRealChanges();
+    const saveBtn = document.getElementById('saveBtn');
+    const cancelBtn = document.getElementById('cancelChangesBtn');
+    
+    // Обновляем индикатор изменений
+    const indicator = document.querySelector('.badge.bg-warning');
+    if (indicator) {
+        if (hasChanges) {
+            indicator.style.display = 'inline';
+            indicator.textContent = '🔔 Есть несохраненные изменения';
+        } else {
+            indicator.style.display = 'none';
+        }
+    }
+    
+    // Обновляем текст кнопок
+    if (saveBtn) {
+        if (hasChanges) {
+            saveBtn.innerHTML = '<i class="bi bi-check-circle"></i> Сохранить';
+        } else {
+            saveBtn.innerHTML = '<i class="bi bi-check-circle"></i> Готово';
+        }
+    }
+}
+
+// Защита от ухода со страницы (только если есть реальные изменения)
+window.addEventListener('beforeunload', function(e) {
+    if (hasRealChanges()) {
+        e.preventDefault();
+        e.returnValue = 'У вас есть несохраненные изменения. Вы уверены, что хотите покинуть страницу?';
+        return e.returnValue;
+    }
+});
+
+// Обработчики событий
+document.addEventListener('DOMContentLoaded', function() {
+    // Добавляем обработчики для кнопок удаления
+    document.querySelectorAll('.remove-publisher-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const publisherId = this.dataset.publisherId;
+            if (publisherId) {
+                removePublisher(publisherId);
+            }
+        });
+    });
+    
+    // Обновляем UI
+    updateUI();
+});
+
+// Обработка результатов поиска от HTMX
 document.body.addEventListener('htmx:afterSwap', function(evt) {
     if (evt.detail.target.id === 'searchResults') {
         document.querySelectorAll('.add-publisher-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                const publisherId = this.dataset.publisherId;
-                if (publisherId) {
-                    addPublisher(publisherId);
-                }
-            });
+            btn.removeEventListener('click', handleAddClick);
+            btn.addEventListener('click', handleAddClick);
         });
+    }
+});
+
+function handleAddClick(e) {
+    e.preventDefault();
+    const publisherId = this.dataset.publisherId;
+    if (publisherId) {
+        addPublisher(publisherId);
+    }
+}
+
+// Перехват кликов по ссылкам для проверки изменений
+document.addEventListener('click', function(e) {
+    const link = e.target.closest('a');
+    if (link && hasRealChanges()) {
+        const href = link.getAttribute('href');
+        // Проверяем, не является ли ссылка кнопкой "Карточка книги" или "Готово/Отмена"
+        if (href && !href.includes('book_detail') && !href.includes('save_publishers_changes') && !href.includes('cancel_publishers_changes')) {
+            if (!confirm('У вас есть несохраненные изменения. Вы уверены, что хотите покинуть страницу?')) {
+                e.preventDefault();
+            }
+        }
+    }
+});
+
+// Обработка отправки формы (исключаем формы "Готово" и "Отменить изменения")
+document.addEventListener('submit', function(e) {
+    const form = e.target;
+    if (form && hasRealChanges()) {
+        const action = form.getAttribute('action');
+        if (action && !action.includes('save_publishers_changes') && !action.includes('cancel_publishers_changes')) {
+            if (!confirm('У вас есть несохраненные изменения. Вы уверены, что хотите покинуть страницу?')) {
+                e.preventDefault();
+            }
+        }
+    }
+});
+
+// Перехват клика по кнопке "Карточка книги"
+document.getElementById('cancelBtn')?.addEventListener('click', function(e) {
+    if (hasRealChanges()) {
+        if (!confirm('У вас есть несохраненные изменения. Вы уверены, что хотите покинуть страницу?')) {
+            e.preventDefault();
+        }
     }
 });
 </script>
 
 <style>
-.list-group-item {
-    transition: all 0.2s;
-    border-left: 4px solid transparent;
+/* Стили для несохраненных изменений */
+.list-group-item.pending-change {
+    border-left: 4px solid #ffc107;
+    background-color: #fffcf0;
 }
 
-.list-group-item:hover {
+.list-group-item.removed {
+    border-left: 4px solid #dc3545;
+    background-color: #fff5f5;
+    opacity: 0.7;
+}
+
+#saveBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-danger:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Стили для улучшения UX */
+.btn-outline-secondary:hover {
     background-color: #f8f9fa;
-    border-left-color: #0d6efd;
-    transform: translateX(4px);
 }
 
-#searchResults {
-    min-height: 50px;
-    transition: all 0.3s ease;
+.card-header .badge {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
 }
 
-#searchResults .list-group-item {
-    border-left-color: #ffc107;
-}
-
-#searchResults .list-group-item:hover {
-    border-left-color: #0d6efd;
-}
-
-@media (max-width: 768px) {
-    .card-body {
-        padding: 1rem;
-    }
-    
-    .list-group-item {
-        flex-direction: column;
-        align-items: stretch !important;
-        gap: 0.5rem;
-    }
-    
-    .list-group-item .btn {
-        width: 100%;
-    }
+.badge.bg-warning {
+    color: #856404;
 }
 </style>
+{% endblock %}
 {% endblock %}
