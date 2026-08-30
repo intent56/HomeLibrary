@@ -47,7 +47,7 @@
         </table>
     </div>
 
-    <!-- 3. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ -->
+    <!-- 3. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ - CSS РЕШЕНИЕ -->
     {% if pagination and pagination.pages > 1 %}
     <div class="pagination-container mt-4 w-100">
         <nav aria-label="Навигация по страницам">
@@ -219,7 +219,7 @@
     color: #ffffff !important;
 }
 
-/* 4. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ */
+/* 4. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ - УСИЛЕННЫЕ СТИЛИ */
 #formatTableContainer .pagination-container {
     background-color: rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(8px);
@@ -230,7 +230,9 @@
 }
 
 /* ПЕРЕОПРЕДЕЛЯЕМ СТИЛИ ПАГИНАЦИИ */
-#formatTableContainer #transparentPagination .page-link {
+#formatTableContainer #transparentPagination .page-link,
+#formatTableContainer #transparentPagination .page-link:focus,
+#formatTableContainer #transparentPagination .page-link:visited {
     background-color: transparent !important;
     background: transparent !important;
     border-color: rgba(255, 255, 255, 0.15) !important;
@@ -238,17 +240,23 @@
     transition: all 0.3s ease;
 }
 
-#formatTableContainer #transparentPagination .page-link:hover {
+#formatTableContainer #transparentPagination .page-item:not(.active) .page-link:hover {
     background-color: rgba(255, 255, 255, 0.1) !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
 }
 
-#formatTableContainer #transparentPagination .page-item.active .page-link {
-    background-color: rgba(13, 110, 253, 0.4) !important;
-    border-color: rgba(13, 110, 253, 0.6) !important;
+#formatTableContainer #transparentPagination .page-item.active .page-link,
+#formatTableContainer #transparentPagination .page-item.active .page-link:hover,
+#formatTableContainer #transparentPagination .page-item.active .page-link:focus {
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
+    color: #000000 !important;
+    box-shadow: none !important;
 }
 
-#formatTableContainer #transparentPagination .page-item.disabled .page-link {
+#formatTableContainer #transparentPagination .page-item.disabled .page-link,
+#formatTableContainer #transparentPagination .page-item.disabled .page-link:hover {
     background-color: transparent !important;
     border-color: rgba(255, 255, 255, 0.05) !important;
     color: rgba(255, 255, 255, 0.2) !important;
@@ -293,54 +301,3 @@
     }
 }
 </style>
-
-<!-- JAVASCRIPT ДЛЯ ПРИНУДИТЕЛЬНОГО ПРИМЕНЕНИЯ СТИЛЕЙ К ПАГИНАЦИИ -->
-<script>
-function makePaginationTransparent() {
-    const paginationLinks = document.querySelectorAll('#transparentPagination .page-link');
-    paginationLinks.forEach(link => {
-        link.style.setProperty('background-color', 'transparent', 'important');
-        link.style.setProperty('background', 'transparent', 'important');
-        link.style.setProperty('border-color', 'rgba(255, 255, 255, 0.15)', 'important');
-        link.style.setProperty('color', '#ffffff', 'important');
-
-        link.addEventListener('mouseenter', function() {
-            this.style.setProperty('background-color', 'rgba(255, 255, 255, 0.1)', 'important');
-            this.style.setProperty('border-color', 'rgba(255, 255, 255, 0.3)', 'important');
-        });
-        link.addEventListener('mouseleave', function() {
-            this.style.setProperty('background-color', 'transparent', 'important');
-            this.style.setProperty('border-color', 'rgba(255, 255, 255, 0.15)', 'important');
-        });
-    });
-
-    const activeLinks = document.querySelectorAll('#transparentPagination .page-item.active .page-link');
-    activeLinks.forEach(link => {
-        link.style.setProperty('background-color', 'rgba(13, 110, 253, 0.4)', 'important');
-        link.style.setProperty('border-color', 'rgba(13, 110, 253, 0.6)', 'important');
-    });
-
-    const disabledLinks = document.querySelectorAll('#transparentPagination .page-item.disabled .page-link');
-    disabledLinks.forEach(link => {
-        link.style.setProperty('background-color', 'transparent', 'important');
-        link.style.setProperty('border-color', 'rgba(255, 255, 255, 0.05)', 'important');
-        link.style.setProperty('color', 'rgba(255, 255, 255, 0.2)', 'important');
-    });
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    makePaginationTransparent();
-});
-
-document.addEventListener('htmx:afterSwap', function(event) {
-    if (event.detail.target.id === 'formatTableContainer') {
-        setTimeout(makePaginationTransparent, 50);
-    }
-});
-
-document.addEventListener('htmx:afterSettle', function(event) {
-    if (event.detail.target.id === 'formatTableContainer') {
-        setTimeout(makePaginationTransparent, 50);
-    }
-});
-</script>
