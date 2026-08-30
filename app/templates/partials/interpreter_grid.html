@@ -3,7 +3,7 @@
     <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
         <!-- 2. КАРТОЧКА С БЕЛОЙ РАМКОЙ -->
         <div class="card h-100 shadow-sm hover-lift border border-white border-opacity-50 transparent-card">
-            <div class="card-body text-center">
+            <div class="card-body text-center d-flex flex-column">
                 <div class="mb-3">
                     {% if interpreter.photo %}
                         <img src="data:image/jpeg;base64,{{ interpreter.photo|b64encode }}" 
@@ -17,9 +17,12 @@
                         </div>
                     {% endif %}
                 </div>
-                <h5 class="card-title text-white">{{ interpreter.fio }}</h5>
+                <!-- ИЗМЕНЕННЫЙ БЛОК С ФИО -->
+                <h5 class="card-title text-white" style="min-height: 3.6rem; display: flex; align-items: center; justify-content: center; word-break: break-word; line-height: 1.3;">
+                    {{ interpreter.fio }}
+                </h5>
                 <p class="card-text">
-                    <span class="badge bg-success bg-opacity-75 text-white">
+                    <span class="badge custom-badge">
                         <i class="bi bi-book"></i> Книг: {{ interpreter.book_interpreters|length }}
                     </span>
                 </p>
@@ -38,7 +41,7 @@
                     </p>
                 {% endif %}
             </div>
-            <div class="card-footer bg-transparent border-top-0">
+            <div class="card-footer bg-transparent border-top-0 mt-auto">
                 <div class="d-flex justify-content-center gap-2">
                     <a href="{{ url_for('main.interpreter_card', interpreter_id=interpreter.id) }}" 
                        class="btn btn-outline-light btn-sm" title="Просмотр карточки">
@@ -205,6 +208,7 @@
     background-color: rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(5px);
     transition: all 0.3s ease;
+    min-height: 380px; /* ФИКСИРОВАННАЯ МИНИМАЛЬНАЯ ВЫСОТА */
 }
 
 #interpreterGrid .transparent-card:hover {
@@ -217,13 +221,49 @@
     border: 1px solid rgba(255, 255, 255, 0.5) !important;
 }
 
-/* 3. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ */
+/* 3. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ - УСИЛЕННЫЕ СТИЛИ */
 #interpreterGrid .pagination-container {
     background-color: rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(8px);
     border-radius: 8px;
     padding: 0.75rem 1rem;
     border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Базовый стиль для всех ссылок пагинации */
+#interpreterGrid .pagination .page-link,
+#interpreterGrid .pagination .page-link:focus,
+#interpreterGrid .pagination .page-link:visited {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+    transition: all 0.2s ease;
+}
+
+/* Стиль при наведении для НЕактивных страниц */
+#interpreterGrid .pagination .page-item:not(.active) .page-link:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+}
+
+/* Стиль для АКТИВНОЙ страницы */
+#interpreterGrid .pagination .page-item.active .page-link,
+#interpreterGrid .pagination .page-item.active .page-link:hover,
+#interpreterGrid .pagination .page-item.active .page-link:focus {
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+}
+
+/* Стиль для отключенных страниц */
+#interpreterGrid .pagination .page-item.disabled .page-link,
+#interpreterGrid .pagination .page-item.disabled .page-link:hover {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    color: rgba(255, 255, 255, 0.2) !important;
+    cursor: not-allowed;
 }
 
 /* Текст в пагинации */
@@ -234,6 +274,15 @@
 /* Цвет текста в карточках */
 #interpreterGrid .card-title {
     color: #ffffff !important;
+    min-height: 3.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    word-break: break-word;
+    line-height: 1.3;
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    padding: 0 0.25rem;
 }
 
 /* Бейджи */
@@ -255,6 +304,14 @@
 
 #interpreterGrid .badge.bg-secondary {
     background-color: rgba(108, 117, 125, 0.7) !important;
+}
+
+/* НОВЫЙ СТИЛЬ ДЛЯ БЕЙДЖА "КНИГ" */
+#interpreterGrid .custom-badge {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
 }
 
 /* Кнопки в карточках */
@@ -290,55 +347,15 @@
         align-items: center !important;
     }
 }
-</style>
 
-<!-- JAVASCRIPT ДЛЯ ПРИНУДИТЕЛЬНОГО ПРИМЕНЕНИЯ СТИЛЕЙ К ПАГИНАЦИИ -->
-<script>
-function makePaginationTransparent() {
-    const paginationLinks = document.querySelectorAll('#transparentPagination .page-link');
-    paginationLinks.forEach(link => {
-        link.style.setProperty('background-color', 'transparent', 'important');
-        link.style.setProperty('background', 'transparent', 'important');
-        link.style.setProperty('border-color', 'rgba(255, 255, 255, 0.15)', 'important');
-        link.style.setProperty('color', '#ffffff', 'important');
-
-        link.addEventListener('mouseenter', function() {
-            this.style.setProperty('background-color', 'rgba(255, 255, 255, 0.1)', 'important');
-            this.style.setProperty('border-color', 'rgba(255, 255, 255, 0.3)', 'important');
-        });
-        link.addEventListener('mouseleave', function() {
-            this.style.setProperty('background-color', 'transparent', 'important');
-            this.style.setProperty('border-color', 'rgba(255, 255, 255, 0.15)', 'important');
-        });
-    });
-
-    const activeLinks = document.querySelectorAll('#transparentPagination .page-item.active .page-link');
-    activeLinks.forEach(link => {
-        link.style.setProperty('background-color', 'rgba(13, 110, 253, 0.4)', 'important');
-        link.style.setProperty('border-color', 'rgba(13, 110, 253, 0.6)', 'important');
-    });
-
-    const disabledLinks = document.querySelectorAll('#transparentPagination .page-item.disabled .page-link');
-    disabledLinks.forEach(link => {
-        link.style.setProperty('background-color', 'transparent', 'important');
-        link.style.setProperty('border-color', 'rgba(255, 255, 255, 0.05)', 'important');
-        link.style.setProperty('color', 'rgba(255, 255, 255, 0.2)', 'important');
-    });
+@media (max-width: 576px) {
+    #interpreterGrid .transparent-card {
+        min-height: 340px;
+    }
+    
+    #interpreterGrid .card-title {
+        min-height: 3rem;
+        font-size: 1rem;
+    }
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-    makePaginationTransparent();
-});
-
-document.addEventListener('htmx:afterSwap', function(event) {
-    if (event.detail.target.id === 'interpreterGridContainer') {
-        setTimeout(makePaginationTransparent, 50);
-    }
-});
-
-document.addEventListener('htmx:afterSettle', function(event) {
-    if (event.detail.target.id === 'interpreterGridContainer') {
-        setTimeout(makePaginationTransparent, 50);
-    }
-});
-</script>
+</style>
