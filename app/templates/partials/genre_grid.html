@@ -3,16 +3,19 @@
     <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
         <!-- 2. КАРТОЧКА С БЕЛОЙ РАМКОЙ -->
         <div class="card h-100 shadow-sm hover-lift border border-white border-opacity-50 transparent-card">
-            <div class="card-body text-center">
+            <div class="card-body text-center d-flex flex-column">
                 <div class="mb-3">
                     <div class="bg-transparent d-inline-flex align-items-center justify-content-center" 
                          style="width: 100px; height: 100px; border: 2px solid rgba(255,255,255,0.3);">
                         <i class="bi bi-tags display-1 text-white-50"></i>
                     </div>
                 </div>
-                <h5 class="card-title text-white">{{ genre.name }}</h5>
+                <!-- БЛОК С НАЗВАНИЕМ ЖАНРА С ФИКСИРОВАННОЙ ВЫСОТОЙ -->
+                <h5 class="card-title text-white" style="min-height: 3.6rem; display: flex; align-items: center; justify-content: center; word-break: break-word; line-height: 1.3;">
+                    {{ genre.name }}
+                </h5>
                 <p class="card-text">
-                    <span class="badge bg-warning bg-opacity-75 text-dark">
+                    <span class="badge custom-badge">
                         <i class="bi bi-book"></i> Книг: {{ genre.book_genres|length }}
                     </span>
                 </p>
@@ -26,7 +29,7 @@
                     {% endif %}
                 </p>
             </div>
-            <div class="card-footer bg-transparent border-top-0">
+            <div class="card-footer bg-transparent border-top-0 mt-auto">
                 <div class="d-flex justify-content-center gap-2">
                     <a href="{{ url_for('main.genre_card', genre_id=genre.id, page=1) }}" 
                        class="btn btn-outline-light btn-sm" title="Просмотр карточки">
@@ -189,6 +192,7 @@
     background-color: rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(5px);
     transition: all 0.3s ease;
+    min-height: 380px;
 }
 
 #genreGrid .transparent-card:hover {
@@ -201,13 +205,49 @@
     border: 1px solid rgba(255, 255, 255, 0.5) !important;
 }
 
-/* 3. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ */
+/* 3. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ - УСИЛЕННЫЕ СТИЛИ */
 #genreGrid .pagination-container {
     background-color: rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(8px);
     border-radius: 8px;
     padding: 0.75rem 1rem;
     border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Базовый стиль для всех ссылок пагинации */
+#genreGrid .pagination .page-link,
+#genreGrid .pagination .page-link:focus,
+#genreGrid .pagination .page-link:visited {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+    transition: all 0.2s ease;
+}
+
+/* Стиль при наведении для НЕактивных страниц */
+#genreGrid .pagination .page-item:not(.active) .page-link:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+}
+
+/* Стиль для АКТИВНОЙ страницы */
+#genreGrid .pagination .page-item.active .page-link,
+#genreGrid .pagination .page-item.active .page-link:hover,
+#genreGrid .pagination .page-item.active .page-link:focus {
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+}
+
+/* Стиль для отключенных страниц */
+#genreGrid .pagination .page-item.disabled .page-link,
+#genreGrid .pagination .page-item.disabled .page-link:hover {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    color: rgba(255, 255, 255, 0.2) !important;
+    cursor: not-allowed;
 }
 
 /* Текст в пагинации */
@@ -218,12 +258,23 @@
 /* Цвет текста в карточках */
 #genreGrid .card-title {
     color: #ffffff !important;
+    min-height: 3.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    word-break: break-word;
+    line-height: 1.3;
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    padding: 0 0.25rem;
 }
 
-/* Бейджи */
-#genreGrid .badge.bg-warning {
-    background-color: rgba(255, 193, 7, 0.7) !important;
-    color: #212529 !important;
+/* НОВЫЙ СТИЛЬ ДЛЯ БЕЙДЖА "КНИГ" */
+#genreGrid .custom-badge {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
 }
 
 /* Кнопки в карточках */
@@ -259,55 +310,15 @@
         align-items: center !important;
     }
 }
-</style>
 
-<!-- JAVASCRIPT ДЛЯ ПРИНУДИТЕЛЬНОГО ПРИМЕНЕНИЯ СТИЛЕЙ К ПАГИНАЦИИ -->
-<script>
-function makePaginationTransparent() {
-    const paginationLinks = document.querySelectorAll('#transparentPagination .page-link');
-    paginationLinks.forEach(link => {
-        link.style.setProperty('background-color', 'transparent', 'important');
-        link.style.setProperty('background', 'transparent', 'important');
-        link.style.setProperty('border-color', 'rgba(255, 255, 255, 0.15)', 'important');
-        link.style.setProperty('color', '#ffffff', 'important');
-
-        link.addEventListener('mouseenter', function() {
-            this.style.setProperty('background-color', 'rgba(255, 255, 255, 0.1)', 'important');
-            this.style.setProperty('border-color', 'rgba(255, 255, 255, 0.3)', 'important');
-        });
-        link.addEventListener('mouseleave', function() {
-            this.style.setProperty('background-color', 'transparent', 'important');
-            this.style.setProperty('border-color', 'rgba(255, 255, 255, 0.15)', 'important');
-        });
-    });
-
-    const activeLinks = document.querySelectorAll('#transparentPagination .page-item.active .page-link');
-    activeLinks.forEach(link => {
-        link.style.setProperty('background-color', 'rgba(13, 110, 253, 0.4)', 'important');
-        link.style.setProperty('border-color', 'rgba(13, 110, 253, 0.6)', 'important');
-    });
-
-    const disabledLinks = document.querySelectorAll('#transparentPagination .page-item.disabled .page-link');
-    disabledLinks.forEach(link => {
-        link.style.setProperty('background-color', 'transparent', 'important');
-        link.style.setProperty('border-color', 'rgba(255, 255, 255, 0.05)', 'important');
-        link.style.setProperty('color', 'rgba(255, 255, 255, 0.2)', 'important');
-    });
+@media (max-width: 576px) {
+    #genreGrid .transparent-card {
+        min-height: 340px;
+    }
+    
+    #genreGrid .card-title {
+        min-height: 3rem;
+        font-size: 1rem;
+    }
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-    makePaginationTransparent();
-});
-
-document.addEventListener('htmx:afterSwap', function(event) {
-    if (event.detail.target.id === 'genreGridContainer') {
-        setTimeout(makePaginationTransparent, 50);
-    }
-});
-
-document.addEventListener('htmx:afterSettle', function(event) {
-    if (event.detail.target.id === 'genreGridContainer') {
-        setTimeout(makePaginationTransparent, 50);
-    }
-});
-</script>
+</style>
