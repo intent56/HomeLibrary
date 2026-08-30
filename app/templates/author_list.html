@@ -241,4 +241,45 @@ content %}
     font-size: 1.1rem;
   }
 </style>
+
+<!-- ===== ПРИНУДИТЕЛЬНЫЕ СТИЛИ ДЛЯ ПАГИНАЦИИ ===== -->
+<!-- Переопределяем Bootstrap для пагинации в authorGridContainer -->
+<style>
+  #authorGridContainer .pagination .page-link {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+  }
+
+  #authorGridContainer .pagination .page-link:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+  }
+
+  #authorGridContainer .pagination .page-item.active .page-link,
+  #authorGridContainer .pagination .page-item.active .page-link:hover,
+  #authorGridContainer .pagination .page-item.active .page-link:focus {
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+  }
+
+  #authorGridContainer .pagination .page-item.disabled .page-link,
+  #authorGridContainer .pagination .page-item.disabled .page-link:hover {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  /* Дополнительно: обнуляем фон контейнера пагинации */
+  #authorGridContainer .pagination-container {
+    background-color: rgba(0, 0, 0, 0.25) !important;
+    backdrop-filter: blur(8px);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+</style>
 {% endblock %}

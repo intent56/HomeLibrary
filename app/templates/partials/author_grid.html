@@ -3,7 +3,7 @@
     <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
         <!-- 2. КАРТОЧКА С БЕЛОЙ РАМКОЙ -->
         <div class="card h-100 shadow-sm hover-lift border border-white border-opacity-50 transparent-card">
-            <div class="card-body text-center">
+            <div class="card-body text-center d-flex flex-column">
                 <div class="mb-3">
                     {% if author.photo %}
                         <img src="data:image/jpeg;base64,{{ author.photo|b64encode }}" 
@@ -17,15 +17,17 @@
                         </div>
                     {% endif %}
                 </div>
-                <h5 class="card-title text-white">{{ author.fio }}</h5>
+                <!-- БЛОК С ФИО АВТОРА С ФИКСИРОВАННОЙ ВЫСОТОЙ -->
+                <h5 class="card-title text-white" style="min-height: 3.6rem; display: flex; align-items: center; justify-content: center; word-break: break-word; line-height: 1.3;">
+                    {{ author.fio }}
+                </h5>
                 <p class="card-text">
-                    <!-- ИЗМЕНЕННЫЙ БЕЙДЖ -->
                     <span class="badge" style="background-color: var(--main-color); color: #000000; font-weight: 500;">
                         <i class="bi bi-book"></i> Книг: {{ author.book_authors|length }}
                     </span>
                 </p>
             </div>
-            <div class="card-footer bg-transparent border-top-0">
+            <div class="card-footer bg-transparent border-top-0 mt-auto">
                 <div class="d-flex justify-content-center gap-2">
                     <a href="{{ url_for('main.author_card', author_id=author.id) }}" 
                        class="btn btn-outline-light btn-sm" title="Просмотр карточки">
@@ -188,6 +190,7 @@
     background-color: rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(5px);
     transition: all 0.3s ease;
+    min-height: 380px;
 }
 
 #authorGrid .transparent-card:hover {
@@ -200,13 +203,49 @@
     border: 1px solid rgba(255, 255, 255, 0.5) !important;
 }
 
-/* 3. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ */
+/* 3. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ - УСИЛЕННЫЕ СТИЛИ */
 #authorGrid .pagination-container {
     background-color: rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(8px);
     border-radius: 8px;
     padding: 0.75rem 1rem;
     border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Базовый стиль для всех ссылок пагинации */
+#authorGrid .pagination .page-link,
+#authorGrid .pagination .page-link:focus,
+#authorGrid .pagination .page-link:visited {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+    transition: all 0.2s ease;
+}
+
+/* Стиль при наведении для НЕактивных страниц */
+#authorGrid .pagination .page-item:not(.active) .page-link:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+}
+
+/* Стиль для АКТИВНОЙ страницы */
+#authorGrid .pagination .page-item.active .page-link,
+#authorGrid .pagination .page-item.active .page-link:hover,
+#authorGrid .pagination .page-item.active .page-link:focus {
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+}
+
+/* Стиль для отключенных страниц */
+#authorGrid .pagination .page-item.disabled .page-link,
+#authorGrid .pagination .page-item.disabled .page-link:hover {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    color: rgba(255, 255, 255, 0.2) !important;
+    cursor: not-allowed;
 }
 
 /* Текст в пагинации */
@@ -217,13 +256,23 @@
 /* Цвет текста в карточках */
 #authorGrid .card-title {
     color: #ffffff !important;
+    min-height: 3.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    word-break: break-word;
+    line-height: 1.3;
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    padding: 0 0.25rem;
 }
 
-/* Бейджи - ДОБАВЛЕН НОВЫЙ СТИЛЬ */
+/* Бейджи */
 #authorGrid .badge {
     background-color: var(--main-color) !important;
     color: #000000 !important;
     font-weight: 500;
+    padding: 0.5rem 1rem;
 }
 
 /* Кнопки в карточках */
@@ -259,72 +308,15 @@
         align-items: center !important;
     }
 }
-</style>
 
-<!-- JAVASCRIPT ДЛЯ ПРИНУДИТЕЛЬНОГО ПРИМЕНЕНИЯ СТИЛЕЙ К ПАГИНАЦИИ -->
-<script>
-function makePaginationTransparent() {
-    // Находим все кнопки пагинации внутри контейнера с ID transparentPagination
-    const paginationLinks = document.querySelectorAll('#transparentPagination .page-link');
-
-    paginationLinks.forEach(link => {
-        // Проверяем, является ли элемент активным
-        const isActive = link.closest('.page-item')?.classList.contains('active');
-
-        // Принудительно применяем стили через style
-        link.style.setProperty('background-color', 'transparent', 'important');
-        link.style.setProperty('background', 'transparent', 'important');
-        link.style.setProperty('border-color', 'rgba(255, 255, 255, 0.15)', 'important');
-        link.style.setProperty('color', '#ffffff', 'important');
-
-        // Добавляем обработчик для hover ТОЛЬКО если элемент НЕ активный
-        if (!isActive) {
-            link.addEventListener('mouseenter', function() {
-                this.style.setProperty('background-color', 'rgba(255, 255, 255, 0.1)', 'important');
-                this.style.setProperty('border-color', 'rgba(255, 255, 255, 0.3)', 'important');
-            });
-            link.addEventListener('mouseleave', function() {
-                this.style.setProperty('background-color', 'transparent', 'important');
-                this.style.setProperty('border-color', 'rgba(255, 255, 255, 0.15)', 'important');
-            });
-        }
-    });
-
-    // Обрабатываем активные элементы - золотой фон
-    const activeLinks = document.querySelectorAll('#transparentPagination .page-item.active .page-link');
-    activeLinks.forEach(link => {
-        link.style.setProperty('background-color', '#d4af37', 'important');
-        link.style.setProperty('border-color', '#d4af37', 'important');
-        link.style.setProperty('color', '#000000', 'important');
-    });
-
-    // Обрабатываем отключенные элементы
-    const disabledLinks = document.querySelectorAll('#transparentPagination .page-item.disabled .page-link');
-    disabledLinks.forEach(link => {
-        link.style.setProperty('background-color', 'transparent', 'important');
-        link.style.setProperty('border-color', 'rgba(255, 255, 255, 0.05)', 'important');
-        link.style.setProperty('color', 'rgba(255, 255, 255, 0.2)', 'important');
-    });
+@media (max-width: 576px) {
+    #authorGrid .transparent-card {
+        min-height: 340px;
+    }
+    
+    #authorGrid .card-title {
+        min-height: 3rem;
+        font-size: 1rem;
+    }
 }
-
-// Запускаем при загрузке страницы
-document.addEventListener('DOMContentLoaded', function() {
-    makePaginationTransparent();
-});
-
-// Запускаем после каждого обновления через HTMX
-document.addEventListener('htmx:afterSwap', function(event) {
-    // Проверяем, что обновился именно контейнер с авторами
-    if (event.detail.target.id === 'authorGridContainer') {
-        // Даем небольшой таймаут, чтобы DOM успел обновиться
-        setTimeout(makePaginationTransparent, 50);
-    }
-});
-
-// Также запускаем после полной замены содержимого
-document.addEventListener('htmx:afterSettle', function(event) {
-    if (event.detail.target.id === 'authorGridContainer') {
-        setTimeout(makePaginationTransparent, 50);
-    }
-});
-</script>
+</style>
