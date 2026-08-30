@@ -1,359 +1,403 @@
-{% extends "base.html" %}
-
-{% block body_class %}bg-page2{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block body_class %}bg-page2{% endblock %} {% block
+content %}
 <div class="row">
-    <div class="col-lg-8 mx-auto">
-        <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2 class="text-white"><i class="bi bi-pencil-square"></i> Редактирование агрегатора</h2>
-                <h5 class="text-white-50">{{ aggregator.name }}</h5>
-            </div>
-            <a href="{{ url_for('main.aggregator_list') }}" class="btn btn-outline-light">
-                <i class="bi bi-arrow-left"></i> Назад к списку
-            </a>
-        </div>
-
-        <form method="POST" action="{{ url_for('main.edit_aggregator', aggregator_id=aggregator.id) }}" novalidate>
-            {{ form.csrf_token }}
-
-            <div class="card shadow-sm mb-4 transparent-card">
-                <div class="card-header transparent-card-header">
-                    <h5 class="mb-0 text-white"><i class="bi bi-info-circle"></i> Информация об агрегаторе</h5>
-                </div>
-                <div class="card-body transparent-card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                {{ form.name.label(class="form-label fw-bold text-white") }}
-                                <span class="text-danger">*</span>
-                                {{ form.name(class="form-control bg-transparent text-white border-light" + (" is-invalid" if form.name.errors else ""), 
-                                           placeholder="Например: Ozon") }}
-                                {% if form.name.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {% for error in form.name.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                                <div class="form-text text-white-50">Название агрегатора</div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                {{ form.code.label(class="form-label fw-bold text-white") }}
-                                <span class="text-danger">*</span>
-                                {{ form.code(class="form-control bg-transparent text-white border-light" + (" is-invalid" if form.code.errors else ""), 
-                                           placeholder="Например: ozon") }}
-                                {% if form.code.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {% for error in form.code.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                                <div class="form-text text-white-50">Уникальный код агрегатора</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        {{ form.url_template.label(class="form-label fw-bold text-white") }}
-                        <span class="text-danger">*</span>
-                        {{ form.url_template(class="form-control bg-transparent text-white border-light" + (" is-invalid" if form.url_template.errors else ""), 
-                                           placeholder="https://www.ozon.ru/search/?text={query}") }}
-                        {% if form.url_template.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.url_template.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                        <div class="form-text text-white-50">
-                            Шаблон URL с <code class="text-white-50">{query}</code> - вместо него будет подставлен поисковый запрос
-                            <br>
-                            <small class="text-white-50">Пример: <code class="text-white-50">https://example.com/search?q={query}</code></small>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        {{ form.icon.label(class="form-label fw-bold text-white") }}
-                        {{ form.icon(class="form-control bg-transparent text-white border-light" + (" is-invalid" if form.icon.errors else ""), 
-                                   placeholder="bi-box-seam") }}
-                        {% if form.icon.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.icon.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                        <div class="form-text text-white-50">
-                            Иконка из библиотеки <a href="https://icons.getbootstrap.com/" target="_blank" class="text-light">Bootstrap Icons</a>
-                            <br>
-                            <small class="text-white-50">Пример: <code class="text-white-50">bi-box-seam</code>, <code class="text-white-50">bi-bag</code>, <code class="text-white-50">bi-book</code></small>
-                        </div>
-                        <div class="mt-2">
-                            <span class="badge bg-light bg-opacity-75 text-dark">Предпросмотр:</span>
-                            <i class="bi {{ form.icon.data or 'bi-box-seam' }} fs-4 text-white" id="iconPreview"></i>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3 form-check">
-                                {{ form.is_active(class="form-check-input bg-transparent border-light") }}
-                                {{ form.is_active.label(class="form-check-label text-white") }}
-                                <div class="form-text text-white-50">Если активно, агрегатор будет доступен для поиска</div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                {{ form.search_type.label(class="form-label fw-bold text-white") }}
-                                {{ form.search_type(class="form-select bg-transparent text-white border-light" + (" is-invalid" if form.search_type.errors else "")) }}
-                                {% if form.search_type.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {% for error in form.search_type.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                                <div class="form-text text-white-50">
-                                    <strong>Стандартный</strong> - открытие URL с запросом<br>
-                                    <strong>Редирект</strong> - специальная обработка с перекодировкой
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        {{ form.comment.label(class="form-label fw-bold text-white") }}
-                        {{ form.comment(class="form-control bg-transparent text-white border-light", rows="3", placeholder="Дополнительная информация об агрегаторе...") }}
-                        <div class="form-text text-white-50">Комментарии, примечания</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card shadow-sm mb-4 transparent-card">
-                <div class="card-body transparent-card-body">
-                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                        <div>
-                            <span class="text-white-50">
-                                <i class="bi bi-info-circle"></i> 
-                                Поля с <span class="text-danger">*</span> обязательны для заполнения
-                            </span>
-                        </div>
-                        <div class="d-flex gap-2">
-                            <a href="{{ url_for('main.aggregator_list') }}" class="btn btn-outline-light btn-lg">
-                                <i class="bi bi-x-circle"></i> Отмена
-                            </a>
-                            {{ form.submit(class="btn btn-primary btn-lg") }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
+  <div class="col-lg-8 mx-auto">
+    <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 class="text-white">
+          <i class="bi bi-pencil-square"></i> Редактирование агрегатора
+        </h2>
+        <h5 class="text-white-50">{{ aggregator.name }}</h5>
+      </div>
+      <a
+        href="{{ url_for('main.aggregator_list') }}"
+        class="btn btn-outline-light"
+      >
+        <i class="bi bi-arrow-left"></i> Назад к списку
+      </a>
     </div>
+
+    <form
+      method="POST"
+      action="{{ url_for('main.edit_aggregator', aggregator_id=aggregator.id) }}"
+      novalidate
+    >
+      {{ form.csrf_token }}
+
+      <div class="card shadow-sm mb-4 transparent-card">
+        <div class="card-header transparent-card-header">
+          <h5 class="mb-0 text-white">
+            <i class="bi bi-info-circle"></i> Информация об агрегаторе
+          </h5>
+        </div>
+        <div class="card-body transparent-card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                {{ form.name.label(class="form-label fw-bold text-white") }}
+                <span class="text-danger">*</span>
+                {{ form.name(class="form-control bg-transparent text-white
+                border-light" + (" is-invalid" if form.name.errors else ""),
+                placeholder="Например: Ozon") }} {% if form.name.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in form.name.errors %} {{ error }} {% endfor %}
+                </div>
+                {% endif %}
+                <div class="form-text text-white-50">Название агрегатора</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                {{ form.code.label(class="form-label fw-bold text-white") }}
+                <span class="text-danger">*</span>
+                {{ form.code(class="form-control bg-transparent text-white
+                border-light" + (" is-invalid" if form.code.errors else ""),
+                placeholder="Например: ozon") }} {% if form.code.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in form.code.errors %} {{ error }} {% endfor %}
+                </div>
+                {% endif %}
+                <div class="form-text text-white-50">
+                  Уникальный код агрегатора
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            {{ form.url_template.label(class="form-label fw-bold text-white") }}
+            <span class="text-danger">*</span>
+            {{ form.url_template(class="form-control bg-transparent text-white
+            border-light" + (" is-invalid" if form.url_template.errors else ""),
+            placeholder="https://www.ozon.ru/search/?text={query}") }} {% if
+            form.url_template.errors %}
+            <div class="invalid-feedback d-block">
+              {% for error in form.url_template.errors %} {{ error }} {% endfor
+              %}
+            </div>
+            {% endif %}
+            <div class="form-text text-white-50">
+              Шаблон URL с <code class="text-white-50">{query}</code> - вместо
+              него будет подставлен поисковый запрос
+              <br />
+              <small class="text-white-50"
+                >Пример:
+                <code class="text-white-50"
+                  >https://example.com/search?q={query}</code
+                ></small
+              >
+            </div>
+          </div>
+
+          <div class="mb-3">
+            {{ form.icon.label(class="form-label fw-bold text-white") }} {{
+            form.icon(class="form-control bg-transparent text-white
+            border-light" + (" is-invalid" if form.icon.errors else ""),
+            placeholder="bi-box-seam") }} {% if form.icon.errors %}
+            <div class="invalid-feedback d-block">
+              {% for error in form.icon.errors %} {{ error }} {% endfor %}
+            </div>
+            {% endif %}
+            <div class="form-text text-white-50">
+              Иконка из библиотеки
+              <a
+                href="https://icons.getbootstrap.com/"
+                target="_blank"
+                class="text-light"
+                >Bootstrap Icons</a
+              >
+              <br />
+              <small class="text-white-50"
+                >Пример: <code class="text-white-50">bi-box-seam</code>,
+                <code class="text-white-50">bi-bag</code>,
+                <code class="text-white-50">bi-book</code></small
+              >
+            </div>
+            <div class="mt-2">
+              <span class="badge bg-light bg-opacity-75 text-dark"
+                >Предпросмотр:</span
+              >
+              <i
+                class="bi {{ form.icon.data or 'bi-box-seam' }} fs-4 text-white"
+                id="iconPreview"
+              ></i>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3 form-check">
+                {{ form.is_active(class="form-check-input bg-transparent
+                border-light") }} {{
+                form.is_active.label(class="form-check-label text-white") }}
+                <div class="form-text text-white-50">
+                  Если активно, агрегатор будет доступен для поиска
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                {{ form.search_type.label(class="form-label fw-bold text-white")
+                }} {{ form.search_type(class="form-select bg-transparent
+                text-white border-light" + (" is-invalid" if
+                form.search_type.errors else "")) }} {% if
+                form.search_type.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in form.search_type.errors %} {{ error }} {%
+                  endfor %}
+                </div>
+                {% endif %}
+                <div class="form-text text-white-50">
+                  <strong>Стандартный</strong> - открытие URL с запросом<br />
+                  <strong>Редирект</strong> - специальная обработка с
+                  перекодировкой
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            {{ form.comment.label(class="form-label fw-bold text-white") }} {{
+            form.comment(class="form-control bg-transparent text-white
+            border-light", rows="3", placeholder="Дополнительная информация об
+            агрегаторе...") }}
+            <div class="form-text text-white-50">Комментарии, примечания</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow-sm mb-4 transparent-card">
+        <div class="card-body transparent-card-body">
+          <div
+            class="d-flex justify-content-between align-items-center flex-wrap gap-2"
+          >
+            <div>
+              <span class="text-white-50">
+                <i class="bi bi-info-circle"></i>
+                Поля с <span class="text-danger">*</span> обязательны для
+                заполнения
+              </span>
+            </div>
+            <div class="d-flex gap-2">
+              <a
+                href="{{ url_for('main.aggregator_list') }}"
+                class="btn btn-outline-light btn-lg"
+              >
+                <i class="bi bi-x-circle"></i> Отмена
+              </a>
+              {{ form.submit(class="btn btn-primary btn-lg") }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener("DOMContentLoaded", function () {
     // Предпросмотр иконки
-    const iconInput = document.getElementById('icon');
-    const iconPreview = document.getElementById('iconPreview');
+    const iconInput = document.getElementById("icon");
+    const iconPreview = document.getElementById("iconPreview");
 
     if (iconInput && iconPreview) {
-        // Устанавливаем начальный предпросмотр
-        const initialIcon = iconInput.value.trim() || 'bi-box-seam';
-        iconPreview.className = 'bi ' + initialIcon + ' fs-4 text-white';
+      // Устанавливаем начальный предпросмотр
+      const initialIcon = iconInput.value.trim() || "bi-box-seam";
+      iconPreview.className = "bi " + initialIcon + " fs-4 text-white";
 
-        iconInput.addEventListener('input', function() {
-            const iconClass = this.value.trim() || 'bi-box-seam';
-            iconPreview.className = 'bi ' + iconClass + ' fs-4 text-white';
-        });
+      iconInput.addEventListener("input", function () {
+        const iconClass = this.value.trim() || "bi-box-seam";
+        iconPreview.className = "bi " + iconClass + " fs-4 text-white";
+      });
     }
 
     // Валидация URL шаблона
-    const urlTemplateInput = document.getElementById('url_template');
+    const urlTemplateInput = document.getElementById("url_template");
     if (urlTemplateInput) {
-        urlTemplateInput.addEventListener('blur', function() {
-            const value = this.value.trim();
-            if (value && !value.includes('{query}')) {
-                this.classList.add('is-invalid');
-                let feedback = this.parentElement.querySelector('.invalid-feedback');
-                if (!feedback) {
-                    feedback = document.createElement('div');
-                    feedback.className = 'invalid-feedback d-block';
-                    feedback.textContent = 'Шаблон URL должен содержать {query}';
-                    this.parentElement.appendChild(feedback);
-                }
-            } else {
-                this.classList.remove('is-invalid');
-                const feedback = this.parentElement.querySelector('.invalid-feedback');
-                if (feedback) feedback.remove();
-            }
-        });
+      urlTemplateInput.addEventListener("blur", function () {
+        const value = this.value.trim();
+        if (value && !value.includes("{query}")) {
+          this.classList.add("is-invalid");
+          let feedback = this.parentElement.querySelector(".invalid-feedback");
+          if (!feedback) {
+            feedback = document.createElement("div");
+            feedback.className = "invalid-feedback d-block";
+            feedback.textContent = "Шаблон URL должен содержать {query}";
+            this.parentElement.appendChild(feedback);
+          }
+        } else {
+          this.classList.remove("is-invalid");
+          const feedback =
+            this.parentElement.querySelector(".invalid-feedback");
+          if (feedback) feedback.remove();
+        }
+      });
     }
 
     // Подтверждение перед выходом без сохранения
-    const form = document.querySelector('form');
+    const form = document.querySelector("form");
     let formChanged = false;
 
-    form.querySelectorAll('input, textarea, select').forEach(element => {
-        element.addEventListener('change', function() {
-            formChanged = true;
-        });
+    form.querySelectorAll("input, textarea, select").forEach((element) => {
+      element.addEventListener("change", function () {
+        formChanged = true;
+      });
     });
 
-    window.addEventListener('beforeunload', function(e) {
-        if (formChanged) {
-            e.preventDefault();
-            e.returnValue = 'Вы не сохранили изменения. Вы уверены, что хотите покинуть страницу?';
-        }
+    window.addEventListener("beforeunload", function (e) {
+      if (formChanged) {
+        e.preventDefault();
+        e.returnValue =
+          "Вы не сохранили изменения. Вы уверены, что хотите покинуть страницу?";
+      }
     });
 
-    form.addEventListener('submit', function() {
-        formChanged = false;
+    form.addEventListener("submit", function () {
+      formChanged = false;
     });
-});
+  });
 </script>
 
 <style>
-/* 1. ПОЛНОСТЬЮ УБИРАЕМ ВСЕ ФОНЫ */
-.transparent-card,
-.transparent-card *,
-.transparent-card .card-body,
-.transparent-card .card-header,
-.transparent-card .card-footer,
-.transparent-card .table,
-.transparent-card .table-responsive {
+  /* 1. ПОЛНОСТЬЮ УБИРАЕМ ВСЕ ФОНЫ */
+  .transparent-card,
+  .transparent-card *,
+  .transparent-card .card-body,
+  .transparent-card .card-header,
+  .transparent-card .card-footer,
+  .transparent-card .table,
+  .transparent-card .table-responsive {
     background: transparent !important;
     background-color: transparent !important;
-}
+  }
 
-/* 2. КАРТОЧКА - ТОЛЬКО РАМКА */
-.transparent-card {
+  /* 2. КАРТОЧКА - ТОЛЬКО РАМКА */
+  .transparent-card {
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
-}
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  }
 
-.transparent-card-header {
+  .transparent-card-header {
     border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
     border-radius: 12px 12px 0 0 !important;
-}
+  }
 
-/* 3. ТЕКСТЫ БЕЛЫМ */
-.text-white { color: #ffffff !important; }
-.text-white-50 { color: rgba(255, 255, 255, 0.7) !important; }
+  /* 3. ТЕКСТЫ БЕЛЫМ */
+  .text-white {
+    color: #ffffff !important;
+  }
+  .text-white-50 {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
 
-/* 4. ПОЛЯ ВВОДА */
-.form-control.bg-transparent {
+  /* 4. ПОЛЯ ВВОДА */
+  .form-control.bg-transparent {
     background-color: rgba(255, 255, 255, 0.1) !important;
     color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
-}
+  }
 
-.form-control.bg-transparent:focus {
+  .form-control.bg-transparent:focus {
     background-color: rgba(255, 255, 255, 0.2) !important;
     border-color: rgba(255, 255, 255, 0.5) !important;
     box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
-}
+  }
 
-.form-control.bg-transparent::placeholder {
+  .form-control.bg-transparent::placeholder {
     color: rgba(255, 255, 255, 0.5);
-}
+  }
 
-/* 5. SELECT ПОЛЯ */
-.form-select.bg-transparent {
+  /* 5. SELECT ПОЛЯ */
+  .form-select.bg-transparent {
     background-color: rgba(255, 255, 255, 0.1) !important;
     color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='white' d='M8 11L3 6h10z'/%3e%3c/svg%3e");
-}
+  }
 
-.form-select.bg-transparent:focus {
+  .form-select.bg-transparent:focus {
     background-color: rgba(255, 255, 255, 0.2) !important;
     border-color: rgba(255, 255, 255, 0.5) !important;
     box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
-}
+  }
 
-.form-select.bg-transparent option {
+  .form-select.bg-transparent option {
     background-color: #343a40;
     color: #ffffff;
-}
+  }
 
-/* 6. CHECKBOX */
-.form-check-input.bg-transparent {
+  /* 6. CHECKBOX */
+  .form-check-input.bg-transparent {
     background-color: rgba(255, 255, 255, 0.1) !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
-}
+  }
 
-.form-check-input.bg-transparent:checked {
+  .form-check-input.bg-transparent:checked {
     background-color: #0d6efd !important;
     border-color: #0d6efd !important;
-}
+  }
 
-/* 7. КНОПКИ */
-.btn-outline-light {
+  /* 7. КНОПКИ */
+  .btn-outline-light {
     color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
-}
+  }
 
-.btn-outline-light:hover {
+  .btn-outline-light:hover {
     background-color: rgba(255, 255, 255, 0.2) !important;
     border-color: #ffffff !important;
     color: #ffffff !important;
-}
+  }
 
-.btn-primary {
+  .btn-primary {
     background-color: rgba(13, 110, 253, 0.8) !important;
     border-color: rgba(13, 110, 253, 0.8) !important;
-}
+  }
 
-.btn-primary:hover {
+  .btn-primary:hover {
     background-color: rgba(13, 110, 253, 1) !important;
     border-color: rgba(13, 110, 253, 1) !important;
-}
+  }
 
-/* 8. КОД */
-code.text-white-50 {
+  /* 8. КОД */
+  code.text-white-50 {
     color: rgba(255, 255, 255, 0.7) !important;
     background: rgba(255, 255, 255, 0.1) !important;
     padding: 0.1rem 0.3rem;
     border-radius: 4px;
-}
+  }
 
-/* 9. ССЫЛКИ */
-a.text-light {
+  /* 9. ССЫЛКИ */
+  a.text-light {
     color: #a8d8ff !important;
-}
+  }
 
-a.text-light:hover {
+  a.text-light:hover {
     color: #ffffff !important;
-}
+  }
 
-/* 10. ПРЕДПРОСМОТР ИКОНКИ */
-#iconPreview {
+  /* 10. ПРЕДПРОСМОТР ИКОНКИ */
+  #iconPreview {
     transition: all 0.3s ease;
-}
+  }
 
-/* 11. АДАПТИВНОСТЬ */
-@media (max-width: 768px) {
+  /* 11. АДАПТИВНОСТЬ */
+  @media (max-width: 768px) {
     .card-body {
-        padding: 1rem !important;
+      padding: 1rem !important;
     }
 
     .d-flex.justify-content-between {
-        flex-direction: column;
-        align-items: stretch !important;
-        gap: 1rem;
+      flex-direction: column;
+      align-items: stretch !important;
+      gap: 1rem;
     }
 
     .btn-lg {
-        width: 100%;
+      width: 100%;
     }
-}
+  }
 </style>
 {% endblock %}

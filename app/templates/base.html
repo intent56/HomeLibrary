@@ -1,185 +1,241 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Домашняя библиотека</title>
-    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/bootstrap-icons.min.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link
+      href="{{ url_for('static', filename='css/bootstrap.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='css/bootstrap-icons.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='css/style.css') }}"
+      rel="stylesheet"
+    />
     <script src="{{ url_for('static', filename='js/htmx.min.js') }}"></script>
     <style>
-        /* Делаем выпадающее меню "Справочники" прозрачным */
+      /* Делаем выпадающее меню "Справочники" прозрачным */
+      .navbar .dropdown-menu {
+        background-color: rgba(
+          33,
+          37,
+          41,
+          0.85
+        ) !important; /* Полупрозрачный темный фон */
+        backdrop-filter: blur(10px); /* Эффект размытия для фона */
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Стили для пунктов меню */
+      .navbar .dropdown-item {
+        color: rgba(255, 255, 255, 0.85) !important;
+        transition: all 0.2s ease;
+      }
+
+      .navbar .dropdown-item:hover {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+      }
+
+      .navbar .dropdown-item i {
+        margin-right: 8px;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .navbar .dropdown-item:hover i {
+        color: #ffffff;
+      }
+
+      /* Разделители в меню */
+      .navbar .dropdown-divider {
+        border-color: rgba(255, 255, 255, 0.1);
+      }
+
+      /* Адаптация для мобильных устройств */
+      @media (max-width: 991.98px) {
         .navbar .dropdown-menu {
-            background-color: rgba(33, 37, 41, 0.85) !important; /* Полупрозрачный темный фон */
-            backdrop-filter: blur(10px); /* Эффект размытия для фона */
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+          background-color: rgba(33, 37, 41, 0.95) !important;
+          backdrop-filter: blur(5px);
         }
-
-        /* Стили для пунктов меню */
-        .navbar .dropdown-item {
-            color: rgba(255, 255, 255, 0.85) !important;
-            transition: all 0.2s ease;
-        }
-
-        .navbar .dropdown-item:hover {
-            background-color: rgba(255, 255, 255, 0.1) !important;
-            color: #ffffff !important;
-        }
-
-        .navbar .dropdown-item i {
-            margin-right: 8px;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .navbar .dropdown-item:hover i {
-            color: #ffffff;
-        }
-
-        /* Разделители в меню */
-        .navbar .dropdown-divider {
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        /* Адаптация для мобильных устройств */
-        @media (max-width: 991.98px) {
-            .navbar .dropdown-menu {
-                background-color: rgba(33, 37, 41, 0.95) !important;
-                backdrop-filter: blur(5px);
-            }
-        }
+      }
     </style>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.body.addEventListener('htmx:configRequest', function(evt) {
-                const csrfToken = document.querySelector('input[name="csrf_token"]');
-                if (csrfToken) {
-                    evt.detail.headers['X-CSRFToken'] = csrfToken.value;
-                }
-            });
+      document.addEventListener("DOMContentLoaded", function () {
+        document.body.addEventListener("htmx:configRequest", function (evt) {
+          const csrfToken = document.querySelector('input[name="csrf_token"]');
+          if (csrfToken) {
+            evt.detail.headers["X-CSRFToken"] = csrfToken.value;
+          }
+        });
 
-            document.body.addEventListener('htmx:responseError', function(evt) {
-                console.error('HTMX Error:', evt.detail);
-                const alertDiv = document.createElement('div');
-                alertDiv.className = 'alert alert-danger alert-dismissible fade show';
-                alertDiv.innerHTML = `
+        document.body.addEventListener("htmx:responseError", function (evt) {
+          console.error("HTMX Error:", evt.detail);
+          const alertDiv = document.createElement("div");
+          alertDiv.className = "alert alert-danger alert-dismissible fade show";
+          alertDiv.innerHTML = `
                     <i class="bi bi-exclamation-triangle"></i>
                     Произошла ошибка при загрузке данных. Попробуйте обновить страницу.
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 `;
-                document.querySelector('.container').prepend(alertDiv);
-            });
+          document.querySelector(".container").prepend(alertDiv);
         });
+      });
     </script>
-</head>
-<body class="{% block body_class %}{% endblock %}">
+  </head>
+  <body class="{% block body_class %}{% endblock %}">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('main.index') }}">
-                <i class="bi bi-book"></i> Домашняя библиотека
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.book_list') }}">
-                            <i class="bi bi-book"></i> Книги
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" 
-                           data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-gear"></i> Справочники
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li>
-                                <a class="dropdown-item" href="{{ url_for('main.author_list') }}">
-                                    <i class="bi bi-people"></i> Авторы
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ url_for('main.interpreter_list') }}">
-                                    <i class="bi bi-translate"></i> Переводчики
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ url_for('main.publisher_list') }}">
-                                    <i class="bi bi-building"></i> Издатели
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ url_for('main.language_list') }}">
-                                    <i class="bi bi-globe"></i> Языки
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ url_for('main.genre_list') }}">
-                                    <i class="bi bi-tags"></i> Жанры
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item" href="{{ url_for('main.cover_list') }}">
-                                    <i class="bi bi-bookmark"></i> Переплеты
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ url_for('main.format_list') }}">
-                                    <i class="bi bi-aspect-ratio"></i> Форматы
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item" href="{{ url_for('main.source_list') }}">
-                                    <i class="bi bi-database"></i> Источники информации
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ url_for('main.aggregator_list') }}">
-                                    <i class="bi bi-link-45deg"></i> Агрегаторы
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item" href="{{ url_for('main.init_db') }}">
-                                    <i class="bi bi-arrow-repeat"></i> Инициализировать
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.add_book') }}">
-                            <i class="bi bi-plus-circle"></i> Добавить книгу
-                        </a>
-                    </li>
-                </ul>
-            </div>
+      <div class="container">
+        <a class="navbar-brand" href="{{ url_for('main.index') }}">
+          <i class="bi bi-book"></i> Домашняя библиотека
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('main.book_list') }}">
+                <i class="bi bi-book"></i> Книги
+              </a>
+            </li>
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                id="navbarDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i class="bi bi-gear"></i> Справочники
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('main.author_list') }}"
+                  >
+                    <i class="bi bi-people"></i> Авторы
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('main.interpreter_list') }}"
+                  >
+                    <i class="bi bi-translate"></i> Переводчики
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('main.publisher_list') }}"
+                  >
+                    <i class="bi bi-building"></i> Издатели
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('main.language_list') }}"
+                  >
+                    <i class="bi bi-globe"></i> Языки
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('main.genre_list') }}"
+                  >
+                    <i class="bi bi-tags"></i> Жанры
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('main.cover_list') }}"
+                  >
+                    <i class="bi bi-bookmark"></i> Переплеты
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('main.format_list') }}"
+                  >
+                    <i class="bi bi-aspect-ratio"></i> Форматы
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('main.source_list') }}"
+                  >
+                    <i class="bi bi-database"></i> Источники информации
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="{{ url_for('main.aggregator_list') }}"
+                  >
+                    <i class="bi bi-link-45deg"></i> Агрегаторы
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('main.init_db') }}">
+                    <i class="bi bi-arrow-repeat"></i> Инициализировать
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('main.add_book') }}">
+                <i class="bi bi-plus-circle"></i> Добавить книгу
+              </a>
+            </li>
+          </ul>
         </div>
+      </div>
     </nav>
 
     <div class="container mt-4">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                        <i class="bi bi-{% if category == 'success' %}check-circle{% elif category == 'danger' %}exclamation-triangle{% elif category == 'warning' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        {% block content %}{% endblock %}
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div
+        class="alert alert-{{ category }} alert-dismissible fade show"
+        role="alert"
+      >
+        <i
+          class="bi bi-{% if category == 'success' %}check-circle{% elif category == 'danger' %}exclamation-triangle{% elif category == 'warning' %}exclamation-circle{% else %}info-circle{% endif %}"
+        ></i>
+        {{ message }}
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+        ></button>
+      </div>
+      {% endfor %} {% endif %} {% endwith %} {% block content %}{% endblock %}
     </div>
 
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
     {% block scripts %}{% endblock %}
-</body>
+  </body>
 </html>
