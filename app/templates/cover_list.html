@@ -20,9 +20,10 @@ content %}
         >
           <i class="bi bi-house me-1"></i> На главную
         </a>
+        <!-- ИЗМЕНЕННАЯ КНОПКА "ДОБАВИТЬ ПЕРЕПЛЕТ" - ИСПОЛЬЗУЕТ КЛАСС btn-edit -->
         <a
           href="{{ url_for('main.add_cover') }}"
-          class="btn btn-primary d-flex align-items-center"
+          class="btn btn-edit d-flex align-items-center"
         >
           <i class="bi bi-plus-circle me-1"></i> Добавить переплет
         </a>
@@ -30,7 +31,6 @@ content %}
     </div>
 
     <!-- 3. КАРТОЧКИ СТАТИСТИКИ С ПРОЗРАЧНЫМ ФОНОМ И БЕЛЫМ ТЕКСТОМ -->
-    <!-- 3. КАРТОЧКИ СТАТИСТИКИ С ПРОЗРАЧНЫМ ФОНОМ, БЕЛЫМ ТЕКСТОМ И БЕЛОЙ РАМКОЙ -->
     <div class="row mb-4">
       <div class="col-md-4">
         <div
@@ -72,16 +72,32 @@ content %}
         <div
           class="card h-100 d-flex flex-column transparent-card-cover border border-white border-opacity-50"
         >
-          <!-- Заголовок с прозрачным фоном -->
+          <!-- Заголовок с прозрачным фоном и фиксированной высотой -->
           <div
             class="card-header transparent-card-header d-flex justify-content-between align-items-center"
-            style="min-height: 70px"
+            style="min-height: 80px"
           >
-            <h5 class="mb-0 text-truncate text-white" style="max-width: 60%">
-              <span class="badge bg-light text-dark">{{ cover.code }}</span>
-              {{ cover.name }}
-            </h5>
-            <div class="btn-group btn-group-sm flex-shrink-0" role="group">
+            <div class="d-flex flex-column overflow-hidden" style="flex: 1">
+              <!-- ИЗМЕНЕННЫЙ БЕЙДЖ - ТЕПЕРЬ НА ОТДЕЛЬНОЙ СТРОКЕ -->
+              <span
+                class="badge custom-badge mb-1"
+                style="align-self: flex-start; font-size: 0.9rem"
+              >
+                {{ cover.code }}
+              </span>
+              <!-- ИЗМЕНЕННЫЙ БЛОК С НАЗВАНИЕМ - НА СЛЕДУЮЩЕЙ СТРОКЕ -->
+              <h5
+                class="mb-0 text-white text-start"
+                style="
+                  font-size: 1rem;
+                  word-break: break-word;
+                  line-height: 1.3;
+                "
+              >
+                {{ cover.name }}
+              </h5>
+            </div>
+            <div class="btn-group btn-group-sm flex-shrink-0 ms-2" role="group">
               <a
                 href="{{ url_for('main.cover_card', cover_id=cover.id) }}"
                 class="btn btn-outline-light"
@@ -227,6 +243,7 @@ content %}
     backdrop-filter: blur(5px);
     transition: all 0.3s ease;
     border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    min-height: 320px; /* ФИКСИРОВАННАЯ МИНИМАЛЬНАЯ ВЫСОТА */
   }
 
   .transparent-card-cover:hover {
@@ -249,6 +266,14 @@ content %}
   /* 5. Стиль для бейджей */
   .bg-opacity-75 {
     --bs-bg-opacity: 0.75;
+  }
+
+  /* НОВЫЙ СТИЛЬ ДЛЯ БЕЙДЖА КОДА - ИСПОЛЬЗУЕТ var(--main-color) */
+  .custom-badge {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    font-weight: 500;
+    padding: 0.35rem 0.75rem;
   }
 
   /* 6. Стиль для полупрозрачного алерта в модальном окне */
@@ -284,6 +309,37 @@ content %}
     color: #ffffff !important;
   }
 
+  /* НОВЫЙ СТИЛЬ ДЛЯ КНОПКИ "ДОБАВИТЬ ПЕРЕПЛЕТ" */
+  .btn-edit {
+    background-color: transparent !important;
+    color: var(--main-color) !important;
+    border: 2px solid var(--main-color) !important;
+    transition: all 0.3s ease !important;
+    font-weight: 500 !important;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-edit:hover {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 194, 0, 0.3);
+  }
+
+  .btn-edit:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 6px rgba(255, 194, 0, 0.2);
+  }
+
+  .btn-edit:focus {
+    box-shadow: 0 0 0 3px rgba(255, 194, 0, 0.4);
+    outline: none;
+  }
+
   /* 9. Адаптивность */
   @media (max-width: 768px) {
     .transparent-card-stat {
@@ -298,23 +354,6 @@ content %}
       padding: 0.25rem 0.4rem;
       font-size: 0.75rem;
     }
-  }
-
-  /* 1. Стиль для карточек статистики */
-  .transparent-card-stat {
-    background-color: rgba(0, 0, 0, 0.25) !important;
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.5) !important;
-    /* Белая рамка */
-    transition: all 0.3s ease;
-    color: #ffffff !important;
-  }
-
-  .transparent-card-stat:hover {
-    background-color: rgba(0, 0, 0, 0.35) !important;
-    transform: translateY(-2px);
-    border-color: rgba(255, 255, 255, 0.8) !important;
-    /* Более яркая рамка при наведении */
   }
 </style>
 {% endblock %}
