@@ -1,0 +1,325 @@
+<div class="row" id="languageGrid">
+    {% for language in languages %}
+    <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+        <!-- 2. КАРТОЧКА С БЕЛОЙ РАМКОЙ -->
+        <div class="card h-100 shadow-sm hover-lift border border-white border-opacity-50 transparent-card">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <div class="bg-transparent d-inline-flex align-items-center justify-content-center" 
+                         style="width: 100px; height: 100px; border: 2px solid rgba(255,255,255,0.3);">
+                        <i class="bi bi-globe display-1 text-white-50"></i>
+                    </div>
+                </div>
+                <h5 class="card-title text-white">{{ language.name }}</h5>
+                <p class="card-text">
+                    <span class="badge bg-secondary bg-opacity-75 text-white">{{ language.code }}</span>
+                </p>
+                <p class="card-text">
+                    <span class="badge bg-primary bg-opacity-75 text-white">
+                        <i class="bi bi-book"></i> Книг: {{ language.lang_books|length }}
+                    </span>
+                </p>
+                {% if language.interpreter_langs %}
+                    <p class="card-text">
+                        <span class="badge bg-info bg-opacity-75 text-white">
+                            <i class="bi bi-translate"></i> Переводчиков: {{ language.interpreter_langs|length }}
+                        </span>
+                    </p>
+                {% endif %}
+                {% if language.comment %}
+                    <p class="card-text text-white-50 small">
+                        <i class="bi bi-chat"></i> {{ language.comment|truncate(50) }}
+                    </p>
+                {% endif %}
+            </div>
+            <div class="card-footer bg-transparent border-top-0">
+                <div class="d-flex justify-content-center gap-2">
+                    <a href="{{ url_for('main.edit_language', language_id=language.id, page=1) }}" 
+                       class="btn btn-outline-light btn-sm" title="Редактировать">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <button type="button" class="btn btn-outline-light btn-sm" title="Удалить" 
+                            data-bs-toggle="modal" data-bs-target="#deleteLanguageModal{{ language.id }}">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно подтверждения удаления -->
+    <div class="modal fade" id="deleteLanguageModal{{ language.id }}" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle text-danger"></i> Подтверждение удаления</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Вы уверены, что хотите удалить язык <strong>"{{ language.name }}"</strong>?</p>
+                    {% if language.lang_books %}
+                        <div class="alert alert-warning transparent-alert">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            Язык привязан к {{ language.lang_books|length }} книг(е/ам). Удаление может нарушить связи!
+                        </div>
+                    {% endif %}
+                    <p class="text-white-50 small">Это действие необратимо!</p>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <form method="POST" action="{{ url_for('main.delete_language', language_id=language.id) }}" style="display: inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="page" value="{{ pagination.page }}">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Удалить
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="text-center py-5">
+            <i class="bi bi-globe display-1 text-white-50"></i>
+            <p class="text-white-50 mt-3">Языки не найдены</p>
+            <a href="{{ url_for('main.add_language') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Добавить первый язык
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- 3. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ -->
+{% if pagination and pagination.pages > 1 %}
+<div class="row">
+    <div class="col-12">
+        <div class="pagination-container mt-4">
+            <nav aria-label="Навигация по страницам">
+                <ul class="pagination pagination-sm justify-content-center mb-0" id="transparentPagination">
+                    <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
+                        <a class="page-link" href="#"
+                           hx-get="{{ url_for('main.language_list') }}"
+                           hx-target="#languageGridContainer"
+                           hx-indicator="#loadingIndicator"
+                           hx-push-url="true"
+                           hx-vals='{"page": 1, "search": "{{ search or '' }}"}'>
+                            <i class="bi bi-chevron-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
+                        <a class="page-link" href="#"
+                           hx-get="{{ url_for('main.language_list') }}"
+                           hx-target="#languageGridContainer"
+                           hx-indicator="#loadingIndicator"
+                           hx-push-url="true"
+                           hx-vals='{"page": {{ pagination.prev_num }}, "search": "{{ search or '' }}"}'>
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+
+                    {% set left = pagination.page - 2 %}
+                    {% set right = pagination.page + 2 %}
+                    {% if left < 1 %}{% set left = 1 %}{% endif %}
+                    {% if right > pagination.pages %}{% set right = pagination.pages %}{% endif %}
+
+                    {% if left > 1 %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+
+                    {% for p in range(left, right + 1) %}
+                        <li class="page-item {% if p == pagination.page %}active{% endif %}">
+                            <a class="page-link" href="#"
+                               hx-get="{{ url_for('main.language_list') }}"
+                               hx-target="#languageGridContainer"
+                               hx-indicator="#loadingIndicator"
+                               hx-push-url="true"
+                               hx-vals='{"page": {{ p }}, "search": "{{ search or '' }}"}'>
+                                {{ p }}
+                            </a>
+                        </li>
+                    {% endfor %}
+
+                    {% if right < pagination.pages %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+
+                    <li class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}">
+                        <a class="page-link" href="#"
+                           hx-get="{{ url_for('main.language_list') }}"
+                           hx-target="#languageGridContainer"
+                           hx-indicator="#loadingIndicator"
+                           hx-push-url="true"
+                           hx-vals='{"page": {{ pagination.next_num }}, "search": "{{ search or '' }}"}'>
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}">
+                        <a class="page-link" href="#"
+                           hx-get="{{ url_for('main.language_list') }}"
+                           hx-target="#languageGridContainer"
+                           hx-indicator="#loadingIndicator"
+                           hx-push-url="true"
+                           hx-vals='{"page": {{ pagination.pages }}, "search": "{{ search or '' }}"}'>
+                            <i class="bi bi-chevron-double-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="text-center text-white-50 small mt-2">
+                Показано: {{ pagination.items|length }} из {{ pagination.total }} записей
+                <span class="mx-2">|</span>
+                Страница {{ pagination.page }} из {{ pagination.pages }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- СТИЛИ ДЛЯ ПРОЗРАЧНЫХ КАРТОЧЕК И ПАГИНАЦИИ -->
+<style>
+/* 1. УБИРАЕМ ВСЕ ПОДЛОЖКИ ДО ФОНА */
+#languageGrid,
+#languageGrid * {
+    background: transparent !important;
+}
+
+/* Исключение — делаем фон для карточек, чтобы текст был читаем */
+#languageGrid .transparent-card {
+    background-color: rgba(0, 0, 0, 0.25) !important;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+}
+
+#languageGrid .transparent-card:hover {
+    background-color: rgba(0, 0, 0, 0.4) !important;
+    transform: translateY(-4px);
+}
+
+/* 2. БЕЛАЯ РАМКА ДЛЯ КАРТОЧЕК */
+#languageGrid .card.border-white {
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+}
+
+/* 3. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ */
+#languageGrid .pagination-container {
+    background-color: rgba(0, 0, 0, 0.25) !important;
+    backdrop-filter: blur(8px);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Текст в пагинации */
+#languageGrid .text-white-50 {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Цвет текста в карточках */
+#languageGrid .card-title {
+    color: #ffffff !important;
+}
+
+/* Бейджи */
+#languageGrid .badge.bg-secondary {
+    background-color: rgba(108, 117, 125, 0.7) !important;
+    color: #ffffff !important;
+}
+
+#languageGrid .badge.bg-primary {
+    background-color: rgba(13, 110, 253, 0.7) !important;
+    color: #ffffff !important;
+}
+
+#languageGrid .badge.bg-info {
+    background-color: rgba(13, 202, 240, 0.7) !important;
+    color: #000000 !important;
+}
+
+/* Кнопки в карточках */
+#languageGrid .btn-outline-light {
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+#languageGrid .btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-color: #ffffff !important;
+    color: #ffffff !important;
+}
+
+/* Модальное окно */
+#languageGrid .modal-content.bg-dark {
+    background-color: rgba(33, 37, 41, 0.95) !important;
+    backdrop-filter: blur(10px);
+}
+
+#languageGrid .transparent-alert {
+    background: rgba(255, 193, 7, 0.15) !important;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 193, 7, 0.3) !important;
+    color: #ffffff !important;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    #languageGrid .pagination-container {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: center !important;
+    }
+}
+</style>
+
+<!-- JAVASCRIPT ДЛЯ ПРИНУДИТЕЛЬНОГО ПРИМЕНЕНИЯ СТИЛЕЙ К ПАГИНАЦИИ -->
+<script>
+function makePaginationTransparent() {
+    const paginationLinks = document.querySelectorAll('#transparentPagination .page-link');
+    paginationLinks.forEach(link => {
+        link.style.setProperty('background-color', 'transparent', 'important');
+        link.style.setProperty('background', 'transparent', 'important');
+        link.style.setProperty('border-color', 'rgba(255, 255, 255, 0.15)', 'important');
+        link.style.setProperty('color', '#ffffff', 'important');
+
+        link.addEventListener('mouseenter', function() {
+            this.style.setProperty('background-color', 'rgba(255, 255, 255, 0.1)', 'important');
+            this.style.setProperty('border-color', 'rgba(255, 255, 255, 0.3)', 'important');
+        });
+        link.addEventListener('mouseleave', function() {
+            this.style.setProperty('background-color', 'transparent', 'important');
+            this.style.setProperty('border-color', 'rgba(255, 255, 255, 0.15)', 'important');
+        });
+    });
+
+    const activeLinks = document.querySelectorAll('#transparentPagination .page-item.active .page-link');
+    activeLinks.forEach(link => {
+        link.style.setProperty('background-color', 'rgba(13, 110, 253, 0.4)', 'important');
+        link.style.setProperty('border-color', 'rgba(13, 110, 253, 0.6)', 'important');
+    });
+
+    const disabledLinks = document.querySelectorAll('#transparentPagination .page-item.disabled .page-link');
+    disabledLinks.forEach(link => {
+        link.style.setProperty('background-color', 'transparent', 'important');
+        link.style.setProperty('border-color', 'rgba(255, 255, 255, 0.05)', 'important');
+        link.style.setProperty('color', 'rgba(255, 255, 255, 0.2)', 'important');
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    makePaginationTransparent();
+});
+
+document.addEventListener('htmx:afterSwap', function(event) {
+    if (event.detail.target.id === 'languageGridContainer') {
+        setTimeout(makePaginationTransparent, 50);
+    }
+});
+
+document.addEventListener('htmx:afterSettle', function(event) {
+    if (event.detail.target.id === 'languageGridContainer') {
+        setTimeout(makePaginationTransparent, 50);
+    }
+});
+</script>

@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="bi bi-building"></i> Карточка издателя</h2>
+            </div>
+            <div>
+                <a href="{{ url_for('main.book_list') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Назад к списку книг
+                </a>
+            </div>
+        </div>
+        
+        <div class="card shadow-sm">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0"><i class="bi bi-building"></i> Информация об издателе</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-4 text-center">
+                        <div class="bg-light p-4 rounded text-center">
+                            <i class="bi bi-building display-1 text-secondary"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <h3 class="mb-3">{{ publisher.name }}</h3>
+                        <table class="table table-borderless">
+                            {% if publisher.ref_publisher %}
+                            <tr>
+                                <th style="width: 35%">Ссылка:</th>
+                                <td>
+                                    <a href="{{ publisher.ref_publisher }}" target="_blank" class="text-primary">
+                                        <i class="bi bi-link-45deg"></i> Подробнее
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            <tr>
+                                <th>Книг:</th>
+                                <td>
+                                    <span class="badge bg-secondary">{{ publisher.book_publishers|length }}</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                {% if publisher.comment %}
+                <div class="mt-3">
+                    <h5 class="fw-bold"><i class="bi bi-chat"></i> Комментарий:</h5>
+                    <div class="p-3 bg-light rounded publisher-comment">
+                        {{ publisher.comment|safe }}
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if publisher.publisher_books %}
+                <div class="mt-4">
+                    <h5 class="fw-bold"><i class="bi bi-book"></i> Книги издателя:</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for book in publisher.book_publishers %}
+                            <a href="{{ url_for('main.book_detail', book_id=book.id) }}" 
+                               class="badge bg-secondary text-decoration-none" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                                {{ book.name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-footer bg-light">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted">
+                        <i class="bi bi-info-circle"></i> ID: {{ publisher.id }}
+                    </span>
+                    <a href="{{ url_for('main.book_list') }}" class="btn btn-secondary btn-sm">
+                        <i class="bi bi-arrow-left"></i> Назад к списку книг
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    border-radius: 12px 12px 0 0 !important;
+}
+
+.table td, .table th {
+    padding: 0.5rem 0.5rem 0.5rem 0;
+    border: none;
+}
+
+.table th {
+    font-weight: 600;
+    color: #495057;
+}
+
+.publisher-comment {
+    border-left: 4px solid #6c757d;
+    border-radius: 4px;
+    word-wrap: break-word;
+}
+
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1.5rem;
+    }
+}
+</style>
+{% endblock %}

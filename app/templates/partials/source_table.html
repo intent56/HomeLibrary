@@ -1,0 +1,384 @@
+<div class="card shadow-sm transparent-card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 transparent-table">
+                <thead class="transparent-table-header">
+                    <tr>
+                        <th>Название</th>
+                        <th>Код</th>
+                        <th>Статус</th>
+                        <th>Поиск книг</th>
+                        <th>Поиск авторов</th>
+                        <th>Поиск переводчиков</th>
+                        <th>Комментарий</th>
+                        <th style="min-width: 120px;">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for source in sources %}
+                    <tr id="source-row-{{ source.id }}">
+                        <td class="text-white"><strong>{{ source.name }}</strong></td>
+                        <td class="text-white"><code class="text-white-50">{{ source.code }}</code></td>
+                        <td id="source-status-{{ source.id }}">
+                            {% if source.is_active %}
+                                <span class="badge bg-success bg-opacity-75 text-white">Активен</span>
+                            {% else %}
+                                <span class="badge bg-danger bg-opacity-75 text-white">Неактивен</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if source.chk_books %}
+                                <span class="badge bg-primary bg-opacity-75 text-white"><i class="bi bi-check-circle"></i></span>
+                            {% else %}
+                                <span class="badge bg-secondary bg-opacity-75 text-white"><i class="bi bi-x-circle"></i></span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if source.chk_authors %}
+                                <span class="badge bg-primary bg-opacity-75 text-white"><i class="bi bi-check-circle"></i></span>
+                            {% else %}
+                                <span class="badge bg-secondary bg-opacity-75 text-white"><i class="bi bi-x-circle"></i></span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if source.chk_interpreters %}
+                                <span class="badge bg-primary bg-opacity-75 text-white"><i class="bi bi-check-circle"></i></span>
+                            {% else %}
+                                <span class="badge bg-secondary bg-opacity-75 text-white"><i class="bi bi-x-circle"></i></span>
+                            {% endif %}
+                        </td>
+                        <td class="text-white-50">{{ source.comment or '-' }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="{{ url_for('main.edit_source', source_id=source.id) }}" 
+                                   class="btn btn-outline-light" title="Редактировать">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <button type="button" 
+                                        class="btn btn-outline-light toggle-btn" 
+                                        hx-post="{{ url_for('main.toggle_source_htmx', source_id=source.id) }}"
+                                        hx-headers='{"X-CSRFToken": "{{ csrf_token() }}"}'
+                                        hx-target="#source-status-{{ source.id }}"
+                                        hx-swap="outerHTML"
+                                        hx-indicator="#source-loading-{{ source.id }}"
+                                        title="{% if source.is_active %}Деактивировать{% else %}Активировать{% endif %}">
+                                    <i class="bi bi-{% if source.is_active %}pause-circle{% else %}play-circle{% endif %}"></i>
+                                    <span id="source-loading-{{ source.id }}" class="htmx-indicator">
+                                        <span class="spinner-border spinner-border-sm" role="status"></span>
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-outline-light btn-delete" 
+                                        data-source-id="{{ source.id }}"
+                                        data-source-name="{{ source.name }}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr id="empty-row">
+                        <td colspan="8" class="text-center text-white-50 py-4">
+                            <i class="bi bi-database display-4 text-white-50 d-block"></i>
+                            <p class="text-white-50 mt-2">Источники не найдены</p>
+                            <a href="{{ url_for('main.add_source') }}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Добавить первый источник
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer transparent-card-footer">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="text-white-50 small">
+                <i class="bi bi-info-circle"></i> Всего источников: {{ sources|length }}
+            </div>
+            <div>
+                <a href="{{ url_for('main.index') }}" class="btn btn-sm btn-outline-light">
+                    <i class="bi bi-house"></i> На главную
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ЕДИНОЕ МОДАЛЬНОЕ ОКНО ПОДТВЕРЖДЕНИЯ УДАЛЕНИЯ -->
+<div class="modal fade" id="deleteSourceModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-light border border-white border-opacity-50">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-danger"><i class="bi bi-exclamation-triangle"></i> Подтверждение удаления</h5>
+                <button type="button" class="btn-close btn-close-white" id="closeModalBtn"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-danger fw-bold" id="deleteModalMessage">Вы уверены, что хотите удалить источник?</p>
+                <p class="text-danger">Это действие необратимо!</p>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">Отмена</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="bi bi-trash"></i> Удалить
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- СТИЛИ ДЛЯ ПОЛНОСТЬЮ ПРОЗРАЧНОЙ ТАБЛИЦЫ -->
+<style>
+/* 1. ПОЛНОСТЬЮ УБИРАЕМ ВСЕ ФОНЫ */
+.transparent-card,
+.transparent-card *,
+.transparent-card .card-body,
+.transparent-card .table-responsive,
+.transparent-card .table,
+.transparent-card thead,
+.transparent-card tbody,
+.transparent-card tr,
+.transparent-card td,
+.transparent-card th {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* 2. КАРТОЧКА - ТОЛЬКО РАМКА */
+.transparent-card {
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: none !important;
+}
+
+/* 3. ФУТЕР КАРТОЧКИ */
+.transparent-card-footer {
+    background: transparent !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* 4. ЗАГОЛОВКИ ТАБЛИЦЫ - ПОЛУПРОЗРАЧНЫЙ ФОН ДЛЯ ЧИТАЕМОСТИ */
+.transparent-table thead th {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    color: #ffffff !important;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+/* 5. СТРОКИ ТАБЛИЦЫ - ЕЛЕ ЗАМЕТНЫЙ ФОН ДЛЯ РАЗДЕЛЕНИЯ */
+.transparent-table tbody tr {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+.transparent-table tbody tr:nth-of-type(odd) {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+.transparent-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 6. ВСЕ ТЕКСТЫ БЕЛЫМ ЦВЕТОМ */
+.transparent-table tbody td {
+    color: #ffffff !important;
+}
+
+.text-white {
+    color: #ffffff !important;
+}
+
+.text-white-50 {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* 7. СТИЛИ ДЛЯ ВЫРАВНИВАНИЯ КНОПОК В ТАБЛИЦАХ */
+.table .btn-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.table .btn-group .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    min-height: 36px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.9rem;
+}
+
+.table .btn-group .btn i {
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+/* 8. КНОПКИ В ТАБЛИЦЕ - СВЕТЛЫЕ НА ТЁМНОМ ФОНЕ */
+.table .btn-outline-light {
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.table .btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-color: #ffffff !important;
+    color: #ffffff !important;
+}
+
+/* 9. СТИЛИ ДЛЯ КНОПКИ "НА ГЛАВНУЮ" В ФУТЕРЕ */
+.btn-outline-light {
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-color: #ffffff !important;
+    color: #ffffff !important;
+}
+
+/* 10. СТИЛИ ДЛЯ БЕЙДЖЕЙ */
+.badge {
+    font-weight: 500;
+    padding: 0.35rem 0.65rem;
+}
+
+.bg-opacity-75 {
+    --bs-bg-opacity: 0.75;
+}
+
+/* 11. СТИЛИ ДЛЯ КОДА */
+code {
+    background: rgba(255, 255, 255, 0.1) !important;
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: #ffffff !important;
+}
+
+/* 12. ИНДИКАТОР ЗАГРУЗКИ HTMX */
+.htmx-indicator {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}
+
+.htmx-request .htmx-indicator {
+    opacity: 1;
+}
+
+.htmx-request.htmx-indicator {
+    opacity: 1;
+}
+
+/* 13. АНИМАЦИЯ ДЛЯ УДАЛЕНИЯ СТРОКИ */
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+tr.htmx-swapping {
+    animation: fadeOut 0.3s ease-in;
+}
+
+/* 14. АДАПТИВНОСТЬ */
+@media (max-width: 768px) {
+    .table .btn-group .btn {
+        min-width: 32px;
+        min-height: 32px;
+        padding: 0.2rem 0.4rem;
+        font-size: 0.8rem;
+    }
+}
+</style>
+
+<!-- JAVASCRIPT -->
+<script>
+// Переменная для хранения ID удаляемого источника
+let deleteSourceId = null;
+
+// Функция для закрытия модального окна
+function closeModal() {
+    const modalElement = document.getElementById('deleteSourceModal');
+    if (modalElement) {
+        const modal = bootstrap.Modal.getInstance(modalElement);
+        if (modal) {
+            modal.hide();
+        }
+    }
+}
+
+// Открытие модального окна с подтверждением удаления
+function openDeleteModal(sourceId, sourceName) {
+    deleteSourceId = sourceId;
+    document.getElementById('deleteModalMessage').innerHTML = 
+        `Вы уверены, что хотите удалить источник <strong>"${sourceName}"</strong>?`;
+    
+    const modalElement = document.getElementById('deleteSourceModal');
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Обработчик для кнопок удаления
+    document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const sourceId = this.dataset.sourceId;
+            const sourceName = this.dataset.sourceName;
+            if (sourceId && sourceName) {
+                openDeleteModal(sourceId, sourceName);
+            }
+        });
+    });
+
+    // Обработчик для кнопки "Отмена"
+    document.getElementById('cancelDeleteBtn').addEventListener('click', function() {
+        closeModal();
+    });
+
+    // Обработчик для крестика
+    document.getElementById('closeModalBtn').addEventListener('click', function() {
+        closeModal();
+    });
+
+    // Обработчик для кнопки "Удалить"
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+        if (!deleteSourceId) return;
+        
+        // Отправляем запрос на удаление
+        fetch(`/delete_source_htmx/${deleteSourceId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token() }}',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                // Удаляем строку из таблицы
+                const row = document.getElementById(`source-row-${deleteSourceId}`);
+                if (row) {
+                    row.remove();
+                }
+                // Закрываем модальное окно
+                closeModal();
+                
+                // Обновляем счетчик в футере
+                const footer = document.querySelector('.card-footer .text-white-50');
+                if (footer) {
+                    const currentCount = parseInt(footer.textContent.match(/\d+/)?.[0] || 0);
+                    if (currentCount > 0) {
+                        footer.textContent = footer.textContent.replace(/\d+/, currentCount - 1);
+                    }
+                }
+            } else {
+                alert('Ошибка при удалении источника');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ошибка при удалении источника');
+        })
+        .finally(() => {
+            deleteSourceId = null;
+        });
+    });
+});
+</script>

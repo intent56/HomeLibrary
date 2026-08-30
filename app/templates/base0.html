@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() if csrf_token else '' }}">
+    <title>Библиотека</title>
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-icons.min.css') }}">
+    <link type="text/css" href="{{ url_for('static', filename='css/style1.css') }}" rel="stylesheet">
+    <link type="text/css" href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+<script>
+        // Настройка HTMX
+        document.addEventListener('DOMContentLoaded', function() {
+            // Добавляем CSRF токен во все HTMX запросы
+            document.body.addEventListener('htmx:configRequest', function(evt) {
+                const csrfToken = document.querySelector('input[name="csrf_token"]');
+                if (csrfToken) {
+                    evt.detail.headers['X-CSRFToken'] = csrfToken.value;
+                }
+            });
+            
+            // Обработка ошибок HTMX
+            document.body.addEventListener('htmx:responseError', function(evt) {
+                console.error('HTMX Error:', evt.detail);
+                // Показываем уведомление об ошибке
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+                alertDiv.innerHTML = `
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Произошла ошибка при загрузке данных. Попробуйте обновить страницу.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.querySelector('.container').prepend(alertDiv);
+            });
+        });
+    </script>
+    </head>
+
+<body>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('main.index') }}">Библиотека</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        Книги
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="">Добавить</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="{{ url_for('main.book_search') }}">Найти</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        Авторы
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ url_for('main.add_author') }}">Добавить</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="{{ url_for('main.author_search') }}">Найти</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        Переводчики
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ url_for('main.add_interpreter') }}">Добавить</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="{{ url_for('main.interpreter_search') }}">Найти</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        Издатели
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ url_for('main.add_publisher') }}">Добавить</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="{{ url_for('main.publisher_search') }}">Найти</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        Справочники
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ url_for('main.genres') }}">Жанры</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('main.formats') }}">Форматы</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('main.covers') }}">Переплеты</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('main.languages') }}">Языки</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('main.book_list') }}">Тест книг</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('main.author_list') }}">Тест авторов</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('main.interpreter_list') }}">Тест переводчиков</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('main.genre_list') }}">Тест жанров</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('main.publisher_list') }}">Тест издателей</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="#">Источник поиска</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mx-auto mt-5 mb-5">
+    <div class="row justify-content-center">
+        <!-- Карточки книг -->
+        {% block content %}
+        {% endblock %}
+    </div>
+</div>
+
+<div class="container">
+    <footer class="row row-cols-1 row-cols-sm-2 row-cols-md-5 py-5 my-5 border-top">
+        <div class="col mb-3">
+            <a href="/" class="d-flex align-items-center mb-3 link-body-emphasis text-decoration-none">
+                <svg class="bi me-2" width="40" height="32">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+            </a>
+            <p class="text-body-secondary">© 2025</p>
+        </div>
+
+        <div class="col mb-3">
+            <h5>Жанры</h5>
+            <ul class="nav flex-column">
+                <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Проза</a></li>
+                <li class="nav-item mb-2"><a href="{{ url_for('main.books_poetry') }}"
+                                             class="nav-link p-0 text-body-secondary">Поэзия</a></li>
+                <li class="nav-item mb-2"><a href="{{ url_for('main.books_fantastic') }}"
+                                             class="nav-link p-0 text-body-secondary">Фантастика</a></li>
+            </ul>
+        </div>
+
+        <div class="col mb-3">
+            <h5>Виды</h5>
+            <ul class="nav flex-column">
+                <li class="nav-item mb-2"><a href="#" class="nav-link p-0 text-body-secondary">Художественная</a></li>
+                <li class="nav-item mb-2"><a href="{{ url_for('main.books_children') }}"
+                                             class="nav-link p-0 text-body-secondary">Детская</a></li>
+                <li class="nav-item mb-2"><a href="{{ url_for('main.books_dictionary') }}"
+                                             class="nav-link p-0 text-body-secondary">Словари</a></li>
+            </ul>
+        </div>
+
+    </footer>
+</div>
+ <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/htmx.min.js') }}"></script>
+     <script>
+        // Конфигурация HTMX для отладки
+        htmx.logAll();
+        
+        // Настройка обработки ошибок
+        document.addEventListener('htmx:afterOnLoad', function(event) {
+            console.log('HTMX loaded:', event.detail);
+        });
+    </script>
+    </body>
+
+</html>

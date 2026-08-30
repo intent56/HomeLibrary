@@ -1,0 +1,955 @@
+/* Основные стили для библиотеки */
+:root {
+    --primary-color: #0d6efd;
+    --success-color: #198754;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #0dcaf0;
+    --main-color: #d4af37
+}
+
+body {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.navbar-brand i {
+    margin-right: 8px;
+}
+
+/* Стили для карточек */
+.card {
+    border: none;
+    border-radius: 12px;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    border-radius: 12px 12px 0 0 !important;
+    border-bottom: none;
+    font-weight: 600;
+    padding: 1rem 1.25rem;
+}
+
+.card-header i {
+    margin-right: 8px;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Стили для форм */
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.form-control,
+.form-select {
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.2s;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: var(--danger-color);
+}
+
+.form-text {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+/* Стили для кнопок */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 0.5rem 1.5rem;
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-lg {
+    padding: 0.75rem 2rem;
+}
+
+/* Стили для списков */
+.list-group-item {
+    border: none;
+    border-bottom: 1px solid #e9ecef;
+    padding: 0.75rem 1.25rem;
+    transition: all 0.2s;
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(4px);
+}
+
+/* Стили для уведомлений */
+.alert {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.alert i {
+    margin-right: 8px;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 10px;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .btn-lg {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 1rem;
+    }
+
+    .table-responsive {
+        font-size: 0.9rem;
+    }
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Стили для прогресс-бара */
+.progress-container {
+    height: 4px;
+    background: #e9ecef;
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--info-color));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+    width: 0%;
+}
+
+/* Стили для поиска */
+#searchResults {
+    min-height: 50px;
+    transition: all 0.3s ease;
+}
+
+#searchResults .list-group-item {
+    border-left: 4px solid var(--warning-color);
+}
+
+#searchResults .list-group-item:hover {
+    border-left-color: var(--primary-color);
+}
+
+/* Стили для иконок в карточках */
+.card-header .badge {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.65rem;
+}
+
+/* Стили для пустых состояний */
+.text-center.py-4 i {
+    opacity: 0.5;
+}
+
+.text-center.py-4 {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 2rem !important;
+}
+
+/* Дополнительные стили для авторов */
+.author-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.author-info i {
+    font-size: 1.2rem;
+}
+
+/* Стили для индикатора загрузки */
+#loading {
+    min-width: 40px;
+    justify-content: center;
+}
+
+/* Стили для ховеров */
+.hover-lift {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Стили для бейджей */
+.badge {
+    padding: 0.35rem 0.65rem;
+    font-weight: 500;
+}
+
+/* Стили для модальных окон */
+.modal-content {
+    border-radius: 12px;
+    border: none;
+}
+
+.modal-header {
+    border-bottom: none;
+    padding: 1.25rem 1.5rem;
+}
+
+.modal-footer {
+    border-top: none;
+    padding: 1.25rem 1.5rem;
+}
+
+/* HTMX индикатор */
+.htmx-indicator {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}
+
+.htmx-request .htmx-indicator {
+    opacity: 1;
+}
+
+.htmx-request.htmx-indicator {
+    opacity: 1;
+}
+
+/* Анимация для обновления контента */
+#bookTableContainer,
+#authorGridContainer,
+#interpreterGridContainer,
+#genreGridContainer,
+#publisherGridContainer {
+    transition: opacity 0.3s ease;
+}
+
+#bookTableContainer.htmx-request,
+#authorGridContainer.htmx-request,
+#interpreterGridContainer.htmx-request,
+#genreGridContainer.htmx-request,
+#publisherGridContainer.htmx-request {
+    opacity: 0.5;
+}
+
+/* Стили для пагинации */
+.page-link {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.page-link:hover {
+    background-color: #e9ecef;
+    transform: translateY(-1px);
+}
+
+.page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.page-item.disabled .page-link {
+    cursor: not-allowed;
+}
+
+/* Стили для таблицы */
+.table thead th {
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
+    padding: 0.75rem;
+}
+
+.table td {
+    vertical-align: middle;
+    padding: 0.75rem;
+}
+
+.table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+    transform: translateX(2px);
+}
+
+/* Стили для миниатюр обложек */
+.img-thumbnail {
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+    padding: 2px;
+}
+
+.book-cover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.book-cover:hover {
+    transform: scale(2.5);
+    z-index: 1000;
+    position: relative;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+/* Стили для пустых строк таблицы */
+.empty-row td {
+    padding: 3rem 0 !important;
+}
+
+/* Стили для карточек статистики на главной */
+.card .card-body {
+    padding: 1rem 1.25rem;
+}
+
+.card .card-title {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.8;
+    margin-bottom: 0.25rem;
+}
+
+.card h2,
+.card h3 {
+    font-weight: 700;
+    margin-bottom: 0;
+}
+
+/* Стили для карточек статистики с цветами */
+.card.bg-primary .card-body {
+    background: linear-gradient(135deg, #0d6efd, #0a58ca);
+}
+
+.card.bg-success .card-body {
+    background: linear-gradient(135deg, #198754, #157347);
+}
+
+.card.bg-info .card-body {
+    background: linear-gradient(135deg, #0dcaf0, #0bb5d4);
+}
+
+.card.bg-warning .card-body {
+    background: linear-gradient(135deg, #ffc107, #e6a800);
+}
+
+.card.bg-secondary .card-body {
+    background: linear-gradient(135deg, #6c757d, #5a6268);
+}
+
+.card.bg-dark .card-body {
+    background: linear-gradient(135deg, #212529, #1a1e21);
+}
+
+.card.bg-danger .card-body {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+}
+
+/* Стили для бейджей в таблице */
+.table td .badge {
+    font-weight: 500;
+    margin-right: 2px;
+    margin-bottom: 2px;
+}
+
+.table td .badge.d-block {
+    display: block !important;
+    margin-bottom: 3px;
+    text-align: left;
+}
+
+/* Стили для информации о книге */
+.table td small.text-muted {
+    font-size: 0.75rem;
+    display: block;
+    margin-top: 2px;
+}
+
+/* Стили для иконок в бейджах */
+.badge i {
+    margin-right: 4px;
+}
+
+/* Стили для выпадающего меню справочников */
+.dropdown-menu {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 0;
+}
+
+.dropdown-item {
+    padding: 0.5rem 1.5rem;
+    transition: all 0.2s;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(4px);
+}
+
+.dropdown-item i {
+    margin-right: 8px;
+    width: 20px;
+    text-align: center;
+}
+
+.dropdown-divider {
+    margin: 0.3rem 0;
+}
+
+/* Стили для адаптивности обложек на мобильных */
+@media (max-width: 768px) {
+    .book-cover {
+        width: 35px !important;
+        height: 50px !important;
+    }
+
+    .book-cover:hover {
+        transform: scale(2);
+    }
+
+    .table td .bg-light {
+        width: 35px !important;
+        height: 50px !important;
+    }
+
+    .table td .bg-light i {
+        font-size: 1rem !important;
+    }
+
+    .badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.4rem;
+    }
+
+    .btn-group-sm .btn {
+        padding: 0.15rem 0.3rem;
+        font-size: 0.7rem;
+    }
+
+    .dropdown-menu {
+        border-radius: 8px;
+    }
+}
+
+/* Стили для карточки книги */
+.book-detail-cover {
+    max-height: 300px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* Стили для тегов в карточке книги */
+.book-detail-tag {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+}
+
+/* Стили для счетчика результатов */
+#resultCount {
+    font-weight: 500;
+    color: #495057;
+}
+
+/* Стили для анимации строк при загрузке */
+@keyframes fadeInRow {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.table tbody tr {
+    animation: fadeInRow 0.3s ease;
+}
+
+/* Стили для кнопок действий в карточке книги */
+.btn-group-sm .btn {
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.btn-group-sm .btn:hover {
+    transform: translateY(-1px);
+}
+
+/* Стили для форм с файлами */
+.input-group-text {
+    background-color: #f8f9fa;
+}
+
+/* Стили для предпросмотра ФИО */
+#fioPreview {
+    transition: all 0.3s ease;
+    min-width: 100px;
+    display: inline-block;
+}
+
+/* Стили для страницы со списком форматов */
+.format-visual {
+    background: rgba(13, 110, 253, 0.1);
+    border: 1px solid var(--primary-color);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.format-visual:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Стили для модальных окон подтверждения */
+.modal-header .modal-title i {
+    margin-right: 8px;
+}
+
+/* Стили для бейджей издателей */
+.badge.bg-secondary i {
+    margin-right: 4px;
+}
+
+/* Стили для бейджей жанров */
+.badge.bg-warning {
+    color: #212529 !important;
+}
+
+.badge.bg-warning i {
+    margin-right: 4px;
+}
+
+/* Стили для бейджей переводчиков */
+.badge.bg-success i {
+    margin-right: 4px;
+}
+
+/* Стили для бейджей авторов */
+.badge.bg-primary i {
+    margin-right: 4px;
+}
+
+/* Стили для карточек авторов и переводчиков */
+.card .btn-outline-info {
+    transition: all 0.2s ease;
+}
+
+.card .btn-outline-info:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(13, 110, 253, 0.2);
+}
+
+/* Стили для информационных карточек */
+.author-card .card-header,
+.interpreter-card .card-header {
+    border-radius: 12px 12px 0 0 !important;
+}
+
+.author-card .table,
+.interpreter-card .table {
+    margin-bottom: 0;
+}
+
+.author-card .table th,
+.interpreter-card .table th {
+    width: 35%;
+    font-weight: 600;
+    color: #495057;
+}
+
+/* Стили для фотографий в карточках */
+.author-card,
+.interpreter-card {
+    border: 4px solid #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Стили для списка книг в карточках */
+.author-card .badge,
+.interpreter-card .badge {
+    transition: all 0.2s ease;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+}
+
+.author-card .badge:hover,
+.interpreter-card .badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.img-large-size {
+    width: 300px;
+    /* устанавливаем ширину */
+    height: 450px;
+    /* устанавливаем высоту */
+    object-fit: cover;
+    /* сохраняем пропорции изображения */
+}
+
+.img-same-size {
+    width: 150px;
+    /* устанавливаем ширину */
+    height: 200px;
+    /* устанавливаем высоту */
+    object-fit: cover;
+    /* сохраняем пропорции изображения */
+}
+
+.img-small-size {
+    width: 100px;
+    /* устанавливаем ширину */
+    height: 150px;
+    /* устанавливаем высоту */
+    object-fit: cover;
+    /* сохраняем пропорции изображения */
+}
+
+.img-list-size {
+    width: 70px;
+    /* устанавливаем ширину */
+    height: 100px;
+    /* устанавливаем высоту */
+    object-fit: cover;
+    /* сохраняем пропорции изображения */
+}
+
+.img-mini-size {
+    width: 70px;
+    /* устанавливаем ширину */
+    height: 100px;
+    /* устанавливаем высоту */
+    object-fit: cover;
+    /* сохраняем пропорции изображения */
+}
+
+/* Стили для карточки переплета */
+.cover-comment {
+    border-left: 4px solid #0d6efd;
+    border-radius: 4px;
+    word-wrap: break-word;
+}
+
+.cover-comment p {
+    margin-bottom: 0.5rem;
+}
+
+.cover-comment ul,
+.cover-comment ol {
+    padding-left: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.cover-comment h1,
+.cover-comment h2,
+.cover-comment h3,
+.cover-comment h4,
+.cover-comment h5,
+.cover-comment h6 {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.cover-comment a {
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+.cover-comment a:hover {
+    text-decoration: underline;
+}
+
+.cover-comment blockquote {
+    border-left: 4px solid #6c757d;
+    padding-left: 1rem;
+    margin: 0.5rem 0;
+    color: #6c757d;
+}
+
+.cover-comment img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.cover-comment table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+.cover-comment table td,
+.cover-comment table th {
+    border: 1px solid #dee2e6;
+    padding: 0.3rem 0.5rem;
+}
+
+.cover-comment table th {
+    background-color: #f8f9fa;
+}
+
+/* Стили для карточки жанра */
+.genre-comment {
+    border-left: 4px solid #ffc107;
+    border-radius: 4px;
+    word-wrap: break-word;
+}
+
+.genre-comment p {
+    margin-bottom: 0.5rem;
+}
+
+.genre-comment ul,
+.genre-comment ol {
+    padding-left: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.genre-comment h1,
+.genre-comment h2,
+.genre-comment h3,
+.genre-comment h4,
+.genre-comment h5,
+.genre-comment h6 {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.genre-comment a {
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+.genre-comment a:hover {
+    text-decoration: underline;
+}
+
+.genre-comment blockquote {
+    border-left: 4px solid #6c757d;
+    padding-left: 1rem;
+    margin: 0.5rem 0;
+    color: #6c757d;
+}
+
+.genre-comment img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.genre-comment table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+
+.genre-comment table td,
+.genre-comment table th {
+    border: 1px solid #dee2e6;
+    padding: 0.3rem 0.5rem;
+}
+
+.genre-comment table th {
+    background-color: #f8f9fa;
+}
+
+/* Стили для ссылок в таблице книг */
+.table td a.badge {
+    transition: all 0.2s ease;
+}
+
+.table td a.badge:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.table td a.badge.bg-primary:hover {
+    background-color: #0b5ed7 !important;
+}
+
+.table td a.badge.bg-secondary:hover {
+    background-color: #5a6268 !important;
+}
+
+/* Стили для полей ввода с placeholder */
+.form-control::placeholder {
+    color: #adb5bd;
+    font-style: italic;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+.form-control:not(:placeholder-shown) {
+    color: #212529;
+    font-weight: 500;
+    border-color: #86b7fe;
+    background-color: #f8f9fa;
+}
+
+.form-control:not(:placeholder-shown):focus {
+    background-color: #ffffff;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+textarea.form-control::placeholder {
+    color: #adb5bd;
+    font-style: italic;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+textarea.form-control:not(:placeholder-shown) {
+    color: #212529;
+    font-weight: 500;
+    border-color: #86b7fe;
+    background-color: #f8f9fa;
+}
+
+.form-control:focus::placeholder {
+    opacity: 0.4;
+    transition: opacity 0.2s ease;
+}
+
+/* Фон для страницы bg_page1 */
+.bg-page1 {
+    background-image: url('/static/jpg/bg_page1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+}
+
+/* Остальной контент должен быть читаемым */
+.bg-page1 .container-fluid,
+.bg-page1 .card,
+.bg-page1 .table {
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(2px);
+}
+
+/* Фон для страницы bg_page2 */
+.bg-page2 {
+    background-image: url('/static/jpg/bg_page2.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+}
+
+/* Остальной контент должен быть читаемым */
+.bg-page2 .container-fluid,
+.bg-page2 .card,
+.bg-page2 .table {
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(2px);
+}
+
+/* Фон для страницы bg_page3 */
+.bg-page3 {
+    background-image: url('/static/jpg/bg_page3.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+}
+
+/* Остальной контент должен быть читаемым */
+.bg-page3 .container-fluid,
+.bg-page3 .card,
+.bg-page3 .table {
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(2px);
+}
+
+/* Фон для страницы bg_page4 */
+.bg-page4 {
+    background-image: url('/static/jpg/bg_page4.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+}
+
+/* Остальной контент должен быть читаемым */
+.bg-page4 .container-fluid,
+.bg-page4 .card,
+.bg-page4 .table {
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(2px);
+}

@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="bi bi-plus-circle"></i> Добавление формата</h2>
+                <h5 class="text-muted">Заполните информацию о формате</h5>
+            </div>
+            <a href="{{ url_for('main.format_list') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Назад к списку
+            </a>
+        </div>
+        
+        <form method="POST" action="{{ url_for('main.add_format') }}" novalidate>
+            {{ form.csrf_token }}
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-aspect-ratio"></i> Информация о формате</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        {{ form.format.label(class="form-label fw-bold") }}
+                        <span class="text-danger">*</span>
+                        {{ form.format(class="form-control" + (" is-invalid" if form.format.errors else ""), 
+                                   placeholder="Например: 'A4'", id="formatCode") }}
+                        {% if form.format.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.format.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">Код формата (например: A4, A5, B5)</div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.width.label(class="form-label fw-bold") }}
+                                {{ form.width(class="form-control" + (" is-invalid" if form.width.errors else ""), 
+                                            type="number", min="0", placeholder="Например: '210'", id="formatWidth") }}
+                                {% if form.width.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.width.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Ширина в миллиметрах</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.height.label(class="form-label fw-bold") }}
+                                {{ form.height(class="form-control" + (" is-invalid" if form.height.errors else ""), 
+                                             type="number", min="0", placeholder="Например: '297'", id="formatHeight") }}
+                                {% if form.height.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.height.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Высота в миллиметрах</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.comment.label(class="form-label fw-bold") }}
+                        {{ form.comment(class="form-control", rows="3", placeholder="Например: 'Стандартный формат'") }}
+                        <div class="form-text">Комментарии, примечания</div>
+                    </div>
+                    
+                    <!-- Визуализация формата -->
+                    <div class="mt-3 p-3 bg-light rounded">
+                        <h6 class="fw-bold"><i class="bi bi-eye"></i> Предпросмотр формата</h6>
+                        <div class="text-center">
+                            <div id="formatPreview" style="
+                                width: 120px; 
+                                height: 160px; 
+                                border: 2px solid #0d6efd; 
+                                background: rgba(13, 110, 253, 0.1);
+                                border-radius: 4px;
+                                margin: 0 auto;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                transition: all 0.3s ease;
+                            ">
+                                <span class="text-muted small" id="formatLabel">A4</span>
+                            </div>
+                            <div class="mt-2 text-muted small">
+                                <span id="sizeLabel">210 x 297 мм</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <span class="text-muted">
+                                <i class="bi bi-info-circle"></i> 
+                                Поля с <span class="text-danger">*</span> обязательны для заполнения
+                            </span>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('main.format_list') }}" class="btn btn-secondary btn-lg">
+                                <i class="bi bi-x-circle"></i> Отмена
+                            </a>
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Обновление предпросмотра формата
+    const widthInput = document.getElementById('formatWidth');
+    const heightInput = document.getElementById('formatHeight');
+    const formatInput = document.getElementById('formatCode');
+    const preview = document.getElementById('formatPreview');
+    const formatLabel = document.getElementById('formatLabel');
+    const sizeLabel = document.getElementById('sizeLabel');
+    
+    function updatePreview() {
+        const width = parseInt(widthInput.value) || 210;
+        const height = parseInt(heightInput.value) || 297;
+        const formatName = formatInput.value || 'A4';
+        
+        // Обновляем размеры предпросмотра (масштабируем для отображения)
+        const maxSize = 160;
+        let displayWidth, displayHeight;
+        
+        if (width > height) {
+            displayWidth = maxSize;
+            displayHeight = (height / width) * maxSize;
+        } else {
+            displayHeight = maxSize;
+            displayWidth = (width / height) * maxSize;
+        }
+        
+        // Ограничиваем минимальный размер для наглядности
+        displayWidth = Math.max(displayWidth, 40);
+        displayHeight = Math.max(displayHeight, 40);
+        
+        preview.style.width = Math.min(displayWidth, maxSize) + 'px';
+        preview.style.height = Math.min(displayHeight, maxSize) + 'px';
+        
+        // Обновляем метки
+        formatLabel.textContent = formatName;
+        sizeLabel.textContent = `${width} x ${height} мм`;
+    }
+    
+    if (widthInput) widthInput.addEventListener('input', updatePreview);
+    if (heightInput) heightInput.addEventListener('input', updatePreview);
+    if (formatInput) formatInput.addEventListener('input', updatePreview);
+    
+    // Инициализация предпросмотра
+    updatePreview();
+});
+</script>
+
+<style>
+/* Стили для полей ввода с placeholder */
+.form-control::placeholder {
+    color: #adb5bd;
+    font-style: italic;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+/* Стили для заполненных полей */
+.form-control:not(:placeholder-shown) {
+    color: #212529;
+    font-weight: 500;
+    border-color: #86b7fe;
+    background-color: #f8f9fa;
+}
+
+.form-control:not(:placeholder-shown):focus {
+    background-color: #ffffff;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.form-control:focus::placeholder {
+    opacity: 0.4;
+    transition: opacity 0.2s ease;
+}
+
+/* Стили для карточек */
+.card {
+    border: none;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.card-header {
+    border-bottom: none;
+    font-weight: 500;
+}
+
+.card-header i {
+    margin-right: 8px;
+}
+
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.form-text {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+.text-danger {
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 1rem;
+    }
+    
+    .btn-lg {
+        width: 100%;
+    }
+}
+
+.btn {
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Стили для предпросмотра формата */
+#formatPreview {
+    transition: all 0.3s ease;
+    border-color: #0d6efd !important;
+}
+
+#formatPreview:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Стили для меток предпросмотра */
+#formatLabel {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #0d6efd;
+}
+</style>
+{% endblock %}

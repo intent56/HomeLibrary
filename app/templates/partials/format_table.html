@@ -1,0 +1,346 @@
+<!-- partials/format_table.html -->
+<div id="formatTableContainer" class="w-100">
+    <div class="table-responsive w-100">
+        <table class="table table-hover transparent-table w-100">
+            <thead>
+                <tr>
+                    <th style="width: 8%;">ID</th>
+                    <th style="width: 20%;">Формат</th>
+                    <th style="width: 15%;">Высота</th>
+                    <th style="width: 15%;">Ширина</th>
+                    <th style="width: 22%;">Комментарий</th>
+                    <th style="width: 10%;">Книг</th>
+                    <th style="width: 10%;">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for format in formats %}
+                <tr>
+                    <td class="text-white">{{ format.id }}</td>
+                    <td class="text-white"><strong>{{ format.format }}</strong></td>
+                    <td class="text-white">{{ format.height or '-' }}</td>
+                    <td class="text-white">{{ format.width or '-' }}</td>
+                    <td class="text-white">{{ format.comment or '-' }}</td>
+                    <td class="text-white">{{ format.fmt_books|length }}</td>
+                    <td>
+                        <div class="btn-group btn-group-sm" title="Редактировать">
+                            <a href="{{ url_for('main.edit_format', format_id=format.id, page=1) }}" class="btn btn-outline-light">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <button type="button" class="btn btn-outline-light"  title="Удалить"
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#deleteModal{{ format.id }}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr class="empty-row">
+                    <td colspan="7" class="text-center text-white-50 py-4">
+                        <i class="bi bi-inbox display-6"></i>
+                        <p class="mt-2">Форматы не найдены</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 3. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ -->
+    {% if pagination and pagination.pages > 1 %}
+    <div class="pagination-container mt-4 w-100">
+        <nav aria-label="Навигация по страницам">
+            <ul class="pagination pagination-sm justify-content-center mb-0" id="transparentPagination">
+                <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
+                    <a class="page-link" href="#"
+                       hx-get="{{ url_for('main.format_list') }}"
+                       hx-target="#formatTableContainer"
+                       hx-indicator="#loadingIndicator"
+                       hx-push-url="true"
+                       hx-vals='{"page": 1, "search": "{{ search or '' }}"}'>
+                        <i class="bi bi-chevron-double-left"></i>
+                    </a>
+                </li>
+                <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
+                    <a class="page-link" href="#"
+                       hx-get="{{ url_for('main.format_list') }}"
+                       hx-target="#formatTableContainer"
+                       hx-indicator="#loadingIndicator"
+                       hx-push-url="true"
+                       hx-vals='{"page": {{ pagination.prev_num }}, "search": "{{ search or '' }}"}'>
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+
+                {% set left = pagination.page - 2 %}
+                {% set right = pagination.page + 2 %}
+                {% if left < 1 %}{% set left = 1 %}{% endif %}
+                {% if right > pagination.pages %}{% set right = pagination.pages %}{% endif %}
+
+                {% if left > 1 %}
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                {% endif %}
+
+                {% for p in range(left, right + 1) %}
+                    <li class="page-item {% if p == pagination.page %}active{% endif %}">
+                        <a class="page-link" href="#"
+                           hx-get="{{ url_for('main.format_list') }}"
+                           hx-target="#formatTableContainer"
+                           hx-indicator="#loadingIndicator"
+                           hx-push-url="true"
+                           hx-vals='{"page": {{ p }}, "search": "{{ search or '' }}"}'>
+                            {{ p }}
+                        </a>
+                    </li>
+                {% endfor %}
+
+                {% if right < pagination.pages %}
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                {% endif %}
+
+                <li class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}">
+                    <a class="page-link" href="#"
+                       hx-get="{{ url_for('main.format_list') }}"
+                       hx-target="#formatTableContainer"
+                       hx-indicator="#loadingIndicator"
+                       hx-push-url="true"
+                       hx-vals='{"page": {{ pagination.next_num }}, "search": "{{ search or '' }}"}'>
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+                <li class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}">
+                    <a class="page-link" href="#"
+                       hx-get="{{ url_for('main.format_list') }}"
+                       hx-target="#formatTableContainer"
+                       hx-indicator="#loadingIndicator"
+                       hx-push-url="true"
+                       hx-vals='{"page": {{ pagination.pages }}, "search": "{{ search or '' }}"}'>
+                        <i class="bi bi-chevron-double-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="text-center text-white-50 small mt-2">
+            Показано: {{ pagination.items|length }} из {{ pagination.total }} записей
+            <span class="mx-2">|</span>
+            Страница {{ pagination.page }} из {{ pagination.pages }}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Модальные окна для удаления (адаптированы для тёмной темы) -->
+{% for format in formats %}
+<div class="modal fade" id="deleteModal{{ format.id }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title"><i class="bi bi-exclamation-triangle text-danger"></i> Подтверждение удаления</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Вы уверены, что хотите удалить формат <strong>"{{ format.format }}"</strong>?</p>
+                {% if format.fmt_books %}
+                    <div class="alert alert-warning transparent-alert">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Формат используется в {{ format.fmt_books|length }} книгах. Удаление невозможно!
+                    </div>
+                {% endif %}
+                <p class="text-white-50 small">Это действие необратимо!</p>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                {% if not format.fmt_books %}
+                <form method="POST" action="{{ url_for('main.delete_format', format_id=format.id) }}" style="display: inline;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Удалить
+                    </button>
+                </form>
+                {% else %}
+                <button type="button" class="btn btn-secondary" disabled>
+                    <i class="bi bi-lock"></i> Используется в книгах
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!-- СТИЛИ ДЛЯ ПРОЗРАЧНОЙ ТАБЛИЦЫ И ПАГИНАЦИИ -->
+<style>
+/* 1. РАСТЯГИВАЕМ ТАБЛИЦУ НА ВСЮ ШИРИНУ */
+#formatTableContainer {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+#formatTableContainer .table-responsive {
+    width: 100% !important;
+    overflow-x: auto;
+}
+
+#formatTableContainer .table {
+    width: 100% !important;
+    min-width: 650px; /* Минимальная ширина для сохранения структуры */
+}
+
+/* 2. УБИРАЕМ ПОДЛОЖКИ ДО ФОНА */
+#formatTableContainer,
+#formatTableContainer * {
+    background: transparent !important;
+}
+
+/* Исключение — делаем фон для заголовков таблицы */
+#formatTableContainer .transparent-table thead th {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    color: #ffffff !important;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+#formatTableContainer .transparent-table tbody tr {
+    background-color: rgba(255, 255, 255, 0.06) !important;
+    transition: background-color 0.2s ease;
+}
+
+#formatTableContainer .transparent-table tbody tr:nth-of-type(odd) {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+#formatTableContainer .transparent-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* 3. ВСЕ ЗНАЧЕНИЯ В ТАБЛИЦЕ БЕЛЫМ ЦВЕТОМ */
+#formatTableContainer .transparent-table tbody td {
+    color: #ffffff !important;
+}
+
+/* 4. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ */
+#formatTableContainer .pagination-container {
+    background-color: rgba(0, 0, 0, 0.25) !important;
+    backdrop-filter: blur(8px);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    width: 100% !important;
+}
+
+/* ПЕРЕОПРЕДЕЛЯЕМ СТИЛИ ПАГИНАЦИИ */
+#formatTableContainer #transparentPagination .page-link {
+    background-color: transparent !important;
+    background: transparent !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+    transition: all 0.3s ease;
+}
+
+#formatTableContainer #transparentPagination .page-link:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+#formatTableContainer #transparentPagination .page-item.active .page-link {
+    background-color: rgba(13, 110, 253, 0.4) !important;
+    border-color: rgba(13, 110, 253, 0.6) !important;
+}
+
+#formatTableContainer #transparentPagination .page-item.disabled .page-link {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* 5. Текст в пагинации */
+#formatTableContainer .text-white-50 {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* 6. Кнопки в таблице */
+#formatTableContainer .btn-outline-light {
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+#formatTableContainer .btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-color: #ffffff !important;
+    color: #ffffff !important;
+}
+
+/* 7. Модальное окно */
+#formatTableContainer .modal-content.bg-dark {
+    background-color: rgba(33, 37, 41, 0.95) !important;
+    backdrop-filter: blur(10px);
+}
+
+#formatTableContainer .transparent-alert {
+    background: rgba(255, 193, 7, 0.15) !important;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 193, 7, 0.3) !important;
+    color: #ffffff !important;
+}
+
+/* 8. Адаптивность */
+@media (max-width: 768px) {
+    #formatTableContainer .pagination-container {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: center !important;
+    }
+}
+</style>
+
+<!-- JAVASCRIPT ДЛЯ ПРИНУДИТЕЛЬНОГО ПРИМЕНЕНИЯ СТИЛЕЙ К ПАГИНАЦИИ -->
+<script>
+function makePaginationTransparent() {
+    const paginationLinks = document.querySelectorAll('#transparentPagination .page-link');
+    paginationLinks.forEach(link => {
+        link.style.setProperty('background-color', 'transparent', 'important');
+        link.style.setProperty('background', 'transparent', 'important');
+        link.style.setProperty('border-color', 'rgba(255, 255, 255, 0.15)', 'important');
+        link.style.setProperty('color', '#ffffff', 'important');
+
+        link.addEventListener('mouseenter', function() {
+            this.style.setProperty('background-color', 'rgba(255, 255, 255, 0.1)', 'important');
+            this.style.setProperty('border-color', 'rgba(255, 255, 255, 0.3)', 'important');
+        });
+        link.addEventListener('mouseleave', function() {
+            this.style.setProperty('background-color', 'transparent', 'important');
+            this.style.setProperty('border-color', 'rgba(255, 255, 255, 0.15)', 'important');
+        });
+    });
+
+    const activeLinks = document.querySelectorAll('#transparentPagination .page-item.active .page-link');
+    activeLinks.forEach(link => {
+        link.style.setProperty('background-color', 'rgba(13, 110, 253, 0.4)', 'important');
+        link.style.setProperty('border-color', 'rgba(13, 110, 253, 0.6)', 'important');
+    });
+
+    const disabledLinks = document.querySelectorAll('#transparentPagination .page-item.disabled .page-link');
+    disabledLinks.forEach(link => {
+        link.style.setProperty('background-color', 'transparent', 'important');
+        link.style.setProperty('border-color', 'rgba(255, 255, 255, 0.05)', 'important');
+        link.style.setProperty('color', 'rgba(255, 255, 255, 0.2)', 'important');
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    makePaginationTransparent();
+});
+
+document.addEventListener('htmx:afterSwap', function(event) {
+    if (event.detail.target.id === 'formatTableContainer') {
+        setTimeout(makePaginationTransparent, 50);
+    }
+});
+
+document.addEventListener('htmx:afterSettle', function(event) {
+    if (event.detail.target.id === 'formatTableContainer') {
+        setTimeout(makePaginationTransparent, 50);
+    }
+});
+</script>

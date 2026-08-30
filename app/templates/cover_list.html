@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+
+{% block body_class %}bg-page2{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+            <div class="text-center text-md-start mb-3 mb-md-0">
+                <h2 class="text-white"><i class="bi bi-bookmark"></i> Справочник переплетов</h2>
+                <p class="text-white-50 mb-0">Всего типов: {{ total_covers }}</p>
+            </div>
+            <div class="d-flex gap-2 flex-wrap justify-content-center">
+                <!-- 2. КНОПКА "НА ГЛАВНУЮ" - БЕЛЫЙ ТЕКСТ -->
+                <a href="{{ url_for('main.index') }}" class="btn btn-outline-light d-flex align-items-center">
+                    <i class="bi bi-house me-1"></i> На главную
+                </a>
+                <a href="{{ url_for('main.add_cover') }}" class="btn btn-primary d-flex align-items-center">
+                    <i class="bi bi-plus-circle me-1"></i> Добавить переплет
+                </a>
+            </div>
+        </div>
+
+        <!-- 3. КАРТОЧКИ СТАТИСТИКИ С ПРОЗРАЧНЫМ ФОНОМ И БЕЛЫМ ТЕКСТОМ -->
+        <!-- 3. КАРТОЧКИ СТАТИСТИКИ С ПРОЗРАЧНЫМ ФОНОМ, БЕЛЫМ ТЕКСТОМ И БЕЛОЙ РАМКОЙ -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card transparent-card-stat border border-white border-opacity-50">
+                    <div class="card-body text-center">
+                        <h6 class="card-title text-white-50">Всего типов переплетов</h6>
+                        <h2 class="text-white mb-0">{{ total_covers }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card transparent-card-stat border border-white border-opacity-50">
+                    <div class="card-body text-center">
+                        <h6 class="card-title text-white-50">Книг с переплетами</h6>
+                        <h2 class="text-white mb-0">{{ total_books_with_covers }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card transparent-card-stat border border-white border-opacity-50">
+                    <div class="card-body text-center">
+                        <h6 class="card-title text-white-50">На странице</h6>
+                        <h2 class="text-white mb-0">{{ covers|length }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Сетка типов обложек с выравниванием карточек -->
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for cover in covers %}
+            <div class="col">
+                <!-- 4. КАРТОЧКА ПЕРЕПЛЕТА С ПРОЗРАЧНЫМ ФОНОМ И БЕЛОЙ РАМКОЙ -->
+                <div class="card h-100 d-flex flex-column transparent-card-cover border border-white border-opacity-50">
+                    <!-- Заголовок с прозрачным фоном -->
+                    <div class="card-header transparent-card-header d-flex justify-content-between align-items-center"
+                        style="min-height: 70px;">
+                        <h5 class="mb-0 text-truncate text-white" style="max-width: 60%;">
+                            <span class="badge bg-light text-dark">{{ cover.code }}</span>
+                            {{ cover.name }}
+                        </h5>
+                        <div class="btn-group btn-group-sm flex-shrink-0" role="group">
+                            <a href="{{ url_for('main.cover_card', cover_id=cover.id) }}" class="btn btn-outline-light"
+                                title="Просмотр">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{{ url_for('main.edit_cover', cover_id=cover.id, next=request.full) }}"
+                                class="btn btn-outline-light" title="Редактировать">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <button type="button" class="btn btn-outline-light" title="Удалить" data-bs-toggle="modal"
+                                data-bs-target="#deleteCoverModal{{ cover.id }}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Основное содержимое с фиксированной минимальной высотой -->
+                    <div class="card-body d-flex flex-column" style="min-height: 150px;">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="p-3 me-3 flex-shrink-0 transparent-icon-circle">
+                                <i class="bi bi-bookmark display-6 text-white-50"></i>
+                            </div>
+                            <div class="overflow-hidden">
+                                <h6 class="mb-1 text-white-50">Код: <span
+                                        class="badge bg-secondary bg-opacity-75 text-white">{{ cover.code }}</span></h6>
+                                <span class="badge bg-info bg-opacity-75 text-white">
+                                    <i class="bi bi-book"></i> {{ cover.cvr_books|length }} книг
+                                </span>
+                            </div>
+                        </div>
+                        <!-- Краткая информация о переплете (фиксированная высота) -->
+                        <p class="card-text text-white-50 small mt-auto mb-0" style="min-height: 2.5rem;">
+                            <i class="bi bi-info-circle"></i>
+                            {% if cover.cvr_books %}
+                            Используется в {{ cover.cvr_books|length }} книгах
+                            {% else %}
+                            Не используется в книгах
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Модальное окно подтверждения удаления (адаптировано для тёмной темы) -->
+            <div class="modal fade" id="deleteCoverModal{{ cover.id }}" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content bg-dark text-light">
+                        <div class="modal-header border-secondary">
+                            <h5 class="modal-title"><i class="bi bi-exclamation-triangle text-danger"></i> Подтверждение
+                                удаления</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Вы уверены, что хотите удалить тип переплета <strong>"{{ cover.name }}"</strong>?</p>
+                            {% if cover.cvr_books %}
+                            <div class="alert alert-warning transparent-alert">
+                                <i class="bi bi-exclamation-triangle"></i>
+                                Переплет используется в {{ cover.cvr_books|length }} книгах. Удаление невозможно!
+                            </div>
+                            {% endif %}
+                            <p class="text-white-50 small">Это действие необратимо!</p>
+                        </div>
+                        <div class="modal-footer border-secondary">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                            {% if not cover.cvr_books %}
+                            <form method="POST" action="{{ url_for('main.delete_cover', cover_id=cover.id) }}"
+                                style="display: inline;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-trash"></i> Удалить
+                                </button>
+                            </form>
+                            {% else %}
+                            <button type="button" class="btn btn-secondary" disabled>
+                                <i class="bi bi-lock"></i> Используется в книгах
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- СТИЛИ ДЛЯ ПРОЗРАЧНЫХ КАРТОЧЕК И ЭЛЕМЕНТОВ -->
+<style>
+    /* 1. Стиль для карточек статистики */
+    .transparent-card-stat {
+        background-color: rgba(0, 0, 0, 0.25) !important;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        transition: all 0.3s ease;
+        color: #ffffff !important;
+    }
+
+    .transparent-card-stat:hover {
+        background-color: rgba(0, 0, 0, 0.35) !important;
+        transform: translateY(-2px);
+    }
+
+    /* 2. Стиль для карточек переплетов */
+    .transparent-card-cover {
+        background-color: rgba(0, 0, 0, 0.2) !important;
+        backdrop-filter: blur(5px);
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    }
+
+    .transparent-card-cover:hover {
+        background-color: rgba(0, 0, 0, 0.35) !important;
+        transform: translateY(-4px);
+    }
+
+    /* 3. Стиль для заголовка карточки переплета */
+    .transparent-card-header {
+        background-color: rgba(0, 0, 0, 0.3) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    /* 4. Стиль для иконки в карточке переплета */
+    .transparent-icon-circle {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    }
+
+    /* 5. Стиль для бейджей */
+    .bg-opacity-75 {
+        --bs-bg-opacity: 0.75;
+    }
+
+    /* 6. Стиль для полупрозрачного алерта в модальном окне */
+    .transparent-alert {
+        background: rgba(255, 193, 7, 0.15) !important;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 193, 7, 0.3) !important;
+        color: #ffffff !important;
+    }
+
+    .transparent-alert i {
+        color: #ffc107 !important;
+    }
+
+    /* 7. Цвет текста */
+    .text-white-50 {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+
+    .text-white {
+        color: #ffffff !important;
+    }
+
+    /* 8. Кнопки */
+    .btn-outline-light {
+        color: #ffffff !important;
+        border-color: rgba(255, 255, 255, 0.3) !important;
+    }
+
+    .btn-outline-light:hover {
+        background-color: rgba(255, 255, 255, 0.2) !important;
+        border-color: #ffffff !important;
+        color: #ffffff !important;
+    }
+
+    /* 9. Адаптивность */
+    @media (max-width: 768px) {
+        .transparent-card-stat {
+            margin-bottom: 1rem;
+        }
+
+        .card-header h5 {
+            font-size: 1rem;
+        }
+
+        .btn-group.btn-group-sm .btn {
+            padding: 0.25rem 0.4rem;
+            font-size: 0.75rem;
+        }
+    }
+
+    /* 1. Стиль для карточек статистики */
+    .transparent-card-stat {
+        background-color: rgba(0, 0, 0, 0.25) !important;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.5) !important;
+        /* Белая рамка */
+        transition: all 0.3s ease;
+        color: #ffffff !important;
+    }
+
+    .transparent-card-stat:hover {
+        background-color: rgba(0, 0, 0, 0.35) !important;
+        transform: translateY(-2px);
+        border-color: rgba(255, 255, 255, 0.8) !important;
+        /* Более яркая рамка при наведении */
+    }
+</style>
+{% endblock %}

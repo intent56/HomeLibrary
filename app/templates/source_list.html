@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block body_class %}bg-page4{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="text-white"><i class="bi bi-database"></i> Справочник источников информации</h2>
+                <p class="text-white-50 mb-0">Управление источниками данных для поиска книг</p>
+            </div>
+            <div class="d-flex gap-2">
+                <!-- 2. КНОПКА "НА ГЛАВНУЮ" - БЕЛЫЙ ТЕКСТ -->
+                <a href="{{ url_for('main.index') }}" class="btn btn-outline-light">
+                    <i class="bi bi-house"></i> На главную
+                </a>
+                <a href="{{ url_for('main.add_source') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Добавить источник
+                </a>
+            </div>
+        </div>
+
+        <!-- Контейнер для таблицы с HTMX -->
+        <div id="sourceTable" class="transparent-container">
+            {% include 'partials/source_table.html' %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Обработка события обновления таблицы
+    document.body.addEventListener('htmx:afterSwap', function(evt) {
+        if (evt.detail.target.id === 'sourceTable') {
+            // Обновляем счетчик в футере
+            const rows = document.querySelectorAll('#sourceTable tbody tr:not(#empty-row)').length;
+            const footer = document.querySelector('.card-footer .text-white-50');
+            if (footer) {
+                footer.textContent = `Всего источников: ${rows}`;
+            }
+        }
+    });
+
+    // Обработка ошибок HTMX
+    document.body.addEventListener('htmx:responseError', function(evt) {
+        console.error('HTMX Error:', evt.detail);
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+        alertDiv.innerHTML = `
+            <i class="bi bi-exclamation-triangle"></i>
+            Произошла ошибка при выполнении операции. Попробуйте обновить страницу.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.querySelector('.container').prepend(alertDiv);
+    });
+});
+</script>
+
+<!-- СТИЛИ ДЛЯ ПРОЗРАЧНОЙ ТАБЛИЦЫ И ЭЛЕМЕНТОВ -->
+<style>
+/* 1. ПРОЗРАЧНЫЙ КОНТЕЙНЕР */
+.transparent-container {
+    background: transparent !important;
+}
+
+/* 2. СТИЛИ ДЛЯ ВЫРАВНИВАНИЯ КНОПОК В ТАБЛИЦАХ */
+.table .btn-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.table .btn-group .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px; /* Увеличенная минимальная ширина */
+    min-height: 36px; /* Увеличенная минимальная высота */
+    padding: 0.25rem 0.5rem;
+    font-size: 0.9rem;
+}
+
+.table .btn-group .btn i {
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+/* 3. СТИЛИ ДЛЯ БЕЛОГО ТЕКСТА */
+.text-white {
+    color: #ffffff !important;
+}
+
+.text-white-50 {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* 4. КНОПКИ В ТАБЛИЦЕ - СВЕТЛЫЕ НА ТЁМНОМ ФОНЕ */
+.table .btn-outline-light {
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.table .btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-color: #ffffff !important;
+    color: #ffffff !important;
+}
+
+/* 5. СТИЛИ ДЛЯ КНОПОК ВНЕ ТАБЛИЦЫ */
+.btn-outline-light {
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-color: #ffffff !important;
+    color: #ffffff !important;
+}
+
+/* 6. СТИЛИ ДЛЯ БЕЙДЖЕЙ */
+.badge {
+    font-weight: 500;
+    padding: 0.35rem 0.65rem;
+}
+
+/* 7. ИНДИКАТОР ЗАГРУЗКИ HTMX */
+.htmx-indicator {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}
+
+.htmx-request .htmx-indicator {
+    opacity: 1;
+}
+
+.htmx-request.htmx-indicator {
+    opacity: 1;
+}
+
+/* 8. АНИМАЦИЯ ДЛЯ УДАЛЕНИЯ СТРОКИ */
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+tr.htmx-swapping {
+    animation: fadeOut 0.3s ease-in;
+}
+
+/* 9. СТИЛИ ДЛЯ ЗАГОЛОВКА КАРТОЧКИ */
+.card-header {
+    border-bottom: none;
+    font-weight: 500;
+}
+
+.card-header i {
+    margin-right: 8px;
+}
+
+/* 10. АДАПТИВНОСТЬ */
+@media (max-width: 768px) {
+    .table .btn-group .btn {
+        min-width: 32px;
+        min-height: 32px;
+        padding: 0.2rem 0.4rem;
+        font-size: 0.8rem;
+    }
+}
+</style>
+{% endblock %}

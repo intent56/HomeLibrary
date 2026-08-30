@@ -1,0 +1,43 @@
+<div id="searchResults">
+    {% if interpreters %}
+        <div class="list-group">
+            {% for interpreter in interpreters %}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="bi bi-person-circle text-primary me-2"></i>
+                        <div class="d-inline-block">
+                            <strong>{{ interpreter.fio }}</strong>
+                            {% if interpreter.firstname %}
+                                <span class="text-muted ms-2">
+                                    <i class="bi bi-person"></i> {{ interpreter.firstname }}
+                                    {% if interpreter.secondname %}
+                                        {{ interpreter.secondname }}
+                                    {% endif %}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-sm add-interpreter-btn" 
+                            data-interpreter-id="{{ interpreter.id }}">
+                        <i class="bi bi-plus-circle"></i> Добавить
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="mt-2 text-muted small">
+            <i class="bi bi-info-circle"></i> Найдено переводчиков: {{ interpreters|length }}
+        </div>
+    {% else %}
+        <div class="alert alert-info mt-2" role="alert">
+            <i class="bi bi-info-circle"></i>
+            <strong>Переводчики не найдены</strong>
+            <p class="mb-0 mt-1">
+                Попробуйте изменить поисковый запрос или 
+                <a href="{{ url_for('main.add_interpreter') }}?book_id={{ request.args.get('book_id', 0) }}" 
+                   class="alert-link">
+                    <i class="bi bi-plus-circle"></i> Добавить нового переводчика
+                </a>
+            </p>
+        </div>
+    {% endif %}
+</div>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Домашняя библиотека</title>
+    <link type="text/css" href="{{ url_for('static', filename='css/style_init.css')}}" rel="stylesheet">
+    <!-- Блокировка возврата назад -->
+    <script>
+        // Блокировка кнопки "Назад" в браузере
+        history.pushState(null, null, location.href);
+        window.addEventListener('popstate', function () {
+            history.pushState(null, null, location.href);
+        });
+    </script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="image-wrapper">
+            <img src="{{ url_for('static', filename='jpg/entrance.jpg') }}" alt="Библиотека" />
+        </div>
+        <div class="header-wrapper">
+            <h1>Домашняя<br>библиотека</h1>
+            <a id="enter" href="{{ url_for('main.index') }}">Войти</a>
+        </div>
+    </div>
+</body>
+
+</html>

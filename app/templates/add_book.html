@@ -1,0 +1,1418 @@
+{% extends "base.html" %}
+
+{% block body_class %}bg-page1{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="text-white"><i class="bi bi-plus-circle"></i> Добавление новой книги</h2>
+                <span class="badge bg-opacity-75 text-white fs-6">Все поля необязательны, кроме отмеченных
+                    *</span>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('main.index') }}" class="btn btn-outline-light">
+                    <i class="bi bi-house"></i> На главную
+                </a>
+            </div>
+        </div>
+
+        <!-- Поиск в интернете -->
+        <div class="card shadow-sm mb-4 transparent-card">
+            <div class="card-header transparent-card-header">
+                <h5 class="mb-0 text-white"><i class="bi bi-cloud-download"></i> Найти книгу в интернете</h5>
+            </div>
+            <div class="card-body transparent-card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label for="sourceSelect" class="form-label fw-bold text-white">Источник</label>
+                        <select class="form-select bg-transparent text-white border-light" id="sourceSelect">
+                            <option value="">Все источники</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="searchQuery" class="form-label fw-bold text-white">Поиск по названию или
+                            ISBN</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent text-white border-light"><i
+                                    class="bi bi-search"></i></span>
+                            <input type="text" class="form-control bg-transparent text-white border-light"
+                                id="searchQuery" placeholder="Например: 'Война и мир' или '978-5-17-123456-7'">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold text-white"> </label>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-light flex-grow-1" type="button" id="searchBtn">
+                                <i class="bi bi-search"></i> Найти
+                            </button>
+                            <button class="btn btn-outline-light" type="button" id="clearSearchBtn">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <div id="searchStatus" class="form-text text-white-50"></div>
+                </div>
+
+                <!-- Результаты поиска -->
+                <div id="searchResults" class="mt-3" style="display: none;">
+                    <h6 class="text-white">Найденные книги:</h6>
+                    <div id="resultsList" class="list-group bg-transparent"></div>
+                </div>
+
+                <!-- Агрегаторы -->
+                <div class="row g-3 mt-2 pt-2 border-top border-light">
+                    <div class="col-md-9">
+                        <label for="aggregatorSelect" class="form-label fw-bold text-white">Поиск на
+                            сайтах-агрегаторах</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent text-white border-light"><i
+                                    class="bi bi-link-45deg"></i></span>
+                            <select class="form-select bg-transparent text-white border-light" id="aggregatorSelect">
+                                <option value="">Выберите агрегатор...</option>
+                            </select>
+                            <input type="text" class="form-control bg-transparent text-white border-light"
+                                id="aggregatorSearchQuery" placeholder="Например: 'Война и мир'">
+                            <button class="btn btn-outline-light" type="button" id="searchAggregatorBtn">
+                                <i class="bi bi-search"></i> Найти
+                            </button>
+                        </div>
+                        <div id="aggregatorSearchStatus" class="form-text text-white-50">Выберите агрегатор и введите
+                            запрос для поиска.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form method="POST" action="{{ url_for('main.add_book') }}" enctype="multipart/form-data" novalidate>
+            {{ form.csrf_token }}
+
+            <!-- Вкладки -->
+            <div class="card shadow-sm mb-4 transparent-card">
+                <div class="card-header transparent-card-header">
+                    <ul class="nav nav-tabs card-header-tabs" id="bookTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="main-tab" data-bs-toggle="tab" data-bs-target="#main"
+                                type="button" role="tab">
+                                <i class="bi bi-info-circle"></i> Основное
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="series-tab" data-bs-toggle="tab" data-bs-target="#series"
+                                type="button" role="tab">
+                                <i class="bi bi-tags"></i> Серия
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="physical-tab" data-bs-toggle="tab" data-bs-target="#physical"
+                                type="button" role="tab">
+                                <i class="bi bi-box"></i> Характеристики
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="ids-tab" data-bs-toggle="tab" data-bs-target="#ids"
+                                type="button" role="tab">
+                                <i class="bi bi-upc-scan"></i> Идентификаторы
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="content-tab" data-bs-toggle="tab" data-bs-target="#content"
+                                type="button" role="tab">
+                                <i class="bi bi-text-paragraph"></i> Содержание
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="cover-tab" data-bs-toggle="tab" data-bs-target="#cover"
+                                type="button" role="tab">
+                                <i class="bi bi-image"></i> Обложка
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body transparent-card-body">
+                    <div class="tab-content" id="bookTabsContent">
+                        <!-- Вкладка 1: Основная информация -->
+                        <div class="tab-pane fade show active" id="main" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.name.label(class="form-label fw-bold text-white") }}
+                                        <span class="text-danger">*</span>
+                                        {{ form.name(class="form-control bg-transparent text-white border-light" + ("
+                                        is-invalid" if form.name.errors else ""),
+                                        placeholder="Например: 'Война и мир'", id="bookName") }}
+                                        {% if form.name.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.name.errors %}
+                                            {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                        <div class="form-text text-white-50">Краткое название книги</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.location.label(class="form-label fw-bold text-white") }}
+                                        <span class="text-danger">*</span>
+                                        {{ form.location(class="form-control bg-transparent text-white border-light" +
+                                        (" is-invalid" if form.location.errors else ""),
+                                        placeholder="Например: 'Полка 3, Стеллаж 2'") }}
+                                        {% if form.location.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.location.errors %}
+                                            {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                        <div class="form-text text-white-50">Место хранения книги в библиотеке</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                {{ form.fullname.label(class="form-label fw-bold text-white") }}
+                                {{ form.fullname(class="form-control bg-transparent text-white border-light",
+                                placeholder="Например: 'Война и мир. Том 1'", id="bookFullname") }}
+                                <div class="form-text text-white-50">Полное название, включая подзаголовок</div>
+                            </div>
+                            <div class="mb-3">
+                                {{ form.id_language.label(class="form-label fw-bold text-white") }}
+                                <div class="input-group">
+                                    {{ form.id_language(class="form-select d-none", id="languageSelect") }}
+                                    <input type="text" class="form-control bg-transparent text-white border-light"
+                                        id="languageSearchInput" placeholder="Введите название или код языка..."
+                                        hx-get="{{ url_for('main.search_languages_ajax') }}"
+                                        hx-trigger="keyup changed delay:300ms, search" hx-target="#languageResults"
+                                        hx-indicator="#languageSearchSpinner" hx-vals='{"book_id": 0}'>
+                                    <button class="btn btn-outline-light" type="button" data-bs-toggle="modal"
+                                        data-bs-target="#languageModal">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                    <span id="languageSearchSpinner"
+                                        class="spinner-border spinner-border-sm htmx-indicator text-white" role="status"
+                                        style="margin-left: 8px;"></span>
+                                </div>
+                                <div id="languageResults" class="list-group mt-2 bg-transparent"
+                                    style="max-height: 200px; overflow-y: auto;"></div>
+                                <div id="selectedLanguageDisplay" class="mt-2">
+                                    <span class="badge btn-outline-light bg-opacity-75 text-white" id="selectedLanguageBadge"
+                                        style="display: none;">
+                                        <i class="bi bi-check-circle"></i> Выбран: <span
+                                            id="selectedLanguageName"></span>
+                                    </span>
+                                </div>
+                                <input type="hidden" id="selectedLanguageId" name="id_language" value="">
+                                {% if form.id_language.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.id_language.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                <div class="form-text text-white-50">Начните вводить название или код языка для поиска.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Вкладка 2: Серия и издание -->
+                        <div class="tab-pane fade" id="series" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.seria_global.label(class="form-label fw-bold text-white") }}
+                                        {{ form.seria_global(class="form-control bg-transparent text-white
+                                        border-light", placeholder="Например: 'Русская классика'") }}
+                                        <div class="form-text text-white-50">Глобальная серия (большой цикл)</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.seria_local.label(class="form-label fw-bold text-white") }}
+                                        {{ form.seria_local(class="form-control bg-transparent text-white border-light",
+                                        placeholder="Например: 'Романы-эпопеи'") }}
+                                        <div class="form-text text-white-50">Локальная серия внутри глобальной</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        {{ form.edition.label(class="form-label fw-bold text-white") }}
+                                        {{ form.edition(class="form-control bg-transparent text-white border-light",
+                                        placeholder="Например: '3-е издание'") }}
+                                        <div class="form-text text-white-50">Номер или название издания</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        {{ form.year_edition.label(class="form-label fw-bold text-white") }}
+                                        {{ form.year_edition(class="form-control bg-transparent text-white border-light"
+                                        + (" is-invalid" if form.year_edition.errors else ""),
+                                        type="number", min="1000", max="2100",
+                                        placeholder="Например: '2024'") }}
+                                        {% if form.year_edition.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.year_edition.errors %}
+                                            {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                        <div class="form-text text-white-50">Год издания книги</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        {{ form.pages.label(class="form-label fw-bold text-white") }}
+                                        {{ form.pages(class="form-control bg-transparent text-white border-light" + ("
+                                        is-invalid" if form.pages.errors else ""),
+                                        type="number", min="0", placeholder="Например: '350'", id="bookPages") }}
+                                        {% if form.pages.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.pages.errors %}
+                                            {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                        <div class="form-text text-white-50">Количество страниц</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Вкладка 3: Физические характеристики -->
+                        <div class="tab-pane fade" id="physical" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.id_cover.label(class="form-label fw-bold text-white") }}
+                                        {{ form.id_cover(class="form-select bg-transparent text-white border-light" + ("
+                                        is-invalid" if form.id_cover.errors else "")) }}
+                                        {% if form.id_cover.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.id_cover.errors %}
+                                            {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                        <div class="form-text text-white-50">Тип переплета книги</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.id_format.label(class="form-label fw-bold text-white") }}
+                                        <!-- HTMX-ПОИСК ДЛЯ ФОРМАТА -->
+                                        <div class="input-group">
+                                            {{ form.id_format(class="form-select d-none", id="formatSelect") }}
+                                            <input type="text"
+                                                class="form-control bg-transparent text-white border-light"
+                                                id="formatSearchInput" placeholder="Начните вводить формат книги..."
+                                                hx-get="{{ url_for('main.search_formats_ajax') }}"
+                                                hx-trigger="keyup changed delay:300ms, search"
+                                                hx-target="#formatResults" hx-indicator="#formatSearchSpinner">
+                                            <button class="btn btn-outline-light" type="button" data-bs-toggle="modal"
+                                                data-bs-target="#formatModal">
+                                                <i class="bi bi-search"></i>
+                                            </button>
+                                            <span id="formatSearchSpinner"
+                                                class="spinner-border spinner-border-sm htmx-indicator text-white"
+                                                role="status" style="margin-left: 8px;"></span>
+                                        </div>
+                                        <div id="formatResults" class="list-group mt-2 bg-transparent"
+                                            style="max-height: 200px; overflow-y: auto;"></div>
+                                        <div id="selectedFormatDisplay" class="mt-2">
+                                            <span class="badge btn-outline-light bg-opacity-75 text-white"
+                                                id="selectedFormatBadge" style="display: none;">
+                                                <i class="bi bi-check-circle"></i> Выбран: <span
+                                                    id="selectedFormatName"></span>
+                                            </span>
+                                        </div>
+                                        <input type="hidden" id="selectedFormatId" name="id_format" value="">
+                                        {% if form.id_format.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.id_format.errors %}
+                                            {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                        <div class="form-text text-white-50">Начните вводить формат книги для поиска.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.circulation.label(class="form-label fw-bold text-white") }}
+                                        {{ form.circulation(class="form-control bg-transparent text-white border-light"
+                                        + (" is-invalid" if form.circulation.errors else ""),
+                                        type="number", min="0", placeholder="Например: '5000'") }}
+                                        {% if form.circulation.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.circulation.errors %}
+                                            {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                        <div class="form-text text-white-50">Тираж книги</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.price.label(class="form-label fw-bold text-white") }}
+                                        <div class="input-group">
+                                            {{ form.price(class="form-control bg-transparent text-white border-light" +
+                                            (" is-invalid" if form.price.errors else ""),
+                                            type="number", step="0.01", min="0", placeholder="Например: '599.99'") }}
+                                            <span
+                                                class="input-group-text bg-transparent text-white border-light">₽</span>
+                                        </div>
+                                        {% if form.price.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {% for error in form.price.errors %}
+                                            {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                        <div class="form-text text-white-50">Цена книги</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Вкладка 4: Идентификаторы -->
+                        <div class="tab-pane fade" id="ids" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.barcode.label(class="form-label fw-bold text-white") }}
+                                        {{ form.barcode(class="form-control bg-transparent text-white border-light",
+                                        placeholder="Например: '978-5-17-123456-7'") }}
+                                        <div class="form-text text-white-50">Штрих-код или артикул</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.isbn.label(class="form-label fw-bold text-white") }}
+                                        {{ form.isbn(class="form-control bg-transparent text-white border-light",
+                                        placeholder="Например: '978-5-17-123456-7'", id="bookIsbn") }}
+                                        <div class="form-text text-white-50">Международный стандартный книжный номер
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Вкладка 5: Содержание -->
+                        <div class="tab-pane fade" id="content" role="tabpanel">
+                            <div class="mb-3">
+                                {{ form.summary.label(class="form-label fw-bold text-white") }}
+                                {{ form.summary(class="form-control bg-transparent text-white border-light", rows="4",
+                                placeholder="Например: 'Краткая аннотация к книге...'", id="bookSummary") }}
+                                <div class="form-text text-white-50">Краткое описание содержания книги</div>
+                            </div>
+                            <div class="mb-3">
+                                {{ form.content.label(class="form-label fw-bold text-white") }}
+                                {{ form.content(class="form-control bg-transparent text-white border-light", rows="6",
+                                placeholder="Например: 'Подробное содержание или оглавление...'") }}
+                                <div class="form-text text-white-50">Полное содержание или оглавление книги</div>
+                            </div>
+                        </div>
+
+                        <!-- Вкладка 6: Обложка -->
+                        <div class="tab-pane fade" id="cover" role="tabpanel">
+                            <div class="mb-3">
+                                {{ form.cover.label(class="form-label fw-bold text-white") }}
+                                {{ form.cover(class="form-control bg-transparent text-white border-light" + ("
+                                is-invalid" if form.cover.errors else ""), accept="image/*") }}
+                                {% if form.cover.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.cover.errors %}
+                                    {{ error }}
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                <div class="form-text text-white-50">Загрузите обложку книги (JPG, PNG, GIF, WEBP)</div>
+                                <div id="coverPreviewContainer" style="display: none;" class="mt-2">
+                                    <img id="coverPreview" src="" alt="Обложка книги"
+                                        style="max-height: 150px; border-radius: 8px;">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                {{ form.add_info.label(class="form-label fw-bold text-white") }}
+                                {{ form.add_info(class="form-control bg-transparent text-white border-light", rows="3",
+                                placeholder="Например: 'Любая дополнительная информация о книге...'", id="bookAddInfo")
+                                }}
+                                <div class="form-text text-white-50">Примечания, пометки, дополнительная информация
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Модальные окна -->
+            <!-- Модальное окно для поиска языка -->
+            <div class="modal fade" id="languageModal" tabindex="-1" aria-labelledby="languageModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content bg-dark text-light border-light">
+                        <div class="modal-header border-secondary">
+                            <h5 class="modal-title text-white" id="languageModalLabel"><i
+                                    class="bi bi-translate text-info"></i> Поиск языка</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <input type="text" class="form-control bg-transparent text-white border-light"
+                                    id="modalLanguageSearch" placeholder="Введите название или код языка...">
+                            </div>
+                            <div id="modalLanguageResults" class="list-group bg-transparent"
+                                style="max-height: 400px; overflow-y: auto;">
+                                <!-- Результаты будут загружены сюда -->
+                            </div>
+                        </div>
+                        <div class="modal-footer border-secondary">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Модальное окно для поиска формата -->
+            <div class="modal fade" id="formatModal" tabindex="-1" aria-labelledby="formatModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content bg-dark text-light border-light">
+                        <div class="modal-header border-secondary">
+                            <h5 class="modal-title text-white" id="formatModalLabel"><i
+                                    class="bi bi-aspect-ratio text-info"></i> Поиск формата</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <input type="text" class="form-control bg-transparent text-white border-light"
+                                    id="modalFormatSearch" placeholder="Введите формат книги...">
+                            </div>
+                            <div id="modalFormatResults" class="list-group bg-transparent"
+                                style="max-height: 400px; overflow-y: auto;">
+                                <!-- Результаты будут загружены сюда -->
+                            </div>
+                        </div>
+                        <div class="modal-footer border-secondary">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Кнопки действия -->
+            <div class="card shadow-sm mb-4 transparent-card">
+                <div class="card-body transparent-card-body">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <span class="text-white-50">
+                                <i class="bi bi-info-circle"></i>
+                                Поля с <span class="text-danger">*</span> обязательны для заполнения
+                            </span>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('main.index') }}" class="btn btn-outline-light btn-lg">
+                                <i class="bi bi-x-circle"></i> Отмена
+                            </a>
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Загрузка списка источников
+    function loadSources() {
+        const select = document.getElementById('sourceSelect');
+        select.innerHTML = '<option value="">Загрузка источников...</option>';
+
+        fetch('/api/sources?type=books')
+            .then(response => {
+                if (!response.ok) throw new Error('Ошибка загрузки источников');
+                return response.json();
+            })
+            .then(sources => {
+                select.innerHTML = '<option value="">Все источники</option>';
+                sources.forEach(source => {
+                    const option = document.createElement('option');
+                    option.value = source.id;
+                    option.textContent = source.name;
+                    select.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Ошибка загрузки источников:', error);
+                select.innerHTML = '<option value="">Ошибка загрузки источников</option>';
+            });
+    }
+
+    // Загрузка агрегаторов
+    function loadAggregators() {
+        const select = document.getElementById('aggregatorSelect');
+        select.innerHTML = '<option value="">Загрузка агрегаторов...</option>';
+
+        fetch('/api/aggregators')
+            .then(response => {
+                if (!response.ok) throw new Error('Ошибка загрузки агрегаторов');
+                return response.json();
+            })
+            .then(aggregators => {
+                select.innerHTML = '<option value="">Выберите агрегатор...</option>';
+                aggregators.forEach(agg => {
+                    const option = document.createElement('option');
+                    option.value = agg.id;
+                    option.dataset.urlTemplate = agg.url_template;
+                    option.dataset.searchType = agg.search_type || 'standard';
+                    option.dataset.icon = agg.icon || 'bi-box-seam';
+                    option.textContent = agg.name;
+                    select.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Ошибка загрузки агрегаторов:', error);
+                select.innerHTML = '<option value="">Ошибка загрузки агрегаторов</option>';
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Загружаем источники и агрегаторы
+        loadSources();
+        loadAggregators();
+
+        // --- Предпросмотр обложки ---
+        const coverInput = document.getElementById('cover');
+        if (coverInput) {
+            coverInput.addEventListener('change', function (e) {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const preview = document.getElementById('coverPreview');
+                        const container = document.getElementById('coverPreviewContainer');
+                        preview.src = e.target.result;
+                        container.style.display = 'block';
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // --- Универсальный поиск ---
+        document.getElementById('searchBtn').addEventListener('click', function () {
+            const sourceId = document.getElementById('sourceSelect').value;
+            const query = document.getElementById('searchQuery').value.trim();
+            const statusDiv = document.getElementById('searchStatus');
+            const resultsDiv = document.getElementById('searchResults');
+            const resultsList = document.getElementById('resultsList');
+            const btn = this;
+
+            if (!query) {
+                statusDiv.textContent = 'Введите название или ISBN для поиска.';
+                statusDiv.className = 'form-text text-warning';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
+
+            statusDiv.textContent = 'Поиск...';
+            statusDiv.className = 'form-text text-primary';
+            resultsDiv.style.display = 'none';
+
+            let url = `/api/search?type=book`;
+            if (sourceId) {
+                url += `&source_id=${sourceId}`;
+            }
+            // Проверяем, является ли запрос ISBN (цифры и дефисы)
+            const isISBN = /^[\d-]+$/.test(query.replace(/\s/g, ''));
+            if (isISBN && query.replace(/-/g, '').length >= 10) {
+                url += `&isbn=${encodeURIComponent(query)}`;
+            } else {
+                url += `&query=${encodeURIComponent(query)}`;
+            }
+
+            fetch(url)
+                .then(response => {
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error('Сервер вернул не JSON ответ.');
+                    }
+                    if (response.status === 429) {
+                        throw new Error('Превышен лимит запросов. Попробуйте позже.');
+                    }
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.error || 'Ошибка запроса');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+
+                    // Если это список результатов
+                    if (Array.isArray(data)) {
+                        if (data.length === 0) {
+                            statusDiv.textContent = 'Книги не найдены.';
+                            statusDiv.className = 'form-text text-warning';
+                            return;
+                        }
+                        showSearchResults(data);
+                        statusDiv.textContent = `Найдено ${data.length} книг. Выберите нужную.`;
+                        statusDiv.className = 'form-text text-success';
+                    } else {
+                        // Единичный результат
+                        statusDiv.innerHTML = '✅ Книга найдена! Поля заполнены.';
+                        statusDiv.className = 'form-text text-success';
+                        fillBookForm(data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка поиска:', error);
+                    statusDiv.innerHTML = `
+                    <span class="text-danger">❌ ${error.message}</span>
+                    <br>
+                    <button class="btn btn-sm btn-outline-secondary mt-1" onclick="manualEntry()">
+                        <i class="bi bi-pencil"></i> Ввести данные вручную
+                    </button>
+                `;
+                    statusDiv.className = 'form-text';
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-search"></i> Найти';
+                });
+        });
+
+        // --- Поиск на агрегаторе ---
+        document.getElementById('searchAggregatorBtn').addEventListener('click', function () {
+            const aggregatorId = document.getElementById('aggregatorSelect').value;
+            const query = document.getElementById('aggregatorSearchQuery').value.trim();
+            const statusDiv = document.getElementById('aggregatorSearchStatus');
+            const btn = this;
+
+            if (!aggregatorId) {
+                statusDiv.textContent = 'Пожалуйста, выберите агрегатор.';
+                statusDiv.className = 'form-text text-warning';
+                return;
+            }
+
+            if (!query) {
+                statusDiv.textContent = 'Пожалуйста, введите название или ISBN для поиска.';
+                statusDiv.className = 'form-text text-warning';
+                return;
+            }
+
+            // Получаем данные из выбранной опции
+            const select = document.getElementById('aggregatorSelect');
+            const selectedOption = select.options[select.selectedIndex];
+            const urlTemplate = selectedOption.dataset.urlTemplate;
+            const searchType = selectedOption.dataset.searchType || 'standard';
+
+            if (!urlTemplate) {
+                statusDiv.textContent = 'Ошибка: шаблон URL не найден.';
+                statusDiv.className = 'form-text text-danger';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
+
+            const encodedQuery = encodeURIComponent(query);
+
+            if (searchType === 'redirect') {
+                // Для Alib.ru используем серверный редирект с перекодировкой
+                window.open(`/go/alib?q=${encodedQuery}`, '_blank');
+                statusDiv.textContent = `Поиск "${query}" выполняется на ${selectedOption.textContent}...`;
+                statusDiv.className = 'form-text text-success';
+            } else {
+                // Для стандартных агрегаторов открываем URL
+                const url = urlTemplate.replace('{query}', encodedQuery);
+                window.open(url, '_blank');
+                statusDiv.textContent = `Поиск "${query}" открыт на ${selectedOption.textContent}.`;
+                statusDiv.className = 'form-text text-success';
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-search"></i> Найти';
+        });
+
+        // --- Функция отображения результатов поиска ---
+        function showSearchResults(books) {
+            const resultsDiv = document.getElementById('searchResults');
+            const resultsList = document.getElementById('resultsList');
+
+            resultsList.innerHTML = '';
+            books.forEach(book => {
+                const item = document.createElement('a');
+                item.href = '#';
+                item.className = 'list-group-item list-group-item-action bg-transparent text-white border-light';
+                item.innerHTML = `
+                <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1 text-white">${book.title || 'Без названия'}</h6>
+                    <small class="text-white-50">${book.authors || 'Автор не указан'}</small>
+                </div>
+                <p class="mb-1 small text-white-50">${book.publisher || 'Издатель не указан'} ${book.published_date ? `(${book.published_date})` : ''}</p>
+                ${book.source ? `<small class="text-white-50">Источник: ${book.source}</small>` : ''}
+            `;
+                item.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    fillBookForm(book);
+                    resultsDiv.style.display = 'none';
+                    document.getElementById('searchStatus').innerHTML = '✅ Книга выбрана! Поля заполнены.';
+                    document.getElementById('searchStatus').className = 'form-text text-success';
+                });
+                resultsList.appendChild(item);
+            });
+            resultsDiv.style.display = 'block';
+        }
+
+        // --- Ручной ввод ---
+        window.manualEntry = function () {
+            const statusDiv = document.getElementById('searchStatus');
+            statusDiv.innerHTML = '📝 Введите данные вручную в форму ниже.';
+            statusDiv.className = 'form-text text-muted';
+            document.querySelector('form').scrollIntoView({ behavior: 'smooth' });
+        };
+
+        // --- Очистка результатов ---
+        document.getElementById('clearSearchBtn').addEventListener('click', function () {
+            document.getElementById('searchResults').style.display = 'none';
+            document.getElementById('searchStatus').textContent = '';
+            document.getElementById('searchStatus').className = 'form-text';
+            document.getElementById('searchQuery').value = '';
+            document.getElementById('aggregatorSearchQuery').value = '';
+            document.getElementById('aggregatorSearchStatus').textContent = 'Выберите агрегатор и введите запрос для поиска.';
+            document.getElementById('aggregatorSearchStatus').className = 'form-text text-white-50';
+            document.getElementById('coverPreviewContainer').style.display = 'none';
+            // Сбрасываем input файла
+            const coverInput = document.getElementById('cover');
+            if (coverInput) coverInput.value = '';
+        });
+
+        // --- Функция заполнения формы ---
+        function fillBookForm(data) {
+            // Основные поля
+            document.getElementById('bookName').value = data.title || '';
+            document.getElementById('bookFullname').value = data.subtitle || '';
+            document.getElementById('bookPages').value = data.page_count || '';
+            document.getElementById('bookSummary').value = data.description || '';
+            document.getElementById('bookAddInfo').value = data.categories || '';
+            if (data.isbn) {
+                document.getElementById('bookIsbn').value = data.isbn;
+            }
+
+            // Год издания
+            if (data.published_date) {
+                const year = data.published_date.substring(0, 4);
+                const yearInput = document.querySelector('input[name="year_edition"]');
+                if (yearInput && year > 1000 && year < 2100) {
+                    yearInput.value = year;
+                }
+            }
+
+            // Язык
+            if (data.language) {
+                const langSelect = document.querySelector('select[name="id_language"]');
+                if (langSelect) {
+                    const options = langSelect.options;
+                    for (let i = 0; i < options.length; i++) {
+                        const langText = options[i].text.toLowerCase();
+                        const searchLang = data.language.toLowerCase();
+                        if (langText.includes(searchLang) || searchLang.includes(langText)) {
+                            langSelect.selectedIndex = i;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Обложка (если есть ссылка на изображение)
+            if (data.cover_image) {
+                const statusDiv = document.getElementById('searchStatus');
+                statusDiv.innerHTML += `<br><span class="text-white-50 small">Обложка доступна по ссылке: ${data.cover_image}</span>`;
+            }
+
+            // Источник
+            if (data.source) {
+                const statusDiv = document.getElementById('searchStatus');
+                statusDiv.innerHTML += `<br><span class="text-white-50 small">Источник: ${data.source}</span>`;
+            }
+
+            // Авторы (выводим в консоль для дальнейшей обработки)
+            if (data.authors) {
+                console.log('Найденные авторы:', data.authors);
+                const authorsList = data.authors.split(', ');
+                showAuthorsSuggestion(authorsList);
+            }
+
+            // Издатель
+            if (data.publisher) {
+                console.log('Издатель:', data.publisher);
+                showPublisherSuggestion(data.publisher);
+            }
+        }
+
+        // --- Предложение авторов ---
+        function showAuthorsSuggestion(authors) {
+            const statusDiv = document.getElementById('searchStatus');
+            let html = '<span class="text-success">✅ Найдены авторы: </span>';
+            authors.forEach(author => {
+                html += `<span class="badge bg-primary bg-opacity-75 text-white me-1">${author}</span>`;
+            });
+            html += '<br><small class="text-white-50">Вы можете добавить их вручную в соответствующем разделе.</small>';
+            statusDiv.innerHTML = html;
+            statusDiv.className = 'form-text';
+        }
+
+        // --- Предложение издателя ---
+        function showPublisherSuggestion(publisher) {
+            const statusDiv = document.getElementById('searchStatus');
+            statusDiv.innerHTML += `<br><span class="text-success">✅ Найден издатель: </span><span class="badge bg-secondary bg-opacity-75 text-white">${publisher}</span>`;
+            statusDiv.className = 'form-text';
+        }
+
+        // --- Валидация полей ---
+        document.querySelector('input[name="pages"]')?.addEventListener('change', function () {
+            if (this.value < 0) this.value = 0;
+        });
+
+        document.querySelector('input[name="year_edition"]')?.addEventListener('change', function () {
+            const year = parseInt(this.value);
+            if (year < 1000) this.value = 1000;
+            else if (year > 2100) this.value = 2100;
+        });
+
+        document.querySelector('input[name="price"]')?.addEventListener('blur', function () {
+            if (this.value) this.value = parseFloat(this.value).toFixed(2);
+        });
+
+        // --- Обработка Enter в полях поиска ---
+        document.getElementById('searchQuery').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                document.getElementById('searchBtn').click();
+            }
+        });
+
+        document.getElementById('aggregatorSearchQuery').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                document.getElementById('searchAggregatorBtn').click();
+            }
+        });
+
+        // --- Сохранение активной вкладки при обновлении ---
+        const tabs = document.querySelectorAll('#bookTabs button[data-bs-toggle="tab"]');
+        tabs.forEach(tab => {
+            tab.addEventListener('shown.bs.tab', function (e) {
+                localStorage.setItem('activeTab', e.target.id);
+            });
+        });
+
+        // Восстанавливаем активную вкладку при загрузке
+        const activeTab = localStorage.getItem('activeTab');
+        if (activeTab) {
+            const tabElement = document.getElementById(activeTab);
+            if (tabElement) {
+                const tab = new bootstrap.Tab(tabElement);
+                tab.show();
+            }
+        }
+    });
+
+    // --- HTMX обработка для языка и формата ---
+    document.addEventListener('htmx:afterSwap', function (event) {
+        // Обработка результатов поиска языка
+        if (event.target.id === 'languageResults' || event.target.id === 'modalLanguageResults') {
+            const items = event.target.querySelectorAll('.list-group-item');
+            items.forEach(item => {
+                item.addEventListener('click', function () {
+                    const id = this.dataset.id;
+                    const name = this.dataset.name;
+                    selectLanguage(id, name);
+                    // Закрываем модальное окно, если оно открыто
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('languageModal'));
+                    if (modal) modal.hide();
+                });
+            });
+        }
+
+        // Обработка результатов поиска формата
+        if (event.target.id === 'formatResults' || event.target.id === 'modalFormatResults') {
+            const items = event.target.querySelectorAll('.list-group-item');
+            items.forEach(item => {
+                item.addEventListener('click', function () {
+                    const id = this.dataset.id;
+                    const name = this.dataset.name;
+                    selectFormat(id, name);
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('formatModal'));
+                    if (modal) modal.hide();
+                });
+            });
+        }
+    });
+
+    // Функции выбора языка и формата
+    function selectLanguage(id, name) {
+        document.getElementById('selectedLanguageId').value = id;
+        document.getElementById('selectedLanguageName').textContent = name;
+        document.getElementById('selectedLanguageBadge').style.display = 'inline-block';
+        document.getElementById('languageSearchInput').value = name;
+        document.getElementById('languageResults').innerHTML = ''; // Очищаем результаты
+        // Обновляем скрытый select для корректной работы WTForms
+        const select = document.getElementById('languageSelect');
+        for (let option of select.options) {
+            if (option.value == id) {
+                select.value = id;
+                break;
+            }
+        }
+    }
+
+    function selectFormat(id, name) {
+        document.getElementById('selectedFormatId').value = id;
+        document.getElementById('selectedFormatName').textContent = name;
+        document.getElementById('selectedFormatBadge').style.display = 'inline-block';
+        document.getElementById('formatSearchInput').value = name;
+        document.getElementById('formatResults').innerHTML = '';
+        const select = document.getElementById('formatSelect');
+        for (let option of select.options) {
+            if (option.value == id) {
+                select.value = id;
+                break;
+            }
+        }
+    }
+
+    // --- Поиск в модальных окнах ---
+    document.getElementById('modalLanguageSearch')?.addEventListener('keyup', function () {
+        const query = this.value.trim();
+        if (query.length >= 2) {
+            htmx.ajax('GET', '{{ url_for("main.search_languages_ajax") }}?q=' + encodeURIComponent(query) + '&book_id=0', '#modalLanguageResults');
+        } else {
+            document.getElementById('modalLanguageResults').innerHTML = '<div class="text-white-50 p-3">Введите минимум 2 символа для поиска.</div>';
+        }
+    });
+
+    document.getElementById('modalFormatSearch')?.addEventListener('keyup', function () {
+        const query = this.value.trim();
+        if (query.length >= 1) {
+            htmx.ajax('GET', '{{ url_for("main.search_formats_ajax") }}?q=' + encodeURIComponent(query), '#modalFormatResults');
+        } else {
+            document.getElementById('modalFormatResults').innerHTML = '<div class="text-white-50 p-3">Введите формат для поиска.</div>';
+        }
+    });
+
+    // --- Обработка выбора при клике на кнопку поиска (открытие модалки) ---
+    document.querySelector('[data-bs-target="#languageModal"]')?.addEventListener('click', function () {
+        // Очищаем предыдущие результаты
+        document.getElementById('modalLanguageResults').innerHTML = '';
+        document.getElementById('modalLanguageSearch').value = '';
+    });
+
+    document.querySelector('[data-bs-target="#formatModal"]')?.addEventListener('click', function () {
+        document.getElementById('modalFormatResults').innerHTML = '';
+        document.getElementById('modalFormatSearch').value = '';
+    });
+
+    // --- Инициализация: если при редактировании уже выбран язык/формат ---
+    document.addEventListener('DOMContentLoaded', function () {
+        // Для языка
+        const langSelect = document.getElementById('languageSelect');
+        const selectedLangId = document.getElementById('selectedLanguageId').value;
+        if (selectedLangId) {
+            for (let option of langSelect.options) {
+                if (option.value == selectedLangId) {
+                    document.getElementById('selectedLanguageName').textContent = option.text;
+                    document.getElementById('selectedLanguageBadge').style.display = 'inline-block';
+                    document.getElementById('languageSearchInput').value = option.text;
+                    break;
+                }
+            }
+        }
+
+        // Для формата
+        const formatSelect = document.getElementById('formatSelect');
+        const selectedFormatId = document.getElementById('selectedFormatId').value;
+        if (selectedFormatId) {
+            for (let option of formatSelect.options) {
+                if (option.value == selectedFormatId) {
+                    document.getElementById('selectedFormatName').textContent = option.text;
+                    document.getElementById('selectedFormatBadge').style.display = 'inline-block';
+                    document.getElementById('formatSearchInput').value = option.text;
+                    break;
+                }
+            }
+        }
+    });
+</script>
+
+<style>
+    /* 1. ПОЛНОСТЬЮ УБИРАЕМ ВСЕ ФОНЫ */
+    .transparent-card,
+    .transparent-card *,
+    .transparent-card .card-body,
+    .transparent-card .card-header,
+    .transparent-card .card-footer,
+    .transparent-card .table,
+    .transparent-card .table-responsive,
+    .transparent-card thead,
+    .transparent-card tbody,
+    .transparent-card tr,
+    .transparent-card td,
+    .transparent-card th {
+        background: transparent !important;
+        background-color: transparent !important;
+    }
+
+    /* 2. КАРТОЧКА - ТОЛЬКО РАМКА */
+    .transparent-card {
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .transparent-card-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 12px 12px 0 0 !important;
+    }
+
+    .transparent-card-body {
+        padding: 1.5rem;
+    }
+
+    /* 3. СТИЛИ ДЛЯ ВКЛАДОК */
+    .nav-tabs .nav-link {
+        color: rgba(255, 255, 255, 0.8);
+        border: none;
+        padding: 0.5rem 1rem;
+        transition: all 0.2s;
+    }
+
+    .nav-tabs .nav-link:hover {
+        border-color: transparent;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #fff;
+    }
+
+    .nav-tabs .nav-link.active {
+        color: #fff;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-bottom: 2px solid #fff;
+    }
+
+    .nav-tabs .nav-link i {
+        margin-right: 6px;
+    }
+
+    .card-header-tabs {
+        margin-right: -0.625rem;
+        margin-bottom: -0.75rem;
+        margin-left: -0.625rem;
+        border-bottom: 0;
+    }
+
+    .tab-pane {
+        padding-top: 1rem;
+    }
+
+    /* 4. ПРОЗРАЧНЫЕ ПОЛЯ ВВОДА */
+    .form-control.bg-transparent {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+        border-color: rgba(255, 255, 255, 0.3) !important;
+        transition: all 0.2s;
+    }
+
+    .form-control.bg-transparent::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .form-control.bg-transparent:focus {
+        background-color: rgba(255, 255, 255, 0.2) !important;
+        border-color: rgba(255, 255, 255, 0.5) !important;
+        box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+    }
+
+    .form-control.bg-transparent.is-invalid {
+        border-color: #dc3545 !important;
+    }
+
+    /* 5. ПРОЗРАЧНЫЕ SELECT ПОЛЯ */
+/* 1. Обычное состояние */
+.form-select.bg-transparent {
+    background-color: #000000 !important; /* Черный фон */
+    color: #ffffff !important; /* Белый текст */
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* 2. Состояние фокуса (когда элемент активен) */
+.form-select.bg-transparent:focus {
+    background-color: #000000 !important; /* Черный фон (как в обычном состоянии) */
+    color: #ffffff !important; /* Белый текст */
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+}
+
+/* 3. Стили для всех элементов <option> внутри списка */
+.form-select.bg-transparent option {
+    background-color: #000000 !important; /* Черный фон для всех пунктов */
+    color: #ffffff !important; /* Белый текст для всех пунктов */
+}
+
+/* 4. Стили для элемента <option>, на который наведен курсор (hover) */
+.form-select.bg-transparent option:hover {
+    background-color: #808080 !important; /* Серый фон при наведении */
+    color: #ffffff !important; /* Белый текст */
+}
+
+/* 5. Стили для выбранного элемента <option> (checked) */
+.form-select.bg-transparent option:checked {
+    background-color: #808080 !important; /* Серый фон для выбранного пункта */
+    color: #ffffff !important; /* Белый текст */
+}
+    /* 6. ПРОЗРАЧНЫЕ INPUT-GROUP */
+    .input-group-text.bg-transparent {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border-color: rgba(255, 255, 255, 0.3) !important;
+        color: #ffffff !important;
+    }
+
+    /* 7. ПРОЗРАЧНЫЙ АЛЕРТ */
+    .transparent-alert {
+        background-color: rgba(13, 202, 240, 0.15) !important;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(13, 202, 240, 0.3) !important;
+        color: #ffffff !important;
+    }
+
+    .transparent-alert i {
+        color: #0dcaf0 !important;
+    }
+
+    .transparent-alert .text-white {
+        color: #ffffff !important;
+    }
+
+    /* 8. ОБЩИЕ СТИЛИ ДЛЯ ТЕКСТА */
+    .text-white {
+        color: #ffffff !important;
+    }
+
+    .text-white-50 {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+
+    /* 9. КНОПКИ */
+    .btn-outline-light {
+        color: #ffffff !important;
+        border-color: rgba(255, 255, 255, 0.3) !important;
+    }
+
+    .btn-outline-light:hover {
+        background-color: rgba(255, 255, 255, 0.2) !important;
+        border-color: #ffffff !important;
+        color: #ffffff !important;
+    }
+
+    .btn-primary {
+        background-color: rgba(13, 110, 253, 0.8) !important;
+        border-color: rgba(13, 110, 253, 0.8) !important;
+    }
+
+    .btn-primary:hover {
+        background-color: rgba(13, 110, 253, 1) !important;
+        border-color: rgba(13, 110, 253, 1) !important;
+    }
+
+    .btn-success {
+        background-color: rgba(25, 135, 84, 0.8) !important;
+        border-color: rgba(25, 135, 84, 0.8) !important;
+    }
+
+    .btn-success:hover {
+        background-color: rgba(25, 135, 84, 1) !important;
+        border-color: rgba(25, 135, 84, 1) !important;
+    }
+
+    /* 10. МОДАЛЬНЫЕ ОКНА */
+    .modal-content.bg-dark {
+        background-color: rgba(33, 37, 41, 0.95) !important;
+        backdrop-filter: blur(10px);
+    }
+
+    .modal-content .border-light {
+        border-color: rgba(255, 255, 255, 0.2) !important;
+    }
+
+    .modal-header.border-secondary,
+    .modal-footer.border-secondary {
+        border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .modal-title.text-white {
+        color: #ffffff !important;
+    }
+
+    .btn-close-white {
+        filter: brightness(0) invert(1);
+    }
+
+    /* 11. РЕЗУЛЬТАТЫ ПОИСКА */
+    #searchResults .list-group-item {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+        border-color: rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+        transition: all 0.2s;
+    }
+
+    #searchResults .list-group-item:hover {
+        background-color: rgba(255, 255, 255, 0.15) !important;
+        transform: translateX(4px);
+    }
+
+    #languageResults .list-group-item,
+    #formatResults .list-group-item,
+    #modalLanguageResults .list-group-item,
+    #modalFormatResults .list-group-item {
+        background-color: rgba(255, 255, 255, 0.05) !important;
+        border-color: rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+        transition: all 0.2s;
+    }
+
+    #languageResults .list-group-item:hover,
+    #formatResults .list-group-item:hover,
+    #modalLanguageResults .list-group-item:hover,
+    #modalFormatResults .list-group-item:hover {
+        background-color: rgba(255, 255, 255, 0.15) !important;
+        transform: translateX(4px);
+    }
+
+    /* 12. БЕЙДЖИ */
+    .badge.bg-info {
+        background-color: rgba(13, 202, 240, 0.7) !important;
+        color: #ffffff !important;
+    }
+
+    .badge.bg-success {
+        background-color: rgba(25, 135, 84, 0.7) !important;
+        color: #ffffff !important;
+    }
+
+    .badge.bg-primary {
+        background-color: rgba(13, 110, 253, 0.7) !important;
+        color: #ffffff !important;
+    }
+
+    .badge.bg-secondary {
+        background-color: rgba(108, 117, 125, 0.7) !important;
+        color: #ffffff !important;
+    }
+
+    .bg-opacity-75 {
+        --bs-bg-opacity: 0.75;
+    }
+
+    /* 13. ГРАНИЦЫ */
+    .border-light {
+        border-color: rgba(255, 255, 255, 0.2) !important;
+    }
+
+    .border-top.border-light {
+        border-top-color: rgba(255, 255, 255, 0.2) !important;
+    }
+
+    /* 14. ИНДИКАТОРЫ HTMX */
+    .htmx-indicator {
+        opacity: 0;
+        transition: opacity 500ms ease-in;
+    }
+
+    .htmx-request .htmx-indicator {
+        opacity: 1;
+    }
+
+    .htmx-request.htmx-indicator {
+        opacity: 1;
+    }
+
+    #languageSearchSpinner,
+    #formatSearchSpinner {
+        margin-top: 8px;
+        width: 1.2rem;
+        height: 1.2rem;
+        color: #ffffff !important;
+    }
+
+    /* 15. СТИЛИ ДЛЯ ОБЛОЖКИ */
+    #coverPreviewContainer {
+        display: none;
+    }
+
+    #coverPreview {
+        max-height: 150px;
+        border-radius: 8px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    /* 16. АДАПТИВНОСТЬ */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1rem !important;
+        }
+
+        .d-flex.justify-content-between {
+            flex-direction: column;
+            align-items: stretch !important;
+            gap: 1rem;
+        }
+
+        .btn-lg {
+            width: 100%;
+        }
+
+        .nav-tabs .nav-link {
+            font-size: 0.85rem;
+            padding: 0.4rem 0.7rem;
+        }
+
+        .nav-tabs .nav-link i {
+            margin-right: 4px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .modal-dialog {
+            margin: 1rem;
+        }
+
+        .modal-body {
+            padding: 1rem;
+        }
+
+        #languageResults,
+        #formatResults,
+        #modalLanguageResults,
+        #modalFormatResults {
+            max-height: 150px !important;
+        }
+    }
+</style>
+
+{% endblock %}

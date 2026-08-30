@@ -1,0 +1,577 @@
+{% extends "base.html" %}
+
+{% block body_class %}bg-page2{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет, увеличенное название книги -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="text-white"><i class="bi bi-pencil-square"></i> Редактирование книги</h2>
+                <h5 class="text-white fw-bold fs-3 mt-2">"{{ book.name }}"</h5>
+            </div>
+            <div>
+                <a href="{{ url_for('main.book_list') }}" class="btn btn-outline-light">
+                    <i class="bi bi-arrow-left"></i> Назад к списку
+                </a>
+            </div>
+        </div>
+
+        <form method="POST" action="{{ url_for('main.edit_book', book_id=book.id) }}" enctype="multipart/form-data" novalidate>
+            {{ form.csrf_token }}
+
+            <!-- Вкладки -->
+            <div class="card shadow-sm mb-4 transparent-card">
+                <div class="card-header transparent-card-header">
+                    <ul class="nav nav-tabs card-header-tabs" id="bookTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="main-tab" data-bs-toggle="tab" data-bs-target="#main" type="button" role="tab">
+                                <i class="bi bi-info-circle"></i> Основное
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="series-tab" data-bs-toggle="tab" data-bs-target="#series" type="button" role="tab">
+                                <i class="bi bi-tags"></i> Серия
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="physical-tab" data-bs-toggle="tab" data-bs-target="#physical" type="button" role="tab">
+                                <i class="bi bi-box"></i> Характеристики
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="ids-tab" data-bs-toggle="tab" data-bs-target="#ids" type="button" role="tab">
+                                <i class="bi bi-upc-scan"></i> Идентификаторы
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="content-tab" data-bs-toggle="tab" data-bs-target="#content" type="button" role="tab">
+                                <i class="bi bi-text-paragraph"></i> Содержание
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="cover-tab" data-bs-toggle="tab" data-bs-target="#cover" type="button" role="tab">
+                                <i class="bi bi-image"></i> Обложка
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body transparent-card-body">
+                    <div class="tab-content" id="bookTabsContent">
+                        <!-- Вкладка 1: Основная информация -->
+                        <div class="tab-pane fade show active" id="main" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.name.label(class="form-label fw-bold text-white") }}
+                                        <span class="text-danger">*</span>
+                                        {{ form.name(class="form-control bg-transparent text-white border-light" + (" is-invalid" if form.name.errors else ""), 
+                                                   placeholder="Введите название книги", id="bookName") }}
+                                        {% if form.name.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.name.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <div class="form-text text-white-50">Краткое название книги</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.location.label(class="form-label fw-bold text-white") }}
+                                        <span class="text-danger">*</span>
+                                        {{ form.location(class="form-control bg-transparent text-white border-light" + (" is-invalid" if form.location.errors else""), 
+                                                       placeholder="Например: Полка 3, Стеллаж 2") }}
+                                        {% if form.location.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.location.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <div class="form-text text-white-50">Место хранения книги в библиотеке</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                {{ form.fullname.label(class="form-label fw-bold text-white") }}
+                                {{ form.fullname(class="form-control bg-transparent text-white border-light", placeholder="Полное название книги (если отличается от краткого)", id="bookFullname") }}
+                                <div class="form-text text-white-50">Полное название, включая подзаголовок</div>
+                            </div>
+                            <div class="mb-3">
+                                {{ form.id_language.label(class="form-label fw-bold text-white") }}
+                                {{ form.id_language(class="form-select bg-transparent text-white border-light" + (" is-invalid" if form.id_language.errors else "")) }}
+                                {% if form.id_language.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.id_language.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text text-white-50">Язык, на котором написана книга</div>
+                            </div>
+                        </div>
+
+                        <!-- Вкладка 2: Серия и издание -->
+                        <div class="tab-pane fade" id="series" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.seria_global.label(class="form-label fw-bold text-white") }}
+                                        {{ form.seria_global(class="form-control bg-transparent text-white border-light", placeholder="Например: Фантастика") }}
+                                        <div class="form-text text-white-50">Глобальная серия (большой цикл)</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.seria_local.label(class="form-label fw-bold text-white") }}
+                                        {{ form.seria_local(class="form-control bg-transparent text-white border-light", placeholder="Например: Космическая опера") }}
+                                        <div class="form-text text-white-50">Локальная серия внутри глобальной</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        {{ form.edition.label(class="form-label fw-bold text-white") }}
+                                        {{ form.edition(class="form-control bg-transparent text-white border-light", placeholder="3-е издание") }}
+                                        <div class="form-text text-white-50">Номер или название издания</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        {{ form.year_edition.label(class="form-label fw-bold text-white") }}
+                                        {{ form.year_edition(class="form-control bg-transparent text-white border-light" + (" is-invalid" if form.year_edition.errors else ""), 
+                                                           type="number", min="1000", max="2100", 
+                                                           placeholder="2024") }}
+                                        {% if form.year_edition.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.year_edition.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <div class="form-text text-white-50">Год издания книги</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        {{ form.pages.label(class="form-label fw-bold text-white") }}
+                                        {{ form.pages(class="form-control bg-transparent text-white border-light" + (" is-invalid" if form.pages.errors else ""), 
+                                                    type="number", min="0", placeholder="350", id="bookPages") }}
+                                        {% if form.pages.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.pages.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <div class="form-text text-white-50">Количество страниц</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Вкладка 3: Физические характеристики -->
+                        <div class="tab-pane fade" id="physical" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.id_cover.label(class="form-label fw-bold text-white") }}
+                                        {{ form.id_cover(class="form-select bg-transparent text-white border-light" + (" is-invalid" if form.id_cover.errors else "")) }}
+                                        {% if form.id_cover.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.id_cover.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <div class="form-text text-white-50">Тип переплета книги</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.id_format.label(class="form-label fw-bold text-white") }}
+                                        {{ form.id_format(class="form-select bg-transparent text-white border-light" + (" is-invalid" if form.id_format.errors else "")) }}
+                                        {% if form.id_format.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.id_format.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <div class="form-text text-white-50">Формат книги</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.circulation.label(class="form-label fw-bold text-white") }}
+                                        {{ form.circulation(class="form-control bg-transparent text-white border-light" + (" is-invalid" if form.circulation.errors else""), 
+                                                          type="number", min="0", placeholder="5000") }}
+                                        {% if form.circulation.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.circulation.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <div class="form-text text-white-50">Тираж книги</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.price.label(class="form-label fw-bold text-white") }}
+                                        <div class="input-group">
+                                            {{ form.price(class="form-control bg-transparent text-white border-light" + (" is-invalid" if form.price.errors else""), 
+                                                        type="number", step="0.01", min="0", placeholder="599.99") }}
+                                            <span class="input-group-text bg-transparent text-white border-light">₽</span>
+                                        </div>
+                                        {% if form.price.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.price.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <div class="form-text text-white-50">Цена книги</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Вкладка 4: Идентификаторы -->
+                        <div class="tab-pane fade" id="ids" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.barcode.label(class="form-label fw-bold text-white") }}
+                                        {{ form.barcode(class="form-control bg-transparent text-white border-light", placeholder="978-5-17-123456-7") }}
+                                        <div class="form-text text-white-50">Штрих-код или артикул</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        {{ form.isbn.label(class="form-label fw-bold text-white") }}
+                                        {{ form.isbn(class="form-control bg-transparent text-white border-light", placeholder="978-5-17-123456-7", id="bookIsbn") }}
+                                        <div class="form-text text-white-50">Международный стандартный книжный номер</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Вкладка 5: Содержание -->
+                        <div class="tab-pane fade" id="content" role="tabpanel">
+                            <div class="mb-3">
+                                {{ form.summary.label(class="form-label fw-bold text-white") }}
+                                {{ form.summary(class="form-control bg-transparent text-white border-light", rows="4", placeholder="Краткая аннотация к книге...", id="bookSummary") }}
+                                <div class="form-text text-white-50">Краткое описание содержания книги</div>
+                            </div>
+                            <div class="mb-3">
+                                {{ form.content.label(class="form-label fw-bold text-white") }}
+                                {{ form.content(class="form-control bg-transparent text-white border-light", rows="6", placeholder="Подробное содержание или оглавление...") }}
+                                <div class="form-text text-white-50">Полное содержание или оглавление книги</div>
+                            </div>
+                        </div>
+
+                        <!-- Вкладка 6: Обложка -->
+                        <div class="tab-pane fade" id="cover" role="tabpanel">
+                            <div class="mb-3">
+                                {{ form.cover.label(class="form-label fw-bold text-white") }}
+                                {% if book.cover %}
+                                    <div class="mb-2">
+                                        <img src="data:image/jpeg;base64,{{ book.cover|b64encode }}" 
+                                             alt="{{ book.name }}" 
+                                             style="max-height: 100px; border-radius: 8px; border: 2px solid rgba(255,255,255,0.3);">
+                                        <br>
+                                        <small class="text-white-50">Текущая обложка</small>
+                                    </div>
+                                {% endif %}
+                                {{ form.cover(class="form-control bg-transparent text-white border-light" + (" is-invalid" if form.cover.errors else""), accept="image/*") }}
+                                {% if form.cover.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.cover.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text text-white-50">Загрузите новую обложку книги (JPG, PNG, GIF, WEBP) - заменит существующую</div>
+                                <div id="coverPreviewContainer" style="display: none;" class="mt-2">
+                                    <img id="coverPreview" src="" alt="Новая обложка" style="max-height: 150px; border-radius: 8px; border: 2px solid rgba(255,255,255,0.3);">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                {{ form.add_info.label(class="form-label fw-bold text-white") }}
+                                {{ form.add_info(class="form-control bg-transparent text-white border-light", rows="3", placeholder="Любая дополнительная информация о книге...") }}
+                                <div class="form-text text-white-50">Примечания, пометки, дополнительная информация</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Кнопки действия -->
+            <div class="card shadow-sm mb-4 transparent-card">
+                <div class="card-body transparent-card-body">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <span class="text-white-50">
+                                <i class="bi bi-info-circle"></i> 
+                                Поля с <span class="text-danger">*</span> обязательны для заполнения
+                            </span>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('main.book_list') }}" class="btn btn-outline-light btn-lg">
+                                <i class="bi bi-x-circle"></i> Отмена
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-save"></i> Сохранить изменения
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // --- Предпросмотр обложки ---
+    const coverInput = document.getElementById('cover');
+    if (coverInput) {
+        coverInput.addEventListener('change', function(e) {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('coverPreview');
+                    const container = document.getElementById('coverPreviewContainer');
+                    preview.src = e.target.result;
+                    container.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // --- Валидация полей ---
+    const pagesInput = document.querySelector('input[name="pages"]');
+    if (pagesInput) {
+        pagesInput.addEventListener('change', function() {
+            if (this.value < 0) {
+                this.value = 0;
+            }
+        });
+    }
+
+    const yearInput = document.querySelector('input[name="year_edition"]');
+    if (yearInput) {
+        yearInput.addEventListener('change', function() {
+            const year = parseInt(this.value);
+            if (year < 1000) {
+                this.value = 1000;
+            } else if (year > 2100) {
+                this.value = 2100;
+            }
+        });
+    }
+
+    const priceInput = document.querySelector('input[name="price"]');
+    if (priceInput) {
+        priceInput.addEventListener('blur', function() {
+            if (this.value) {
+                this.value = parseFloat(this.value).toFixed(2);
+            }
+        });
+    }
+
+    // --- Подтверждение перед выходом без сохранения ---
+    const form = document.querySelector('form');
+    let formChanged = false;
+
+    form.querySelectorAll('input, textarea, select').forEach(element => {
+        element.addEventListener('change', function() {
+            formChanged = true;
+        });
+    });
+
+    window.addEventListener('beforeunload', function(e) {
+        if (formChanged) {
+            e.preventDefault();
+            e.returnValue = 'Вы не сохранили изменения. Вы уверены, что хотите покинуть страницу?';
+        }
+    });
+
+    form.addEventListener('submit', function() {
+        formChanged = false;
+    });
+
+    // --- Сохранение активной вкладки ---
+    const tabs = document.querySelectorAll('#bookTabs button[data-bs-toggle="tab"]');
+    tabs.forEach(tab => {
+        tab.addEventListener('shown.bs.tab', function(e) {
+            localStorage.setItem('activeEditBookTab', e.target.id);
+        });
+    });
+
+    const activeTab = localStorage.getItem('activeEditBookTab');
+    if (activeTab) {
+        const tabElement = document.getElementById(activeTab);
+        if (tabElement) {
+            const tab = new bootstrap.Tab(tabElement);
+            tab.show();
+        }
+    }
+});
+</script>
+
+<!-- СТИЛИ -->
+<style>
+/* 1. ПОЛНОСТЬЮ УБИРАЕМ ВСЕ ФОНЫ */
+.transparent-card,
+.transparent-card *,
+.transparent-card .card-body,
+.transparent-card .card-header,
+.transparent-card .card-footer,
+.transparent-card .table,
+.transparent-card .table-responsive,
+.transparent-card thead,
+.transparent-card tbody,
+.transparent-card tr,
+.transparent-card td,
+.transparent-card th {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* 2. КАРТОЧКА - ТОЛЬКО РАМКА */
+.transparent-card {
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+}
+
+.transparent-card-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 12px 12px 0 0 !important;
+}
+
+/* 3. СТИЛИ ДЛЯ ВКЛАДОК */
+.nav-tabs .nav-link {
+    color: rgba(255,255,255,0.8);
+    border: none;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s;
+}
+
+.nav-tabs .nav-link:hover {
+    border-color: transparent;
+    background-color: rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+.nav-tabs .nav-link.active {
+    color: #fff;
+    background-color: rgba(255,255,255,0.2);
+    border-bottom: 2px solid #fff;
+}
+
+.nav-tabs .nav-link i {
+    margin-right: 6px;
+}
+
+.card-header-tabs {
+    margin-right: -0.625rem;
+    margin-bottom: -0.75rem;
+    margin-left: -0.625rem;
+    border-bottom: 0;
+}
+
+.tab-pane {
+    padding-top: 1rem;
+}
+
+/* 4. ПРОЗРАЧНЫЕ ПОЛЯ ВВОДА */
+.form-control.bg-transparent {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.2s;
+}
+
+.form-control.bg-transparent::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.form-control.bg-transparent:focus {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+}
+
+.form-control.bg-transparent.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+/* 5. ПРОЗРАЧНЫЕ SELECT ПОЛЯ */
+.form-select.bg-transparent {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='white' d='M8 11L3 6h10z'/%3e%3c/svg%3e");
+}
+
+.form-select.bg-transparent:focus {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+}
+
+.form-select.bg-transparent option {
+    background-color: #343a40;
+    color: #ffffff;
+}
+
+/* 6. ОБЩИЕ СТИЛИ */
+.text-white { color: #ffffff !important; }
+.text-white-50 { color: rgba(255, 255, 255, 0.7) !important; }
+
+/* 7. КНОПКИ */
+.btn-outline-light {
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-color: #ffffff !important;
+    color: #ffffff !important;
+}
+
+/* 8. АДАПТИВНОСТЬ */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem !important;
+    }
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 1rem;
+    }
+    .btn-lg {
+        width: 100%;
+    }
+    .nav-tabs .nav-link {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.7rem;
+    }
+    .nav-tabs .nav-link i {
+        margin-right: 4px;
+    }
+}
+</style>
+{% endblock %}
