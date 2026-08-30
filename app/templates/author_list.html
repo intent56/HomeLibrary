@@ -1,172 +1,205 @@
-{% extends "base.html" %}
-
-{% block body_class %}bg-page2{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block body_class %}bg-page2{% endblock %} {% block
+content %}
 <div class="row">
-    <div class="col-12">
-        <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет для иконки, заголовка и счетчика -->
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
-            <div class="text-center text-md-start mb-3 mb-md-0">
-                <h2 class="text-white"><i class="bi bi-people"></i> Список авторов</h2>
-                <p class="text-white-50 mb-0">Всего авторов: {{ total_authors }}</p>
-            </div>
-            <div class="d-flex gap-2 flex-wrap justify-content-center">
-                <!-- 2. КНОПКА "НА ГЛАВНУЮ" - БЕЛЫЙ ТЕКСТ -->
-                <a href="{{ url_for('main.index') }}" class="btn btn-outline-light d-flex align-items-center">
-                    <i class="bi bi-house me-1"></i> На главную
-                </a>
-                <a href="{{ url_for('main.add_author') }}" class="btn btn-edit d-flex align-items-center">
-                    <i class="bi bi-plus-circle me-1"></i> Добавить автора
-                </a>
-            </div>
-        </div>
-
-        <!-- 3. ПОИСК БЕЗ ПОДЛОЖКИ (УБРАНА КАРТОЧКА) -->
-        <!-- Блок поиска с белой рамкой (гарантированно) -->
-        <div class="search-fields-container"
-            style="border: 2px solid rgba(255, 255, 255, 0.5) !important; border-radius: 8px; padding: 1rem; background: transparent;">
-            <div class="row g-3">
-                <div class="col-md-10">
-                    <div class="input-group">
-                        <span class="input-group-text bg-transparent text-white border-light">
-                            <i class="bi bi-search"></i>
-                        </span>
-                        <input type="text" class="form-control bg-transparent text-white border-light" id="searchInput"
-                            name="search" placeholder="Поиск по ФИО, фамилии..." value="{{ search or '' }}"
-                            hx-get="{{ url_for('main.author_list') }}" hx-trigger="keyup changed delay:300ms"
-                            hx-target="#authorGridContainer" hx-indicator="#loadingIndicator" hx-push-url="true"
-                            hx-vals='{"page": 1}'>
-                        <span class="input-group-text bg-transparent border-light" id="loadingIndicator"
-                            style="display: none;">
-                            <span class="spinner-border spinner-border-sm text-white" role="status"></span>
-                        </span>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-outline-light" onclick="resetSearch()">
-                        <i class="bi bi-arrow-counterclockwise"></i> Сброс
-                    </button>
-                </div>
-            </div>
-            <div class="mt-2">
-                <span class="text-white-50 small" id="resultCount">
-                    Найдено: {{ total_authors }}
-                </span>
-            </div>
-        </div>
-
-        <!-- Контейнер для сетки авторов -->
-        <div id="authorGridContainer">
-            {% include 'partials/author_grid.html' %}
-        </div>
+  <div class="col-12">
+    <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет для иконки, заголовка и счетчика -->
+    <div
+      class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4"
+    >
+      <div class="text-center text-md-start mb-3 mb-md-0">
+        <h2 class="text-white"><i class="bi bi-people"></i> Список авторов</h2>
+        <p class="text-white-50 mb-0">Всего авторов: {{ total_authors }}</p>
+      </div>
+      <div class="d-flex gap-2 flex-wrap justify-content-center">
+        <!-- 2. КНОПКА "НА ГЛАВНУЮ" - БЕЛЫЙ ТЕКСТ -->
+        <a
+          href="{{ url_for('main.index') }}"
+          class="btn btn-outline-light d-flex align-items-center"
+        >
+          <i class="bi bi-house me-1"></i> На главную
+        </a>
+        <a
+          href="{{ url_for('main.add_author') }}"
+          class="btn btn-edit d-flex align-items-center"
+        >
+          <i class="bi bi-plus-circle me-1"></i> Добавить автора
+        </a>
+      </div>
     </div>
+
+    <!-- 3. ПОИСК БЕЗ ПОДЛОЖКИ (УБРАНА КАРТОЧКА) -->
+    <!-- Блок поиска с белой рамкой (гарантированно) -->
+    <div
+      class="search-fields-container"
+      style="
+        border: 2px solid rgba(255, 255, 255, 0.5) !important;
+        border-radius: 8px;
+        padding: 1rem;
+        background: transparent;
+      "
+    >
+      <div class="row g-3">
+        <div class="col-md-10">
+          <div class="input-group">
+            <span
+              class="input-group-text bg-transparent text-white border-light"
+            >
+              <i class="bi bi-search"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control bg-transparent text-white border-light"
+              id="searchInput"
+              name="search"
+              placeholder="Поиск по ФИО, фамилии..."
+              value="{{ search or '' }}"
+              hx-get="{{ url_for('main.author_list') }}"
+              hx-trigger="keyup changed delay:300ms"
+              hx-target="#authorGridContainer"
+              hx-indicator="#loadingIndicator"
+              hx-push-url="true"
+              hx-vals='{"page": 1}'
+            />
+            <span
+              class="input-group-text bg-transparent border-light"
+              id="loadingIndicator"
+              style="display: none"
+            >
+              <span
+                class="spinner-border spinner-border-sm text-white"
+                role="status"
+              ></span>
+            </span>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-outline-light" onclick="resetSearch()">
+            <i class="bi bi-arrow-counterclockwise"></i> Сброс
+          </button>
+        </div>
+      </div>
+      <div class="mt-2">
+        <span class="text-white-50 small" id="resultCount">
+          Найдено: {{ total_authors }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Контейнер для сетки авторов -->
+    <div id="authorGridContainer">
+      {% include 'partials/author_grid.html' %}
+    </div>
+  </div>
 </div>
 
 <script>
-    function resetSearch() {
-        document.getElementById('searchInput').value = '';
+  function resetSearch() {
+    document.getElementById("searchInput").value = "";
 
-        htmx.ajax('GET', '{{ url_for("main.author_list") }}', {
-            target: '#authorGridContainer',
-            values: { page: 1 }
-        });
+    htmx.ajax("GET", '{{ url_for("main.author_list") }}', {
+      target: "#authorGridContainer",
+      values: { page: 1 },
+    });
+  }
+
+  document.body.addEventListener("htmx:afterSwap", function (evt) {
+    if (evt.detail.target.id === "authorGridContainer") {
+      const totalAuthors = evt.detail.xhr.getResponseHeader("X-Total-Count");
+      const currentPage = evt.detail.xhr.getResponseHeader("X-Current-Page");
+      const totalPages = evt.detail.xhr.getResponseHeader("X-Total-Pages");
+
+      if (totalAuthors) {
+        document.querySelector(".text-white-50.mb-0").textContent =
+          "Всего авторов: " + totalAuthors;
+      }
+
+      const cards = document.querySelectorAll(
+        "#authorGridContainer .card.h-100",
+      ).length;
+      document.getElementById("resultCount").textContent =
+        "Найдено: " + (totalAuthors || cards);
     }
+  });
 
-    document.body.addEventListener('htmx:afterSwap', function (evt) {
-        if (evt.detail.target.id === 'authorGridContainer') {
-            const totalAuthors = evt.detail.xhr.getResponseHeader('X-Total-Count');
-            const currentPage = evt.detail.xhr.getResponseHeader('X-Current-Page');
-            const totalPages = evt.detail.xhr.getResponseHeader('X-Total-Pages');
+  document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("searchInput");
+    const urlParams = new URLSearchParams(window.location.search);
+    const search = urlParams.get("search");
 
-            if (totalAuthors) {
-                document.querySelector('.text-white-50.mb-0').textContent = 'Всего авторов: ' + totalAuthors;
-            }
-
-            const cards = document.querySelectorAll('#authorGridContainer .card.h-100').length;
-            document.getElementById('resultCount').textContent = 'Найдено: ' + (totalAuthors || cards);
-        }
-    });
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.getElementById('searchInput');
-        const urlParams = new URLSearchParams(window.location.search);
-        const search = urlParams.get('search');
-
-        if (search) {
-            searchInput.value = search;
-        }
-    });
+    if (search) {
+      searchInput.value = search;
+    }
+  });
 </script>
 
 <!-- ДОПОЛНИТЕЛЬНЫЕ СТИЛИ ДЛЯ ПРОЗРАЧНЫХ ПОЛЕЙ НА ТЕМНОМ ФОНЕ -->
 <style>
-    /* Стиль для всего контейнера с поиском, чтобы убрать карточку */
-    .search-fields-container {
-        background: transparent;
-        padding: 0.5rem 0 1rem 0;
-    }
+  /* Стиль для всего контейнера с поиском, чтобы убрать карточку */
+  .search-fields-container {
+    background: transparent;
+    padding: 0.5rem 0 1rem 0;
+  }
 
-    /* Стили для прозрачных полей ввода */
-    .form-control.bg-transparent {
-        background-color: rgba(255, 255, 255, 0.15) !important;
-        color: #ffffff !important;
-        transition: background-color 0.2s;
-    }
+  /* Стили для прозрачных полей ввода */
+  .form-control.bg-transparent {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+    transition: background-color 0.2s;
+  }
 
-    .form-control.bg-transparent::placeholder {
-        color: rgba(255, 255, 255, 0.6);
-    }
+  .form-control.bg-transparent::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+  }
 
-    .form-control.bg-transparent:focus {
-        background-color: rgba(255, 255, 255, 0.25) !important;
-        color: #ffffff !important;
-        box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.15);
-    }
+  .form-control.bg-transparent:focus {
+    background-color: rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.15);
+  }
 
-    /* Стили для иконок в input-group */
+  /* Стили для иконок в input-group */
+  .input-group-text.bg-transparent {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: var(--bs-light) !important;
+    color: #ffffff !important;
+  }
+
+  /* Стили для границ полей */
+  .border-light {
+    border-color: rgba(255, 255, 255, 0.3) !important;
+  }
+
+  /* Стиль для кнопки "Сброс" (светлая на темном фоне) */
+  .btn-light {
+    background-color: #f8f9fa;
+    border-color: #f8f9fa;
+    color: #212529;
+    transition: all 0.2s;
+  }
+
+  .btn-light:hover {
+    background-color: #e9ecef;
+    border-color: #e9ecef;
+    transform: scale(1.02);
+  }
+
+  /* Стиль для текста информации о фильтрах */
+  .text-white-50 {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  /* Адаптивность для мобильных устройств */
+  @media (max-width: 768px) {
     .input-group-text.bg-transparent {
-        background-color: rgba(255, 255, 255, 0.1) !important;
-        border-color: var(--bs-light) !important;
-        color: #ffffff !important;
+      padding: 0.375rem 0.5rem;
     }
 
-    /* Стили для границ полей */
-    .border-light {
-        border-color: rgba(255, 255, 255, 0.3) !important;
-    }
-
-    /* Стиль для кнопки "Сброс" (светлая на темном фоне) */
     .btn-light {
-        background-color: #f8f9fa;
-        border-color: #f8f9fa;
-        color: #212529;
-        transition: all 0.2s;
+      margin-top: 0.5rem;
     }
-
-    .btn-light:hover {
-        background-color: #e9ecef;
-        border-color: #e9ecef;
-        transform: scale(1.02);
-    }
-
-    /* Стиль для текста информации о фильтрах */
-    .text-white-50 {
-        color: rgba(255, 255, 255, 0.7) !important;
-    }
-
-    /* Адаптивность для мобильных устройств */
-    @media (max-width: 768px) {
-        .input-group-text.bg-transparent {
-            padding: 0.375rem 0.5rem;
-        }
-
-        .btn-light {
-            margin-top: 0.5rem;
-        }
-    }
-/* Стили для кнопок "Добавить автора" */
-.btn-edit {
+  }
+  /* Стили для кнопок "Добавить автора" */
+  .btn-edit {
     background-color: transparent !important;
     color: var(--main-color) !important;
     border: 2px solid var(--main-color) !important;
@@ -176,36 +209,36 @@
     border-radius: 6px;
     font-size: 0.95rem;
     letter-spacing: 0.3px;
-}
+  }
 
-.btn-edit:hover {
+  .btn-edit:hover {
     background-color: var(--main-color) !important;
     color: #000000 !important;
     border-color: #000000 !important;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(255, 194, 0, 0.3);
-}
+  }
 
-.btn-edit:active {
+  .btn-edit:active {
     transform: translateY(0px);
     box-shadow: 0 2px 6px rgba(255, 194, 0, 0.2);
-}
+  }
 
-.btn-edit:focus {
+  .btn-edit:focus {
     box-shadow: 0 0 0 3px rgba(255, 194, 0, 0.4);
     outline: none;
-}
+  }
 
-/* Маленькие кнопки (для карточек) */
-.btn-edit-sm {
+  /* Маленькие кнопки (для карточек) */
+  .btn-edit-sm {
     padding: 0.25rem 0.8rem;
     font-size: 0.85rem;
-}
+  }
 
-/* Большие кнопки (для основных действий) */
-.btn-edit-lg {
+  /* Большие кнопки (для основных действий) */
+  .btn-edit-lg {
     padding: 0.75rem 1.5rem;
     font-size: 1.1rem;
-}
+  }
 </style>
 {% endblock %}

@@ -1,312 +1,341 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <div class="row">
-    <div class="col-lg-8 mx-auto">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2><i class="bi bi-plus-circle"></i> Добавление издателя</h2>
-                <h5 class="text-muted">Заполните информацию об издателе</h5>
-            </div>
-            <a href="{{ url_for('main.publisher_list') }}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left"></i> Назад к списку
-            </a>
-        </div>
-        
-        <form method="POST" action="{{ url_for('main.add_publisher') }}" novalidate>
-            {{ form.csrf_token }}
-            <input type="hidden" name="book_id" value="{{ book_id }}">
-            
-            <!-- Информация об издателе -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> Информация об издателе</h5>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        {{ form.name.label(class="form-label fw-bold") }}
-                        <span class="text-danger">*</span>
-                        {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else ""), 
-                                   placeholder="Например: 'АСТ'", id="publisherName") }}
-                        {% if form.name.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.name.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                        <div class="form-text">Название издательства</div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        {{ form.ref_publisher.label(class="form-label fw-bold") }}
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-globe"></i></span>
-                            {{ form.ref_publisher(class="form-control" + (" is-invalid" if form.ref_publisher.errors else ""), 
-                                                placeholder="Например: 'https://ast.ru/'", id="publisherUrl") }}
-                        </div>
-                        {% if form.ref_publisher.errors %}
-                            <div class="invalid-feedback d-block">
-                                {% for error in form.ref_publisher.errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                        <div class="form-text">Ссылка на страницу с информацией об издателе (необязательно)</div>
-                        
-                        <!-- Предпросмотр ссылки -->
-                        <div id="urlPreview" class="mt-2" style="display: none;">
-                            <span class="badge bg-info">
-                                <i class="bi bi-link-45deg"></i> 
-                                <a href="#" id="urlPreviewLink" target="_blank" class="text-white text-decoration-none">
-                                    Перейти по ссылке
-                                </a>
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        {{ form.comment.label(class="form-label fw-bold") }}
-                        {{ form.comment(class="form-control", rows="3", placeholder="Например: 'Крупнейшее российское издательство'") }}
-                        <div class="form-text">Комментарии, примечания</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Кнопки действия -->
-            <div class="card shadow-sm mb-4">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                        <div>
-                            <span class="text-muted">
-                                <i class="bi bi-info-circle"></i> 
-                                Поля с <span class="text-danger">*</span> обязательны для заполнения
-                            </span>
-                        </div>
-                        <div class="d-flex gap-2">
-                            <a href="{{ url_for('main.publisher_list') }}" class="btn btn-secondary btn-lg">
-                                <i class="bi bi-x-circle"></i> Отмена
-                            </a>
-                            {{ form.submit(class="btn btn-primary btn-lg") }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
+  <div class="col-lg-8 mx-auto">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2><i class="bi bi-plus-circle"></i> Добавление издателя</h2>
+        <h5 class="text-muted">Заполните информацию об издателе</h5>
+      </div>
+      <a
+        href="{{ url_for('main.publisher_list') }}"
+        class="btn btn-outline-secondary"
+      >
+        <i class="bi bi-arrow-left"></i> Назад к списку
+      </a>
     </div>
+
+    <form method="POST" action="{{ url_for('main.add_publisher') }}" novalidate>
+      {{ form.csrf_token }}
+      <input type="hidden" name="book_id" value="{{ book_id }}" />
+
+      <!-- Информация об издателе -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-info-circle"></i> Информация об издателе
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            {{ form.name.label(class="form-label fw-bold") }}
+            <span class="text-danger">*</span>
+            {{ form.name(class="form-control" + (" is-invalid" if
+            form.name.errors else ""), placeholder="Например: 'АСТ'",
+            id="publisherName") }} {% if form.name.errors %}
+            <div class="invalid-feedback d-block">
+              {% for error in form.name.errors %} {{ error }} {% endfor %}
+            </div>
+            {% endif %}
+            <div class="form-text">Название издательства</div>
+          </div>
+
+          <div class="mb-3">
+            {{ form.ref_publisher.label(class="form-label fw-bold") }}
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-globe"></i></span>
+              {{ form.ref_publisher(class="form-control" + (" is-invalid" if
+              form.ref_publisher.errors else ""), placeholder="Например:
+              'https://ast.ru/'", id="publisherUrl") }}
+            </div>
+            {% if form.ref_publisher.errors %}
+            <div class="invalid-feedback d-block">
+              {% for error in form.ref_publisher.errors %} {{ error }} {% endfor
+              %}
+            </div>
+            {% endif %}
+            <div class="form-text">
+              Ссылка на страницу с информацией об издателе (необязательно)
+            </div>
+
+            <!-- Предпросмотр ссылки -->
+            <div id="urlPreview" class="mt-2" style="display: none">
+              <span class="badge bg-info">
+                <i class="bi bi-link-45deg"></i>
+                <a
+                  href="#"
+                  id="urlPreviewLink"
+                  target="_blank"
+                  class="text-white text-decoration-none"
+                >
+                  Перейти по ссылке
+                </a>
+              </span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            {{ form.comment.label(class="form-label fw-bold") }} {{
+            form.comment(class="form-control", rows="3", placeholder="Например:
+            'Крупнейшее российское издательство'") }}
+            <div class="form-text">Комментарии, примечания</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Кнопки действия -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <div
+            class="d-flex justify-content-between align-items-center flex-wrap gap-2"
+          >
+            <div>
+              <span class="text-muted">
+                <i class="bi bi-info-circle"></i>
+                Поля с <span class="text-danger">*</span> обязательны для
+                заполнения
+              </span>
+            </div>
+            <div class="d-flex gap-2">
+              <a
+                href="{{ url_for('main.publisher_list') }}"
+                class="btn btn-secondary btn-lg"
+              >
+                <i class="bi bi-x-circle"></i> Отмена
+              </a>
+              {{ form.submit(class="btn btn-primary btn-lg") }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener("DOMContentLoaded", function () {
     // Предпросмотр ссылки
-    const urlInput = document.getElementById('publisherUrl');
-    const urlPreview = document.getElementById('urlPreview');
-    const urlPreviewLink = document.getElementById('urlPreviewLink');
-    
+    const urlInput = document.getElementById("publisherUrl");
+    const urlPreview = document.getElementById("urlPreview");
+    const urlPreviewLink = document.getElementById("urlPreviewLink");
+
     if (urlInput) {
-        urlInput.addEventListener('input', function() {
-            const url = this.value.trim();
-            if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
-                urlPreview.style.display = 'block';
-                urlPreviewLink.href = url;
-                urlPreviewLink.textContent = url.length > 50 ? url.substring(0, 50) + '...' : url;
-            } else {
-                urlPreview.style.display = 'none';
-            }
-        });
-        
-        urlInput.addEventListener('blur', function() {
-            if (this.value && !this.value.startsWith('http://') && !this.value.startsWith('https://')) {
-                this.classList.add('is-invalid');
-                let feedback = this.parentElement.querySelector('.invalid-feedback');
-                if (!feedback) {
-                    feedback = document.createElement('div');
-                    feedback.className = 'invalid-feedback d-block';
-                    feedback.textContent = 'Введите корректный URL (начинается с http:// или https://)';
-                    this.parentElement.appendChild(feedback);
-                }
-            } else {
-                this.classList.remove('is-invalid');
-                const feedback = this.parentElement.querySelector('.invalid-feedback');
-                if (feedback) feedback.remove();
-            }
-        });
-    }
-    
-    // Автоматическая капитализация названия издательства
-    const nameInput = document.getElementById('publisherName');
-    if (nameInput) {
-        nameInput.addEventListener('blur', function() {
-            if (this.value) {
-                this.value = this.value.replace(/\w\S*/g, function(txt) {
-                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-                });
-            }
-        });
-    }
-    
-    // Подтверждение перед выходом без сохранения
-    const form = document.querySelector('form');
-    let formChanged = false;
-    
-    form.querySelectorAll('input, textarea, select').forEach(element => {
-        element.addEventListener('change', function() {
-            formChanged = true;
-        });
-    });
-    
-    window.addEventListener('beforeunload', function(e) {
-        if (formChanged) {
-            e.preventDefault();
-            e.returnValue = 'Вы не сохранили изменения. Вы уверены, что хотите покинуть страницу?';
+      urlInput.addEventListener("input", function () {
+        const url = this.value.trim();
+        if (url && (url.startsWith("http://") || url.startsWith("https://"))) {
+          urlPreview.style.display = "block";
+          urlPreviewLink.href = url;
+          urlPreviewLink.textContent =
+            url.length > 50 ? url.substring(0, 50) + "..." : url;
+        } else {
+          urlPreview.style.display = "none";
         }
+      });
+
+      urlInput.addEventListener("blur", function () {
+        if (
+          this.value &&
+          !this.value.startsWith("http://") &&
+          !this.value.startsWith("https://")
+        ) {
+          this.classList.add("is-invalid");
+          let feedback = this.parentElement.querySelector(".invalid-feedback");
+          if (!feedback) {
+            feedback = document.createElement("div");
+            feedback.className = "invalid-feedback d-block";
+            feedback.textContent =
+              "Введите корректный URL (начинается с http:// или https://)";
+            this.parentElement.appendChild(feedback);
+          }
+        } else {
+          this.classList.remove("is-invalid");
+          const feedback =
+            this.parentElement.querySelector(".invalid-feedback");
+          if (feedback) feedback.remove();
+        }
+      });
+    }
+
+    // Автоматическая капитализация названия издательства
+    const nameInput = document.getElementById("publisherName");
+    if (nameInput) {
+      nameInput.addEventListener("blur", function () {
+        if (this.value) {
+          this.value = this.value.replace(/\w\S*/g, function (txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+          });
+        }
+      });
+    }
+
+    // Подтверждение перед выходом без сохранения
+    const form = document.querySelector("form");
+    let formChanged = false;
+
+    form.querySelectorAll("input, textarea, select").forEach((element) => {
+      element.addEventListener("change", function () {
+        formChanged = true;
+      });
     });
-    
-    form.addEventListener('submit', function() {
-        formChanged = false;
+
+    window.addEventListener("beforeunload", function (e) {
+      if (formChanged) {
+        e.preventDefault();
+        e.returnValue =
+          "Вы не сохранили изменения. Вы уверены, что хотите покинуть страницу?";
+      }
     });
-});
+
+    form.addEventListener("submit", function () {
+      formChanged = false;
+    });
+  });
 </script>
 
 <style>
-/* Стили для полей ввода с placeholder */
-.form-control::placeholder {
+  /* Стили для полей ввода с placeholder */
+  .form-control::placeholder {
     color: #adb5bd;
     font-style: italic;
     font-size: 0.9rem;
     opacity: 0.7;
-}
+  }
 
-/* Стили для заполненных полей */
-.form-control:not(:placeholder-shown) {
+  /* Стили для заполненных полей */
+  .form-control:not(:placeholder-shown) {
     color: #212529;
     font-weight: 500;
     border-color: #86b7fe;
     background-color: #f8f9fa;
-}
+  }
 
-.form-control:not(:placeholder-shown):focus {
+  .form-control:not(:placeholder-shown):focus {
     background-color: #ffffff;
     border-color: #86b7fe;
     box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-}
+  }
 
-/* Стили для textarea */
-textarea.form-control::placeholder {
+  /* Стили для textarea */
+  textarea.form-control::placeholder {
     color: #adb5bd;
     font-style: italic;
     font-size: 0.9rem;
     opacity: 0.7;
-}
+  }
 
-textarea.form-control:not(:placeholder-shown) {
+  textarea.form-control:not(:placeholder-shown) {
     color: #212529;
     font-weight: 500;
     border-color: #86b7fe;
     background-color: #f8f9fa;
-}
+  }
 
-/* Анимация для полей при фокусе */
-.form-control:focus::placeholder {
+  /* Анимация для полей при фокусе */
+  .form-control:focus::placeholder {
     opacity: 0.4;
     transition: opacity 0.2s ease;
-}
+  }
 
-/* Стили для карточек */
-.card {
+  /* Стили для карточек */
+  .card {
     border: none;
     transition: transform 0.2s;
-}
+  }
 
-.card:hover {
+  .card:hover {
     transform: translateY(-2px);
-}
+  }
 
-.card-header {
+  .card-header {
     border-bottom: none;
     font-weight: 500;
-}
+  }
 
-.card-header i {
+  .card-header i {
     margin-right: 8px;
-}
+  }
 
-.form-label {
+  .form-label {
     font-weight: 500;
     margin-bottom: 0.25rem;
-}
+  }
 
-.form-text {
+  .form-text {
     font-size: 0.8rem;
     color: #6c757d;
     margin-top: 0.25rem;
-}
+  }
 
-.text-danger {
+  .text-danger {
     font-weight: bold;
-}
+  }
 
-.form-control:focus {
+  .form-control:focus {
     border-color: #86b7fe;
     box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-}
+  }
 
-@media (max-width: 768px) {
+  @media (max-width: 768px) {
     .card-body {
-        padding: 1rem;
+      padding: 1rem;
     }
-    
+
     .d-flex.justify-content-between {
-        flex-direction: column;
-        align-items: stretch !important;
-        gap: 1rem;
+      flex-direction: column;
+      align-items: stretch !important;
+      gap: 1rem;
     }
-    
+
     .btn-lg {
-        width: 100%;
+      width: 100%;
     }
-}
+  }
 
-.btn {
+  .btn {
     transition: all 0.2s;
-}
+  }
 
-.btn:hover {
+  .btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
 
-/* Стили для input-group */
-.input-group-text {
+  /* Стили для input-group */
+  .input-group-text {
     background-color: #f8f9fa;
-}
+  }
 
-.input-group .form-control:focus {
+  .input-group .form-control:focus {
     z-index: 0;
-}
+  }
 
-/* Стили для предпросмотра ссылки */
-#urlPreview {
+  /* Стили для предпросмотра ссылки */
+  #urlPreview {
     animation: fadeIn 0.3s ease;
-}
+  }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
-#urlPreview .badge {
+  #urlPreview .badge {
     font-size: 0.9rem;
     padding: 0.5rem 0.75rem;
-}
+  }
 
-#urlPreview .badge a {
+  #urlPreview .badge a {
     color: #fff;
     text-decoration: none;
-}
+  }
 
-#urlPreview .badge a:hover {
+  #urlPreview .badge a:hover {
     text-decoration: underline;
-}
+  }
 </style>
 {% endblock %}
