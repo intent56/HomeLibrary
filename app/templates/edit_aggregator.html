@@ -8,13 +8,15 @@ content %}
         <h2 class="text-white">
           <i class="bi bi-pencil-square"></i> Редактирование агрегатора
         </h2>
-        <h5 class="text-white-50">{{ aggregator.name }}</h5>
+        <h5 class="text-white fw-bold fs-3 mt-2">{{ aggregator.name }}</h5>
       </div>
+      <!-- ИЗМЕНЕННАЯ КНОПКА "НАЗАД" -->
       <a
-        href="{{ url_for('main.aggregator_list') }}"
-        class="btn btn-outline-light"
+        href="{{ request.args.get('next') or url_for('main.aggregator_list') }}"
+        class="btn btn-outline-light d-flex align-items-center"
+        id="backButton"
       >
-        <i class="bi bi-arrow-left"></i> Назад к списку
+        <i class="bi bi-arrow-left"></i> Назад
       </a>
     </div>
 
@@ -25,10 +27,12 @@ content %}
     >
       {{ form.csrf_token }}
 
-      <div class="card shadow-sm mb-4 transparent-card">
-        <div class="card-header transparent-card-header">
+      <!-- ИЗМЕНЕННАЯ КАРТОЧКА "ИНФОРМАЦИЯ ОБ АГРЕГАТОРЕ" -->
+      <div class="card shadow-sm mb-4 transparent-card-source">
+        <div class="card-header transparent-card-header-source">
           <h5 class="mb-0 text-white">
-            <i class="bi bi-info-circle"></i> Информация об агрегаторе
+            <i class="bi bi-info-circle" style="color: var(--main-color)"></i>
+            Информация об агрегаторе
           </h5>
         </div>
         <div class="card-body transparent-card-body">
@@ -129,7 +133,7 @@ content %}
             <div class="col-md-6">
               <div class="mb-3 form-check">
                 {{ form.is_active(class="form-check-input bg-transparent
-                border-light") }} {{
+                border-light", style="accent-color: var(--main-color);") }} {{
                 form.is_active.label(class="form-check-label text-white") }}
                 <div class="form-text text-white-50">
                   Если активно, агрегатор будет доступен для поиска
@@ -167,6 +171,7 @@ content %}
         </div>
       </div>
 
+      <!-- Кнопки действия -->
       <div class="card shadow-sm mb-4 transparent-card">
         <div class="card-body transparent-card-body">
           <div
@@ -180,13 +185,17 @@ content %}
               </span>
             </div>
             <div class="d-flex gap-2">
+              <!-- ИЗМЕНЕННАЯ КНОПКА "ОТМЕНА" -->
               <a
-                href="{{ url_for('main.aggregator_list') }}"
-                class="btn btn-outline-light btn-lg"
+                href="{{ request.args.get('next') or url_for('main.aggregator_list') }}"
+                class="btn btn-outline-light btn"
               >
                 <i class="bi bi-x-circle"></i> Отмена
               </a>
-              {{ form.submit(class="btn btn-primary btn-lg") }}
+              <!-- ИЗМЕНЕННАЯ КНОПКА "СОХРАНИТЬ ИЗМЕНЕНИЯ" -->
+              <button type="submit" class="btn btn-edit">
+                <i class="bi bi-save"></i> Сохранить изменения
+              </button>
             </div>
           </div>
         </div>
@@ -256,6 +265,24 @@ content %}
     form.addEventListener("submit", function () {
       formChanged = false;
     });
+
+    // --- Умная кнопка "Назад" ---
+    const backButton = document.getElementById("backButton");
+    if (backButton) {
+      // Если есть referrer (переход с другой страницы этого же сайта)
+      if (
+        document.referrer &&
+        document.referrer.includes(window.location.hostname)
+      ) {
+        backButton.href = document.referrer;
+      }
+      // Если передан параметр next, используем его (имеет приоритет)
+      const urlParams = new URLSearchParams(window.location.search);
+      const next = urlParams.get("next");
+      if (next) {
+        backButton.href = next;
+      }
+    }
   });
 </script>
 
@@ -279,12 +306,26 @@ content %}
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
   }
 
-  .transparent-card-header {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 12px 12px 0 0 !important;
+  /* 3. СПЕЦИАЛЬНЫЙ СТИЛЬ ДЛЯ КАРТОЧКИ "ИНФОРМАЦИЯ ОБ АГРЕГАТОРЕ" */
+  .transparent-card-source {
+    background-color: transparent !important;
+    border: 1px solid var(--main-color) !important;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
   }
 
-  /* 3. ТЕКСТЫ БЕЛЫМ */
+  .transparent-card-header-source {
+    background-color: rgba(212, 175, 55, 0.15) !important;
+    border-bottom: 1px solid var(--main-color) !important;
+    border-radius: 12px 12px 0 0 !important;
+    padding: 1rem 1.25rem;
+  }
+
+  .transparent-card-body {
+    padding: 1.5rem;
+  }
+
+  /* 4. ТЕКСТЫ БЕЛЫМ */
   .text-white {
     color: #ffffff !important;
   }
@@ -292,7 +333,7 @@ content %}
     color: rgba(255, 255, 255, 0.7) !important;
   }
 
-  /* 4. ПОЛЯ ВВОДА */
+  /* 5. ПОЛЯ ВВОДА */
   .form-control.bg-transparent {
     background-color: rgba(255, 255, 255, 0.1) !important;
     color: #ffffff !important;
@@ -309,7 +350,7 @@ content %}
     color: rgba(255, 255, 255, 0.5);
   }
 
-  /* 5. SELECT ПОЛЯ */
+  /* 6. SELECT ПОЛЯ */
   .form-select.bg-transparent {
     background-color: rgba(255, 255, 255, 0.1) !important;
     color: #ffffff !important;
@@ -328,18 +369,18 @@ content %}
     color: #ffffff;
   }
 
-  /* 6. CHECKBOX */
+  /* 7. СТИЛИ ДЛЯ CHECKBOX - ИЗМЕНЕНЫ */
   .form-check-input.bg-transparent {
-    background-color: rgba(255, 255, 255, 0.1) !important;
+    background-color: rgba(255, 255, 255, 0.15) !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
   }
 
   .form-check-input.bg-transparent:checked {
-    background-color: #0d6efd !important;
-    border-color: #0d6efd !important;
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
   }
 
-  /* 7. КНОПКИ */
+  /* 8. КНОПКИ */
   .btn-outline-light {
     color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
@@ -351,17 +392,47 @@ content %}
     color: #ffffff !important;
   }
 
-  .btn-primary {
-    background-color: rgba(13, 110, 253, 0.8) !important;
-    border-color: rgba(13, 110, 253, 0.8) !important;
+  .btn-edit {
+    background-color: transparent !important;
+    color: var(--main-color) !important;
+    border: 2px solid var(--main-color) !important;
+    transition: all 0.3s ease !important;
+    font-weight: 500 !important;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
   }
 
-  .btn-primary:hover {
-    background-color: rgba(13, 110, 253, 1) !important;
-    border-color: rgba(13, 110, 253, 1) !important;
+  .btn-edit:hover {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 194, 0, 0.3);
   }
 
-  /* 8. КОД */
+  .btn-edit:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 6px rgba(255, 194, 0, 0.2);
+  }
+
+  .btn-edit:focus {
+    box-shadow: 0 0 0 3px rgba(255, 194, 0, 0.4);
+    outline: none;
+  }
+
+  .btn-edit-sm {
+    padding: 0.25rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .btn-edit-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+  }
+
+  /* 9. КОД */
   code.text-white-50 {
     color: rgba(255, 255, 255, 0.7) !important;
     background: rgba(255, 255, 255, 0.1) !important;
@@ -369,7 +440,7 @@ content %}
     border-radius: 4px;
   }
 
-  /* 9. ССЫЛКИ */
+  /* 10. ССЫЛКИ */
   a.text-light {
     color: #a8d8ff !important;
   }
@@ -378,12 +449,12 @@ content %}
     color: #ffffff !important;
   }
 
-  /* 10. ПРЕДПРОСМОТР ИКОНКИ */
+  /* 11. ПРЕДПРОСМОТР ИКОНКИ */
   #iconPreview {
     transition: all 0.3s ease;
   }
 
-  /* 11. АДАПТИВНОСТЬ */
+  /* 12. АДАПТИВНОСТЬ */
   @media (max-width: 768px) {
     .card-body {
       padding: 1rem !important;
