@@ -12,7 +12,7 @@ content %}
       </div>
       <a
         href="{{ request.args.get('next') or url_for('main.interpreter_list') }}"
-        class="btn btn-outline-light"
+        class="btn btn-outline-light d-flex align-items-center"
         id="backButton"
       >
         <i class="bi bi-arrow-left"></i> Назад
@@ -119,7 +119,9 @@ content %}
                   </div>
                 </div>
               </div>
-              <div class="alert alert-info transparent-alert">
+
+              <!-- ИЗМЕНЕННЫЙ АЛЕРТ - ИСПОЛЬЗУЕТ var(--main-color) -->
+              <div class="alert custom-alert" role="alert">
                 <i class="bi bi-info-circle"></i>
                 <strong>ФИО будет сформировано автоматически:</strong>
                 <span id="fioPreviewInterpreter" class="fw-bold ms-2 text-white"
@@ -168,9 +170,10 @@ content %}
                     <small class="text-white-50">Текущее фото</small>
                   </div>
                   {% endif %}
+                  <!-- ИЗМЕНЕННЫЙ INPUT ДЛЯ ФАЙЛА -->
                   <input
                     type="file"
-                    class="form-control bg-transparent text-white border-light"
+                    class="form-control custom-file-input"
                     id="interpreterPhoto"
                     name="photo"
                     accept="image/*"
@@ -220,7 +223,7 @@ content %}
                 </h5>
                 <a
                   href="{{ url_for('main.select_interpreter_languages', interpreter_id=interpreter.id) }}"
-                  class="btn btn-info btn-sm"
+                  class="btn btn-edit-sm"
                 >
                   <i class="bi bi-pencil"></i> Редактировать
                 </a>
@@ -351,7 +354,7 @@ content %}
                 </table>
               </div>
 
-              <!-- ПАГИНАЦИЯ -->
+              <!-- ПАГИНАЦИЯ - ИСПРАВЛЕННАЯ -->
               {% if pagination and pagination.pages > 1 %}
               <div class="pagination-container mt-3">
                 <nav aria-label="Навигация по страницам">
@@ -461,11 +464,11 @@ content %}
             <div class="d-flex gap-2">
               <a
                 href="{{ request.args.get('next') or url_for('main.interpreter_list') }}"
-                class="btn btn-outline-light btn-lg"
+                class="btn btn-outline-light btn"
               >
                 <i class="bi bi-x-circle"></i> Отмена
               </a>
-              <button type="submit" class="btn btn-primary btn-lg">
+              <button type="submit" class="btn btn-edit">
                 <i class="bi bi-save"></i> Сохранить изменения
               </button>
             </div>
@@ -596,24 +599,25 @@ content %}
         tab.show();
       }
     }
+
+    // --- Умная кнопка "Назад" ---
+    const backButton = document.getElementById("backButton");
+    if (backButton) {
+      // Если есть referrer (переход с другой страницы этого же сайта)
+      if (
+        document.referrer &&
+        document.referrer.includes(window.location.hostname)
+      ) {
+        backButton.href = document.referrer;
+      }
+      // Если передан параметр next, используем его (имеет приоритет)
+      const urlParams = new URLSearchParams(window.location.search);
+      const next = urlParams.get("next");
+      if (next) {
+        backButton.href = next;
+      }
+    }
   });
-  // --- Умная кнопка "Назад" ---
-  const backButton = document.getElementById("backButton");
-  if (backButton) {
-    // Если есть referrer (переход с другой страницы этого же сайта)
-    if (
-      document.referrer &&
-      document.referrer.includes(window.location.hostname)
-    ) {
-      backButton.href = document.referrer;
-    }
-    // Если передан параметр next, используем его (имеет приоритет)
-    const urlParams = new URLSearchParams(window.location.search);
-    const next = urlParams.get("next");
-    if (next) {
-      backButton.href = next;
-    }
-  }
 </script>
 
 <!-- СТИЛИ -->
@@ -704,23 +708,39 @@ content %}
     border-color: #dc3545 !important;
   }
 
-  /* 5. ПРОЗРАЧНЫЙ АЛЕРТ */
+  /* 5. НОВЫЙ СТИЛЬ ДЛЯ АЛЕРТА - ИСПОЛЬЗУЕТ var(--main-color) */
+  .custom-alert {
+    background-color: rgba(212, 175, 55, 0.2) !important;
+    backdrop-filter: blur(5px);
+    border: 1px solid var(--main-color) !important;
+    color: #ffffff !important;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+  }
+
+  .custom-alert i {
+    color: var(--main-color) !important;
+  }
+
+  .custom-alert .text-white {
+    color: #ffffff !important;
+  }
+
+  /* 6. ПРОЗРАЧНЫЙ АЛЕРТ (для предупреждений) */
   .transparent-alert {
     background-color: rgba(13, 202, 240, 0.15) !important;
     backdrop-filter: blur(5px);
     border: 1px solid rgba(13, 202, 240, 0.3) !important;
     color: #ffffff !important;
   }
-
   .transparent-alert i {
     color: #0dcaf0 !important;
   }
-
   .transparent-alert .text-white {
     color: #ffffff !important;
   }
 
-  /* 6. ПРОЗРАЧНАЯ ТАБЛИЦА */
+  /* 7. ПРОЗРАЧНАЯ ТАБЛИЦА */
   .transparent-table {
     width: 100% !important;
   }
@@ -751,7 +771,7 @@ content %}
     color: rgba(255, 255, 255, 0.7) !important;
   }
 
-  /* 7. КНОПКИ В ТАБЛИЦЕ */
+  /* 8. КНОПКИ В ТАБЛИЦЕ */
   .btn-group .btn {
     display: inline-flex;
     align-items: center;
@@ -777,7 +797,7 @@ content %}
     color: #ffffff !important;
   }
 
-  /* 8. ПАГИНАЦИЯ */
+  /* 9. ПАГИНАЦИЯ - ИСПРАВЛЕННЫЙ СТИЛЬ */
   .pagination-container {
     background-color: rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(8px);
@@ -786,7 +806,9 @@ content %}
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  #transparentPagination .page-link {
+  #transparentPagination .page-link,
+  #transparentPagination .page-link:focus,
+  #transparentPagination .page-link:visited {
     background-color: transparent !important;
     background: transparent !important;
     border-color: rgba(255, 255, 255, 0.15) !important;
@@ -794,78 +816,160 @@ content %}
     transition: all 0.3s ease;
   }
 
-  #transparentPagination .page-link:hover {
+  #transparentPagination .page-item:not(.active) .page-link:hover {
     background-color: rgba(255, 255, 255, 0.1) !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
   }
 
-  #transparentPagination .page-item.active .page-link {
-    background-color: rgba(13, 110, 253, 0.4) !important;
-    border-color: rgba(13, 110, 253, 0.6) !important;
+  /* АКТИВНАЯ СТРАНИЦА - ЗОЛОТОЙ ФОН, ЧЕРНЫЙ ТЕКСТ */
+  #transparentPagination .page-item.active .page-link,
+  #transparentPagination .page-item.active .page-link:hover,
+  #transparentPagination .page-item.active .page-link:focus {
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
+    color: #000000 !important;
+    box-shadow: none !important;
   }
 
-  #transparentPagination .page-item.disabled .page-link {
+  #transparentPagination .page-item.disabled .page-link,
+  #transparentPagination .page-item.disabled .page-link:hover {
     background-color: transparent !important;
     border-color: rgba(255, 255, 255, 0.05) !important;
     color: rgba(255, 255, 255, 0.2) !important;
   }
 
-  /* 9. ОБЩИЕ СТИЛИ */
+  /* 10. НОВЫЙ СТИЛЬ ДЛЯ INPUT ФАЙЛА */
+  .custom-file-input {
+    background-color: rgba(212, 175, 55, 0.15) !important;
+    color: #ffffff !important;
+    border: 2px solid var(--main-color) !important;
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .custom-file-input:hover {
+    background-color: rgba(212, 175, 55, 0.25) !important;
+    border-color: #000000 !important;
+  }
+
+  .custom-file-input:focus {
+    background-color: rgba(212, 175, 55, 0.2) !important;
+    border-color: var(--main-color) !important;
+    box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.2);
+    outline: none;
+  }
+
+  /* Стилизация кнопки "Выберите файл" внутри input */
+  .custom-file-input::file-selector-button {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    border: 2px solid var(--main-color) !important;
+    border-radius: 6px;
+    padding: 0.3rem 0.8rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .custom-file-input::file-selector-button:hover {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: #000000 !important;
+  }
+
+  /* 11. ОБЩИЕ СТИЛИ */
   .text-white {
     color: #ffffff !important;
   }
-
   .text-white-50 {
     color: rgba(255, 255, 255, 0.7) !important;
   }
-
   .bg-opacity-75 {
     --bs-bg-opacity: 0.75;
   }
 
-  /* 10. АДАПТИВНОСТЬ */
+  /* 12. АДАПТИВНОСТЬ */
   @media (max-width: 768px) {
     .card-body {
       padding: 1rem !important;
     }
-
     .d-flex.justify-content-between {
       flex-direction: column;
       align-items: stretch !important;
       gap: 1rem;
     }
-
     .btn-lg {
       width: 100%;
     }
-
     .nav-tabs .nav-link {
       font-size: 0.85rem;
       padding: 0.4rem 0.7rem;
     }
-
     .nav-tabs .nav-link i {
       margin-right: 4px;
     }
-
     .transparent-table td,
     .transparent-table th {
       padding: 0.3rem 0.4rem;
       font-size: 0.85rem;
     }
-
     .btn-group .btn {
       min-width: 32px;
       min-height: 32px;
       padding: 0.2rem 0.4rem;
       font-size: 0.8rem;
     }
-
     .pagination-container {
       flex-direction: column;
       gap: 0.75rem;
       align-items: center !important;
     }
+  }
+
+  /* Стили для кнопок "Сохранить изменения" */
+  .btn-edit {
+    background-color: transparent !important;
+    color: var(--main-color) !important;
+    border: 2px solid var(--main-color) !important;
+    transition: all 0.3s ease !important;
+    font-weight: 500 !important;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-edit:hover {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 194, 0, 0.3);
+  }
+
+  .btn-edit:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 6px rgba(255, 194, 0, 0.2);
+  }
+
+  .btn-edit:focus {
+    box-shadow: 0 0 0 3px rgba(255, 194, 0, 0.4);
+    outline: none;
+  }
+
+  /* Маленькие кнопки (для карточек) */
+  .btn-edit-sm {
+    padding: 0.25rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  /* Большие кнопки (для основных действий) */
+  .btn-edit-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
   }
 </style>
 {% endblock %}
