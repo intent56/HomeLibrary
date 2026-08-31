@@ -17,7 +17,8 @@ content %}
         <a href="{{ url_for('main.index') }}" class="btn btn-outline-light">
           <i class="bi bi-house"></i> На главную
         </a>
-        <a href="{{ url_for('main.add_aggregator') }}" class="btn btn-primary">
+        <!-- ИЗМЕНЕННАЯ КНОПКА "ДОБАВИТЬ АГРЕГАТОР" -->
+        <a href="{{ url_for('main.add_aggregator') }}" class="btn btn-edit">
           <i class="bi bi-plus-circle"></i> Добавить агрегатор
         </a>
       </div>
@@ -89,13 +90,85 @@ content %}
     color: #ffffff !important;
   }
 
-  /* 4. АДАПТИВНОСТЬ */
+  /* 4. СТИЛИ ДЛЯ КНОПКИ "ДОБАВИТЬ АГРЕГАТОР" */
+  .btn-edit {
+    background-color: transparent !important;
+    color: var(--main-color) !important;
+    border: 2px solid var(--main-color) !important;
+    transition: all 0.3s ease !important;
+    font-weight: 500 !important;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-edit:hover {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 194, 0, 0.3);
+  }
+
+  .btn-edit:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 6px rgba(255, 194, 0, 0.2);
+  }
+
+  .btn-edit:focus {
+    box-shadow: 0 0 0 3px rgba(255, 194, 0, 0.4);
+    outline: none;
+  }
+
+  /* 5. АДАПТИВНОСТЬ */
   @media (max-width: 768px) {
     .d-flex.justify-content-between {
       flex-direction: column;
       align-items: stretch !important;
       gap: 1rem;
     }
+  }
+</style>
+
+<!-- ===== ПРИНУДИТЕЛЬНЫЕ СТИЛИ ДЛЯ ПАГИНАЦИИ ===== -->
+<!-- Переопределяем Bootstrap для пагинации в aggregatorTable -->
+<style>
+  #aggregatorTable .pagination .page-link {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+  }
+
+  #aggregatorTable .pagination .page-link:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+  }
+
+  #aggregatorTable .pagination .page-item.active .page-link,
+  #aggregatorTable .pagination .page-item.active .page-link:hover,
+  #aggregatorTable .pagination .page-item.active .page-link:focus {
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+  }
+
+  #aggregatorTable .pagination .page-item.disabled .page-link,
+  #aggregatorTable .pagination .page-item.disabled .page-link:hover {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  /* Дополнительно: обнуляем фон контейнера пагинации */
+  #aggregatorTable .pagination-container {
+    background-color: rgba(0, 0, 0, 0.25) !important;
+    backdrop-filter: blur(8px);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 </style>
 {% endblock %}

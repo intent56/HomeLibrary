@@ -77,7 +77,7 @@
         </div>
     </div>
 
-    <!-- 1. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ -->
+    <!-- 1. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ - CSS РЕШЕНИЕ -->
     {% if pagination and pagination.pages > 1 %}
     <div class="pagination-container">
         <nav aria-label="Навигация по страницам">
@@ -316,7 +316,7 @@
     color: #ffffff !important;
 }
 
-/* 11. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ */
+/* 11. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ - УСИЛЕННЫЕ СТИЛИ */
 #aggregatorTable .pagination-container {
     background-color: rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(8px);
@@ -325,7 +325,9 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-#aggregatorTable #transparentPagination .page-link {
+#aggregatorTable #transparentPagination .page-link,
+#aggregatorTable #transparentPagination .page-link:focus,
+#aggregatorTable #transparentPagination .page-link:visited {
     background-color: transparent !important;
     background: transparent !important;
     border-color: rgba(255, 255, 255, 0.15) !important;
@@ -333,17 +335,24 @@
     transition: all 0.3s ease;
 }
 
-#aggregatorTable #transparentPagination .page-link:hover {
+#aggregatorTable #transparentPagination .page-item:not(.active) .page-link:hover {
     background-color: rgba(255, 255, 255, 0.1) !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
 }
 
-#aggregatorTable #transparentPagination .page-item.active .page-link {
-    background-color: rgba(13, 110, 253, 0.4) !important;
-    border-color: rgba(13, 110, 253, 0.6) !important;
+/* АКТИВНАЯ СТРАНИЦА - ЗОЛОТОЙ ФОН, ЧЕРНЫЙ ТЕКСТ */
+#aggregatorTable #transparentPagination .page-item.active .page-link,
+#aggregatorTable #transparentPagination .page-item.active .page-link:hover,
+#aggregatorTable #transparentPagination .page-item.active .page-link:focus {
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
+    color: #000000 !important;
+    box-shadow: none !important;
 }
 
-#aggregatorTable #transparentPagination .page-item.disabled .page-link {
+#aggregatorTable #transparentPagination .page-item.disabled .page-link,
+#aggregatorTable #transparentPagination .page-item.disabled .page-link:hover {
     background-color: transparent !important;
     border-color: rgba(255, 255, 255, 0.05) !important;
     color: rgba(255, 255, 255, 0.2) !important;
@@ -429,7 +438,7 @@ function openDeleteModal(aggregatorId, aggregatorName) {
     deleteAggregatorId = aggregatorId;
     document.getElementById('deleteModalMessage').innerHTML = 
         `Вы уверены, что хотите удалить агрегатор <strong>"${aggregatorName}"</strong>?`;
-    
+
     const modalElement = document.getElementById('deleteAggregatorModal');
     const modal = new bootstrap.Modal(modalElement);
     modal.show();
@@ -461,7 +470,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Обработчик для кнопки "Удалить"
     document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
         if (!deleteAggregatorId) return;
-        
+
         // Отправляем запрос на удаление
         fetch(`/delete_aggregator_htmx/${deleteAggregatorId}`, {
             method: 'DELETE',
@@ -479,7 +488,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 // Закрываем модальное окно
                 closeModal();
-                
+
                 // Обновляем счетчик в футере
                 const footer = document.querySelector('.card-footer .text-white-50');
                 if (footer) {
@@ -500,52 +509,5 @@ document.addEventListener('DOMContentLoaded', function() {
             deleteAggregatorId = null;
         });
     });
-
-    // Пагинация
-    makePaginationTransparent();
-});
-
-function makePaginationTransparent() {
-    const paginationLinks = document.querySelectorAll('#transparentPagination .page-link');
-    paginationLinks.forEach(link => {
-        link.style.setProperty('background-color', 'transparent', 'important');
-        link.style.setProperty('background', 'transparent', 'important');
-        link.style.setProperty('border-color', 'rgba(255, 255, 255, 0.15)', 'important');
-        link.style.setProperty('color', '#ffffff', 'important');
-
-        link.addEventListener('mouseenter', function() {
-            this.style.setProperty('background-color', 'rgba(255, 255, 255, 0.1)', 'important');
-            this.style.setProperty('border-color', 'rgba(255, 255, 255, 0.3)', 'important');
-        });
-        link.addEventListener('mouseleave', function() {
-            this.style.setProperty('background-color', 'transparent', 'important');
-            this.style.setProperty('border-color', 'rgba(255, 255, 255, 0.15)', 'important');
-        });
-    });
-
-    const activeLinks = document.querySelectorAll('#transparentPagination .page-item.active .page-link');
-    activeLinks.forEach(link => {
-        link.style.setProperty('background-color', 'rgba(13, 110, 253, 0.4)', 'important');
-        link.style.setProperty('border-color', 'rgba(13, 110, 253, 0.6)', 'important');
-    });
-
-    const disabledLinks = document.querySelectorAll('#transparentPagination .page-item.disabled .page-link');
-    disabledLinks.forEach(link => {
-        link.style.setProperty('background-color', 'transparent', 'important');
-        link.style.setProperty('border-color', 'rgba(255, 255, 255, 0.05)', 'important');
-        link.style.setProperty('color', 'rgba(255, 255, 255, 0.2)', 'important');
-    });
-}
-
-document.addEventListener('htmx:afterSwap', function(event) {
-    if (event.detail.target.id === 'aggregatorTable') {
-        setTimeout(makePaginationTransparent, 50);
-    }
-});
-
-document.addEventListener('htmx:afterSettle', function(event) {
-    if (event.detail.target.id === 'aggregatorTable') {
-        setTimeout(makePaginationTransparent, 50);
-    }
 });
 </script>
