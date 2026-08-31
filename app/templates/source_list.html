@@ -16,7 +16,7 @@ content %}
         <!-- 2. КНОПКА "НА ГЛАВНУЮ" - БЕЛЫЙ ТЕКСТ -->
         <a
           href="{{ url_for('main.index') }}"
-          class="btn btn-outline-light d-flex align-items-cente"
+          class="btn btn-outline-light d-flex align-items-center"
         >
           <i class="bi bi-house"></i> На главную
         </a>
@@ -82,8 +82,8 @@ content %}
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 36px; /* Увеличенная минимальная ширина */
-    min-height: 36px; /* Увеличенная минимальная высота */
+    min-width: 36px;
+    min-height: 36px;
     padding: 0.25rem 0.5rem;
     font-size: 0.9rem;
   }
@@ -179,7 +179,8 @@ content %}
       font-size: 0.8rem;
     }
   }
-  /* Стили для кнопок "Добавить автора" */
+
+  /* Стили для кнопок "Добавить источник" */
   .btn-edit {
     background-color: transparent !important;
     color: var(--main-color) !important;
@@ -220,6 +221,47 @@ content %}
   .btn-edit-lg {
     padding: 0.75rem 1.5rem;
     font-size: 1.1rem;
+  }
+</style>
+
+<!-- ===== ПРИНУДИТЕЛЬНЫЕ СТИЛИ ДЛЯ ПАГИНАЦИИ ===== -->
+<!-- Переопределяем Bootstrap для пагинации в sourceTable -->
+<style>
+  #sourceTable .pagination .page-link {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+  }
+
+  #sourceTable .pagination .page-link:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+  }
+
+  #sourceTable .pagination .page-item.active .page-link,
+  #sourceTable .pagination .page-item.active .page-link:hover,
+  #sourceTable .pagination .page-item.active .page-link:focus {
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+  }
+
+  #sourceTable .pagination .page-item.disabled .page-link,
+  #sourceTable .pagination .page-item.disabled .page-link:hover {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  /* Дополнительно: обнуляем фон контейнера пагинации */
+  #sourceTable .pagination-container {
+    background-color: rgba(0, 0, 0, 0.25) !important;
+    backdrop-filter: blur(8px);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 </style>
 {% endblock %}

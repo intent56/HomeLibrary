@@ -28,6 +28,7 @@ class Config(object):
     ITEMS_PER_PAGE_LANGUAGE = 4
     ITEMS_PER_PAGE_FORMAT = 5
     ITEMS_PER_PAGE_COVER = 5
+    ITEMS_PER_PAGE_SOURCE = 5
     LOG_TO_STDOUT = os.environ.get("LOG_TO_STDOUT")
     BASE_DIR = basedir
 

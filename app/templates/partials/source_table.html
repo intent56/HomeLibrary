@@ -127,6 +127,92 @@
       </table>
     </div>
   </div>
+
+  <!-- ПАГИНАЦИЯ -->
+  {% if pagination and pagination.pages > 1 %}
+  <div class="card-footer transparent-card-footer">
+    <div class="pagination-container mt-2">
+      <nav aria-label="Навигация по страницам">
+        <ul class="pagination pagination-sm justify-content-center mb-0" id="transparentPagination">
+          <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
+            <a class="page-link" href="#"
+               hx-get="{{ url_for('main.source_list') }}"
+               hx-target="#sourceTable"
+               hx-indicator="#loadingIndicator"
+               hx-push-url="true"
+               hx-vals='{"page": 1, "search": "{{ search or '' }}"}'>
+              <i class="bi bi-chevron-double-left"></i>
+            </a>
+          </li>
+          <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
+            <a class="page-link" href="#"
+               hx-get="{{ url_for('main.source_list') }}"
+               hx-target="#sourceTable"
+               hx-indicator="#loadingIndicator"
+               hx-push-url="true"
+               hx-vals='{"page": {{ pagination.prev_num }}, "search": "{{ search or '' }}"}'>
+              <i class="bi bi-chevron-left"></i>
+            </a>
+          </li>
+
+          {% set left = pagination.page - 2 %}
+          {% set right = pagination.page + 2 %}
+          {% if left < 1 %}{% set left = 1 %}{% endif %}
+          {% if right > pagination.pages %}{% set right = pagination.pages %}{% endif %}
+
+          {% if left > 1 %}
+            <li class="page-item disabled"><span class="page-link">...</span></li>
+          {% endif %}
+
+          {% for p in range(left, right + 1) %}
+            <li class="page-item {% if p == pagination.page %}active{% endif %}">
+              <a class="page-link" href="#"
+                 hx-get="{{ url_for('main.source_list') }}"
+                 hx-target="#sourceTable"
+                 hx-indicator="#loadingIndicator"
+                 hx-push-url="true"
+                 hx-vals='{"page": {{ p }}, "search": "{{ search or '' }}"}'>
+                {{ p }}
+              </a>
+            </li>
+          {% endfor %}
+
+          {% if right < pagination.pages %}
+            <li class="page-item disabled"><span class="page-link">...</span></li>
+          {% endif %}
+
+          <li class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}">
+            <a class="page-link" href="#"
+               hx-get="{{ url_for('main.source_list') }}"
+               hx-target="#sourceTable"
+               hx-indicator="#loadingIndicator"
+               hx-push-url="true"
+               hx-vals='{"page": {{ pagination.next_num }}, "search": "{{ search or '' }}"}'>
+              <i class="bi bi-chevron-right"></i>
+            </a>
+          </li>
+          <li class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}">
+            <a class="page-link" href="#"
+               hx-get="{{ url_for('main.source_list') }}"
+               hx-target="#sourceTable"
+               hx-indicator="#loadingIndicator"
+               hx-push-url="true"
+               hx-vals='{"page": {{ pagination.pages }}, "search": "{{ search or '' }}"}'>
+              <i class="bi bi-chevron-double-right"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="text-center text-white-50 small mt-2">
+        Показано: {{ pagination.items|length }} из {{ pagination.total }} записей
+        <span class="mx-2">|</span>
+        Страница {{ pagination.page }} из {{ pagination.pages }}
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <!-- Если пагинация не нужна, показываем простой футер -->
   <div class="card-footer transparent-card-footer">
     <div class="d-flex justify-content-between align-items-center">
       <div class="text-white-50 small">
@@ -134,6 +220,7 @@
       </div>
     </div>
   </div>
+  {% endif %}
 </div>
 
 <!-- ЕДИНОЕ МОДАЛЬНОЕ ОКНО ПОДТВЕРЖДЕНИЯ УДАЛЕНИЯ -->
@@ -170,7 +257,7 @@
   </div>
 </div>
 
-<!-- СТИЛИ ДЛЯ ПОЛНОСТЬЮ ПРОЗРАЧНОЙ ТАБЛИЦЫ -->
+<!-- СТИЛИ -->
 <style>
   /* 1. ПОЛНОСТЬЮ УБИРАЕМ ВСЕ ФОНЫ */
   .transparent-card,
@@ -197,6 +284,7 @@
   .transparent-card-footer {
     background: transparent !important;
     border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding: 0.75rem 1rem;
   }
 
   /* 4. ЗАГОЛОВКИ ТАБЛИЦЫ - ПОЛУПРОЗРАЧНЫЙ ФОН ДЛЯ ЧИТАЕМОСТИ */
@@ -232,7 +320,7 @@
     color: rgba(255, 255, 255, 0.7) !important;
   }
 
-  /* 7. СТИЛИ ДЛЯ ВЫРАВНИВАНИЯ КНОПОК В ТАБЛИЦАХ */
+  /* 7. СТИЛИ ДЛЯ КНОПОК В ТАБЛИЦЕ */
   .table .btn-group {
     display: inline-flex;
     align-items: center;
@@ -254,7 +342,6 @@
     line-height: 1;
   }
 
-  /* 8. КНОПКИ В ТАБЛИЦЕ - СВЕТЛЫЕ НА ТЁМНОМ ФОНЕ */
   .table .btn-outline-light {
     color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
@@ -266,7 +353,49 @@
     color: #ffffff !important;
   }
 
-  /* 10. СТИЛИ ДЛЯ БЕЙДЖЕЙ */
+  /* 8. СТИЛИ ДЛЯ ПАГИНАЦИИ */
+  #sourceTable .pagination-container {
+    background-color: rgba(0, 0, 0, 0.25) !important;
+    backdrop-filter: blur(8px);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  #sourceTable #transparentPagination .page-link,
+  #sourceTable #transparentPagination .page-link:focus,
+  #sourceTable #transparentPagination .page-link:visited {
+    background-color: transparent !important;
+    background: transparent !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+    transition: all 0.3s ease;
+  }
+
+  #sourceTable #transparentPagination .page-item:not(.active) .page-link:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+  }
+
+  /* АКТИВНАЯ СТРАНИЦА - ЗОЛОТОЙ ФОН, ЧЕРНЫЙ ТЕКСТ */
+  #sourceTable #transparentPagination .page-item.active .page-link,
+  #sourceTable #transparentPagination .page-item.active .page-link:hover,
+  #sourceTable #transparentPagination .page-item.active .page-link:focus {
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+  }
+
+  #sourceTable #transparentPagination .page-item.disabled .page-link,
+  #sourceTable #transparentPagination .page-item.disabled .page-link:hover {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  /* 9. СТИЛИ ДЛЯ БЕЙДЖЕЙ */
   .badge {
     font-weight: 500;
     padding: 0.35rem 0.65rem;
@@ -276,7 +405,7 @@
     --bs-bg-opacity: 0.75;
   }
 
-  /* 11. СТИЛИ ДЛЯ КОДА */
+  /* 10. СТИЛИ ДЛЯ КОДА */
   code {
     background: rgba(255, 255, 255, 0.1) !important;
     padding: 0.1rem 0.3rem;
@@ -285,7 +414,7 @@
     color: #ffffff !important;
   }
 
-  /* 12. ИНДИКАТОР ЗАГРУЗКИ HTMX */
+  /* 11. ИНДИКАТОР ЗАГРУЗКИ HTMX */
   .htmx-indicator {
     opacity: 0;
     transition: opacity 500ms ease-in;
@@ -299,7 +428,7 @@
     opacity: 1;
   }
 
-  /* 13. АНИМАЦИЯ ДЛЯ УДАЛЕНИЯ СТРОКИ */
+  /* 12. АНИМАЦИЯ ДЛЯ УДАЛЕНИЯ СТРОКИ */
   @keyframes fadeOut {
     from {
       opacity: 1;
@@ -313,7 +442,7 @@
     animation: fadeOut 0.3s ease-in;
   }
 
-  /* 14. АДАПТИВНОСТЬ */
+  /* 13. АДАПТИВНОСТЬ */
   @media (max-width: 768px) {
     .table .btn-group .btn {
       min-width: 32px;
