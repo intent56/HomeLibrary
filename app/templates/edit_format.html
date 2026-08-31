@@ -10,7 +10,10 @@ content %}
         </h2>
         <h5 class="text-white fw-bold fs-3 mt-2">{{ format_item.format }}</h5>
       </div>
-      <a href="{{ url_for('main.format_list') }}" class="btn btn-outline-light">
+      <a
+        href="{{ url_for('main.format_list') }}"
+        class="btn btn-outline-light d-flex align-items-center"
+      >
         <i class="bi bi-arrow-left"></i> Назад к списку
       </a>
     </div>
@@ -121,15 +124,14 @@ content %}
                 </div>
               </div>
 
-              {% if format_item.fmt_books %}
-              <div class="alert alert-info transparent-alert mt-3">
+              <!-- ИЗМЕНЕННЫЙ АЛЕРТ - ИСПОЛЬЗУЕТ var(--main-color) -->
+              <div class="alert custom-alert mt-3" role="alert">
                 <i class="bi bi-info-circle"></i>
                 <strong class="text-white">Книг с этим форматом:</strong>
                 <span class="text-white"
                   >{{ format_item.fmt_books|length }}</span
                 >
               </div>
-              {% endif %}
             </div>
 
             <!-- Вкладка 2: Книги этого формата -->
@@ -230,7 +232,7 @@ content %}
                 </table>
               </div>
 
-              <!-- ПАГИНАЦИЯ -->
+              <!-- ПАГИНАЦИЯ - ИСПРАВЛЕННАЯ -->
               {% if pagination and pagination.pages > 1 %}
               <div class="pagination-container mt-3">
                 <nav aria-label="Навигация по страницам">
@@ -340,11 +342,12 @@ content %}
             <div class="d-flex gap-2">
               <a
                 href="{{ url_for('main.format_list') }}"
-                class="btn btn-outline-light btn-lg"
+                class="btn btn-outline-light btn"
               >
                 <i class="bi bi-x-circle"></i> Отмена
               </a>
-              <button type="submit" class="btn btn-primary btn-lg">
+              <!-- ИЗМЕНЕННАЯ КНОПКА "СОХРАНИТЬ ИЗМЕНЕНИЯ" -->
+              <button type="submit" class="btn btn-edit">
                 <i class="bi bi-save"></i> Сохранить изменения
               </button>
             </div>
@@ -488,7 +491,25 @@ content %}
     border-color: #dc3545 !important;
   }
 
-  /* 5. ПРОЗРАЧНЫЙ АЛЕРТ */
+  /* 5. НОВЫЙ СТИЛЬ ДЛЯ АЛЕРТА - ИСПОЛЬЗУЕТ var(--main-color) */
+  .custom-alert {
+    background-color: rgba(212, 175, 55, 0.2) !important;
+    backdrop-filter: blur(5px);
+    border: 1px solid var(--main-color) !important;
+    color: #ffffff !important;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+  }
+
+  .custom-alert i {
+    color: var(--main-color) !important;
+  }
+
+  .custom-alert .text-white {
+    color: #ffffff !important;
+  }
+
+  /* 6. ПРОЗРАЧНЫЙ АЛЕРТ (для предупреждений) */
   .transparent-alert {
     background-color: rgba(13, 202, 240, 0.15) !important;
     backdrop-filter: blur(5px);
@@ -502,7 +523,7 @@ content %}
     color: #ffffff !important;
   }
 
-  /* 6. ПРОЗРАЧНАЯ ТАБЛИЦА */
+  /* 7. ПРОЗРАЧНАЯ ТАБЛИЦА */
   .transparent-table {
     width: 100% !important;
   }
@@ -529,7 +550,7 @@ content %}
     color: rgba(255, 255, 255, 0.7) !important;
   }
 
-  /* 7. КНОПКИ В ТАБЛИЦЕ */
+  /* 8. КНОПКИ В ТАБЛИЦЕ */
   .btn-group .btn {
     display: inline-flex;
     align-items: center;
@@ -552,7 +573,7 @@ content %}
     color: #ffffff !important;
   }
 
-  /* 8. ПАГИНАЦИЯ */
+  /* 9. ПАГИНАЦИЯ - ИСПРАВЛЕННЫЙ СТИЛЬ */
   .pagination-container {
     background-color: rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(8px);
@@ -560,28 +581,41 @@ content %}
     padding: 0.75rem 1rem;
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
-  #transparentPagination .page-link {
+
+  #transparentPagination .page-link,
+  #transparentPagination .page-link:focus,
+  #transparentPagination .page-link:visited {
     background-color: transparent !important;
     background: transparent !important;
     border-color: rgba(255, 255, 255, 0.15) !important;
     color: #ffffff !important;
     transition: all 0.3s ease;
   }
-  #transparentPagination .page-link:hover {
+
+  #transparentPagination .page-item:not(.active) .page-link:hover {
     background-color: rgba(255, 255, 255, 0.1) !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
   }
-  #transparentPagination .page-item.active .page-link {
-    background-color: rgba(13, 110, 253, 0.4) !important;
-    border-color: rgba(13, 110, 253, 0.6) !important;
+
+  /* АКТИВНАЯ СТРАНИЦА - ЗОЛОТОЙ ФОН, ЧЕРНЫЙ ТЕКСТ */
+  #transparentPagination .page-item.active .page-link,
+  #transparentPagination .page-item.active .page-link:hover,
+  #transparentPagination .page-item.active .page-link:focus {
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
+    color: #000000 !important;
+    box-shadow: none !important;
   }
-  #transparentPagination .page-item.disabled .page-link {
+
+  #transparentPagination .page-item.disabled .page-link,
+  #transparentPagination .page-item.disabled .page-link:hover {
     background-color: transparent !important;
     border-color: rgba(255, 255, 255, 0.05) !important;
     color: rgba(255, 255, 255, 0.2) !important;
   }
 
-  /* 9. ОБЩИЕ СТИЛИ */
+  /* 10. ОБЩИЕ СТИЛИ */
   .text-white {
     color: #ffffff !important;
   }
@@ -592,7 +626,7 @@ content %}
     --bs-bg-opacity: 0.75;
   }
 
-  /* 10. АДАПТИВНОСТЬ */
+  /* 11. АДАПТИВНОСТЬ */
   @media (max-width: 768px) {
     .card-body {
       padding: 1rem !important;
@@ -628,6 +662,49 @@ content %}
       gap: 0.75rem;
       align-items: center !important;
     }
+  }
+
+  /* Стили для кнопок "Сохранить изменения" */
+  .btn-edit {
+    background-color: transparent !important;
+    color: var(--main-color) !important;
+    border: 2px solid var(--main-color) !important;
+    transition: all 0.3s ease !important;
+    font-weight: 500 !important;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-edit:hover {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 194, 0, 0.3);
+  }
+
+  .btn-edit:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 6px rgba(255, 194, 0, 0.2);
+  }
+
+  .btn-edit:focus {
+    box-shadow: 0 0 0 3px rgba(255, 194, 0, 0.4);
+    outline: none;
+  }
+
+  /* Маленькие кнопки (для карточек) */
+  .btn-edit-sm {
+    padding: 0.25rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  /* Большие кнопки (для основных действий) */
+  .btn-edit-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
   }
 </style>
 {% endblock %}
