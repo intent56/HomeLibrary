@@ -14,10 +14,13 @@ content %}
       </div>
       <div class="d-flex gap-2">
         <!-- 2. КНОПКА "НА ГЛАВНУЮ" - БЕЛЫЙ ТЕКСТ -->
-        <a href="{{ url_for('main.index') }}" class="btn btn-outline-light">
+        <a
+          href="{{ url_for('main.index') }}"
+          class="btn btn-outline-light d-flex align-items-cente"
+        >
           <i class="bi bi-house"></i> На главную
         </a>
-        <a href="{{ url_for('main.add_source') }}" class="btn btn-primary">
+        <a href="{{ url_for('main.add_source') }}" class="btn btn-edit">
           <i class="bi bi-plus-circle"></i> Добавить источник
         </a>
       </div>
@@ -175,6 +178,48 @@ content %}
       padding: 0.2rem 0.4rem;
       font-size: 0.8rem;
     }
+  }
+  /* Стили для кнопок "Добавить автора" */
+  .btn-edit {
+    background-color: transparent !important;
+    color: var(--main-color) !important;
+    border: 2px solid var(--main-color) !important;
+    transition: all 0.3s ease !important;
+    font-weight: 500 !important;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-edit:hover {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 194, 0, 0.3);
+  }
+
+  .btn-edit:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 6px rgba(255, 194, 0, 0.2);
+  }
+
+  .btn-edit:focus {
+    box-shadow: 0 0 0 3px rgba(255, 194, 0, 0.4);
+    outline: none;
+  }
+
+  /* Маленькие кнопки (для карточек) */
+  .btn-edit-sm {
+    padding: 0.25rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  /* Большие кнопки (для основных действий) */
+  .btn-edit-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
   }
 </style>
 {% endblock %}

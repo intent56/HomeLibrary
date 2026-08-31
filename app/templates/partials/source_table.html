@@ -132,14 +132,6 @@
       <div class="text-white-50 small">
         <i class="bi bi-info-circle"></i> Всего источников: {{ sources|length }}
       </div>
-      <div>
-        <a
-          href="{{ url_for('main.index') }}"
-          class="btn btn-sm btn-outline-light"
-        >
-          <i class="bi bi-house"></i> На главную
-        </a>
-      </div>
     </div>
   </div>
 </div>
@@ -269,18 +261,6 @@
   }
 
   .table .btn-outline-light:hover {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    border-color: #ffffff !important;
-    color: #ffffff !important;
-  }
-
-  /* 9. СТИЛИ ДЛЯ КНОПКИ "НА ГЛАВНУЮ" В ФУТЕРЕ */
-  .btn-outline-light {
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-  }
-
-  .btn-outline-light:hover {
     background-color: rgba(255, 255, 255, 0.2) !important;
     border-color: #ffffff !important;
     color: #ffffff !important;
