@@ -13,7 +13,7 @@ content %}
       <!-- 2. ИЗМЕНЕННАЯ КНОПКА "НАЗАД" -->
       <a
         href="{{ request.args.get('next') or url_for('main.author_list') }}"
-        class="btn btn-outline-light"
+        class="btn btn-outline-light d-flex align-items-center"
         id="backButton"
       >
         <i class="bi bi-arrow-left"></i> Назад
