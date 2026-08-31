@@ -1,16 +1,22 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %} {% block body_class %}bg-page2{% endblock %} {% block
+content %}
 <div class="row">
   <div class="col-lg-8 mx-auto">
+    <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h2><i class="bi bi-pencil-square"></i> Редактирование источника</h2>
-        <h5 class="text-muted">{{ source.name }}</h5>
+        <h2 class="text-white">
+          <i class="bi bi-pencil-square"></i> Редактирование источника
+        </h2>
+        <h5 class="text-white fw-bold fs-3 mt-2">{{ source.name }}</h5>
       </div>
+      <!-- 2. ИЗМЕНЕННАЯ КНОПКА "НАЗАД" -->
       <a
-        href="{{ url_for('main.source_list') }}"
-        class="btn btn-outline-secondary"
+        href="{{ request.args.get('next') or url_for('main.source_list') }}"
+        class="btn btn-outline-light d-flex align-items-center"
+        id="backButton"
       >
-        <i class="bi bi-arrow-left"></i> Назад к списку
+        <i class="bi bi-arrow-left"></i> Назад
       </a>
     </div>
 
@@ -21,62 +27,72 @@
     >
       {{ form.csrf_token }}
 
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-primary text-white">
-          <h5 class="mb-0">
-            <i class="bi bi-info-circle"></i> Информация об источнике
+      <!-- ИЗМЕНЕННАЯ КАРТОЧКА "ИНФОРМАЦИЯ ОБ ИСТОЧНИКЕ" -->
+      <div class="card shadow-sm mb-4 transparent-card-source">
+        <div class="card-header transparent-card-header-source">
+          <h5 class="mb-0 text-white">
+            <i class="bi bi-info-circle" style="color: var(--main-color)"></i>
+            Информация об источнике
           </h5>
         </div>
-        <div class="card-body">
+        <div class="card-body transparent-card-body">
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3">
-                {{ form.name.label(class="form-label fw-bold") }}
+                {{ form.name.label(class="form-label fw-bold text-white") }}
                 <span class="text-danger">*</span>
-                {{ form.name(class="form-control" + (" is-invalid" if
-                form.name.errors else ""), placeholder="Например: Google Books")
-                }} {% if form.name.errors %}
+                {{ form.name(class="form-control bg-transparent text-white
+                border-light" + (" is-invalid" if form.name.errors else ""),
+                placeholder="Например: Google Books") }} {% if form.name.errors
+                %}
                 <div class="invalid-feedback d-block">
                   {% for error in form.name.errors %} {{ error }} {% endfor %}
                 </div>
                 {% endif %}
-                <div class="form-text">Название источника</div>
+                <div class="form-text text-white-50">Название источника</div>
               </div>
             </div>
             <div class="col-md-6">
               <div class="mb-3">
-                {{ form.code.label(class="form-label fw-bold") }}
+                {{ form.code.label(class="form-label fw-bold text-white") }}
                 <span class="text-danger">*</span>
-                {{ form.code(class="form-control" + (" is-invalid" if
-                form.code.errors else ""), placeholder="Например: google_books")
-                }} {% if form.code.errors %}
+                {{ form.code(class="form-control bg-transparent text-white
+                border-light" + (" is-invalid" if form.code.errors else ""),
+                placeholder="Например: google_books") }} {% if form.code.errors
+                %}
                 <div class="invalid-feedback d-block">
                   {% for error in form.code.errors %} {{ error }} {% endfor %}
                 </div>
                 {% endif %}
-                <div class="form-text">Уникальный код источника</div>
+                <div class="form-text text-white-50">
+                  Уникальный код источника
+                </div>
               </div>
             </div>
           </div>
 
           <div class="mb-3">
-            {{ form.url.label(class="form-label fw-bold") }} {{
-            form.url(class="form-control" + (" is-invalid" if form.url.errors
-            else ""), placeholder="https://www.googleapis.com/books/v1/") }} {%
-            if form.url.errors %}
+            {{ form.url.label(class="form-label fw-bold text-white") }} {{
+            form.url(class="form-control bg-transparent text-white border-light"
+            + (" is-invalid" if form.url.errors else ""),
+            placeholder="https://www.googleapis.com/books/v1/") }} {% if
+            form.url.errors %}
             <div class="invalid-feedback d-block">
               {% for error in form.url.errors %} {{ error }} {% endfor %}
             </div>
             {% endif %}
-            <div class="form-text">URL API источника (необязательно)</div>
+            <div class="form-text text-white-50">
+              URL API источника (необязательно)
+            </div>
           </div>
 
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3 form-check">
-                {{ form.is_active(class="form-check-input") }} {{
-                form.is_active.label(class="form-check-label") }}
-                <div class="form-text">
+                {{ form.is_active(class="form-check-input bg-transparent
+                border-light", style="accent-color: var(--main-color);") }} {{
+                form.is_active.label(class="form-check-label text-white") }}
+                <div class="form-text text-white-50">
                   Если активно, источник будет доступен для поиска
                 </div>
               </div>
@@ -86,53 +102,61 @@
           <div class="row mb-3">
             <div class="col-md-4">
               <div class="form-check">
-                {{ form.chk_books(class="form-check-input") }} {{
-                form.chk_books.label(class="form-check-label") }}
+                {{ form.chk_books(class="form-check-input bg-transparent
+                border-light", style="accent-color: var(--main-color);") }} {{
+                form.chk_books.label(class="form-check-label text-white") }}
               </div>
             </div>
             <div class="col-md-4">
               <div class="form-check">
-                {{ form.chk_authors(class="form-check-input") }} {{
-                form.chk_authors.label(class="form-check-label") }}
+                {{ form.chk_authors(class="form-check-input bg-transparent
+                border-light", style="accent-color: var(--main-color);") }} {{
+                form.chk_authors.label(class="form-check-label text-white") }}
               </div>
             </div>
             <div class="col-md-4">
               <div class="form-check">
-                {{ form.chk_interpreters(class="form-check-input") }} {{
-                form.chk_interpreters.label(class="form-check-label") }}
+                {{ form.chk_interpreters(class="form-check-input bg-transparent
+                border-light", style="accent-color: var(--main-color);") }} {{
+                form.chk_interpreters.label(class="form-check-label text-white")
+                }}
               </div>
             </div>
           </div>
 
           <div class="mb-3">
-            {{ form.comment.label(class="form-label fw-bold") }} {{
-            form.comment(class="form-control", rows="3",
-            placeholder="Дополнительная информация об источнике...") }}
-            <div class="form-text">Комментарии, примечания</div>
+            {{ form.comment.label(class="form-label fw-bold text-white") }} {{
+            form.comment(class="form-control bg-transparent text-white
+            border-light", rows="3", placeholder="Дополнительная информация об
+            источнике...") }}
+            <div class="form-text text-white-50">Комментарии, примечания</div>
           </div>
         </div>
       </div>
 
-      <div class="card shadow-sm mb-4">
-        <div class="card-body">
+      <!-- Кнопки действия -->
+      <div class="card shadow-sm mb-4 transparent-card">
+        <div class="card-body transparent-card-body">
           <div
             class="d-flex justify-content-between align-items-center flex-wrap gap-2"
           >
             <div>
-              <span class="text-muted">
+              <span class="text-white-50">
                 <i class="bi bi-info-circle"></i>
                 Поля с <span class="text-danger">*</span> обязательны для
                 заполнения
               </span>
             </div>
             <div class="d-flex gap-2">
+              <!-- ИЗМЕНЕННАЯ КНОПКА "ОТМЕНА" -->
               <a
-                href="{{ url_for('main.source_list') }}"
-                class="btn btn-secondary btn-lg"
+                href="{{ request.args.get('next') or url_for('main.source_list') }}"
+                class="btn btn-outline-light btn"
               >
                 <i class="bi bi-x-circle"></i> Отмена
               </a>
-              <button type="submit" class="btn btn-primary btn-lg">
+              <!-- ИЗМЕНЕННАЯ КНОПКА "СОХРАНИТЬ ИЗМЕНЕНИЯ" -->
+              <button type="submit" class="btn btn-edit">
                 <i class="bi bi-save"></i> Сохранить изменения
               </button>
             </div>
@@ -142,4 +166,207 @@
     </form>
   </div>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // --- Подтверждение перед выходом без сохранения ---
+    const form = document.querySelector("form");
+    let formChanged = false;
+
+    form.querySelectorAll("input, textarea, select").forEach((element) => {
+      element.addEventListener("change", function () {
+        formChanged = true;
+      });
+    });
+
+    window.addEventListener("beforeunload", function (e) {
+      if (formChanged) {
+        e.preventDefault();
+        e.returnValue =
+          "Вы не сохранили изменения. Вы уверены, что хотите покинуть страницу?";
+      }
+    });
+
+    form.addEventListener("submit", function () {
+      formChanged = false;
+    });
+
+    // --- Умная кнопка "Назад" ---
+    const backButton = document.getElementById("backButton");
+    if (backButton) {
+      // Если есть referrer (переход с другой страницы этого же сайта)
+      if (
+        document.referrer &&
+        document.referrer.includes(window.location.hostname)
+      ) {
+        backButton.href = document.referrer;
+      }
+      // Если передан параметр next, используем его (имеет приоритет)
+      const urlParams = new URLSearchParams(window.location.search);
+      const next = urlParams.get("next");
+      if (next) {
+        backButton.href = next;
+      }
+    }
+  });
+</script>
+
+<!-- СТИЛИ -->
+<style>
+  /* 1. ПОЛНОСТЬЮ УБИРАЕМ ВСЕ ФОНЫ */
+  .transparent-card,
+  .transparent-card *,
+  .transparent-card .card-body,
+  .transparent-card .card-header,
+  .transparent-card .card-footer,
+  .transparent-card .table,
+  .transparent-card .table-responsive,
+  .transparent-card thead,
+  .transparent-card tbody,
+  .transparent-card tr,
+  .transparent-card td,
+  .transparent-card th {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
+  /* 2. КАРТОЧКА - ТОЛЬКО РАМКА */
+  .transparent-card {
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  /* 3. СПЕЦИАЛЬНЫЙ СТИЛЬ ДЛЯ КАРТОЧКИ "ИНФОРМАЦИЯ ОБ ИСТОЧНИКЕ" */
+  .transparent-card-source {
+    background-color: transparent !important;
+    border: 1px solid var(--main-color) !important;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  .transparent-card-header-source {
+    background-color: rgba(212, 175, 55, 0.15) !important;
+    border-bottom: 1px solid var(--main-color) !important;
+    border-radius: 12px 12px 0 0 !important;
+    padding: 1rem 1.25rem;
+  }
+
+  .transparent-card-body {
+    padding: 1.5rem;
+  }
+
+  /* 4. ПРОЗРАЧНЫЕ ПОЛЯ ВВОДА */
+  .form-control.bg-transparent {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.2s;
+  }
+
+  .form-control.bg-transparent::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .form-control.bg-transparent:focus {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+  }
+
+  .form-control.bg-transparent.is-invalid {
+    border-color: #dc3545 !important;
+  }
+
+  /* 5. СТИЛИ ДЛЯ CHECKBOX */
+  .form-check-input.bg-transparent {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+  }
+
+  .form-check-input.bg-transparent:checked {
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
+  }
+
+  /* 6. ОБЩИЕ СТИЛИ */
+  .text-white {
+    color: #ffffff !important;
+  }
+
+  .text-white-50 {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  .form-check-label.text-white {
+    color: #ffffff !important;
+  }
+
+  /* 7. АДАПТИВНОСТЬ */
+  @media (max-width: 768px) {
+    .card-body {
+      padding: 1rem !important;
+    }
+    .d-flex.justify-content-between {
+      flex-direction: column;
+      align-items: stretch !important;
+      gap: 1rem;
+    }
+    .btn-lg {
+      width: 100%;
+    }
+  }
+
+  /* 8. Стили для кнопок */
+  .btn-outline-light {
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+  }
+
+  .btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-color: #ffffff !important;
+    color: #ffffff !important;
+  }
+
+  .btn-edit {
+    background-color: transparent !important;
+    color: var(--main-color) !important;
+    border: 2px solid var(--main-color) !important;
+    transition: all 0.3s ease !important;
+    font-weight: 500 !important;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-edit:hover {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 194, 0, 0.3);
+  }
+
+  .btn-edit:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 6px rgba(255, 194, 0, 0.2);
+  }
+
+  .btn-edit:focus {
+    box-shadow: 0 0 0 3px rgba(255, 194, 0, 0.4);
+    outline: none;
+  }
+
+  .btn-edit-sm {
+    padding: 0.25rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .btn-edit-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+  }
+</style>
 {% endblock %}
