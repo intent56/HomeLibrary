@@ -11,7 +11,7 @@ content %}
         <h5 class="text-white fw-bold fs-3 mt-2">{{ cover.name }}</h5>
       </div>
       <a
-        href="{{ request.args.get('next') or url_for('main.cover_list') }}"
+        href="{{ request.args.get('next') or url_for('main.cover_list', page=return_page) }}"
         class="btn btn-outline-light d-flex align-items-center"
         id="backButton"
       >
@@ -232,7 +232,7 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('main.edit_cover', cover_id=cover.id, page=1) }}"
+                        href="{{ url_for('main.edit_cover', cover_id=cover.id, page=1, return_page=return_page) }}"
                       >
                         <i class="bi bi-chevron-double-left"></i>
                       </a>
@@ -242,7 +242,7 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('main.edit_cover', cover_id=cover.id, page=pagination.prev_num) }}"
+                        href="{{ url_for('main.edit_cover', cover_id=cover.id, page=pagination.prev_num, return_page=return_page) }}"
                       >
                         <i class="bi bi-chevron-left"></i>
                       </a>
@@ -261,7 +261,7 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('main.edit_cover', cover_id=cover.id, page=p) }}"
+                        href="{{ url_for('main.edit_cover', cover_id=cover.id, page=p, return_page=return_page) }}"
                       >
                         {{ p }}
                       </a>
@@ -277,7 +277,7 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('main.edit_cover', cover_id=cover.id, page=pagination.next_num) }}"
+                        href="{{ url_for('main.edit_cover', cover_id=cover.id, page=pagination.next_num, return_page=return_page) }}"
                       >
                         <i class="bi bi-chevron-right"></i>
                       </a>
@@ -287,7 +287,7 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('main.edit_cover', cover_id=cover.id, page=pagination.pages) }}"
+                        href="{{ url_for('main.edit_cover', cover_id=cover.id, page=pagination.pages, return_page=return_page) }}"
                       >
                         <i class="bi bi-chevron-double-right"></i>
                       </a>
@@ -328,7 +328,7 @@ content %}
             </div>
             <div class="d-flex gap-2">
               <a
-                href="{{ request.args.get('next') or url_for('main.cover_list') }}"
+                href="{{ url_for('main.cover_list', page=return_page) }}"
                 class="btn btn-outline-light"
               >
                 <i class="bi bi-arrow-left"></i> Отмена

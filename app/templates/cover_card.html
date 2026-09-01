@@ -9,12 +9,22 @@ content %}
           <i class="bi bi-bookmark"></i> Карточка переплета
         </h2>
       </div>
-      <div>
+      <div class="d-flex gap-2">
         <a
-          href="{{ url_for('main.cover_list') }}"
+          href="{{ url_for('main.cover_list', 
+                    page=return_page) }}"
           class="btn btn-outline-light"
         >
           <i class="bi bi-arrow-left"></i> Назад к списку
+        </a>
+        <!-- КНОПКА "РЕДАКТИРОВАТЬ" -->
+        <a
+          href="{{ url_for('main.edit_cover', 
+                    cover_id=cover.id,
+                    return_page=return_page) }}"
+          class="btn btn-edit"
+        >
+          <i class="bi bi-pencil"></i> Редактировать
         </a>
       </div>
     </div>
@@ -209,7 +219,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.cover_card', cover_id=cover.id, page=1) }}"
+                      href="{{ url_for('main.cover_card', cover_id=cover.id, page=1, return_page=return_page) }}"
                     >
                       <i class="bi bi-chevron-double-left"></i>
                     </a>
@@ -219,7 +229,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.cover_card', cover_id=cover.id, page=pagination.prev_num) }}"
+                      href="{{ url_for('main.cover_card', cover_id=cover.id, page=pagination.prev_num, return_page=return_page) }}"
                     >
                       <i class="bi bi-chevron-left"></i>
                     </a>
@@ -238,7 +248,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.cover_card', cover_id=cover.id, page=p) }}"
+                      href="{{ url_for('main.cover_card', cover_id=cover.id, page=p, return_page=return_page) }}"
                     >
                       {{ p }}
                     </a>
@@ -254,7 +264,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.cover_card', cover_id=cover.id, page=pagination.next_num) }}"
+                      href="{{ url_for('main.cover_card', cover_id=cover.id, page=pagination.next_num, return_page=return_page) }}"
                     >
                       <i class="bi bi-chevron-right"></i>
                     </a>
@@ -264,7 +274,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.cover_card', cover_id=cover.id, page=pagination.pages) }}"
+                      href="{{ url_for('main.cover_card', cover_id=cover.id, page=pagination.pages, return_page=return_page) }}"
                     >
                       <i class="bi bi-chevron-double-right"></i>
                     </a>
@@ -292,14 +302,6 @@ content %}
           <span class="text-white-50"
             ><i class="bi bi-info-circle"></i> ID: {{ cover.id }}</span
           >
-          <div class="d-flex gap-2">
-            <a
-              href="{{ url_for('main.edit_cover', cover_id=cover.id, next=request.full) }}"
-              class="btn btn-edit"
-            >
-              <i class="bi bi-pencil"></i> Редактировать
-            </a>
-          </div>
         </div>
       </div>
     </div>
