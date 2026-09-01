@@ -661,8 +661,12 @@ def edit_interpreter(interpreter_id):
     interpreter = Interpreter.query.get_or_404(interpreter_id)
     form = FormInterpreter(obj=interpreter)
 
-    # Получаем книги переводчика с пагинацией
+    # Получаем параметры для возврата
     page = request.args.get('page', 1, type=int)
+    search = request.args.get('search', '')
+    return_page = request.args.get('return_page', 1, type=int)
+    return_search = request.args.get('return_search', '')
+
     books_query = Book.query.join(book_interpreters).filter(
         book_interpreters.c.id_interpreter == interpreter_id).order_by(Book.name.asc())
     pagination = books_query.paginate(
@@ -694,7 +698,11 @@ def edit_interpreter(interpreter_id):
                            form=form,
                            interpreter=interpreter,
                            books=pagination.items,
-                           pagination=pagination)
+                           pagination=pagination,
+                           page=page,
+                           search=search,
+                           return_page=return_page,
+                           return_search=return_search)
 
 
 @bp.route('/interpreter/<int:interpreter_id>/delete', methods=['POST'])
@@ -1848,6 +1856,11 @@ def interpreter_card(interpreter_id):
     interpreter = Interpreter.query.get_or_404(interpreter_id)
     page = request.args.get('page', 1, type=int)
 
+    # Получаем параметры для возврата
+    search = request.args.get('search', '')
+    return_page = request.args.get('return_page', 1, type=int)
+    return_search = request.args.get('return_search', '')
+
     # Получаем книги переводчика с пагинацией
     books_query = Book.query.join(book_interpreters).filter(
         book_interpreters.c.id_interpreter == interpreter_id).order_by(Book.name.asc())
@@ -1860,7 +1873,10 @@ def interpreter_card(interpreter_id):
     return render_template('interpreter_card.html',
                            interpreter=interpreter,
                            books=pagination.items,
-                           pagination=pagination)
+                           pagination=pagination,
+                           search=search,
+                           return_page=return_page,
+                           return_search=return_search)
 
 
 @bp.route('/interpreter/<int:interpreter_id>/view')

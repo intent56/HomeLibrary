@@ -43,11 +43,17 @@
             </div>
             <div class="card-footer bg-transparent border-top-0 mt-auto">
                 <div class="d-flex justify-content-center gap-2">
-                    <a href="{{ url_for('main.interpreter_card', interpreter_id=interpreter.id) }}" 
+                    <a href="{{ url_for('main.interpreter_card', 
+                                interpreter_id=interpreter.id, 
+                                return_page=pagination.page if pagination else 1,
+                                return_search=search) }}" 
                        class="btn btn-outline-light btn-sm" title="Просмотр карточки">
                         <i class="bi bi-eye"></i>
                     </a>
-                    <a href="{{ url_for('main.edit_interpreter', interpreter_id=interpreter.id, next=request.full_path) }}" 
+                    <a href="{{ url_for('main.edit_interpreter', 
+                                interpreter_id=interpreter.id, 
+                                return_page=pagination.page if pagination else 1,
+                                return_search=search) }}" 
                        class="btn btn-outline-light btn-sm" title="Редактировать переводчика">
                         <i class="bi bi-pencil"></i>
                     </a>

@@ -1,20 +1,34 @@
 {% extends "base.html" %} {% block body_class %}bg-page2{% endblock %} {% block
 content %}
-<div class="row justify-content-center">
-  <div class="col-lg-10">
+<div class="row">
+  <div class="col-lg-10 mx-auto">
     <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
         <h2 class="text-white">
           <i class="bi bi-person-badge"></i> Карточка переводчика
         </h2>
+        <h5 class="text-white fw-bold fs-3 mt-2">{{ interpreter.fio }}</h5>
       </div>
-      <div>
+      <div class="d-flex gap-2">
+        <!-- КНОПКА "НАЗАД К СПИСКУ" С СОХРАНЕНИЕМ ПАРАМЕТРОВ -->
         <a
-          href="{{ url_for('main.interpreter_list') }}"
-          class="btn btn-outline-light"
+          href="{{ url_for('main.interpreter_list', 
+                    page=return_page, 
+                    search=return_search) }}"
+          class="btn btn-outline-light d-flex align-items-center"
         >
           <i class="bi bi-arrow-left"></i> Назад к списку
+        </a>
+        <!-- КНОПКА "РЕДАКТИРОВАТЬ" -->
+        <a
+          href="{{ url_for('main.edit_interpreter', 
+                    interpreter_id=interpreter.id,
+                    return_page=return_page,
+                    return_search=return_search) }}"
+          class="btn btn-edit"
+        >
+          <i class="bi bi-pencil"></i> Редактировать
         </a>
       </div>
     </div>
@@ -270,7 +284,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.interpreter_card', interpreter_id=interpreter.id, page=1) }}"
+                      href="{{ url_for('main.interpreter_card', interpreter_id=interpreter.id, page=1, return_page=return_page, return_search=return_search) }}"
                     >
                       <i class="bi bi-chevron-double-left"></i>
                     </a>
@@ -280,7 +294,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.interpreter_card', interpreter_id=interpreter.id, page=pagination.prev_num) }}"
+                      href="{{ url_for('main.interpreter_card', interpreter_id=interpreter.id, page=pagination.prev_num, return_page=return_page, return_search=return_search) }}"
                     >
                       <i class="bi bi-chevron-left"></i>
                     </a>
@@ -299,7 +313,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.interpreter_card', interpreter_id=interpreter.id, page=p) }}"
+                      href="{{ url_for('main.interpreter_card', interpreter_id=interpreter.id, page=p, return_page=return_page, return_search=return_search) }}"
                     >
                       {{ p }}
                     </a>
@@ -315,7 +329,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.interpreter_card', interpreter_id=interpreter.id, page=pagination.next_num) }}"
+                      href="{{ url_for('main.interpreter_card', interpreter_id=interpreter.id, page=pagination.next_num, return_page=return_page, return_search=return_search) }}"
                     >
                       <i class="bi bi-chevron-right"></i>
                     </a>
@@ -325,7 +339,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.interpreter_card', interpreter_id=interpreter.id, page=pagination.pages) }}"
+                      href="{{ url_for('main.interpreter_card', interpreter_id=interpreter.id, page=pagination.pages, return_page=return_page, return_search=return_search) }}"
                     >
                       <i class="bi bi-chevron-double-right"></i>
                     </a>
@@ -354,14 +368,6 @@ content %}
           <span class="text-white-50">
             <i class="bi bi-info-circle"></i> ID: {{ interpreter.id }}
           </span>
-          <div class="d-flex gap-2">
-            <a
-              href="{{ url_for('main.edit_interpreter', interpreter_id=interpreter.id, next=request.full_path) }}"
-              class="btn btn-edit"
-            >
-              <i class="bi bi-pencil"></i> Редактировать
-            </a>
-          </div>
         </div>
       </div>
     </div>
