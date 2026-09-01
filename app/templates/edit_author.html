@@ -10,13 +10,13 @@ content %}
         </h2>
         <h5 class="text-white fw-bold fs-3 mt-2">{{ author.fio }}</h5>
       </div>
-      <!-- 2. ИЗМЕНЕННАЯ КНОПКА "НАЗАД" -->
+      <!-- 2. ИЗМЕНЕННАЯ КНОПКА "НАЗАД" С СОХРАНЕНИЕМ ПАРАМЕТРОВ -->
       <a
-        href="{{ request.args.get('next') or url_for('main.author_list') }}"
+        href="{{ request.args.get('next') or url_for('main.author_list', page=return_page, search=return_search) }}"
         class="btn btn-outline-light d-flex align-items-center"
         id="backButton"
       >
-        <i class="bi bi-arrow-left"></i> &nbsp;Назад
+        <i class="bi bi-arrow-left"></i> Назад
       </a>
     </div>
 
@@ -293,7 +293,7 @@ content %}
                 </table>
               </div>
 
-              <!-- ПАГИНАЦИЯ -->
+              <!-- ПАГИНАЦИЯ С СОХРАНЕНИЕМ ПАРАМЕТРОВ -->
               {% if pagination and pagination.pages > 1 %}
               <div class="pagination-container mt-3">
                 <nav aria-label="Навигация по страницам">
@@ -306,7 +306,7 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('main.edit_author', author_id=author.id, page=1) }}"
+                        href="{{ url_for('main.edit_author', author_id=author.id, page=1, return_page=return_page, return_search=return_search) }}"
                       >
                         <i class="bi bi-chevron-double-left"></i>
                       </a>
@@ -316,7 +316,7 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('main.edit_author', author_id=author.id, page=pagination.prev_num) }}"
+                        href="{{ url_for('main.edit_author', author_id=author.id, page=pagination.prev_num, return_page=return_page, return_search=return_search) }}"
                       >
                         <i class="bi bi-chevron-left"></i>
                       </a>
@@ -335,7 +335,7 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('main.edit_author', author_id=author.id, page=p) }}"
+                        href="{{ url_for('main.edit_author', author_id=author.id, page=p, return_page=return_page, return_search=return_search) }}"
                       >
                         {{ p }}
                       </a>
@@ -351,7 +351,7 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('main.edit_author', author_id=author.id, page=pagination.next_num) }}"
+                        href="{{ url_for('main.edit_author', author_id=author.id, page=pagination.next_num, return_page=return_page, return_search=return_search) }}"
                       >
                         <i class="bi bi-chevron-right"></i>
                       </a>
@@ -361,7 +361,7 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('main.edit_author', author_id=author.id, page=pagination.pages) }}"
+                        href="{{ url_for('main.edit_author', author_id=author.id, page=pagination.pages, return_page=return_page, return_search=return_search) }}"
                       >
                         <i class="bi bi-chevron-double-right"></i>
                       </a>
@@ -401,9 +401,9 @@ content %}
               </span>
             </div>
             <div class="d-flex gap-2">
-              <!-- Кнопка "Отмена" также должна возвращать на предыдущую страницу -->
+              <!-- Кнопка "Отмена" с сохранением параметров -->
               <a
-                href="{{ request.args.get('next') or url_for('main.author_list') }}"
+                href="{{ url_for('main.author_list', page=return_page, search=return_search) }}"
                 class="btn btn-outline-light btn"
               >
                 <i class="bi bi-x-circle"></i> Отмена

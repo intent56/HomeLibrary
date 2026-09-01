@@ -1,20 +1,34 @@
 {% extends "base.html" %} {% block body_class %}bg-page2{% endblock %} {% block
 content %}
-<div class="row justify-content-center">
-  <div class="col-lg-10">
+<div class="row">
+  <div class="col-lg-10 mx-auto">
     <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
         <h2 class="text-white">
           <i class="bi bi-person-badge"></i> Карточка автора
         </h2>
+        <h5 class="text-white fw-bold fs-3 mt-2">{{ author.fio }}</h5>
       </div>
-      <div>
+      <div class="d-flex gap-2">
+        <!-- КНОПКА "НАЗАД К СПИСКУ" С СОХРАНЕНИЕМ ПАРАМЕТРОВ -->
         <a
-          href="{{ url_for('main.author_list') }}"
-          class="btn btn-outline-light"
+          href="{{ url_for('main.author_list', 
+                    page=return_page, 
+                    search=return_search) }}"
+          class="btn btn-outline-light d-flex align-items-center"
         >
           <i class="bi bi-arrow-left"></i> Назад к списку
+        </a>
+        <!-- КНОПКА "РЕДАКТИРОВАТЬ" -->
+        <a
+          href="{{ url_for('main.edit_author', 
+                    author_id=author.id,
+                    return_page=return_page,
+                    return_search=return_search) }}"
+          class="btn btn-edit"
+        >
+          <i class="bi bi-pencil"></i> Редактировать
         </a>
       </div>
     </div>
@@ -24,7 +38,7 @@ content %}
       <div class="card-header transparent-card-header">
         <ul
           class="nav nav-tabs card-header-tabs"
-          id="authorTabs"
+          id="authorCardTabs"
           role="tablist"
         >
           <li class="nav-item" role="presentation">
@@ -48,119 +62,89 @@ content %}
               type="button"
               role="tab"
             >
-              <i class="bi bi-book"></i> Книги автора
+              <i class="bi bi-book"></i> Книги автора ({{ pagination.total if
+              pagination else 0 }})
             </button>
           </li>
         </ul>
       </div>
       <div class="card-body transparent-card-body">
-        <div class="tab-content" id="authorTabsContent">
+        <div class="tab-content" id="authorCardTabsContent">
           <!-- Вкладка 1: Информация об авторе -->
           <div class="tab-pane fade show active" id="info" role="tabpanel">
             <div class="row">
-              <div class="col-md-4 text-center mb-4 mb-md-0">
-                {% if author.photo %}
-                <img
-                  src="data:image/jpeg;base64,{{ author.photo|b64encode }}"
-                  alt="{{ author.fio }}"
-                  class="img-fluid shadow-sm"
-                  style="
-                    width: 200px;
-                    height: 200px;
-                    object-fit: cover;
-                    border: 2px solid rgba(255, 255, 255, 0.3);
-                  "
-                />
-                {% else %}
-                <div
-                  class="bg-transparent d-inline-flex align-items-center justify-content-center shadow-sm"
-                  style="
-                    width: 200px;
-                    height: 200px;
-                    border: 2px solid rgba(255, 255, 255, 0.3);
-                  "
-                >
-                  <i class="bi bi-person display-1 text-white-50"></i>
+              <div class="col-md-4 text-center">
+                <div class="mb-3">
+                  {% if author.photo %}
+                  <img
+                    src="data:image/jpeg;base64,{{ author.photo|b64encode }}"
+                    alt="{{ author.fio }}"
+                    class="img-thumbnail"
+                    style="
+                      width: 200px;
+                      height: 200px;
+                      object-fit: cover;
+                      border: 2px solid rgba(255, 255, 255, 0.3);
+                    "
+                  />
+                  {% else %}
+                  <div
+                    class="bg-transparent d-inline-flex align-items-center justify-content-center"
+                    style="
+                      width: 200px;
+                      height: 200px;
+                      border: 2px solid rgba(255, 255, 255, 0.3);
+                    "
+                  >
+                    <i class="bi bi-person-circle display-1 text-white-50"></i>
+                  </div>
+                  {% endif %}
                 </div>
+                {% if author.ref_author %}
+                <a
+                  href="{{ author.ref_author }}"
+                  target="_blank"
+                  class="btn btn-outline-light btn-sm"
+                >
+                  <i class="bi bi-link-45deg"></i> Ссылка на информацию
+                </a>
                 {% endif %}
               </div>
               <div class="col-md-8">
-                <h3 class="mb-3 text-white fw-bold fs-1">{{ author.fio }}</h3>
-
                 <table class="table table-borderless transparent-table">
                   <tr>
-                    <th style="width: 35%" class="text-white-50">Фамилия:</th>
-                    <td class="text-white fw-bold fs-5">
-                      {{ author.lastname }}
-                    </td>
+                    <th style="width: 30%">ФИО:</th>
+                    <td class="text-white fw-bold">{{ author.fio }}</td>
                   </tr>
-                  {% if author.firstname %}
                   <tr>
-                    <th class="text-white-50">Имя:</th>
-                    <td class="text-white fw-bold fs-5">
-                      {{ author.firstname }}
-                    </td>
+                    <th>Книг:</th>
+                    <td class="text-white">{{ author.book_authors|length }}</td>
                   </tr>
-                  {% endif %} {% if author.secondname %}
+                  {% if author.comment %}
                   <tr>
-                    <th class="text-white-50">Отчество:</th>
-                    <td class="text-white fw-bold fs-5">
-                      {{ author.secondname }}
-                    </td>
-                  </tr>
-                  {% endif %} {% if author.ref_author %}
-                  <tr>
-                    <th class="text-white-50">Ссылка:</th>
-                    <td>
-                      <a
-                        href="{{ author.ref_author }}"
-                        target="_blank"
-                        class="text-light"
-                      >
-                        <i class="bi bi-link-45deg"></i> Подробнее
-                      </a>
-                    </td>
+                    <th>Комментарий:</th>
+                    <td class="text-white">{{ author.comment|safe }}</td>
                   </tr>
                   {% endif %}
-                  <tr>
-                    <th class="text-white-50">Всего книг:</th>
-                    <td>
-                      <span
-                        class="badge bg-primary bg-opacity-75 text-white fs-6"
-                        >{{ author.book_authors|length }}</span
-                      >
-                    </td>
-                  </tr>
                 </table>
               </div>
             </div>
-
-            {% if author.comment %}
-            <div class="mt-4">
-              <h5 class="fw-bold text-white">
-                <i class="bi bi-chat"></i> Комментарий:
-              </h5>
-              <div class="p-3 rounded transparent-comment">
-                {{ author.comment|safe }}
-              </div>
-            </div>
-            {% endif %}
           </div>
 
           <!-- Вкладка 2: Книги автора -->
           <div class="tab-pane fade" id="books" role="tabpanel">
             <h5 class="fw-bold text-white">
-              <i class="bi bi-book"></i> Книги автора:
+              <i class="bi bi-book"></i> Книги автора
             </h5>
             {% if books %}
-            <div class="table-responsive">
+            <div class="table-responsive mt-3">
               <table class="table table-hover transparent-table">
                 <thead class="transparent-table-header">
                   <tr>
                     <th style="width: 10%">Обложка</th>
-                    <th style="width: 45%">Название</th>
+                    <th style="width: 50%">Название</th>
                     <th style="width: 20%">Год</th>
-                    <th style="width: 25%">Действия</th>
+                    <th style="width: 20%">Действия</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -228,13 +212,6 @@ content %}
                         >
                           <i class="bi bi-eye"></i>
                         </a>
-                        <a
-                          href="{{ url_for('main.edit_book', book_id=book.id) }}"
-                          class="btn btn-outline-light"
-                          title="Редактировать книгу"
-                        >
-                          <i class="bi bi-pencil"></i>
-                        </a>
                       </div>
                     </td>
                   </tr>
@@ -243,7 +220,7 @@ content %}
               </table>
             </div>
 
-            <!-- ПАГИНАЦИЯ -->
+            <!-- ПАГИНАЦИЯ С СОХРАНЕНИЕМ ПАРАМЕТРОВ -->
             {% if pagination and pagination.pages > 1 %}
             <div class="pagination-container mt-3">
               <nav aria-label="Навигация по страницам">
@@ -256,7 +233,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_card', author_id=author.id, page=1) }}"
+                      href="{{ url_for('main.author_card', author_id=author.id, page=1, return_page=return_page, return_search=return_search) }}"
                     >
                       <i class="bi bi-chevron-double-left"></i>
                     </a>
@@ -266,7 +243,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_card', author_id=author.id, page=pagination.prev_num) }}"
+                      href="{{ url_for('main.author_card', author_id=author.id, page=pagination.prev_num, return_page=return_page, return_search=return_search) }}"
                     >
                       <i class="bi bi-chevron-left"></i>
                     </a>
@@ -285,7 +262,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_card', author_id=author.id, page=p) }}"
+                      href="{{ url_for('main.author_card', author_id=author.id, page=p, return_page=return_page, return_search=return_search) }}"
                     >
                       {{ p }}
                     </a>
@@ -301,7 +278,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_card', author_id=author.id, page=pagination.next_num) }}"
+                      href="{{ url_for('main.author_card', author_id=author.id, page=pagination.next_num, return_page=return_page, return_search=return_search) }}"
                     >
                       <i class="bi bi-chevron-right"></i>
                     </a>
@@ -311,7 +288,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_card', author_id=author.id, page=pagination.pages) }}"
+                      href="{{ url_for('main.author_card', author_id=author.id, page=pagination.pages, return_page=return_page, return_search=return_search) }}"
                     >
                       <i class="bi bi-chevron-double-right"></i>
                     </a>
@@ -327,26 +304,11 @@ content %}
               </div>
             </div>
             {% endif %} {% else %}
-            <div class="alert alert-info transparent-alert">
-              <i class="bi bi-info-circle"></i>
+            <div class="alert alert-warning transparent-alert mt-3">
+              <i class="bi bi-exclamation-triangle"></i>
               У автора пока нет книг
             </div>
             {% endif %}
-          </div>
-        </div>
-      </div>
-      <div class="card-footer transparent-card-footer">
-        <div class="d-flex justify-content-between align-items-center">
-          <span class="text-white-50">
-            <i class="bi bi-info-circle"></i> ID: {{ author.id }}
-          </span>
-          <div class="d-flex gap-2">
-            <a
-              href="{{ url_for('main.edit_author', author_id=author.id, next=request.full_path) }}"
-              class="btn btn-edit"
-            >
-              <i class="bi bi-pencil"></i> Редактировать
-            </a>
           </div>
         </div>
       </div>
@@ -355,18 +317,18 @@ content %}
 </div>
 
 <script>
+  // Сохранение активной вкладки
   document.addEventListener("DOMContentLoaded", function () {
-    // Сохранение активной вкладки
     const tabs = document.querySelectorAll(
-      '#authorTabs button[data-bs-toggle="tab"]',
+      '#authorCardTabs button[data-bs-toggle="tab"]',
     );
     tabs.forEach((tab) => {
       tab.addEventListener("shown.bs.tab", function (e) {
-        localStorage.setItem("activeAuthorTab", e.target.id);
+        localStorage.setItem("activeAuthorCardTab", e.target.id);
       });
     });
 
-    const activeTab = localStorage.getItem("activeAuthorTab");
+    const activeTab = localStorage.getItem("activeAuthorCardTab");
     if (activeTab) {
       const tabElement = document.getElementById(activeTab);
       if (tabElement) {
@@ -408,9 +370,8 @@ content %}
     border-radius: 12px 12px 0 0 !important;
   }
 
-  .transparent-card-footer {
-    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 0 0 12px 12px !important;
+  .transparent-card-body {
+    padding: 1.5rem;
   }
 
   /* 3. СТИЛИ ДЛЯ ВКЛАДОК */
@@ -448,7 +409,29 @@ content %}
     padding-top: 1rem;
   }
 
-  /* 4. ТАБЛИЦА */
+  /* 4. ПРОЗРАЧНЫЕ ПОЛЯ ВВОДА */
+  .form-control.bg-transparent {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.2s;
+  }
+
+  .form-control.bg-transparent::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .form-control.bg-transparent:focus {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+  }
+
+  .form-control.bg-transparent.is-invalid {
+    border-color: #dc3545 !important;
+  }
+
+  /* 5. ПРОЗРАЧНАЯ ТАБЛИЦА */
   .transparent-table {
     width: 100% !important;
   }
@@ -475,7 +458,21 @@ content %}
     color: rgba(255, 255, 255, 0.7) !important;
   }
 
-  /* 5. КНОПКИ */
+  /* 6. ПРОЗРАЧНЫЙ АЛЕРТ */
+  .transparent-alert {
+    background-color: rgba(13, 202, 240, 0.15) !important;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(13, 202, 240, 0.3) !important;
+    color: #ffffff !important;
+  }
+  .transparent-alert i {
+    color: #0dcaf0 !important;
+  }
+  .transparent-alert .text-white {
+    color: #ffffff !important;
+  }
+
+  /* 7. КНОПКИ В ТАБЛИЦЕ */
   .btn-group .btn {
     display: inline-flex;
     align-items: center;
@@ -498,31 +495,7 @@ content %}
     color: #ffffff !important;
   }
 
-  /* 6. ПРОЗРАЧНЫЙ КОММЕНТАРИЙ */
-  .transparent-comment {
-    background-color: rgba(255, 255, 255, 0.05) !important;
-    border-left: 4px solid rgba(255, 255, 255, 0.3) !important;
-    color: rgba(255, 255, 255, 0.8) !important;
-  }
-  .transparent-comment a {
-    color: #a8d8ff !important;
-  }
-  .transparent-comment p {
-    margin-bottom: 0.5rem;
-  }
-
-  /* 7. АЛЕРТ */
-  .transparent-alert {
-    background-color: rgba(13, 202, 240, 0.15) !important;
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(13, 202, 240, 0.3) !important;
-    color: #ffffff !important;
-  }
-  .transparent-alert i {
-    color: #0dcaf0 !important;
-  }
-
-  /* 8. ПАГИНАЦИЯ */
+  /* 8. ПАГИНАЦИЯ - ИСПРАВЛЕННЫЙ СТИЛЬ */
   .pagination-container {
     background-color: rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(8px);
@@ -530,22 +503,35 @@ content %}
     padding: 0.75rem 1rem;
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
-  #transparentPagination .page-link {
+
+  #transparentPagination .page-link,
+  #transparentPagination .page-link:focus,
+  #transparentPagination .page-link:visited {
     background-color: transparent !important;
     background: transparent !important;
     border-color: rgba(255, 255, 255, 0.15) !important;
     color: #ffffff !important;
     transition: all 0.3s ease;
   }
-  #transparentPagination .page-link:hover {
+
+  #transparentPagination .page-item:not(.active) .page-link:hover {
     background-color: rgba(255, 255, 255, 0.1) !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
   }
-  #transparentPagination .page-item.active .page-link {
+
+  /* АКТИВНАЯ СТРАНИЦА - ЗОЛОТОЙ ФОН, ЧЕРНЫЙ ТЕКСТ */
+  #transparentPagination .page-item.active .page-link,
+  #transparentPagination .page-item.active .page-link:hover,
+  #transparentPagination .page-item.active .page-link:focus {
     background-color: var(--main-color) !important;
     border-color: var(--main-color) !important;
+    color: #000000 !important;
+    box-shadow: none !important;
   }
-  #transparentPagination .page-item.disabled .page-link {
+
+  #transparentPagination .page-item.disabled .page-link,
+  #transparentPagination .page-item.disabled .page-link:hover {
     background-color: transparent !important;
     border-color: rgba(255, 255, 255, 0.05) !important;
     color: rgba(255, 255, 255, 0.2) !important;
@@ -562,36 +548,7 @@ content %}
     --bs-bg-opacity: 0.75;
   }
 
-  /* 10. АДАПТИВНОСТЬ */
-  @media (max-width: 768px) {
-    .card-body {
-      padding: 1rem !important;
-    }
-    .transparent-table td,
-    .transparent-table th {
-      padding: 0.3rem 0.4rem;
-      font-size: 0.85rem;
-    }
-    .btn-group .btn {
-      min-width: 32px;
-      min-height: 32px;
-      padding: 0.2rem 0.4rem;
-      font-size: 0.8rem;
-    }
-    .pagination-container {
-      flex-direction: column;
-      gap: 0.75rem;
-      align-items: center !important;
-    }
-    .nav-tabs .nav-link {
-      font-size: 0.85rem;
-      padding: 0.4rem 0.7rem;
-    }
-    .nav-tabs .nav-link i {
-      margin-right: 4px;
-    }
-  }
-  /* Стили для кнопок "Редактировать" */
+  /* 10. Стили для кнопки "Редактировать" */
   .btn-edit {
     background-color: transparent !important;
     color: var(--main-color) !important;
@@ -622,16 +579,42 @@ content %}
     outline: none;
   }
 
-  /* Маленькие кнопки (для карточек) */
-  .btn-edit-sm {
-    padding: 0.25rem 0.8rem;
-    font-size: 0.85rem;
-  }
-
-  /* Большие кнопки (для основных действий) */
-  .btn-edit-lg {
-    padding: 0.75rem 1.5rem;
-    font-size: 1.1rem;
+  /* 11. АДАПТИВНОСТЬ */
+  @media (max-width: 768px) {
+    .card-body {
+      padding: 1rem !important;
+    }
+    .d-flex.justify-content-between {
+      flex-direction: column;
+      align-items: stretch !important;
+      gap: 1rem;
+    }
+    .btn-lg {
+      width: 100%;
+    }
+    .nav-tabs .nav-link {
+      font-size: 0.85rem;
+      padding: 0.4rem 0.7rem;
+    }
+    .nav-tabs .nav-link i {
+      margin-right: 4px;
+    }
+    .transparent-table td,
+    .transparent-table th {
+      padding: 0.3rem 0.4rem;
+      font-size: 0.85rem;
+    }
+    .btn-group .btn {
+      min-width: 32px;
+      min-height: 32px;
+      padding: 0.2rem 0.4rem;
+      font-size: 0.8rem;
+    }
+    .pagination-container {
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: center !important;
+    }
   }
 </style>
 {% endblock %}

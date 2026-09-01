@@ -29,11 +29,17 @@
             </div>
             <div class="card-footer bg-transparent border-top-0 mt-auto">
                 <div class="d-flex justify-content-center gap-2">
-                    <a href="{{ url_for('main.author_card', author_id=author.id) }}" 
+                    <a href="{{ url_for('main.author_card', 
+                                         author_id=author.id, 
+                                         return_page=pagination.page if pagination else 1,
+                                         return_search=search) }}" 
                        class="btn btn-outline-light btn-sm" title="Просмотр карточки">
                         <i class="bi bi-eye"></i>
                     </a>
-                    <a href="{{ url_for('main.edit_author', author_id=author.id, next=request.full_path) }}" 
+                    <a href="{{ url_for('main.edit_author', 
+                                         author_id=author.id, 
+                                         return_page=pagination.page if pagination else 1,
+                                         return_search=search) }}" 
                        class="btn btn-outline-light btn-sm" title="Редактировать">
                         <i class="bi bi-pencil"></i>
                     </a>

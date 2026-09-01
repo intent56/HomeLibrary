@@ -471,8 +471,12 @@ def edit_author(author_id):
     author = Author.query.get_or_404(author_id)
     form = FormAuthor(obj=author)
 
-    # Получаем книги автора с пагинацией
+    # Получаем параметры для возврата
     page = request.args.get('page', 1, type=int)
+    search = request.args.get('search', '')
+    return_page = request.args.get('return_page', 1, type=int)
+    return_search = request.args.get('return_search', '')
+
     books_query = Book.query.join(book_authors).filter(
         book_authors.c.id_author == author_id).order_by(Book.name.asc())
     pagination = books_query.paginate(
@@ -504,7 +508,11 @@ def edit_author(author_id):
                            form=form,
                            author=author,
                            books=pagination.items,
-                           pagination=pagination)
+                           pagination=pagination,
+                           page=page,
+                           search=search,
+                           return_page=return_page,
+                           return_search=return_search)
 
 
 @bp.route('/author/<int:author_id>/delete', methods=['POST'])
@@ -1812,6 +1820,11 @@ def author_card(author_id):
     author = Author.query.get_or_404(author_id)
     page = request.args.get('page', 1, type=int)
 
+    # Получаем параметры для возврата
+    search = request.args.get('search', '')
+    return_page = request.args.get('return_page', 1, type=int)
+    return_search = request.args.get('return_search', '')
+
     # Получаем книги автора с пагинацией
     books_query = Book.query.join(book_authors).filter(
         book_authors.c.id_author == author_id).order_by(Book.name.asc())
@@ -1824,7 +1837,10 @@ def author_card(author_id):
     return render_template('author_card.html',
                            author=author,
                            books=pagination.items,
-                           pagination=pagination)
+                           pagination=pagination,
+                           search=search,
+                           return_page=return_page,
+                           return_search=return_search)
 
 
 @bp.route('/interpreter/<int:interpreter_id>/card')
