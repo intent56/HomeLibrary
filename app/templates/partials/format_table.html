@@ -24,7 +24,10 @@
                     <td class="text-white">{{ format.fmt_books|length }}</td>
                     <td>
                         <div class="btn-group btn-group-sm" title="Редактировать">
-                            <a href="{{ url_for('main.edit_format', format_id=format.id, page=1) }}" class="btn btn-outline-light">
+                            <a href="{{ url_for('main.edit_format', 
+                                         format_id=format.id, 
+                                         return_page=pagination.page if pagination else 1,
+                                         return_search=search) }}" class="btn btn-outline-light">
                                 <i class="bi bi-pencil"></i>
                             </a>
                             <button type="button" class="btn btn-outline-light"  title="Удалить"
