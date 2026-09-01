@@ -1274,8 +1274,12 @@ def edit_publisher(publisher_id):
     publisher = Publisher.query.get_or_404(publisher_id)
     form = FormPublisher(obj=publisher)
 
-    # Получаем книги издателя с пагинацией
+    # Получаем параметры для возврата
     page = request.args.get('page', 1, type=int)
+    search = request.args.get('search', '')
+    return_page = request.args.get('return_page', 1, type=int)
+    return_search = request.args.get('return_search', '')
+
     books_query = Book.query.join(book_publishers).filter(
         book_publishers.c.id_publisher == publisher_id).order_by(Book.name.asc())
     pagination = books_query.paginate(
@@ -1298,7 +1302,11 @@ def edit_publisher(publisher_id):
                            form=form,
                            publisher=publisher,
                            books=pagination.items,
-                           pagination=pagination)
+                           pagination=pagination,
+                           page=page,
+                           search=search,
+                           return_page=return_page,
+                           return_search=return_search)
 
 
 @bp.route('/publisher/<int:publisher_id>/delete', methods=['POST'])
@@ -1641,8 +1649,12 @@ def edit_language(language_id):
     language = Language.query.get_or_404(language_id)
     form = FormLanguage(obj=language)
 
-    # Получаем книги на этом языке с пагинацией
+    # Получаем параметры для возврата
     page = request.args.get('page', 1, type=int)
+    search = request.args.get('search', '')
+    return_page = request.args.get('return_page', 1, type=int)
+    return_search = request.args.get('return_search', '')
+
     books_query = Book.query.filter(
         Book.id_language == language_id).order_by(Book.name.asc())
     pagination = books_query.paginate(
@@ -1665,7 +1677,11 @@ def edit_language(language_id):
                            form=form,
                            language=language,
                            books=pagination.items,
-                           pagination=pagination)
+                           pagination=pagination,
+                           page=page,
+                           search=search,
+                           return_page=return_page,
+                           return_search=return_search)
 
 
 @bp.route('/language/<int:language_id>/delete', methods=['POST'])
@@ -1913,8 +1929,12 @@ def edit_format(format_id):
     format_item = Format.query.get_or_404(format_id)
     form = FormFormat(obj=format_item)
 
-    # Получаем книги этого формата с пагинацией
+    # Получаем параметры для возврата
     page = request.args.get('page', 1, type=int)
+    search = request.args.get('search', '')
+    return_page = request.args.get('return_page', 1, type=int)
+    return_search = request.args.get('return_search', '')
+
     books_query = Book.query.filter(
         Book.id_format == format_id).order_by(Book.name.asc())
     pagination = books_query.paginate(
@@ -1937,7 +1957,11 @@ def edit_format(format_id):
                            form=form,
                            format_item=format_item,
                            books=pagination.items,
-                           pagination=pagination)
+                           pagination=pagination,
+                           page=page,
+                           search=search,
+                           return_page=return_page,
+                           return_search=return_search)
 
 
 @bp.route('/format/<int:format_id>/delete', methods=['POST'])
@@ -1966,8 +1990,10 @@ def edit_cover(cover_id):
     cover = Cover.query.get_or_404(cover_id)
     form = FormCover(obj=cover)
 
-    # Получаем книги с этим переплетом с пагинацией
+    # Получаем параметры для возврата
     page = request.args.get('page', 1, type=int)
+    return_page = request.args.get('return_page', 1, type=int)
+
     books_query = Book.query.filter(
         Book.id_cover == cover_id).order_by(Book.name.asc())
     pagination = books_query.paginate(
@@ -1990,7 +2016,9 @@ def edit_cover(cover_id):
                                        form=form,
                                        cover=cover,
                                        books=pagination.items,
-                                       pagination=pagination)
+                                       pagination=pagination,
+                                       page=page,
+                                       return_page=return_page)
 
             db.session.commit()
             flash('Тип переплета успешно обновлен!', 'success')
@@ -2003,7 +2031,9 @@ def edit_cover(cover_id):
                            form=form,
                            cover=cover,
                            books=pagination.items,
-                           pagination=pagination)
+                           pagination=pagination,
+                           page=page,
+                           return_page=return_page)
 
 
 @bp.route('/cover/<int:cover_id>/delete', methods=['POST'])
@@ -2074,7 +2104,10 @@ def add_cover():
 @bp.route('/cover/<int:cover_id>/card')
 def cover_card(cover_id):
     cover = Cover.query.get_or_404(cover_id)
+
+    # Получаем параметры для возврата
     page = request.args.get('page', 1, type=int)
+    return_page = request.args.get('return_page', 1, type=int)
 
     # Пагинация для книг с этим переплетом
     books_query = Book.query.filter_by(
@@ -2088,7 +2121,9 @@ def cover_card(cover_id):
     return render_template('cover_card.html',
                            cover=cover,
                            books=pagination.items,
-                           pagination=pagination)
+                           pagination=pagination,
+                           page=page,
+                           return_page=return_page)
 
 
 @bp.route('/genre/<int:genre_id>/card')

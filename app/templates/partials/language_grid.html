@@ -37,7 +37,10 @@
             </div>
             <div class="card-footer bg-transparent border-top-0 mt-auto">
                 <div class="d-flex justify-content-center gap-2">
-                    <a href="{{ url_for('main.edit_language', language_id=language.id, page=1) }}" 
+                    <a href="{{ url_for('main.edit_language', 
+                                  language_id=language.id, 
+                                  return_page=pagination.page if pagination else 1,
+                                  return_search=search) }}" 
                        class="btn btn-outline-light btn-sm" title="Редактировать">
                         <i class="bi bi-pencil"></i>
                     </a>
