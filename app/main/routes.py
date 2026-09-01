@@ -980,6 +980,12 @@ def edit_genre(genre_id):
     genre = Genre.query.get_or_404(genre_id)
     form = FormGenre(obj=genre)
 
+    # Получаем параметры для возврата
+    page = request.args.get('page', 1, type=int)
+    search = request.args.get('search', '')
+    return_page = request.args.get('return_page', 1, type=int)
+    return_search = request.args.get('return_search', '')
+
     # Получаем книги в этом жанре с пагинацией
     page = request.args.get('page', 1, type=int)
     # Используем связь genre_books для получения книг
@@ -1005,7 +1011,11 @@ def edit_genre(genre_id):
                            form=form,
                            genre=genre,
                            books=pagination.items,
-                           pagination=pagination)
+                           pagination=pagination,
+                           page=page,
+                           search=search,
+                           return_page=return_page,
+                           return_search=return_search)
 
 
 @bp.route('/genre/<int:genre_id>/delete', methods=['POST'])
@@ -2086,6 +2096,11 @@ def genre_card(genre_id):
     genre = Genre.query.get_or_404(genre_id)
     page = request.args.get('page', 1, type=int)
 
+    # Получаем параметры для возврата
+    search = request.args.get('search', '')
+    return_page = request.args.get('return_page', 1, type=int)
+    return_search = request.args.get('return_search', '')
+
     # Получаем книги этого жанра через связь many-to-many
     # Используем подзапрос для пагинации
     books_query = Book.query.join(book_genres).filter(
@@ -2099,7 +2114,10 @@ def genre_card(genre_id):
     return render_template('genre_card.html',
                            genre=genre,
                            books=pagination.items,
-                           pagination=pagination)
+                           pagination=pagination,
+                           search=search,
+                           return_page=return_page,
+                           return_search=return_search)
 
 
 @bp.route('/author/<int:author_id>/view')

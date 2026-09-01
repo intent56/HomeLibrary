@@ -7,12 +7,25 @@ content %}
       <div>
         <h2 class="text-white"><i class="bi bi-tags"></i> Карточка жанра</h2>
       </div>
-      <div>
+      <div class="d-flex gap-2">
+        <!-- КНОПКА "НАЗАД К СПИСКУ" С СОХРАНЕНИЕМ ПАРАМЕТРОВ -->
         <a
-          href="{{ url_for('main.genre_list') }}"
-          class="btn btn-outline-light"
+          href="{{ url_for('main.genre_list', 
+                    page=return_page, 
+                    search=return_search) }}"
+          class="btn btn-outline-light d-flex align-items-center"
         >
           <i class="bi bi-arrow-left"></i> Назад к списку
+        </a>
+        <!-- КНОПКА "РЕДАКТИРОВАТЬ" -->
+        <a
+          href="{{ url_for('main.edit_genre', 
+                    genre_id=genre.id,
+                    return_page=return_page,
+                    return_search=return_search) }}"
+          class="btn btn-edit"
+        >
+          <i class="bi bi-pencil"></i> Редактировать
         </a>
       </div>
     </div>
@@ -203,7 +216,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.genre_card', genre_id=genre.id, page=1) }}"
+                      href="{{ url_for('main.genre_card', genre_id=genre.id, page=1, return_page=return_page, return_search=return_search) }}"
                     >
                       <i class="bi bi-chevron-double-left"></i>
                     </a>
@@ -213,7 +226,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.genre_card', genre_id=genre.id, page=pagination.prev_num) }}"
+                      href="{{ url_for('main.genre_card', genre_id=genre.id, page=pagination.prev_num, return_page=return_page, return_search=return_search) }}"
                     >
                       <i class="bi bi-chevron-left"></i>
                     </a>
@@ -232,7 +245,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.genre_card', genre_id=genre.id, page=p) }}"
+                      href="{{ url_for('main.genre_card', genre_id=genre.id, page=p, return_page=return_page, return_search=return_search) }}"
                     >
                       {{ p }}
                     </a>
@@ -248,7 +261,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.genre_card', genre_id=genre.id, page=pagination.next_num) }}"
+                      href="{{ url_for('main.genre_card', genre_id=genre.id, page=pagination.next_num, return_page=return_page, return_search=return_search) }}"
                     >
                       <i class="bi bi-chevron-right"></i>
                     </a>
@@ -258,7 +271,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.genre_card', genre_id=genre.id, page=pagination.pages) }}"
+                      href="{{ url_for('main.genre_card', genre_id=genre.id, page=pagination.pages, return_page=return_page, return_search=return_search) }}"
                     >
                       <i class="bi bi-chevron-double-right"></i>
                     </a>
@@ -286,14 +299,6 @@ content %}
           <span class="text-white-50"
             ><i class="bi bi-info-circle"></i> ID: {{ genre.id }}</span
           >
-          <div class="d-flex gap-2">
-            <a
-              href="{{ url_for('main.edit_genre', genre_id=genre.id, next=request.full_path) }}"
-              class="btn btn-edit"
-            >
-              <i class="bi bi-pencil"></i> Редактировать
-            </a>
-          </div>
         </div>
       </div>
     </div>

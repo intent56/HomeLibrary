@@ -31,11 +31,15 @@
             </div>
             <div class="card-footer bg-transparent border-top-0 mt-auto">
                 <div class="d-flex justify-content-center gap-2">
-                    <a href="{{ url_for('main.genre_card', genre_id=genre.id, page=1) }}" 
+                    <a href="{{ url_for('main.genre_card', genre_id=genre.id, 
+                                         return_page=pagination.page if pagination else 1,
+                                         return_search=search) }}" 
                        class="btn btn-outline-light btn-sm" title="Просмотр карточки">
                         <i class="bi bi-eye"></i>
                     </a>
-                    <a href="{{ url_for('main.edit_genre', genre_id=genre.id, next=request.full_path) }}" 
+                    <a href="{{ url_for('main.edit_genre', genre_id=genre.id, 
+                                         return_page=pagination.page if pagination else 1,
+                                         return_search=search) }}" 
                        class="btn btn-outline-light btn-sm" title="Редактировать">
                         <i class="bi bi-pencil"></i>
                     </a>
