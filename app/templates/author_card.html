@@ -123,7 +123,9 @@ content %}
                   {% if author.comment %}
                   <tr>
                     <th>Комментарий:</th>
-                    <td class="text-white">{{ author.comment|safe }}</td>
+                    <td class="text-white comment-cell">
+                      {{ author.comment|safe }}
+                    </td>
                   </tr>
                   {% endif %}
                 </table>
@@ -615,6 +617,33 @@ content %}
       gap: 0.75rem;
       align-items: center !important;
     }
+  }
+  /* 12. СТИЛЬ ДЛЯ ЯЧЕЙКИ С КОММЕНТАРИЕМ */
+  .comment-cell {
+    max-height: 150px; /* Ограничиваем максимальную высоту */
+    overflow-y: auto; /* Включаем вертикальную прокрутку */
+    white-space: pre-wrap; /* Сохраняем переносы строк и пробелы */
+    word-wrap: break-word; /* Переносим длинные слова */
+    padding-right: 10px; /* Отступ справа для удобства чтения */
+  }
+
+  /* Стилизация полосы прокрутки (опционально, для красоты) */
+  .comment-cell::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .comment-cell::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+
+  .comment-cell::-webkit-scrollbar-thumb {
+    background: var(--main-color);
+    border-radius: 3px;
+  }
+
+  .comment-cell::-webkit-scrollbar-thumb:hover {
+    background: #e6b800;
   }
 </style>
 {% endblock %}
