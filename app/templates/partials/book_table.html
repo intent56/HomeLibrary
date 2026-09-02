@@ -41,7 +41,7 @@
                     <td>
                         {% if book.author_books %}
                         {% for author in book.author_books %}
-                        <a href="{{ url_for('main.author_view', author_id=author.id, page=1) }}"
+                        <a href="{{ url_for('main.author_view', author_id=author.id, book_id=book.id) }}"
                             class="badge mb-1 d-block text-decoration-none" style="font-size: 0.85rem; cursor: pointer;"
                             title="Просмотр карточки автора">
                             <i class="bi bi-person"></i> {{ author.fio }}
@@ -54,7 +54,7 @@
                     <td>
                         {% if book.interpreter_books %}
                         {% for interpreter in book.interpreter_books %}
-                        <a href="{{ url_for('main.interpreter_view', interpreter_id=interpreter.id) }}"
+                        <a href="{{ url_for('main.interpreter_view', interpreter_id=interpreter.id, book_id=book.id) }}"
                             class="badge mb-1 d-block text-decoration-none" style="font-size: 0.85rem; cursor: pointer;"
                             title="Просмотр карточки переводчика">
                             <i class="bi bi-translate"></i> {{ interpreter.fio }}
