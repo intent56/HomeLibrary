@@ -11,7 +11,7 @@ content %}
       </div>
       <div>
         <a href="{{ url_for('main.book_list') }}" class="btn btn-outline-light">
-          <i class="bi bi-arrow-left"></i> Назад к списку книг
+          <i class="bi bi-arrow-left"></i> Назад
         </a>
       </div>
     </div>
@@ -330,12 +330,6 @@ content %}
           <span class="text-white-50">
             <i class="bi bi-info-circle"></i> ID: {{ author.id }}
           </span>
-          <a
-            href="{{ url_for('main.book_list') }}"
-            class="btn btn-outline-light btn-sm"
-          >
-            <i class="bi bi-arrow-left"></i> Назад к списку книг
-          </a>
         </div>
       </div>
     </div>
