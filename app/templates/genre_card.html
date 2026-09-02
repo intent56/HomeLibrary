@@ -98,7 +98,7 @@ content %}
               <h5 class="fw-bold text-white">
                 <i class="bi bi-chat"></i> Комментарий:
               </h5>
-              <div class="p-3 rounded transparent-comment">
+              <div class="p-3 rounded transparent-comment comment-cell">
                 {{ genre.comment|safe }}
               </div>
             </div>
@@ -610,6 +610,34 @@ content %}
   .btn-edit-lg {
     padding: 0.75rem 1.5rem;
     font-size: 1.1rem;
+  }
+  /* 12. СТИЛЬ ДЛЯ ЯЧЕЙКИ С КОММЕНТАРИЕМ */
+  .comment-cell {
+    max-height: 300px; /* Ограничиваем максимальную высоту */
+    overflow-y: auto; /* Включаем вертикальную прокрутку */
+    white-space: pre-wrap; /* Сохраняем переносы строк и пробелы */
+    word-wrap: break-word; /* Переносим длинные слова */
+    padding-right: 10px; /* Отступ справа для удобства чтения */
+    display: block; /* <-- ЭТО КЛЮЧЕВОЕ СВОЙСТВО */
+  }
+
+  /* Стилизация полосы прокрутки (опционально, для красоты) */
+  .comment-cell::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .comment-cell::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+
+  .comment-cell::-webkit-scrollbar-thumb {
+    background: var(--main-color);
+    border-radius: 3px;
+  }
+
+  .comment-cell::-webkit-scrollbar-thumb:hover {
+    background: #e6b800;
   }
 </style>
 {% endblock %}
