@@ -1910,6 +1910,7 @@ def interpreter_view(interpreter_id):
     interpreter = Interpreter.query.get_or_404(interpreter_id)
     page = request.args.get('page', 1, type=int)
     book_id = request.args.get('book_id', type=int)
+
     # Получаем параметры для возврата
     search = request.args.get('search', '')
     author_search = request.args.get('author_search', '')
