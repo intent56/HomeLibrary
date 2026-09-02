@@ -11,7 +11,13 @@ content %}
       </div>
       <div>
         <a
-          href="{{ url_for('main.book_detail', book_id=book_id) }}"
+          href="{{ url_for('main.book_detail', 
+                     book_id=book_id,
+                     page=page,
+                     search=search,
+                     author_search=author_search,
+                     interpreter_search=interpreter_search,
+                     genre_search=genre_search) }}"
           class="btn btn-outline-light d-flex align-items-center"
         >
           <i class="bi bi-arrow-left"></i> Назад к книге

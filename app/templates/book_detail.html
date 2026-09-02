@@ -270,7 +270,12 @@ content %}
                     <small class="text-white-50">
                       <a href="{{ url_for('main.author_view', 
                                  author_id=author.id,
-                                 book_id=book.id) }}"
+                                 book_id=book.id,
+                                 page=page,
+                                 search=search,
+                                 author_search=author_search,
+                                 interpreter_search=interpreter_search,
+                                 genre_search=genre_search) }}"
                      class="text-light text-decoration-none">
                      <i class="bi bi-eye"></i> Просмотр
                      </a> 

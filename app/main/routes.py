@@ -1909,7 +1909,14 @@ def interpreter_card(interpreter_id):
 def interpreter_view(interpreter_id):
     interpreter = Interpreter.query.get_or_404(interpreter_id)
     page = request.args.get('page', 1, type=int)
+    book_id = request.args.get('book_id', type=int)
+    # Получаем параметры для возврата
+    search = request.args.get('search', '')
+    author_search = request.args.get('author_search', '')
+    interpreter_search = request.args.get('interpreter_search', '')
+    genre_search = request.args.get('genre_search', '')
 
+    # Получаем книги переводчика с пагинацией
     books_query = Book.query.join(book_interpreters).filter(
         book_interpreters.c.id_interpreter == interpreter_id).order_by(Book.name.asc())
     pagination = books_query.paginate(
@@ -1921,7 +1928,13 @@ def interpreter_view(interpreter_id):
     return render_template('interpreter_card_view.html',
                            interpreter=interpreter,
                            books=pagination.items,
-                           pagination=pagination)
+                           pagination=pagination,
+                           book_id=book_id,
+                           page=page,
+                           search=search,
+                           author_search=author_search,
+                           interpreter_search=interpreter_search,
+                           genre_search=genre_search)
 
 
 @bp.route('/format/<int:format_id>/edit', methods=['GET', 'POST'])
@@ -2160,6 +2173,11 @@ def author_view(author_id):
     author = Author.query.get_or_404(author_id)
     page = request.args.get('page', 1, type=int)
     book_id = request.args.get('book_id', type=int)
+    # Получаем параметры для возврата
+    search = request.args.get('search', '')
+    author_search = request.args.get('author_search', '')
+    interpreter_search = request.args.get('interpreter_search', '')
+    genre_search = request.args.get('genre_search', '')
 
     # Получаем книги автора с пагинацией
     books_query = Book.query.join(book_authors).filter(
@@ -2174,7 +2192,12 @@ def author_view(author_id):
                            author=author,
                            books=pagination.items,
                            pagination=pagination,
-                           book_id=book_id)
+                           book_id=book_id,
+                           page=page,
+                           search=search,
+                           author_search=author_search,
+                           interpreter_search=interpreter_search,
+                           genre_search=genre_search)
 
 
 @bp.route('/publisher/<int:publisher_id>/view')
