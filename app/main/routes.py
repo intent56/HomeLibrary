@@ -2156,9 +2156,10 @@ def genre_card(genre_id):
 
 
 @bp.route('/author/<int:author_id>/view')
-def author_view(author_id): 
+def author_view(author_id):
     author = Author.query.get_or_404(author_id)
     page = request.args.get('page', 1, type=int)
+    book_id = request.args.get('book_id', type=int)
 
     # Получаем книги автора с пагинацией
     books_query = Book.query.join(book_authors).filter(
@@ -2172,7 +2173,8 @@ def author_view(author_id):
     return render_template('author_card_view.html',
                            author=author,
                            books=pagination.items,
-                           pagination=pagination)
+                           pagination=pagination,
+                           book_id=book_id)
 
 
 @bp.route('/publisher/<int:publisher_id>/view')

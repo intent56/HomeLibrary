@@ -10,8 +10,11 @@ content %}
         </h2>
       </div>
       <div>
-        <a href="{{ url_for('main.book_list') }}" class="btn btn-outline-light">
-          <i class="bi bi-arrow-left"></i> Назад
+        <a
+          href="{{ url_for('main.book_detail', book_id=book_id) }}"
+          class="btn btn-outline-light d-flex align-items-center"
+        >
+          <i class="bi bi-arrow-left"></i> Назад к книге
         </a>
       </div>
     </div>

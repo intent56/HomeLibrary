@@ -268,12 +268,12 @@ content %}
                     <strong class="text-white fs-5">{{ author.fio }}</strong>
                     <br />
                     <small class="text-white-50">
-                      <a
-                        href="{{ url_for('main.author_view', author_id=author.id) }}"
-                        class="text-light text-decoration-none"
-                      >
-                        <i class="bi bi-eye"></i> Просмотр
-                      </a>
+                      <a href="{{ url_for('main.author_view', 
+                                 author_id=author.id,
+                                 book_id=book.id) }}"
+                     class="text-light text-decoration-none">
+                     <i class="bi bi-eye"></i> Просмотр
+                     </a> 
                     </small>
                   </div>
                 </div>
