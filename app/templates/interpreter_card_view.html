@@ -18,8 +18,7 @@ content %}
                      search=search,
                      author_search=author_search,
                      interpreter_search=interpreter_search,
-                     genre_search=genre_search,
-                     return_page=return_page) }}"
+                     genre_search=genre_search) }}"
           class="btn btn-outline-light d-flex align-items-center"
         >
           <i class="bi bi-arrow-left"></i> Назад к книге
@@ -27,14 +26,12 @@ content %}
         {% else %}
         <a
           href="{{ url_for('main.book_list',
-                               page=return_page,
-                               search=search,
-                               author_search=author_search,
-                               interpreter_search=interpreter_search,
-                               genre_search=genre_search,
-                               return_page=return_page          
-          ) }}"
-          class="btn btn-outline-light"
+                     page=return_page,
+                     search=search,
+                     author_search=author_search,
+                     interpreter_search=interpreter_search,
+                     genre_search=genre_search) }}"
+          class="btn btn-outline-light d-flex align-items-center"
         >
           <i class="bi bi-arrow-left"></i> Назад к списку книг
         </a>
@@ -283,7 +280,7 @@ content %}
                       class="page-link"
                       href="{{ url_for('main.interpreter_card_view', 
                               interpreter_id=interpreter.id, 
-                               page=1,
+                               books_page=1,
                                book_id=book_id,
                                search=search,
                                author_search=author_search,
@@ -301,7 +298,7 @@ content %}
                       class="page-link"
                       href="{{ url_for('main.interpreter_card_view', 
                                interpreter_id=interpreter.id, 
-                               page=pagination.prev_num,
+                               books_page=pagination.prev_num,
                                book_id=book_id,
                                search=search,
                                author_search=author_search,
@@ -328,7 +325,7 @@ content %}
                       class="page-link"
                       href="{{ url_for('main.interpreter_card_view', 
                                interpreter_id=interpreter.id, 
-                               page=p,
+                               books_page=p,
                                book_id=book_id,
                                search=search,
                                author_search=author_search,
@@ -352,7 +349,7 @@ content %}
                       class="page-link"
                       href="{{ url_for('main.interpreter_card_view', 
                                interpreter_id=interpreter.id, 
-                              page=pagination.next_num,
+                              books_page=pagination.next_num,
                                book_id=book_id,
                                search=search,
                                author_search=author_search,
@@ -370,7 +367,7 @@ content %}
                       class="page-link"
                       href="{{ url_for('main.interpreter_card_view', 
                                interpreter_id=interpreter.id, 
-                               page=pagination.pages,
+                               books_page=pagination.pages,
                                book_id=book_id,
                                search=search,
                                author_search=author_search,

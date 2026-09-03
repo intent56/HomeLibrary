@@ -1910,7 +1910,7 @@ def interpreter_card(interpreter_id):
 @bp.route('/interpreter/<int:interpreter_id>/view')
 def interpreter_view(interpreter_id):
     interpreter = Interpreter.query.get_or_404(interpreter_id)
-    page = request.args.get('page', 1, type=int)
+    books_page = request.args.get('books_page', 1, type=int)
     book_id = request.args.get('book_id', type=int)
 
     # Получаем параметры для возврата
@@ -1925,7 +1925,7 @@ def interpreter_view(interpreter_id):
     books_query = Book.query.join(book_interpreters).filter(
         book_interpreters.c.id_interpreter == interpreter_id).order_by(Book.name.asc())
     pagination = books_query.paginate(
-        page=page,
+        page=books_page,
         per_page=Config.ITEMS_PER_PAGE_BOOK,
         error_out=False
     )
@@ -1936,7 +1936,7 @@ def interpreter_view(interpreter_id):
                            pagination=pagination,
                            book_id=book_id,
                            return_to=return_to,
-                           page=page,
+                           books_page=books_page,
                            search=search,
                            author_search=author_search,
                            interpreter_search=interpreter_search,
@@ -2178,7 +2178,7 @@ def genre_card(genre_id):
 @bp.route('/author/<int:author_id>/view')
 def author_view(author_id):
     author = Author.query.get_or_404(author_id)
-    page = request.args.get('page', 1, type=int)
+    books_page = request.args.get('books_page', 1, type=int)
     book_id = request.args.get('book_id', type=int)
     # Получаем параметры для возврата
     return_to = request.args.get('return_to')
@@ -2192,7 +2192,7 @@ def author_view(author_id):
     books_query = Book.query.join(book_authors).filter(
         book_authors.c.id_author == author_id).order_by(Book.name.asc())
     pagination = books_query.paginate(
-        page=page,
+        page=books_page,
         per_page=Config.ITEMS_PER_PAGE_BOOK,
         error_out=False
     )
@@ -2203,7 +2203,7 @@ def author_view(author_id):
                            pagination=pagination,
                            book_id=book_id,
                            return_to=return_to,
-                           page=page,
+                           books_page=books_page,
                            search=search,
                            author_search=author_search,
                            interpreter_search=interpreter_search,

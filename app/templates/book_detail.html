@@ -269,24 +269,24 @@ content %}
                     </div>
                     {% endif %}
                   </div>
-                  <div>
-                    <strong class="text-white fs-5">{{ author.fio }}</strong>
-                    <br />
-                    <small class="text-white-50">
-                      <a href="{{ url_for('main.author_view', 
-                                 author_id=author.id,
-                                 book_id=book.id,
-                                 return_to='book_detail',
-                                 page=return_page,
-                                 search=search,
-                                 author_search=author_search,
-                                 interpreter_search=interpreter_search,
-                                 genre_search=genre_search,
-                                 return_page=return_page) }}"
-                     class="text-light text-decoration-none">
-                     <i class="bi bi-eye"></i> Просмотр
-                     </a> 
-                    </small>
+                 <div>
+                     <strong class="text-white fs-5">{{ author.fio }}</strong>
+                     <br />
+                     <small class="text-white-50">
+                     <a href="{{ url_for('main.author_view', 
+                              author_id=author.id,
+                              book_id=book.id,
+                              return_to='book_detail',
+                              books_page=1,                    
+                              return_page=return_page,         
+                              search=search,
+                              author_search=author_search,
+                              interpreter_search=interpreter_search,
+                              genre_search=genre_search) }}"
+                        class="text-light text-decoration-none">
+                        <i class="bi bi-eye"></i> Просмотр
+                       </a> 
+                       </small>
                   </div>
                 </div>
               </div>
@@ -355,15 +355,15 @@ content %}
                     <small class="text-white-50">
                       <a
                         href="{{ url_for('main.interpreter_view', 
-                                 interpreter_id=interpreter.id,
-                                 book_id=book.id,
-                                 return_to='book_detail',
-                                 page=return_page,
-                                 search=search,
-                                 author_search=author_search,
-                                 interpreter_search=interpreter_search,
-                                 genre_search=genre_search,
-                                 return_page=return_page) }}"
+                              interpreter_id=interpreter.id,
+                              book_id=book.id,
+                              return_to='book_detail',
+                              books_page=1,                    
+                              return_page=return_page,         
+                              search=search,
+                              author_search=author_search,
+                              interpreter_search=interpreter_search,
+                              genre_search=genre_search) }}"
                         class="text-light text-decoration-none"
                       >
                         <i class="bi bi-eye"></i> Просмотр
