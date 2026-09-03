@@ -267,7 +267,8 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_view', author_id=author.id, 
+                      href="{{ url_for('main.author_view', 
+                              author_id=author.id, 
                                page=1,
                                book_id=book_id,
                                search=search,
@@ -284,7 +285,8 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_view', author_id=author.id, 
+                      href="{{ url_for('main.author_view', 
+                              author_id=author.id, 
                                page=pagination.prev_num,
                                book_id=book_id,
                                search=search,
@@ -310,7 +312,8 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_view', author_id=author.id, 
+                      href="{{ url_for('main.author_view', 
+                               author_id=author.id, 
                                page=p,
                                book_id=book_id,
                                search=search,
@@ -333,7 +336,8 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_view', author_id=author.id, 
+                      href="{{ url_for('main.author_view', 
+                              author_id=author.id, 
                               page=pagination.next_num,
                                book_id=book_id,
                                search=search,
@@ -350,7 +354,8 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_view', author_id=author.id, 
+                      href="{{ url_for('main.author_view', 
+                               author_id=author.id, 
                                page=pagination.pages,
                                book_id=book_id,
                                search=search,
@@ -565,7 +570,6 @@ content %}
   .transparent-comment::-webkit-scrollbar-thumb:hover {
     background: #e6b800;
   }
-
   /* 6. ПРОЗРАЧНЫЙ АЛЕРТ */
   .transparent-alert {
     background-color: rgba(13, 202, 240, 0.15) !important;
@@ -671,34 +675,6 @@ content %}
     .nav-tabs .nav-link i {
       margin-right: 4px;
     }
-  }
-  /* 12. СТИЛЬ ДЛЯ ЯЧЕЙКИ С КОММЕНТАРИЕМ */
-  .comment-cell {
-    max-height: 300px; /* Ограничиваем максимальную высоту */
-    overflow-y: auto; /* Включаем вертикальную прокрутку */
-    white-space: pre-wrap; /* Сохраняем переносы строк и пробелы */
-    word-wrap: break-word; /* Переносим длинные слова */
-    padding-right: 10px; /* Отступ справа для удобства чтения */
-    display: block; /* <-- ЭТО КЛЮЧЕВОЕ СВОЙСТВО */
-  }
-
-  /* Стилизация полосы прокрутки (опционально, для красоты) */
-  .comment-cell::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .comment-cell::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 3px;
-  }
-
-  .comment-cell::-webkit-scrollbar-thumb {
-    background: var(--main-color);
-    border-radius: 3px;
-  }
-
-  .comment-cell::-webkit-scrollbar-thumb:hover {
-    background: #e6b800;
   }
 </style>
 {% endblock %}

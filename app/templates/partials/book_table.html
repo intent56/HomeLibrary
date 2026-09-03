@@ -63,7 +63,16 @@
                     <td>
                         {% if book.interpreter_books %}
                         {% for interpreter in book.interpreter_books %}
-                        <a href="{{ url_for('main.interpreter_view', interpreter_id=interpreter.id, book_id=book.id) }}"
+                        <a href="{{ url_for('main.interpreter_view', 
+                                 interpreter_id=interpreter.id, 
+                                 book_id=book.id,
+                                 return_to='book_table',
+                                 page=page,
+                                 search=search,
+                                 author_search=author_search,
+                                 interpreter_search=interpreter_search,
+                                 genre_search=genre_search,
+                                 return_page=pagination.page if pagination else 1,) }}"
                             class="badge mb-1 d-block text-decoration-none" style="font-size: 0.85rem; cursor: pointer;"
                             title="Просмотр карточки переводчика">
                             <i class="bi bi-translate"></i> {{ interpreter.fio }}

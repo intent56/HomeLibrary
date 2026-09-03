@@ -1919,6 +1919,7 @@ def interpreter_view(interpreter_id):
     author_search = request.args.get('author_search', '')
     interpreter_search = request.args.get('interpreter_search', '')
     genre_search = request.args.get('genre_search', '')
+    return_page = request.args.get('return_page', 1, type=int)
 
     # Получаем книги переводчика с пагинацией
     books_query = Book.query.join(book_interpreters).filter(
@@ -1939,7 +1940,8 @@ def interpreter_view(interpreter_id):
                            search=search,
                            author_search=author_search,
                            interpreter_search=interpreter_search,
-                           genre_search=genre_search)
+                           genre_search=genre_search,
+                           return_page=return_page)
 
 
 @bp.route('/format/<int:format_id>/edit', methods=['GET', 'POST'])
