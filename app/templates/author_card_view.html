@@ -9,19 +9,37 @@ content %}
           <i class="bi bi-person-badge"></i> Карточка автора
         </h2>
       </div>
+
       <div>
+        {% if return_to == 'book_detail' and book_id %}
         <a
           href="{{ url_for('main.book_detail', 
                      book_id=book_id,
-                     page=page,
+                     page=return_page,
                      search=search,
                      author_search=author_search,
                      interpreter_search=interpreter_search,
-                     genre_search=genre_search) }}"
+                     genre_search=genre_search,
+                     return_page=return_page) }}"
           class="btn btn-outline-light d-flex align-items-center"
         >
           <i class="bi bi-arrow-left"></i> Назад к книге
         </a>
+        {% else %}
+        <a
+          href="{{ url_for('main.book_list',
+                               page=return_page,
+                               search=search,
+                               author_search=author_search,
+                               interpreter_search=interpreter_search,
+                               genre_search=genre_search,
+                               return_page=return_page          
+          ) }}"
+          class="btn btn-outline-light"
+        >
+          <i class="bi bi-arrow-left"></i> Назад к списку книг
+        </a>
+        {% endif %}
       </div>
     </div>
 
@@ -165,8 +183,8 @@ content %}
                   <tr>
                     <th style="width: 10%">Обложка</th>
                     <th style="width: 45%">Название</th>
-                    <th style="width: 20%">Год</th>
-                    <th style="width: 25%">Действия</th>
+                    <th style="width: 10%">Год</th>
+                    <th style="width: 35%">Издатель</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -210,31 +228,25 @@ content %}
                     </td>
                     <td>
                       <strong class="text-white">{{ book.name }}</strong>
-                      {% if book.fullname %}
-                      <br /><small class="text-white-50"
-                        >{{ book.fullname|truncate(50) }}</small
-                      >
-                      {% endif %}
                     </td>
                     <td>
                       {% if book.year_edition %}
-                      <span class="badge bg-secondary bg-opacity-75 text-white"
-                        >{{ book.year_edition }}</span
+                      <strong class="text-white"
+                        >{{ book.year_edition }}</strong
                       >
                       {% else %}
-                      <span class="text-white-50">-</span>
+                      <strong class="text-white">-</strong>
                       {% endif %}
                     </td>
                     <td>
-                      <div class="btn-group btn-group-sm" role="group">
-                        <a
-                          href="{{ url_for('main.book_detail', book_id=book.id) }}"
-                          class="btn btn-outline-light"
-                          title="Просмотр книги"
-                        >
-                          <i class="bi bi-eye"></i>
-                        </a>
-                      </div>
+                      {% if book.publisher_books %} {% for publisher in
+                      book.publisher_books %}
+                      <strong class="text-white">{{ publisher.name }}</strong>
+                      {% endfor %} {% else %}
+                      <span class="text-light-50"
+                        ><i class="bi bi-tag"></i> Нет издателя</span
+                      >
+                      {% endif %}
                     </td>
                   </tr>
                   {% endfor %}
@@ -255,7 +267,14 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_view', author_id=author.id, page=1) }}"
+                      href="{{ url_for('main.author_view', author_id=author.id, 
+                               page=1,
+                               book_id=book_id,
+                               search=search,
+                               author_search=author_search,
+                               interpreter_search=interpreter_search,
+                               genre_search=genre_search,
+                               return_page=return_page) }}"
                     >
                       <i class="bi bi-chevron-double-left"></i>
                     </a>
@@ -265,7 +284,14 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_view', author_id=author.id, page=pagination.prev_num) }}"
+                      href="{{ url_for('main.author_view', author_id=author.id, 
+                               page=pagination.prev_num,
+                               book_id=book_id,
+                               search=search,
+                               author_search=author_search,
+                               interpreter_search=interpreter_search,
+                               genre_search=genre_search,
+                               return_page=return_page) }}"
                     >
                       <i class="bi bi-chevron-left"></i>
                     </a>
@@ -284,7 +310,14 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_view', author_id=author.id, page=p) }}"
+                      href="{{ url_for('main.author_view', author_id=author.id, 
+                               page=p,
+                               book_id=book_id,
+                               search=search,
+                               author_search=author_search,
+                               interpreter_search=interpreter_search,
+                               genre_search=genre_search,
+                               return_page=return_page) }}"
                     >
                       {{ p }}
                     </a>
@@ -300,7 +333,14 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_view', author_id=author.id, page=pagination.next_num) }}"
+                      href="{{ url_for('main.author_view', author_id=author.id, 
+                              page=pagination.next_num,
+                               book_id=book_id,
+                               search=search,
+                               author_search=author_search,
+                               interpreter_search=interpreter_search,
+                               genre_search=genre_search,
+                               return_page=return_page) }}"
                     >
                       <i class="bi bi-chevron-right"></i>
                     </a>
@@ -310,7 +350,14 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_view', author_id=author.id, page=pagination.pages) }}"
+                      href="{{ url_for('main.author_view', author_id=author.id, 
+                               page=pagination.pages,
+                               book_id=book_id,
+                               search=search,
+                               author_search=author_search,
+                               interpreter_search=interpreter_search,
+                               genre_search=genre_search,
+                               return_page=return_page) }}"
                     >
                       <i class="bi bi-chevron-double-right"></i>
                     </a>
@@ -471,6 +518,9 @@ content %}
     background-color: rgba(255, 255, 255, 0.05) !important;
     border-left: 4px solid rgba(255, 255, 255, 0.3) !important;
     color: rgba(255, 255, 255, 0.8) !important;
+    max-height: 300px; /* Ограничиваем максимальную высоту */
+    overflow-y: auto; /* Включаем вертикальную прокрутку */
+    display: block; /* <-- ЭТО КЛЮЧЕВОЕ СВОЙСТВО */
   }
   .transparent-comment a {
     color: #a8d8ff !important;
@@ -496,6 +546,24 @@ content %}
   }
   .transparent-comment table th {
     background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  /* Стилизация полосы прокрутки (опционально, для красоты) */
+  .transparent-comment::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .transparent-comment::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+
+  .transparent-comment::-webkit-scrollbar-thumb {
+    background: var(--main-color);
+    border-radius: 3px;
+  }
+
+  .transparent-comment::-webkit-scrollbar-thumb:hover {
+    background: #e6b800;
   }
 
   /* 6. ПРОЗРАЧНЫЙ АЛЕРТ */
@@ -603,6 +671,34 @@ content %}
     .nav-tabs .nav-link i {
       margin-right: 4px;
     }
+  }
+  /* 12. СТИЛЬ ДЛЯ ЯЧЕЙКИ С КОММЕНТАРИЕМ */
+  .comment-cell {
+    max-height: 300px; /* Ограничиваем максимальную высоту */
+    overflow-y: auto; /* Включаем вертикальную прокрутку */
+    white-space: pre-wrap; /* Сохраняем переносы строк и пробелы */
+    word-wrap: break-word; /* Переносим длинные слова */
+    padding-right: 10px; /* Отступ справа для удобства чтения */
+    display: block; /* <-- ЭТО КЛЮЧЕВОЕ СВОЙСТВО */
+  }
+
+  /* Стилизация полосы прокрутки (опционально, для красоты) */
+  .comment-cell::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .comment-cell::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+
+  .comment-cell::-webkit-scrollbar-thumb {
+    background: var(--main-color);
+    border-radius: 3px;
+  }
+
+  .comment-cell::-webkit-scrollbar-thumb:hover {
+    background: #e6b800;
   }
 </style>
 {% endblock %}

@@ -1536,6 +1536,7 @@ def book_detail(book_id):
     author_search = request.args.get('author_search', '')
     interpreter_search = request.args.get('interpreter_search', '')
     genre_search = request.args.get('genre_search', '')
+    return_page = request.args.get('return_page', page, type=int)
 
     return render_template('book_detail.html',
                            book=book,
@@ -1543,7 +1544,8 @@ def book_detail(book_id):
                            search=search,
                            author_search=author_search,
                            interpreter_search=interpreter_search,
-                           genre_search=genre_search)
+                           genre_search=genre_search,
+                           return_page=return_page)
 
 
 @bp.route('/covers')
@@ -1912,6 +1914,7 @@ def interpreter_view(interpreter_id):
     book_id = request.args.get('book_id', type=int)
 
     # Получаем параметры для возврата
+    return_to = request.args.get('return_to')
     search = request.args.get('search', '')
     author_search = request.args.get('author_search', '')
     interpreter_search = request.args.get('interpreter_search', '')
@@ -1931,6 +1934,7 @@ def interpreter_view(interpreter_id):
                            books=pagination.items,
                            pagination=pagination,
                            book_id=book_id,
+                           return_to=return_to,
                            page=page,
                            search=search,
                            author_search=author_search,
@@ -2175,10 +2179,12 @@ def author_view(author_id):
     page = request.args.get('page', 1, type=int)
     book_id = request.args.get('book_id', type=int)
     # Получаем параметры для возврата
+    return_to = request.args.get('return_to')
     search = request.args.get('search', '')
     author_search = request.args.get('author_search', '')
     interpreter_search = request.args.get('interpreter_search', '')
     genre_search = request.args.get('genre_search', '')
+    return_page = request.args.get('return_page', 1, type=int)
 
     # Получаем книги автора с пагинацией
     books_query = Book.query.join(book_authors).filter(
@@ -2194,11 +2200,13 @@ def author_view(author_id):
                            books=pagination.items,
                            pagination=pagination,
                            book_id=book_id,
+                           return_to=return_to,
                            page=page,
                            search=search,
                            author_search=author_search,
                            interpreter_search=interpreter_search,
-                           genre_search=genre_search)
+                           genre_search=genre_search,
+                           return_page=return_page)
 
 
 @bp.route('/publisher/<int:publisher_id>/view')

@@ -10,7 +10,12 @@ content %}
       </div>
       <div  class="d-flex gap-2">
         <a
-          href="{{ url_for('main.book_list', page=page, search=search, author_search=author_search, interpreter_search=interpreter_search, genre_search=genre_search) }}"
+          href="{{ url_for('main.book_list', 
+                   page=return_page, 
+                   search=search, 
+                   author_search=author_search, 
+                   interpreter_search=interpreter_search, 
+                   genre_search=genre_search) }}"
           class="btn btn-outline-light"
         >
           <i class="bi bi-arrow-left"></i> Назад к списку
@@ -271,11 +276,13 @@ content %}
                       <a href="{{ url_for('main.author_view', 
                                  author_id=author.id,
                                  book_id=book.id,
-                                 page=page,
+                                 return_to='book_detail',
+                                 page=return_page,
                                  search=search,
                                  author_search=author_search,
                                  interpreter_search=interpreter_search,
-                                 genre_search=genre_search) }}"
+                                 genre_search=genre_search,
+                                 return_page=return_page) }}"
                      class="text-light text-decoration-none">
                      <i class="bi bi-eye"></i> Просмотр
                      </a> 
