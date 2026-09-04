@@ -232,11 +232,6 @@ content %}
                     </td>
                     <td>
                       <strong class="text-white">{{ book.name }}</strong>
-                      {% if book.fullname %}
-                      <br /><small class="text-white-50"
-                        >{{ book.fullname|truncate(50) }}</small
-                      >
-                      {% endif %}
                     </td>
                     <td>
                       {% if book.year_edition %}
