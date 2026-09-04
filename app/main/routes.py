@@ -1944,6 +1944,151 @@ def interpreter_view(interpreter_id):
                            return_page=return_page)
 
 
+@bp.route('/genre/<int:genre_id>/view')
+def genre_view(genre_id):
+    genre = Genre.query.get_or_404(genre_id)
+    books_page = request.args.get('books_page', 1, type=int)
+    book_id = request.args.get('book_id', type=int)
+
+    # Получаем параметры для возврата
+    return_to = request.args.get('return_to')
+    search = request.args.get('search', '')
+    author_search = request.args.get('author_search', '')
+    interpreter_search = request.args.get('interpreter_search', '')
+    genre_search = request.args.get('genre_search', '')
+    return_page = request.args.get('return_page', 1, type=int)
+
+    # Получаем книги данного жанра с пагинацией
+    books_query = Book.query.join(book_genres).filter(
+        book_genres.c.id_genre == genre_id).order_by(Book.name.asc())
+    pagination = books_query.paginate(
+        page=books_page,
+        per_page=Config.ITEMS_PER_PAGE_BOOK,
+        error_out=False
+    )
+
+    return render_template('genre_card_view.html',
+                           genre=genre,
+                           books=pagination.items,
+                           pagination=pagination,
+                           book_id=book_id,
+                           return_to=return_to,
+                           books_page=books_page,
+                           search=search,
+                           author_search=author_search,
+                           interpreter_search=interpreter_search,
+                           genre_search=genre_search,
+                           return_page=return_page)
+
+
+@bp.route('/language/<int:language_id>/view')
+def language_view(language_id):
+    language = Language.query.get_or_404(language_id)
+    books_page = request.args.get('books_page', 1, type=int)
+    book_id = request.args.get('book_id', type=int)
+    # Получаем параметры для возврата
+    return_to = request.args.get('return_to')
+    search = request.args.get('search', '')
+    author_search = request.args.get('author_search', '')
+    interpreter_search = request.args.get('interpreter_search', '')
+    genre_search = request.args.get('genre_search', '')
+    return_page = request.args.get('return_page', 1, type=int)
+
+    # Получаем книги издателя с пагинацией
+    books_query = Book.query.filter(
+        Book.id_language == language_id).order_by(Book.name.asc())
+    pagination = books_query.paginate(
+        page=books_page,
+        per_page=Config.ITEMS_PER_PAGE_BOOK,
+        error_out=False
+    )
+
+    return render_template('publisher_card_view.html',
+                           language=language,
+                           books=pagination.items,
+                           pagination=pagination,
+                           book_id=book_id,
+                           return_to=return_to,
+                           books_page=books_page,
+                           search=search,
+                           author_search=author_search,
+                           interpreter_search=interpreter_search,
+                           genre_search=genre_search,
+                           return_page=return_page)
+
+
+@bp.route('/cover/<int:cover_id>/view')
+def cover_view(cover_id):
+    cover = Language.query.get_or_404(cover_id)
+    books_page = request.args.get('books_page', 1, type=int)
+    book_id = request.args.get('book_id', type=int)
+    # Получаем параметры для возврата
+    return_to = request.args.get('return_to')
+    search = request.args.get('search', '')
+    author_search = request.args.get('author_search', '')
+    interpreter_search = request.args.get('interpreter_search', '')
+    genre_search = request.args.get('genre_search', '')
+    return_page = request.args.get('return_page', 1, type=int)
+
+    # Получаем книги издателя с пагинацией
+    books_query = Book.query.filter(
+        Book.id_cover == cover_id).order_by(Book.name.asc())
+    pagination = books_query.paginate(
+        page=books_page,
+        per_page=Config.ITEMS_PER_PAGE_BOOK,
+        error_out=False
+    )
+
+    return render_template('cover_card_view.html',
+                           cover=cover,
+                           books=pagination.items,
+                           pagination=pagination,
+                           book_id=book_id,
+                           return_to=return_to,
+                           books_page=books_page,
+                           search=search,
+                           author_search=author_search,
+                           interpreter_search=interpreter_search,
+                           genre_search=genre_search,
+                           return_page=return_page)
+
+
+@bp.route('/format/<int:format_id>/view')
+def format_view(format_id):
+    format = Format.query.get_or_404(format_id)
+    books_page = request.args.get('books_page', 1, type=int)
+    book_id = request.args.get('book_id', type=int)
+    # Получаем параметры для возврата
+    return_to = request.args.get('return_to')
+    search = request.args.get('search', '')
+    author_search = request.args.get('author_search', '')
+    interpreter_search = request.args.get('interpreter_search', '')
+    genre_search = request.args.get('genre_search', '')
+    return_page = request.args.get('return_page', 1, type=int)
+
+    # Получаем книги издателя с пагинацией
+    books_query = Book.query.filter(
+        Book.id_format == format_id).order_by(Book.name.asc())
+    pagination = books_query.paginate(
+        page=books_page,
+        per_page=Config.ITEMS_PER_PAGE_BOOK,
+        error_out=False
+    )
+
+    return render_template('format_card_view.html',
+                           format=format,
+                           books=pagination.items,
+                           pagination=pagination,
+                           book_id=book_id,
+                           return_to=return_to,
+                           books_page=books_page,
+                           search=search,
+                           author_search=author_search,
+                           interpreter_search=interpreter_search,
+                           genre_search=genre_search,
+                           return_page=return_page)
+
+
 @bp.route('/format/<int:format_id>/edit', methods=['GET', 'POST'])
 def edit_format(format_id):
     format_item = Format.query.get_or_404(format_id)
@@ -2214,13 +2359,21 @@ def author_view(author_id):
 @bp.route('/publisher/<int:publisher_id>/view')
 def publisher_view(publisher_id):
     publisher = Publisher.query.get_or_404(publisher_id)
-    page = request.args.get('page', 1, type=int)
+    books_page = request.args.get('books_page', 1, type=int)
+    book_id = request.args.get('book_id', type=int)
+    # Получаем параметры для возврата
+    return_to = request.args.get('return_to')
+    search = request.args.get('search', '')
+    author_search = request.args.get('author_search', '')
+    interpreter_search = request.args.get('interpreter_search', '')
+    genre_search = request.args.get('genre_search', '')
+    return_page = request.args.get('return_page', 1, type=int)
 
     # Получаем книги издателя с пагинацией
     books_query = Book.query.join(book_publishers).filter(
         book_publishers.c.id_publisher == publisher_id).order_by(Book.name.asc())
     pagination = books_query.paginate(
-        page=page,
+        page=books_page,
         per_page=Config.ITEMS_PER_PAGE_BOOK,
         error_out=False
     )
@@ -2228,7 +2381,15 @@ def publisher_view(publisher_id):
     return render_template('publisher_card_view.html',
                            publisher=publisher,
                            books=pagination.items,
-                           pagination=pagination)
+                           pagination=pagination,
+                           book_id=book_id,
+                           return_to=return_to,
+                           books_page=books_page,
+                           search=search,
+                           author_search=author_search,
+                           interpreter_search=interpreter_search,
+                           genre_search=genre_search,
+                           return_page=return_page)
 
 
 @bp.route('/sources')
