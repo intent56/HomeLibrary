@@ -3,15 +3,13 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 from sqlalchemy import and_, or_
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError
+from sqlalchemy.exc import SQLAlchemyError
 import logging
 import urllib.parse
 import base64
 from flask import (
     render_template,
     url_for,
-    send_from_directory,
-    send_file,
     current_app,
     request,
     redirect,
