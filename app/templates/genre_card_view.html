@@ -474,9 +474,9 @@ content %}
     background-color: rgba(255, 255, 255, 0.05) !important;
     border-left: 4px solid rgba(255, 255, 255, 0.3) !important;
     color: rgba(255, 255, 255, 0.8) !important;
-    max-height: 300px;
-    overflow-y: auto;
-    display: block;
+    max-height: 300px; /* Ограничиваем максимальную высоту */
+    overflow-y: auto; /* Включаем вертикальную прокрутку */
+    display: block; /* <-- ЭТО КЛЮЧЕВОЕ СВОЙСТВО */
   }
   .transparent-comment a {
     color: #a8d8ff !important;
@@ -503,17 +503,21 @@ content %}
   .transparent-comment table th {
     background-color: rgba(255, 255, 255, 0.1) !important;
   }
+  /* Стилизация полосы прокрутки (опционально, для красоты) */
   .transparent-comment::-webkit-scrollbar {
     width: 6px;
   }
+
   .transparent-comment::-webkit-scrollbar-track {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 3px;
   }
+
   .transparent-comment::-webkit-scrollbar-thumb {
     background: var(--main-color);
     border-radius: 3px;
   }
+
   .transparent-comment::-webkit-scrollbar-thumb:hover {
     background: #e6b800;
   }
