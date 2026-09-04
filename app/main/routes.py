@@ -3,7 +3,7 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 from sqlalchemy import and_, or_
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 import logging
 import urllib.parse
 import base64
@@ -13,6 +13,8 @@ from flask import (
     current_app,
     request,
     redirect,
+    send_from_directory,
+    send_file,
     flash,
     jsonify,
     session,
