@@ -1548,6 +1548,25 @@ def book_detail(book_id):
                            return_page=return_page)
 
 
+@bp.route('/book/<int:book_id>/view')
+def book_view(book_id):
+    book = Book.query.get_or_404(book_id)
+    # Получаем параметры для возврата
+    id = request.args.get('id', 1, type=int)
+    page1 = request.args.get('page1', 1, type=int)
+    return_search = request.args.get('return_search', '')
+    return_page = request.args.get('return_page', 1, type=int)
+    return_to = request.args.get('return_to', '')
+
+    return render_template('book_detail_view.html',
+                           book=book,
+                           id=id,
+                           page1=page1,
+                           return_search=return_search,
+                           return_page=return_page,
+                           return_to=return_to)
+
+
 @bp.route('/covers')
 def cover_list():
     covers = Cover.query.order_by(Cover.name).all()
@@ -1874,6 +1893,7 @@ def author_card(author_id):
                            author=author,
                            books=pagination.items,
                            pagination=pagination,
+                           page=page,
                            search=search,
                            return_page=return_page,
                            return_search=return_search)

@@ -203,7 +203,13 @@ content %}
                     <td>
                       <div class="btn-group btn-group-sm" role="group">
                         <a
-                          href="{{ url_for('main.book_detail', book_id=book.id) }}"
+                          href="{{ url_for('main.book_view', 
+                                book_id=book.id,
+                                page1=page if page else 1,
+                                id=author.id,
+                                return_search=return_search,
+                                return_page=return_page,
+                                return_to='author_card') }}"
                           class="btn btn-outline-light"
                           title="Просмотр книги"
                         >
@@ -230,7 +236,11 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_card', author_id=author.id, page=1, return_page=return_page, return_search=return_search) }}"
+                      href="{{ url_for('main.author_card', 
+                               author_id=author.id, 
+                               page=1, 
+                               return_page=return_page, 
+                               return_search=return_search) }}"
                     >
                       <i class="bi bi-chevron-double-left"></i>
                     </a>
@@ -240,7 +250,11 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_card', author_id=author.id, page=pagination.prev_num, return_page=return_page, return_search=return_search) }}"
+                      href="{{ url_for('main.author_card', 
+                               author_id=author.id, 
+                               page=pagination.prev_num, 
+                               return_page=return_page, 
+                               return_search=return_search) }}"
                     >
                       <i class="bi bi-chevron-left"></i>
                     </a>
@@ -259,7 +273,11 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_card', author_id=author.id, page=p, return_page=return_page, return_search=return_search) }}"
+                      href="{{ url_for('main.author_card', 
+                               author_id=author.id, 
+                               page=p, 
+                               return_page=return_page, 
+                               return_search=return_search) }}"
                     >
                       {{ p }}
                     </a>
@@ -275,7 +293,11 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_card', author_id=author.id, page=pagination.next_num, return_page=return_page, return_search=return_search) }}"
+                      href="{{ url_for('main.author_card', 
+                                author_id=author.id, 
+                                page=pagination.next_num, 
+                                return_page=return_page, 
+                                return_search=return_search) }}"
                     >
                       <i class="bi bi-chevron-right"></i>
                     </a>
@@ -285,7 +307,11 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_card', author_id=author.id, page=pagination.pages, return_page=return_page, return_search=return_search) }}"
+                      href="{{ url_for('main.author_card', 
+                               author_id=author.id, 
+                               page=pagination.pages, 
+                               return_page=return_page, 
+                               return_search=return_search) }}"
                     >
                       <i class="bi bi-chevron-double-right"></i>
                     </a>
