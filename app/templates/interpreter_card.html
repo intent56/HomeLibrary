@@ -245,18 +245,17 @@ content %}
                     <td>
                       <div class="btn-group btn-group-sm" role="group">
                         <a
-                          href="{{ url_for('main.book_detail', book_id=book.id) }}"
+                          href="{{ url_for('main.book_view', 
+                                book_id=book.id,
+                                page1=page if page else 1,
+                                id=author.id,
+                                return_search=return_search,
+                                return_page=return_page,
+                                return_to='interpreter_card') }}"
                           class="btn btn-outline-light"
                           title="Просмотр книги"
                         >
                           <i class="bi bi-eye"></i>
-                        </a>
-                        <a
-                          href="{{ url_for('main.edit_book', book_id=book.id) }}"
-                          class="btn btn-outline-light"
-                          title="Редактировать книгу"
-                        >
-                          <i class="bi bi-pencil"></i>
                         </a>
                       </div>
                     </td>

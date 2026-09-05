@@ -1922,6 +1922,7 @@ def interpreter_card(interpreter_id):
                            interpreter=interpreter,
                            books=pagination.items,
                            pagination=pagination,
+                           page=page,
                            search=search,
                            return_page=return_page,
                            return_search=return_search)
