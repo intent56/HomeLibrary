@@ -1628,6 +1628,28 @@ def format_list():
                            search=search)
 
 
+@bp.route('/format/<int:format_id>/view')
+def format_view(format_id):
+    format_obj = Format.query.get_or_404(format_id)
+    page = request.args.get('page', 1, type=int)
+    return_page = request.args.get('return_page', 1, type=int)
+
+    # Пагинация для книг этого формата
+    books_query = Book.query.filter_by(
+        id_format=format_obj.id).order_by(Book.name.asc())
+    pagination = books_query.paginate(
+        page=page,
+        per_page=Config.ITEMS_PER_PAGE_BOOK,
+        error_out=False
+    )
+
+    return render_template('format_card_view.html',
+                           format=format_obj,
+                           books=pagination.items,
+                           pagination=pagination,
+                           return_page=return_page)
+
+
 @bp.route('/languages')
 def language_list():
     page = request.args.get('page', 1, type=int)
