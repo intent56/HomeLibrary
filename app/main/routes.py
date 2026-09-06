@@ -1665,6 +1665,34 @@ def language_list():
                            search=search)
 
 
+@bp.route('/language/<int:language_id>/card')
+def language_card(language_id):
+    language = Language.query.get_or_404(language_id)
+    page = request.args.get('page', 1, type=int)
+
+    # Получаем параметры для возврата
+    search = request.args.get('search', '')
+    return_page = request.args.get('return_page', 1, type=int)
+    return_search = request.args.get('return_search', '')
+
+    # Получаем книги на данном языке с пагинацией
+    books_query = Book.query.filter_by(
+        id_language=language_id).order_by(Book.name.asc())
+    pagination = books_query.paginate(
+        page=page,
+        per_page=Config.ITEMS_PER_PAGE_BOOK,
+        error_out=False
+    )
+    return render_template('language_card.html',
+                           language=language,
+                           books=pagination.items,
+                           pagination=pagination,
+                           page=page,
+                           search=search,
+                           return_page=return_page,
+                           return_search=return_search)
+
+
 @bp.route('/language/<int:language_id>/edit', methods=['GET', 'POST'])
 def edit_language(language_id):
     language = Language.query.get_or_404(language_id)
