@@ -24,7 +24,7 @@ content %}
         <a
           href="{{ url_for('main.interpreter_card', 
                      interpreter_id=id,
-                     page=page,
+                     page=page1,
                      return_search=return_search,
                      return_page=return_page) }}"
           class="btn btn-outline-light d-flex align-items-center"
@@ -35,7 +35,7 @@ content %}
         <a
           href="{{ url_for('main.publisher_card', 
                      publisher_id=id,
-                     page=page,
+                     page=page1,
                      return_search=return_search,
                      return_page=return_page) }}"
           class="btn btn-outline-light d-flex align-items-center"
@@ -46,7 +46,7 @@ content %}
         <a
           href="{{ url_for('main.genre_card', 
                      genre_id=id,
-                     page=page,
+                     page=page1,
                      return_search=return_search,
                      return_page=return_page) }}"
           class="btn btn-outline-light d-flex align-items-center"
@@ -57,12 +57,12 @@ content %}
         <a
           href="{{ url_for('main.cover_card', 
                      cover_id=id,
-                     page=page,
+                     page=page1,
                      return_search=return_search,
                      return_page=return_page) }}"
           class="btn btn-outline-light d-flex align-items-center"
         >
-          <i class="bi bi-arrow-left"></i> Назад к жанру
+          <i class="bi bi-arrow-left"></i> Назад к переплету
         </a>
         {% endif %}
       </div>

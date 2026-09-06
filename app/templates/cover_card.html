@@ -517,7 +517,7 @@ content %}
     color: #0dcaf0 !important;
   }
 
-  /* 8. ПАГИНАЦИЯ */
+  /* 8. ПАГИНАЦИЯ - ИСПРАВЛЕННЫЙ СТИЛЬ */
   .pagination-container {
     background-color: rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(8px);
@@ -526,7 +526,9 @@ content %}
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  #transparentPagination .page-link {
+  #transparentPagination .page-link,
+  #transparentPagination .page-link:focus,
+  #transparentPagination .page-link:visited {
     background-color: transparent !important;
     background: transparent !important;
     border-color: rgba(255, 255, 255, 0.15) !important;
@@ -534,17 +536,24 @@ content %}
     transition: all 0.3s ease;
   }
 
-  #transparentPagination .page-link:hover {
+  #transparentPagination .page-item:not(.active) .page-link:hover {
     background-color: rgba(255, 255, 255, 0.1) !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
   }
 
-  #transparentPagination .page-item.active .page-link {
-    background-color: rgba(13, 110, 253, 0.4) !important;
-    border-color: rgba(13, 110, 253, 0.6) !important;
+  /* АКТИВНАЯ СТРАНИЦА - ЗОЛОТОЙ ФОН, ЧЕРНЫЙ ТЕКСТ */
+  #transparentPagination .page-item.active .page-link,
+  #transparentPagination .page-item.active .page-link:hover,
+  #transparentPagination .page-item.active .page-link:focus {
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
+    color: #000000 !important;
+    box-shadow: none !important;
   }
 
-  #transparentPagination .page-item.disabled .page-link {
+  #transparentPagination .page-item.disabled .page-link,
+  #transparentPagination .page-item.disabled .page-link:hover {
     background-color: transparent !important;
     border-color: rgba(255, 255, 255, 0.05) !important;
     color: rgba(255, 255, 255, 0.2) !important;
@@ -597,6 +606,7 @@ content %}
       margin-right: 4px;
     }
   }
+
   /* Стили для кнопок "Редактировать" */
   .btn-edit {
     background-color: transparent !important;
@@ -639,17 +649,17 @@ content %}
     padding: 0.75rem 1.5rem;
     font-size: 1.1rem;
   }
+
   /* 12. СТИЛЬ ДЛЯ ЯЧЕЙКИ С КОММЕНТАРИЕМ */
   .comment-cell {
-    max-height: 300px; /* Ограничиваем максимальную высоту */
-    overflow-y: auto; /* Включаем вертикальную прокрутку */
-    white-space: pre-wrap; /* Сохраняем переносы строк и пробелы */
-    word-wrap: break-word; /* Переносим длинные слова */
-    padding-right: 10px; /* Отступ справа для удобства чтения */
-    display: block; /* <-- ЭТО КЛЮЧЕВОЕ СВОЙСТВО */
+    max-height: 300px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    padding-right: 10px;
+    display: block;
   }
 
-  /* Стилизация полосы прокрутки (опционально, для красоты) */
   .comment-cell::-webkit-scrollbar {
     width: 6px;
   }
@@ -667,6 +677,7 @@ content %}
   .comment-cell::-webkit-scrollbar-thumb:hover {
     background: #e6b800;
   }
+
   /* 13. ПЛАВНОЕ УВЕЛИЧЕНИЕ ОБЛОЖЕК ПРИ НАВЕДЕНИИ */
   .book-cover-thumbnail {
     transition:
