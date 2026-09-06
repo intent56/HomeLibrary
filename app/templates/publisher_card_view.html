@@ -24,6 +24,16 @@ content %}
         >
           <i class="bi bi-arrow-left"></i> Назад к книге
         </a>
+        {% elif return_to == 'publisher_list' %}
+        <a
+          href="{{ url_for('main.publisher_list', 
+                     publisher_id=publisher.id,
+                     page=return_page,
+                     search=search) }}"
+          class="btn btn-outline-light d-flex align-items-center"
+        >
+          <i class="bi bi-arrow-left"></i> Назад к списку издателей
+        </a>
         {% else %}
         <a
           href="{{ url_for('main.book_list',
@@ -244,7 +254,8 @@ content %}
                                author_search=author_search,
                                interpreter_search=interpreter_search,
                                genre_search=genre_search,
-                               return_page=return_page) }}"
+                               return_page=return_page,
+                               return_to=return_to) }}"
                     >
                       <i class="bi bi-chevron-double-left"></i>
                     </a>
@@ -262,7 +273,8 @@ content %}
                                author_search=author_search,
                                interpreter_search=interpreter_search,
                                genre_search=genre_search,
-                               return_page=return_page) }}"
+                               return_page=return_page,
+                               return_to=return_to) }}"
                     >
                       <i class="bi bi-chevron-left"></i>
                     </a>
@@ -289,7 +301,8 @@ content %}
                                author_search=author_search,
                                interpreter_search=interpreter_search,
                                genre_search=genre_search,
-                               return_page=return_page) }}"
+                               return_page=return_page,
+                               return_to=return_to) }}"
                     >
                       {{ p }}
                     </a>
@@ -313,7 +326,8 @@ content %}
                                author_search=author_search,
                                interpreter_search=interpreter_search,
                                genre_search=genre_search,
-                               return_page=return_page) }}"
+                               return_page=return_page,
+                               return_to=return_to) }}"
                     >
                       <i class="bi bi-chevron-right"></i>
                     </a>
@@ -331,7 +345,8 @@ content %}
                                author_search=author_search,
                                interpreter_search=interpreter_search,
                                genre_search=genre_search,
-                               return_page=return_page) }}"
+                               return_page=return_page,
+                               return_to=return_to) }}"
                     >
                       <i class="bi bi-chevron-double-right"></i>
                     </a>

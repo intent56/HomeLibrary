@@ -34,14 +34,22 @@
             </div>
             <div class="card-footer bg-transparent border-top-0 mt-auto">
                 <div class="d-flex justify-content-center gap-2">
+                    <a href="{{ url_for('main.publisher_view', 
+                                         publisher_id=publisher.id, 
+                                         return_page=pagination.page if pagination else 1,
+                                         return_search=search,
+                                         return_to='publisher_list') }}" 
+                       class="btn btn-outline-light btn-sm" title="Просмотр карточки издателя">
+                        <i class="bi bi-eye"></i>
+                    </a>
                     <a href="{{ url_for('main.edit_publisher', 
                                   publisher_id=publisher.id, 
                                   return_page=pagination.page if pagination else 1,
                                   return_search=search) }}" 
-                       class="btn btn-outline-light btn-sm" title="Редактировать">
+                       class="btn btn-outline-light btn-sm" title="Редактировать издателя">
                         <i class="bi bi-pencil"></i>
                     </a>
-                    <button type="button" class="btn btn-outline-light btn-sm" title="Удалить"
+                    <button type="button" class="btn btn-outline-light btn-sm" title="Удалить издателя"
                             data-bs-toggle="modal" data-bs-target="#deletePublisherModal{{ publisher.id }}">
                         <i class="bi bi-trash"></i>
                     </button>

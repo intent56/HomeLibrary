@@ -11,19 +11,11 @@ content %}
       <div class="d-flex gap-2">
         <a
           href="{{ url_for('main.language_list', 
-                    page=return_page) }}"
+                    page=return_page,
+                    search=search) }}"
           class="btn btn-outline-light"
         >
-          <i class="bi bi-arrow-left"></i> Назад к списку
-        </a>
-        <!-- КНОПКА "РЕДАКТИРОВАТЬ" -->
-        <a
-          href="{{ url_for('main.edit_language', 
-                    language_id=language.id,
-                    return_page=return_page) }}"
-          class="btn btn-edit"
-        >
-          <i class="bi bi-pencil"></i> Редактировать
+          <i class="bi bi-arrow-left"></i> Назад к списку языков
         </a>
       </div>
     </div>
