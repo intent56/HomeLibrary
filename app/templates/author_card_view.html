@@ -24,6 +24,16 @@ content %}
         >
           <i class="bi bi-arrow-left"></i> Назад к книге
         </a>
+        {% elif return_to == 'author_list' %}
+        <a
+          href="{{ url_for('main.author_list', 
+                     author_id=author.id,
+                     page=return_page,
+                     search=search) }}"
+          class="btn btn-outline-light d-flex align-items-center"
+        >
+          <i class="bi bi-arrow-left"></i> Назад к списку авторов
+        </a>
         {% else %}
         <a
           href="{{ url_for('main.book_list',
@@ -272,7 +282,8 @@ content %}
                                author_search=author_search,
                                interpreter_search=interpreter_search,
                                genre_search=genre_search,
-                               return_page=return_page) }}"
+                               return_page=return_page,
+                               return_to=return_to) }}"
                     >
                       <i class="bi bi-chevron-double-left"></i>
                     </a>
@@ -290,7 +301,8 @@ content %}
                                author_search=author_search,
                                interpreter_search=interpreter_search,
                                genre_search=genre_search,
-                               return_page=return_page) }}"
+                               return_page=return_page,
+                               return_to=return_to) }}"
                     >
                       <i class="bi bi-chevron-left"></i>
                     </a>
@@ -317,7 +329,8 @@ content %}
                                author_search=author_search,
                                interpreter_search=interpreter_search,
                                genre_search=genre_search,
-                               return_page=return_page) }}"
+                               return_page=return_page,
+                               return_to=return_to) }}"
                     >
                       {{ p }}
                     </a>
@@ -341,7 +354,8 @@ content %}
                                author_search=author_search,
                                interpreter_search=interpreter_search,
                                genre_search=genre_search,
-                               return_page=return_page) }}"
+                               return_page=return_page,
+                               return_to=return_to) }}"
                     >
                       <i class="bi bi-chevron-right"></i>
                     </a>
@@ -359,7 +373,8 @@ content %}
                                author_search=author_search,
                                interpreter_search=interpreter_search,
                                genre_search=genre_search,
-                               return_page=return_page) }}"
+                               return_page=return_page,
+                               return_to=return_to) }}"
                     >
                       <i class="bi bi-chevron-double-right"></i>
                     </a>
@@ -604,7 +619,7 @@ content %}
     color: #ffffff !important;
   }
 
-  /* 8. ПАГИНАЦИЯ */
+  /* 8. ПАГИНАЦИЯ - ИСПРАВЛЕННЫЙ СТИЛЬ */
   .pagination-container {
     background-color: rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(8px);
@@ -612,27 +627,39 @@ content %}
     padding: 0.75rem 1rem;
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
-  #transparentPagination .page-link {
+
+  #transparentPagination .page-link,
+  #transparentPagination .page-link:focus,
+  #transparentPagination .page-link:visited {
     background-color: transparent !important;
     background: transparent !important;
     border-color: rgba(255, 255, 255, 0.15) !important;
     color: #ffffff !important;
     transition: all 0.3s ease;
   }
-  #transparentPagination .page-link:hover {
+
+  #transparentPagination .page-item:not(.active) .page-link:hover {
     background-color: rgba(255, 255, 255, 0.1) !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
   }
-  #transparentPagination .page-item.active .page-link {
-    background-color: rgba(13, 110, 253, 0.4) !important;
-    border-color: rgba(13, 110, 253, 0.6) !important;
+
+  /* АКТИВНАЯ СТРАНИЦА - ЗОЛОТОЙ ФОН, ЧЕРНЫЙ ТЕКСТ */
+  #transparentPagination .page-item.active .page-link,
+  #transparentPagination .page-item.active .page-link:hover,
+  #transparentPagination .page-item.active .page-link:focus {
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
+    color: #000000 !important;
+    box-shadow: none !important;
   }
-  #transparentPagination .page-item.disabled .page-link {
+
+  #transparentPagination .page-item.disabled .page-link,
+  #transparentPagination .page-item.disabled .page-link:hover {
     background-color: transparent !important;
     border-color: rgba(255, 255, 255, 0.05) !important;
     color: rgba(255, 255, 255, 0.2) !important;
   }
-
   /* 9. ОБЩИЕ СТИЛИ */
   .text-white {
     color: #ffffff !important;
