@@ -43,10 +43,11 @@
             </div>
             <div class="card-footer bg-transparent border-top-0 mt-auto">
                 <div class="d-flex justify-content-center gap-2">
-                    <a href="{{ url_for('main.interpreter_card', 
+                    <a href="{{ url_for('main.interpreter_view', 
                                 interpreter_id=interpreter.id, 
                                 return_page=pagination.page if pagination else 1,
-                                return_search=search) }}" 
+                                return_search=search,
+                                return_to='interpreter_list') }}" 
                        class="btn btn-outline-light btn-sm" title="Просмотр карточки">
                         <i class="bi bi-eye"></i>
                     </a>
