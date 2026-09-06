@@ -2301,6 +2301,31 @@ def cover_card(cover_id):
                            return_page=return_page)
 
 
+@bp.route('/cover/<int:cover_id>/view')
+def cover_view(cover_id):
+    cover = Cover.query.get_or_404(cover_id)
+
+    # Получаем параметры для возврата
+    page = request.args.get('page', 1, type=int)
+    return_page = request.args.get('return_page', 1, type=int)
+
+    # Пагинация для книг с этим переплетом
+    books_query = Book.query.filter_by(
+        id_cover=cover_id).order_by(Book.name.asc())
+    pagination = books_query.paginate(
+        page=page,
+        per_page=Config.ITEMS_PER_PAGE_COVER,
+        error_out=False
+    )
+
+    return render_template('cover_card_view.html',
+                           cover=cover,
+                           books=pagination.items,
+                           pagination=pagination,
+                           page=page,
+                           return_page=return_page)
+
+
 @bp.route('/genre/<int:genre_id>/card')
 def genre_card(genre_id):
     genre = Genre.query.get_or_404(genre_id)

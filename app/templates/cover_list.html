@@ -99,10 +99,10 @@ content %}
             </div>
             <div class="btn-group btn-group-sm flex-shrink-0 ms-2" role="group">
               <a
-                href="{{ url_for('main.cover_card', cover_id=cover.id, 
+                href="{{ url_for('main.cover_view', cover_id=cover.id, 
                                          return_page=pagination.page if pagination else 1) }}"
                 class="btn btn-outline-light"
-                title="Просмотр"
+                title="Просмотр карточки переплета"
               >
                 <i class="bi bi-eye"></i>
               </a>
@@ -110,14 +110,14 @@ content %}
                 href="{{ url_for('main.edit_cover', cover_id=cover.id, 
                                          return_page=pagination.page if pagination else 1) }}"
                 class="btn btn-outline-light"
-                title="Редактировать"
+                title="Редактировать переплет"
               >
                 <i class="bi bi-pencil"></i>
               </a>
               <button
                 type="button"
                 class="btn btn-outline-light"
-                title="Удалить"
+                title="Удалить переплет"
                 data-bs-toggle="modal"
                 data-bs-target="#deleteCoverModal{{ cover.id }}"
               >
