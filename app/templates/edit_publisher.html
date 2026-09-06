@@ -11,7 +11,7 @@ content %}
         <h5 class="text-white fw-bold fs-3 mt-2">{{ publisher.name }}</h5>
       </div>
       <a
-        href="{{ request.args.get('next') or url_for('main.punlisher_list', page=return_page, search=return_search) }}"
+        href="{{ request.args.get('next') or url_for('main.publisher_list', page=return_page, search=return_search) }}"
         class="btn btn-outline-light d-flex align-items-center"
       >
         <i class="bi bi-arrow-left"></i> &nbsp;Назад к списку
