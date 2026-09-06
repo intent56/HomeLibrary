@@ -2228,6 +2228,7 @@ def genre_card(genre_id):
                            genre=genre,
                            books=pagination.items,
                            pagination=pagination,
+                           page=page,
                            search=search,
                            return_page=return_page,
                            return_search=return_search)

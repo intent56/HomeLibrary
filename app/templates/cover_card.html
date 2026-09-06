@@ -101,7 +101,7 @@ content %}
               <h5 class="fw-bold text-white">
                 <i class="bi bi-chat"></i> Комментарий:
               </h5>
-              <div class="p-3 rounded transparent-comment comment-cell">
+              <div class="p-3 rounded transparent-comment">
                 {{ cover.comment|safe }}
               </div>
             </div>
@@ -132,7 +132,7 @@ content %}
                       <img
                         src="data:image/jpeg;base64,{{ book.cover|b64encode }}"
                         alt="{{ book.name }}"
-                        class="img-thumbnail"
+                        class="img-thumbnail book-cover-thumbnail"
                         style="
                           width: 40px;
                           height: 56px;
@@ -180,18 +180,17 @@ content %}
                     <td>
                       <div class="btn-group btn-group-sm" role="group">
                         <a
-                          href="{{ url_for('main.book_detail', book_id=book.id) }}"
+                          href="{{ url_for('main.book_view', 
+                                book_id=book.id,
+                                page1=page if page else 1,
+                                id=cover.id,
+                                return_search=return_search,
+                                return_page=return_page,
+                                return_to='cover_card') }}"
                           class="btn btn-outline-light"
                           title="Просмотр книги"
                         >
                           <i class="bi bi-eye"></i>
-                        </a>
-                        <a
-                          href="{{ url_for('main.edit_book', book_id=book.id) }}"
-                          class="btn btn-outline-light"
-                          title="Редактировать книгу"
-                        >
-                          <i class="bi bi-pencil"></i>
                         </a>
                       </div>
                     </td>
@@ -454,17 +453,18 @@ content %}
     color: #ffffff !important;
   }
 
-  /* 6. ПРОЗРАЧНЫЙ КОММЕНТАРИЙ */
+  /* 5. ПРОЗРАЧНЫЙ КОММЕНТАРИЙ */
   .transparent-comment {
     background-color: rgba(255, 255, 255, 0.05) !important;
     border-left: 4px solid rgba(255, 255, 255, 0.3) !important;
     color: rgba(255, 255, 255, 0.8) !important;
+    max-height: 300px; /* Ограничиваем максимальную высоту */
+    overflow-y: auto; /* Включаем вертикальную прокрутку */
+    display: block; /* <-- ЭТО КЛЮЧЕВОЕ СВОЙСТВО */
   }
-
   .transparent-comment a {
     color: #a8d8ff !important;
   }
-
   .transparent-comment h1,
   .transparent-comment h2,
   .transparent-comment h3,
@@ -473,24 +473,38 @@ content %}
   .transparent-comment h6 {
     color: #ffffff !important;
   }
-
   .transparent-comment blockquote {
     border-left: 4px solid rgba(255, 255, 255, 0.3);
     padding-left: 1rem;
     margin: 0.5rem 0;
     color: rgba(255, 255, 255, 0.7);
   }
-
   .transparent-comment table td,
   .transparent-comment table th {
     border: 1px solid rgba(255, 255, 255, 0.2);
     padding: 0.3rem 0.5rem;
   }
-
   .transparent-comment table th {
     background-color: rgba(255, 255, 255, 0.1) !important;
   }
+  /* Стилизация полосы прокрутки (опционально, для красоты) */
+  .transparent-comment::-webkit-scrollbar {
+    width: 6px;
+  }
 
+  .transparent-comment::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+
+  .transparent-comment::-webkit-scrollbar-thumb {
+    background: var(--main-color);
+    border-radius: 3px;
+  }
+
+  .transparent-comment::-webkit-scrollbar-thumb:hover {
+    background: #e6b800;
+  }
   /* 7. АЛЕРТ */
   .transparent-alert {
     background-color: rgba(13, 202, 240, 0.15) !important;
@@ -652,6 +666,22 @@ content %}
 
   .comment-cell::-webkit-scrollbar-thumb:hover {
     background: #e6b800;
+  }
+  /* 13. ПЛАВНОЕ УВЕЛИЧЕНИЕ ОБЛОЖЕК ПРИ НАВЕДЕНИИ */
+  .book-cover-thumbnail {
+    transition:
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    border-radius: 4px;
+    will-change: transform;
+  }
+
+  .book-cover-thumbnail:hover {
+    transform: scale(2.5);
+    z-index: 1000;
+    position: relative;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
   }
 </style>
 {% endblock %}

@@ -1,34 +1,21 @@
 {% extends "base.html" %} {% block body_class %}bg-page2{% endblock %} {% block
 content %}
-<div class="row">
-  <div class="col-lg-10 mx-auto">
+<div class="row justify-content-center">
+  <div class="col-lg-10">
     <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
         <h2 class="text-white">
-          <i class="bi bi-translate"></i> Карточка переводчика
+          <i class="bi bi-bookmark"></i> Карточка переплета
         </h2>
-        <h5 class="text-white fw-bold fs-3 mt-2">{{ interpreter.fio }}</h5>
       </div>
       <div class="d-flex gap-2">
-        <!-- КНОПКА "НАЗАД К СПИСКУ" С СОХРАНЕНИЕМ ПАРАМЕТРОВ -->
         <a
-          href="{{ url_for('main.interpreter_list', 
-                    page=return_page, 
-                    search=return_search) }}"
-          class="btn btn-outline-light d-flex align-items-center"
+          href="{{ url_for('main.cover_list', 
+                    page=return_page) }}"
+          class="btn btn-outline-light"
         >
           <i class="bi bi-arrow-left"></i> Назад к списку
-        </a>
-        <!-- КНОПКА "РЕДАКТИРОВАТЬ" -->
-        <a
-          href="{{ url_for('main.edit_interpreter', 
-                    interpreter_id=interpreter.id,
-                    return_page=return_page,
-                    return_search=return_search) }}"
-          class="btn btn-edit"
-        >
-          <i class="bi bi-pencil"></i> Редактировать
         </a>
       </div>
     </div>
@@ -36,11 +23,7 @@ content %}
     <!-- Вкладки -->
     <div class="card shadow-sm mb-4 transparent-card">
       <div class="card-header transparent-card-header">
-        <ul
-          class="nav nav-tabs card-header-tabs"
-          id="interpreterTabs"
-          role="tablist"
-        >
+        <ul class="nav nav-tabs card-header-tabs" id="coverTabs" role="tablist">
           <li class="nav-item" role="presentation">
             <button
               class="nav-link active"
@@ -50,7 +33,7 @@ content %}
               type="button"
               role="tab"
             >
-              <i class="bi bi-info-circle"></i> Информация о переводчике
+              <i class="bi bi-info-circle"></i> Информация о переплете
             </button>
           </li>
           <li class="nav-item" role="presentation">
@@ -62,132 +45,73 @@ content %}
               type="button"
               role="tab"
             >
-              <i class="bi bi-book"></i> Книги переводчика
+              <i class="bi bi-book"></i> Книги с этим переплетом
             </button>
           </li>
         </ul>
       </div>
       <div class="card-body transparent-card-body">
-        <div class="tab-content" id="interpreterTabsContent">
-          <!-- Вкладка 1: Информация о переводчике -->
+        <div class="tab-content" id="coverTabsContent">
+          <!-- Вкладка 1: Информация о переплете -->
           <div class="tab-pane fade show active" id="info" role="tabpanel">
-            <div class="row">
-              <div class="col-md-4 text-center mb-4 mb-md-0">
-                {% if interpreter.photo %}
-                <img
-                  src="data:image/jpeg;base64,{{ interpreter.photo|b64encode }}"
-                  alt="{{ interpreter.fio }}"
-                  class="img-fluid shadow-sm"
-                  style="
-                    width: 200px;
-                    height: 200px;
-                    object-fit: cover;
-                    border: 2px solid rgba(255, 255, 255, 0.3);
-                  "
-                />
-                {% else %}
-                <div
-                  class="bg-transparent d-inline-flex align-items-center justify-content-center shadow-sm"
-                  style="
-                    width: 200px;
-                    height: 200px;
-                    border: 2px solid rgba(255, 255, 255, 0.3);
-                  "
-                >
-                  <i class="bi bi-person display-1 text-white-50"></i>
+            <div class="row mb-4">
+              <div class="col-md-4 text-center">
+                <div class="bg-transparent p-4 rounded text-center">
+                  <i class="bi bi-bookmark display-1 text-white-50"></i>
                 </div>
-                {% endif %}
               </div>
               <div class="col-md-8">
-                <h3 class="mb-3 text-white fw-bold fs-1">
-                  {{ interpreter.fio }}
-                </h3>
-
+                <h3 class="mb-3 text-white fw-bold">{{ cover.name }}</h3>
                 <table class="table table-borderless transparent-table">
                   <tr>
-                    <th style="width: 35%" class="text-white-50">Фамилия:</th>
-                    <td class="text-white fw-bold fs-5">
-                      {{ interpreter.lastname }}
-                    </td>
-                  </tr>
-                  {% if interpreter.firstname %}
-                  <tr>
-                    <th class="text-white-50">Имя:</th>
-                    <td class="text-white fw-bold fs-5">
-                      {{ interpreter.firstname }}
-                    </td>
-                  </tr>
-                  {% endif %} {% if interpreter.secondname %}
-                  <tr>
-                    <th class="text-white-50">Отчество:</th>
-                    <td class="text-white fw-bold fs-5">
-                      {{ interpreter.secondname }}
-                    </td>
-                  </tr>
-                  {% endif %} {% if interpreter.ref_interpreter %}
-                  <tr>
-                    <th class="text-white-50">Ссылка:</th>
+                    <th style="width: 35%" class="text-white-50">Код:</th>
                     <td>
-                      <a
-                        href="{{ interpreter.ref_interpreter }}"
-                        target="_blank"
-                        class="text-light"
-                      >
-                        <i class="bi bi-link-45deg"></i> Подробнее
-                      </a>
-                    </td>
-                  </tr>
-                  {% endif %}
-                  <tr>
-                    <th class="text-white-50">Всего книг:</th>
-                    <td>
-                      <span
-                        class="badge bg-success bg-opacity-75 text-white fs-6"
-                        >{{ interpreter.book_interpreters|length }}</span
+                      <span class="badge bg-primary bg-opacity-75 text-white"
+                        >{{ cover.code }}</span
                       >
                     </td>
                   </tr>
-                  {% if interpreter.lang_interpreters %}
                   <tr>
-                    <th class="text-white-50">Языки:</th>
+                    <th class="text-white-50">Название:</th>
+                    <td class="text-white fw-bold">{{ cover.name }}</td>
+                  </tr>
+                  <tr>
+                    <th class="text-white-50">Книг с этим переплетом:</th>
                     <td>
-                      {% for lang in interpreter.lang_interpreters %}
-                      <span class="badge bg-info bg-opacity-75 text-white"
-                        >{{ lang.name }}</span
+                      <span class="badge bg-info bg-opacity-75 text-white fs-6"
+                        >{{ cover.cvr_books|length }}</span
                       >
-                      {% endfor %}
                     </td>
                   </tr>
-                  {% endif %}
                 </table>
               </div>
             </div>
 
-            {% if interpreter.comment %}
-            <div class="mt-4">
+            {% if cover.comment %}
+            <div class="mt-3">
               <h5 class="fw-bold text-white">
                 <i class="bi bi-chat"></i> Комментарий:
               </h5>
               <div class="p-3 rounded transparent-comment comment-cell">
-                {{ interpreter.comment|safe }}
+                {{ cover.comment|safe }}
               </div>
             </div>
             {% endif %}
           </div>
 
-          <!-- Вкладка 2: Книги переводчика -->
+          <!-- Вкладка 2: Книги с этим переплетом -->
           <div class="tab-pane fade" id="books" role="tabpanel">
             <h5 class="fw-bold text-white">
-              <i class="bi bi-book"></i> Книги переводчика:
+              <i class="bi bi-book"></i> Книги с этим переплетом:
             </h5>
             {% if books %}
             <div class="table-responsive">
-              <table class="table table-hover transparent-table">
+              <table class="table table-hover transparent-table w-100">
                 <thead class="transparent-table-header">
                   <tr>
                     <th style="width: 10%">Обложка</th>
-                    <th style="width: 45%">Название</th>
-                    <th style="width: 20%">Год</th>
+                    <th style="width: 30%">Название</th>
+                    <th style="width: 35%">Авторы</th>
                     <th style="width: 25%">Действия</th>
                   </tr>
                 </thead>
@@ -199,7 +123,7 @@ content %}
                       <img
                         src="data:image/jpeg;base64,{{ book.cover|b64encode }}"
                         alt="{{ book.name }}"
-                        class="img-thumbnail book-cover-thumbnail"
+                        class="img-thumbnail"
                         style="
                           width: 40px;
                           height: 56px;
@@ -234,24 +158,20 @@ content %}
                       <strong class="text-white">{{ book.name }}</strong>
                     </td>
                     <td>
-                      {% if book.year_edition %}
-                      <span class="badge bg-secondary bg-opacity-75 text-white"
-                        >{{ book.year_edition }}</span
+                      {% if book.author_books %} {% for author in
+                      book.author_books %}
+                      <span
+                        class="badge bg-primary bg-opacity-75 text-white mb-1 d-block"
+                        >{{ author.fio }}</span
                       >
-                      {% else %}
-                      <span class="text-white-50">-</span>
+                      {% endfor %} {% else %}
+                      <span class="text-white-50 small">Нет авторов</span>
                       {% endif %}
                     </td>
                     <td>
                       <div class="btn-group btn-group-sm" role="group">
                         <a
-                          href="{{ url_for('main.book_view', 
-                                book_id=book.id,
-                                page1=page if page else 1,
-                                id=interpreter.id,
-                                return_search=return_search,
-                                return_page=return_page,
-                                return_to='interpreter_card') }}"
+                          href="{{ url_for('main.book_detail', book_id=book.id) }}"
                           class="btn btn-outline-light"
                           title="Просмотр книги"
                         >
@@ -278,7 +198,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.interpreter_card', interpreter_id=interpreter.id, page=1, return_page=return_page, return_search=return_search) }}"
+                      href="{{ url_for('main.cover_card', cover_id=cover.id, page=1, return_page=return_page) }}"
                     >
                       <i class="bi bi-chevron-double-left"></i>
                     </a>
@@ -288,7 +208,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.interpreter_card', interpreter_id=interpreter.id, page=pagination.prev_num, return_page=return_page, return_search=return_search) }}"
+                      href="{{ url_for('main.cover_card', cover_id=cover.id, page=pagination.prev_num, return_page=return_page) }}"
                     >
                       <i class="bi bi-chevron-left"></i>
                     </a>
@@ -307,7 +227,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.interpreter_card', interpreter_id=interpreter.id, page=p, return_page=return_page, return_search=return_search) }}"
+                      href="{{ url_for('main.cover_card', cover_id=cover.id, page=p, return_page=return_page) }}"
                     >
                       {{ p }}
                     </a>
@@ -323,7 +243,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.interpreter_card', interpreter_id=interpreter.id, page=pagination.next_num, return_page=return_page, return_search=return_search) }}"
+                      href="{{ url_for('main.cover_card', cover_id=cover.id, page=pagination.next_num, return_page=return_page) }}"
                     >
                       <i class="bi bi-chevron-right"></i>
                     </a>
@@ -333,7 +253,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.interpreter_card', interpreter_id=interpreter.id, page=pagination.pages, return_page=return_page, return_search=return_search) }}"
+                      href="{{ url_for('main.cover_card', cover_id=cover.id, page=pagination.pages, return_page=return_page) }}"
                     >
                       <i class="bi bi-chevron-double-right"></i>
                     </a>
@@ -350,8 +270,7 @@ content %}
             </div>
             {% endif %} {% else %}
             <div class="alert alert-info transparent-alert">
-              <i class="bi bi-info-circle"></i>
-              У переводчика пока нет книг
+              <i class="bi bi-info-circle"></i> Нет книг с этим переплетом
             </div>
             {% endif %}
           </div>
@@ -359,9 +278,9 @@ content %}
       </div>
       <div class="card-footer transparent-card-footer">
         <div class="d-flex justify-content-between align-items-center">
-          <span class="text-white-50">
-            <i class="bi bi-info-circle"></i> ID: {{ interpreter.id }}
-          </span>
+          <span class="text-white-50"
+            ><i class="bi bi-info-circle"></i> ID: {{ cover.id }}</span
+          >
         </div>
       </div>
     </div>
@@ -372,15 +291,15 @@ content %}
   document.addEventListener("DOMContentLoaded", function () {
     // Сохранение активной вкладки
     const tabs = document.querySelectorAll(
-      '#interpreterTabs button[data-bs-toggle="tab"]',
+      '#coverTabs button[data-bs-toggle="tab"]',
     );
     tabs.forEach((tab) => {
       tab.addEventListener("shown.bs.tab", function (e) {
-        localStorage.setItem("activeInterpreterTab", e.target.id);
+        localStorage.setItem("activeCoverTab", e.target.id);
       });
     });
 
-    const activeTab = localStorage.getItem("activeInterpreterTab");
+    const activeTab = localStorage.getItem("activeCoverTab");
     if (activeTab) {
       const tabElement = document.getElementById(activeTab);
       if (tabElement) {
@@ -530,8 +449,30 @@ content %}
     color: #a8d8ff !important;
   }
 
-  .transparent-comment p {
-    margin-bottom: 0.5rem;
+  .transparent-comment h1,
+  .transparent-comment h2,
+  .transparent-comment h3,
+  .transparent-comment h4,
+  .transparent-comment h5,
+  .transparent-comment h6 {
+    color: #ffffff !important;
+  }
+
+  .transparent-comment blockquote {
+    border-left: 4px solid rgba(255, 255, 255, 0.3);
+    padding-left: 1rem;
+    margin: 0.5rem 0;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .transparent-comment table td,
+  .transparent-comment table th {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.3rem 0.5rem;
+  }
+
+  .transparent-comment table th {
+    background-color: rgba(255, 255, 255, 0.1) !important;
   }
 
   /* 7. АЛЕРТ */
@@ -569,8 +510,8 @@ content %}
   }
 
   #transparentPagination .page-item.active .page-link {
-    background-color: var(--main-color) !important;
-    border-color: var(--main-color) !important;
+    background-color: rgba(13, 110, 253, 0.4) !important;
+    border-color: rgba(13, 110, 253, 0.6) !important;
   }
 
   #transparentPagination .page-item.disabled .page-link {
@@ -626,7 +567,6 @@ content %}
       margin-right: 4px;
     }
   }
-
   /* Стили для кнопок "Редактировать" */
   .btn-edit {
     background-color: transparent !important;
@@ -696,22 +636,6 @@ content %}
 
   .comment-cell::-webkit-scrollbar-thumb:hover {
     background: #e6b800;
-  }
-  /* 13. ПЛАВНОЕ УВЕЛИЧЕНИЕ ОБЛОЖЕК ПРИ НАВЕДЕНИИ */
-  .book-cover-thumbnail {
-    transition:
-      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
-    border-radius: 4px;
-    will-change: transform;
-  }
-
-  .book-cover-thumbnail:hover {
-    transform: scale(2.5);
-    z-index: 1000;
-    position: relative;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
   }
 </style>
 {% endblock %}
