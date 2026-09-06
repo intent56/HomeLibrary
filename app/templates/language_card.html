@@ -5,9 +5,7 @@ content %}
     <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h2 class="text-white">
-          <i class="bi bi-globe"></i> Карточка языка
-        </h2>
+        <h2 class="text-white"><i class="bi bi-globe"></i> Карточка языка</h2>
       </div>
 
       <div class="d-flex gap-2">
@@ -59,7 +57,8 @@ content %}
               type="button"
               role="tab"
             >
-              <i class="bi bi-book"></i> Книги на этом языке
+              <i class="bi bi-book"></i> Книги на этом языке ({{
+              pagination_books.total if pagination_books else 0 }})
             </button>
           </li>
           <li class="nav-item" role="presentation">
@@ -71,7 +70,9 @@ content %}
               type="button"
               role="tab"
             >
-              <i class="bi bi-translate"></i> Переводчики с языка
+              <i class="bi bi-translate"></i> Переводчики с языка ({{
+              pagination_interpreters.total if pagination_interpreters else 0
+              }})
             </button>
           </li>
         </ul>
@@ -103,22 +104,19 @@ content %}
                 <table class="table table-borderless transparent-table">
                   <tr>
                     <th style="width: 30%" class="text-white-50">Код:</th>
-                    <td class="text-white fw-bold fs-5">
-                      {{ language.code }}
-                    </td>
+                    <td class="text-white fw-bold fs-5">{{ language.code }}</td>
                   </tr>
                   <tr>
                     <th class="text-white-50">Название:</th>
-                    <td class="text-white fw-bold fs-5">
-                      {{ language.name }}
-                    </td>
+                    <td class="text-white fw-bold fs-5">{{ language.name }}</td>
                   </tr>
                   <tr>
                     <th class="text-white-50">Книг на этом языке:</th>
                     <td>
                       <span
                         class="badge bg-primary bg-opacity-75 text-white fs-6"
-                        >{{ language.lang_books|length }}</span
+                        >{{ pagination_books.total if pagination_books else 0
+                        }}</span
                       >
                     </td>
                   </tr>
@@ -127,7 +125,8 @@ content %}
                     <td>
                       <span
                         class="badge bg-success bg-opacity-75 text-white fs-6"
-                        >{{ language.interpreter_langs|length }}</span
+                        >{{ pagination_interpreters.total if
+                        pagination_interpreters else 0 }}</span
                       >
                     </td>
                   </tr>
@@ -152,7 +151,7 @@ content %}
             <h5 class="fw-bold text-white">
               <i class="bi bi-book"></i> Книги на этом языке:
             </h5>
-            {% if books %}
+            {% if pagination_books and pagination_books.items %}
             <div class="table-responsive">
               <table class="table table-hover transparent-table">
                 <thead class="transparent-table-header">
@@ -164,7 +163,7 @@ content %}
                   </tr>
                 </thead>
                 <tbody>
-                  {% for book in books %}
+                  {% for book in pagination_books.items %}
                   <tr>
                     <td>
                       {% if book.cover %}
@@ -232,7 +231,7 @@ content %}
             </div>
 
             <!-- ПАГИНАЦИЯ КНИГ -->
-            {% if pagination and pagination.pages > 1 %}
+            {% if pagination_books and pagination_books.pages > 1 %}
             <div class="pagination-container mt-3">
               <nav aria-label="Навигация по страницам книг">
                 <ul
@@ -240,80 +239,85 @@ content %}
                   id="transparentPagination"
                 >
                   <li
-                    class="page-item {% if pagination.page == 1 %}disabled{% endif %}"
+                    class="page-item {% if pagination_books.page == 1 %}disabled{% endif %}"
                   >
                     <a
                       class="page-link"
                       href="{{ url_for('main.language_card', 
                                language_id=language.id, 
-                               page=1, 
+                               page_books=1, 
+                               page_interpreters=pagination_interpreters.page if pagination_interpreters else 1,
                                return_page=return_page) }}"
                     >
                       <i class="bi bi-chevron-double-left"></i>
                     </a>
                   </li>
                   <li
-                    class="page-item {% if pagination.page == 1 %}disabled{% endif %}"
+                    class="page-item {% if pagination_books.page == 1 %}disabled{% endif %}"
                   >
                     <a
                       class="page-link"
                       href="{{ url_for('main.language_card', 
                                language_id=language.id, 
-                               page=pagination.prev_num, 
+                               page_books=pagination_books.prev_num, 
+                               page_interpreters=pagination_interpreters.page if pagination_interpreters else 1,
                                return_page=return_page) }}"
                     >
                       <i class="bi bi-chevron-left"></i>
                     </a>
                   </li>
 
-                  {% set left = pagination.page - 2 %} {% set right =
-                  pagination.page + 2 %} {% if left < 1 %}{% set left = 1 %}{%
-                  endif %} {% if right > pagination.pages %}{% set right =
-                  pagination.pages %}{% endif %} {% if left > 1 %}
+                  {% set left = pagination_books.page - 2 %} {% set right =
+                  pagination_books.page + 2 %} {% if left < 1 %}{% set left = 1
+                  %}{% endif %} {% if right > pagination_books.pages %}{% set
+                  right = pagination_books.pages %}{% endif %} {% if left > 1 %}
                   <li class="page-item disabled">
                     <span class="page-link">...</span>
                   </li>
                   {% endif %} {% for p in range(left, right + 1) %}
                   <li
-                    class="page-item {% if p == pagination.page %}active{% endif %}"
+                    class="page-item {% if p == pagination_books.page %}active{% endif %}"
                   >
                     <a
                       class="page-link"
                       href="{{ url_for('main.language_card', 
                                language_id=language.id, 
-                               page=p, 
+                               page_books=p, 
+                               page_interpreters=pagination_interpreters.page if pagination_interpreters else 1,
                                return_page=return_page) }}"
                     >
                       {{ p }}
                     </a>
                   </li>
-                  {% endfor %} {% if right < pagination.pages %}
+                  {% endfor %} {% if right < pagination_books.pages %}
                   <li class="page-item disabled">
                     <span class="page-link">...</span>
                   </li>
                   {% endif %}
 
                   <li
-                    class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}"
+                    class="page-item {% if pagination_books.page == pagination_books.pages %}disabled{% endif %}"
                   >
                     <a
                       class="page-link"
                       href="{{ url_for('main.language_card', 
                                 language_id=language.id, 
-                                page=pagination.next_num, 
+                                page_books=pagination_books.next_num, 
+                                page_interpreters=pagination_interpreters.page if pagination_interpreters else 1,
                                 return_page=return_page) }}"
                     >
                       <i class="bi bi-chevron-right"></i>
                     </a>
                   </li>
                   <li
-                    class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}"
+                    class="page-item {% if pagination_books.page == pagination_books.pages %}disabled{% endif %}"
                   >
                     <a
                       class="page-link"
                       href="{{ url_for('main.language_card', 
                                language_id=language.id, 
-                               page=pagination.pages, 
+                               page_books=pagination_books.pages, 
+                               page_interpreters=pagination_interpreters.page if pagination_interpreters else 1,
                                return_page=return_page) }}"
                     >
                       <i class="bi bi-chevron-double-right"></i>
@@ -323,10 +327,11 @@ content %}
               </nav>
 
               <div class="text-center text-white-50 small mt-2">
-                Показано: {{ pagination.items|length }} из {{ pagination.total
-                }} книг
+                Показано: {{ pagination_books.items|length }} из {{
+                pagination_books.total }} книг
                 <span class="mx-2">|</span>
-                Страница {{ pagination.page }} из {{ pagination.pages }}
+                Страница {{ pagination_books.page }} из {{
+                pagination_books.pages }}
               </div>
             </div>
             {% endif %} {% else %}
@@ -342,7 +347,7 @@ content %}
             <h5 class="fw-bold text-white">
               <i class="bi bi-translate"></i> Переводчики с этого языка:
             </h5>
-            {% if language.interpreter_langs %}
+            {% if pagination_interpreters and pagination_interpreters.items %}
             <div class="table-responsive">
               <table class="table table-hover transparent-table">
                 <thead class="transparent-table-header">
@@ -352,7 +357,7 @@ content %}
                   </tr>
                 </thead>
                 <tbody>
-                  {% for interpreter in language.interpreter_langs %}
+                  {% for interpreter in pagination_interpreters.items %}
                   <tr>
                     <td>
                       <strong class="text-white">{{ interpreter.fio }}</strong>
@@ -373,7 +378,114 @@ content %}
                 </tbody>
               </table>
             </div>
-            {% else %}
+
+            <!-- ПАГИНАЦИЯ ПЕРЕВОДЧИКОВ -->
+            {% if pagination_interpreters and pagination_interpreters.pages > 1
+            %}
+            <div class="pagination-container mt-3">
+              <nav aria-label="Навигация по страницам переводчиков">
+                <ul
+                  class="pagination pagination-sm justify-content-center mb-0"
+                  id="transparentPagination"
+                >
+                  <li
+                    class="page-item {% if pagination_interpreters.page == 1 %}disabled{% endif %}"
+                  >
+                    <a
+                      class="page-link"
+                      href="{{ url_for('main.language_card', 
+                               language_id=language.id, 
+                               page_interpreters=1,
+                               page_books=pagination_books.page if pagination_books else 1,
+                               return_page=return_page) }}"
+                    >
+                      <i class="bi bi-chevron-double-left"></i>
+                    </a>
+                  </li>
+                  <li
+                    class="page-item {% if pagination_interpreters.page == 1 %}disabled{% endif %}"
+                  >
+                    <a
+                      class="page-link"
+                      href="{{ url_for('main.language_card', 
+                               language_id=language.id, 
+                               page_interpreters=pagination_interpreters.prev_num,
+                               page_books=pagination_books.page if pagination_books else 1,
+                               return_page=return_page) }}"
+                    >
+                      <i class="bi bi-chevron-left"></i>
+                    </a>
+                  </li>
+
+                  {% set left = pagination_interpreters.page - 2 %} {% set right
+                  = pagination_interpreters.page + 2 %} {% if left < 1 %}{% set
+                  left = 1 %}{% endif %} {% if right >
+                  pagination_interpreters.pages %}{% set right =
+                  pagination_interpreters.pages %}{% endif %} {% if left > 1 %}
+                  <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                  </li>
+                  {% endif %} {% for p in range(left, right + 1) %}
+                  <li
+                    class="page-item {% if p == pagination_interpreters.page %}active{% endif %}"
+                  >
+                    <a
+                      class="page-link"
+                      href="{{ url_for('main.language_card', 
+                               language_id=language.id, 
+                               page_interpreters=p,
+                               page_books=pagination_books.page if pagination_books else 1,
+                               return_page=return_page) }}"
+                    >
+                      {{ p }}
+                    </a>
+                  </li>
+                  {% endfor %} {% if right < pagination_interpreters.pages %}
+                  <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                  </li>
+                  {% endif %}
+
+                  <li
+                    class="page-item {% if pagination_interpreters.page == pagination_interpreters.pages %}disabled{% endif %}"
+                  >
+                    <a
+                      class="page-link"
+                      href="{{ url_for('main.language_card', 
+                                language_id=language.id, 
+                                page_interpreters=pagination_interpreters.next_num,
+                                page_books=pagination_books.page if pagination_books else 1,
+                                return_page=return_page) }}"
+                    >
+                      <i class="bi bi-chevron-right"></i>
+                    </a>
+                  </li>
+                  <li
+                    class="page-item {% if pagination_interpreters.page == pagination_interpreters.pages %}disabled{% endif %}"
+                  >
+                    <a
+                      class="page-link"
+                      href="{{ url_for('main.language_card', 
+                               language_id=language.id, 
+                               page_interpreters=pagination_interpreters.pages,
+                               page_books=pagination_books.page if pagination_books else 1,
+                               return_page=return_page) }}"
+                    >
+                      <i class="bi bi-chevron-double-right"></i>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+
+              <div class="text-center text-white-50 small mt-2">
+                Показано: {{ pagination_interpreters.items|length }} из {{
+                pagination_interpreters.total }} переводчиков
+                <span class="mx-2">|</span>
+                Страница {{ pagination_interpreters.page }} из {{
+                pagination_interpreters.pages }}
+              </div>
+            </div>
+            {% endif %} {% else %}
             <div class="alert alert-warning transparent-alert mt-3">
               <i class="bi bi-exclamation-triangle"></i>
               Нет переводчиков, работающих с этого языка
@@ -416,7 +528,6 @@ content %}
   });
 </script>
 
-<!-- СТИЛИ -->
 <style>
   /* 1. ПОЛНОСТЬЮ УБИРАЕМ ВСЕ ФОНЫ */
   .transparent-card,

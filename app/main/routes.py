@@ -33,6 +33,7 @@ from app.models.main import (
     book_authors,
     book_interpreters,
     book_publishers,
+    interpreter_languages,
     Source,
     Aggregator,
 )
@@ -1668,26 +1669,45 @@ def language_list():
 @bp.route('/language/<int:language_id>/card')
 def language_card(language_id):
     language = Language.query.get_or_404(language_id)
-    page = request.args.get('page', 1, type=int)
+    page_books = request.args.get('page_books', 1, type=int)
+    page_interpreters = request.args.get('page_interpreters', 1, type=int)
 
     # Получаем параметры для возврата
     search = request.args.get('search', '')
     return_page = request.args.get('return_page', 1, type=int)
     return_search = request.args.get('return_search', '')
 
-    # Получаем книги на данном языке с пагинацией
+    # Пагинация для книг на этом языке
     books_query = Book.query.filter_by(
         id_language=language_id).order_by(Book.name.asc())
-    pagination = books_query.paginate(
-        page=page,
+    pagination_books = books_query.paginate(
+        page=page_books,
         per_page=Config.ITEMS_PER_PAGE_BOOK,
         error_out=False
     )
+
+    # Пагинация для переводчиков с этого языка
+    # Используем связь interpreter_langs для получения списка переводчиков
+    interpreters_query = language.interpreter_langs
+    # Применяем пагинацию к списку, полученному из relationship
+    # Для этого используем метод .paginate() на самом запросе, но relationship
+    # возвращает список, а не запрос. Поэтому нужно построить запрос заново.
+    interpreters_query = Interpreter.query.join(interpreter_languages).filter(
+        interpreter_languages.c.id_language == language_id
+    ).order_by(Interpreter.fio.asc())
+
+    pagination_interpreters = interpreters_query.paginate(
+        page=page_interpreters,
+        per_page=Config.ITEMS_PER_PAGE_INTERPRETER,
+        error_out=False
+    )
+
     return render_template('language_card.html',
                            language=language,
-                           books=pagination.items,
-                           pagination=pagination,
-                           page=page,
+                           pagination_books=pagination_books,
+                           pagination_interpreters=pagination_interpreters,
+                           page_books=page_books,
+                           page_interpreters=page_interpreters,
                            search=search,
                            return_page=return_page,
                            return_search=return_search)
