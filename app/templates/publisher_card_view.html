@@ -159,8 +159,8 @@ content %}
                   <tr>
                     <th style="width: 10%">Обложка</th>
                     <th style="width: 45%">Название</th>
-                    <th style="width: 10%">Год</th>
                     <th style="width: 35%">Авторы</th>
+                    <th style="width: 10%">Год</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -206,25 +206,20 @@ content %}
                       <strong class="text-white">{{ book.name }}</strong>
                     </td>
                     <td>
+                      {% if book.author_books %} {% for author in
+                      book.author_books %}
+                      <strong class="text-white">{{ author.fio }}</strong>
+                      {% endfor %} {% else %}
+                      <strong class="text-white">Нет авторов</strong>
+                      {% endif %}
+                    </td>
+                    <td>
                       {% if book.year_edition %}
                       <strong class="text-white"
                         >{{ book.year_edition }}</strong
                       >
                       {% else %}
                       <strong class="text-white">-</strong>
-                      {% endif %}
-                    </td>
-                    <td>
-                      {% if book.author_books %} {% for author in
-                      book.author_books %}
-                      <span
-                        class="badge bg-secondary bg-opacity-75 text-white me-1"
-                        >{{ author.fio }}</span
-                      >
-                      {% endfor %} {% else %}
-                      <span class="text-light-50"
-                        ><i class="bi bi-person-x"></i> Нет авторов</span
-                      >
                       {% endif %}
                     </td>
                   </tr>

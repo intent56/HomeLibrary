@@ -140,9 +140,10 @@ content %}
                 <thead class="transparent-table-header">
                   <tr>
                     <th style="width: 10%">Обложка</th>
-                    <th style="width: 45%">Название</th>
+                    <th style="width: 30%">Название</th>
+                    <th style="width: 25%">Авторы</th>
                     <th style="width: 10%">Год</th>
-                    <th style="width: 35%">Авторы</th>
+                    <th style="width: 25%">Издатель</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -188,6 +189,14 @@ content %}
                       <strong class="text-white">{{ book.name }}</strong>
                     </td>
                     <td>
+                      {% if book.author_books %} {% for author in
+                      book.author_books %}
+                      <strong class="text-white">{{ author.fio }}</strong>
+                      {% endfor %} {% else %}
+                      <strong class="text-white">Нет авторов</strong>
+                      {% endif %}
+                    </td>
+                    <td>
                       {% if book.year_edition %}
                       <strong class="text-white"
                         >{{ book.year_edition }}</strong
@@ -197,16 +206,11 @@ content %}
                       {% endif %}
                     </td>
                     <td>
-                      {% if book.author_books %} {% for author in
-                      book.author_books %}
-                      <span
-                        class="badge bg-secondary bg-opacity-75 text-white me-1"
-                        >{{ author.fio }}</span
-                      >
+                      {% if book.publisher_books %} {% for publisher in
+                      book.publisher_books %}
+                      <strong class="text-white">{{ publisher.name }}</strong>
                       {% endfor %} {% else %}
-                      <span class="text-light-50"
-                        ><i class="bi bi-person-x"></i> Нет авторов</span
-                      >
+                      <strong class="text-white">Нет издателей</strong>
                       {% endif %}
                     </td>
                   </tr>

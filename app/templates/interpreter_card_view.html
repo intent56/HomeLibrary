@@ -203,9 +203,10 @@ content %}
                 <thead class="transparent-table-header">
                   <tr>
                     <th style="width: 10%">Обложка</th>
-                    <th style="width: 45%">Название</th>
-                    <th style="width: 20%">Год</th>
-                    <th style="width: 25%">Действия</th>
+                    <th style="width: 30%">Название</th>
+                    <th style="width: 25%">Авторы</th>
+                    <th style="width: 10%">Год</th>
+                    <th style="width: 25%">Издатель</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -249,6 +250,16 @@ content %}
                     </td>
                     <td>
                       <strong class="text-white">{{ book.name }}</strong>
+                    </td>
+                    <td>
+                      {% if book.author_books %} {% for auth in
+                      book.author_books %}
+                      <strong class="text-white">{{ auth.fio }}</strong>
+                      {% endfor %} {% else %}
+                      <span class="text-light-50"
+                        ><i class="bi bi-tag"></i> Нет автора</span
+                      >
+                      {% endif %}
                     </td>
                     <td>
                       {% if book.year_edition %}
