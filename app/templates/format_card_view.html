@@ -193,16 +193,9 @@ content %}
                         >{{ book.year_edition }}</strong
                       >
                       {% else %}
-                      <strong class="text-white">-</strong>
-                      {% endif %}
-                    </td>
-                    <td>
-                      {% if book.year_edition %}
-                      <strong class="text-white"
-                        >{{ book.year_edition }}</strong
+                      <span class="text-light-50"
+                        ><i class="bi bi-tag"></i>-</span
                       >
-                      {% else %}
-                      <strong class="text-white">-</strong>
                       {% endif %}
                     </td>
                     <td>

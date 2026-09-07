@@ -169,7 +169,9 @@ content %}
                       book.author_books %}
                       <strong class="text-white">{{ author.fio }}</strong>
                       {% endfor %} {% else %}
-                      <strong class="text-white">Нет авторов</strong>
+                      <span class="text-light-50"
+                        ><i class="bi bi-tag"></i>Нет авторов</span
+                      >
                       {% endif %}
                     </td>
                     <td>

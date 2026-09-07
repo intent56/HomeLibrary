@@ -193,7 +193,9 @@ content %}
                       book.author_books %}
                       <strong class="text-white">{{ author.fio }}</strong>
                       {% endfor %} {% else %}
-                      <strong class="text-white">Нет авторов</strong>
+                      <span class="text-light-50"
+                        ><i class="bi bi-tag"></i>Нет авторов</span
+                      >
                       {% endif %}
                     </td>
                     <td>
@@ -202,7 +204,9 @@ content %}
                         >{{ book.year_edition }}</strong
                       >
                       {% else %}
-                      <strong class="text-white">-</strong>
+                      <span class="text-light-50"
+                        ><i class="bi bi-tag"></i>-</span
+                      >
                       {% endif %}
                     </td>
                     <td>
@@ -210,7 +214,9 @@ content %}
                       book.publisher_books %}
                       <strong class="text-white">{{ publisher.name }}</strong>
                       {% endfor %} {% else %}
-                      <strong class="text-white">Нет издателей</strong>
+                      <span class="text-light-50"
+                        ><i class="bi bi-tag"></i>Нет издателей</span
+                      >
                       {% endif %}
                     </td>
                   </tr>
