@@ -64,6 +64,28 @@ content %}
         >
           <i class="bi bi-arrow-left"></i> Назад к переплету
         </a>
+        {% elif  return_to == 'language_card' %}
+        <a
+          href="{{ url_for('main.language_card', 
+                     cover_id=id,
+                     page=page1,
+                     return_search=return_search,
+                     return_page=return_page) }}"
+          class="btn btn-outline-light d-flex align-items-center"
+        >
+          <i class="bi bi-arrow-left"></i> Назад к языку
+        </a>
+        {% elif  return_to == 'format_card' %}
+        <a
+          href="{{ url_for('main.format_card', 
+                     format_id=id,
+                     page=page1,
+                     return_search=return_search,
+                     return_page=return_page) }}"
+          class="btn btn-outline-light d-flex align-items-center"
+        >
+          <i class="bi bi-arrow-left"></i> Назад к языку
+        </a>
         {% endif %}
       </div>
     </div>

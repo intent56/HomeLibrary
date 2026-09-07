@@ -1,0 +1,886 @@
+{% extends "base.html" %} {% block body_class %}bg-page2{% endblock %} {% block
+content %}
+<div class="row justify-content-center">
+  <div class="col-lg-10">
+    <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 class="text-white"><i class="bi bi-globe"></i> Карточка языка</h2>
+      </div>
+
+      <div class="d-flex gap-2">
+        <a
+          href="{{ url_for('main.language_list', 
+                    page=return_page,
+                    search=return_search) }}"
+          class="btn btn-outline-light"
+        >
+          <i class="bi bi-arrow-left"></i> Назад к списку языков
+        </a>
+      </div>
+    </div>
+
+    <!-- Вкладки -->
+    <div class="card shadow-sm mb-4 transparent-card">
+      <div class="card-header transparent-card-header">
+        <ul
+          class="nav nav-tabs card-header-tabs"
+          id="languageCardTabs"
+          role="tablist"
+        >
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link active"
+              id="info-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#info"
+              type="button"
+              role="tab"
+            >
+              <i class="bi bi-info-circle"></i> Информация о языке
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              id="books-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#books"
+              type="button"
+              role="tab"
+            >
+              <i class="bi bi-book"></i> Книги на этом языке ({{
+              pagination_books.total if pagination_books else 0 }})
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              id="interpreters-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#interpreters"
+              type="button"
+              role="tab"
+            >
+              <i class="bi bi-translate"></i> Переводчики с языка ({{
+              pagination_interpreters.total if pagination_interpreters else 0
+              }})
+            </button>
+          </li>
+        </ul>
+      </div>
+      <div class="card-body transparent-card-body">
+        <div class="tab-content" id="languageCardTabsContent">
+          <!-- Вкладка 1: Информация о языке -->
+          <div class="tab-pane fade show active" id="info" role="tabpanel">
+            <div class="row">
+              <div class="col-md-4 text-center">
+                <div class="mb-3">
+                  <div
+                    class="bg-transparent d-inline-flex align-items-center justify-content-center"
+                    style="
+                      width: 200px;
+                      height: 200px;
+                      border: 2px solid rgba(255, 255, 255, 0.3);
+                    "
+                  >
+                    <i class="bi bi-globe display-1 text-white-50"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-8">
+                <h3 class="mb-3 text-white fw-bold fs-1">
+                  {{ language.name }}
+                </h3>
+
+                <table class="table table-borderless transparent-table">
+                  <tr>
+                    <th style="width: 30%" class="text-white-50">Код:</th>
+                    <td class="text-white fw-bold fs-5">{{ language.code }}</td>
+                  </tr>
+                  <tr>
+                    <th class="text-white-50">Название:</th>
+                    <td class="text-white fw-bold fs-5">{{ language.name }}</td>
+                  </tr>
+                  <tr>
+                    <th class="text-white-50">Книг на этом языке:</th>
+                    <td>
+                      <span
+                        class="badge bg-primary bg-opacity-75 text-white fs-6"
+                        >{{ pagination_books.total if pagination_books else 0
+                        }}</span
+                      >
+                    </td>
+                  </tr>
+                  <tr>
+                    <th class="text-white-50">Переводчиков с языка:</th>
+                    <td>
+                      <span
+                        class="badge bg-success bg-opacity-75 text-white fs-6"
+                        >{{ pagination_interpreters.total if
+                        pagination_interpreters else 0 }}</span
+                      >
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+
+            {% if language.comment %}
+            <div class="mt-4">
+              <h5 class="fw-bold text-white">
+                <i class="bi bi-chat"></i> Комментарий:
+              </h5>
+              <div class="p-3 rounded transparent-comment">
+                {{ language.comment|safe }}
+              </div>
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- Вкладка 2: Книги на этом языке -->
+          <div class="tab-pane fade" id="books" role="tabpanel">
+            <h5 class="fw-bold text-white">
+              <i class="bi bi-book"></i> Книги на этом языке:
+            </h5>
+            {% if pagination_books and pagination_books.items %}
+            <div class="table-responsive">
+              <table class="table table-hover transparent-table">
+                <thead class="transparent-table-header">
+                  <tr>
+                    <th style="width: 10%">Обложка</th>
+                    <th style="width: 40%">Название</th>
+                    <th style="width: 35%">Авторы</th>
+                    <th style="width: 15%">Год</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for book in pagination_books.items %}
+                  <tr>
+                    <td>
+                      {% if book.cover %}
+                      <img
+                        src="data:image/jpeg;base64,{{ book.cover|b64encode }}"
+                        alt="{{ book.name }}"
+                        class="img-thumbnail book-cover-thumbnail"
+                        style="
+                          width: 40px;
+                          height: 56px;
+                          object-fit: cover;
+                          border-color: rgba(255, 255, 255, 0.2);
+                          background: transparent;
+                        "
+                        onerror="
+                          this.onerror = null;
+                          this.src =
+                            'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'56\' viewBox=\'0 0 40 56\'%3E%3Crect width=\'40\' height=\'56\' fill=\'%23f8f9fa\'/%3E%3Ctext x=\'20\' y=\'28\' font-family=\'Arial\' font-size=\'8\' fill=\'%236c757d\' text-anchor=\'middle\'%3EНет%3C/text%3E%3Ctext x=\'20\' y=\'38\' font-family=\'Arial\' font-size=\'8\' fill=\'%236c757d\' text-anchor=\'middle\'%3Eобложки%3C/text%3E%3C/svg%3E';
+                        "
+                      />
+                      {% else %}
+                      <div
+                        class="bg-transparent d-inline-flex align-items-center justify-content-center img-thumbnail"
+                        style="
+                          width: 40px;
+                          height: 56px;
+                          border-color: rgba(255, 255, 255, 0.2);
+                          background: transparent;
+                        "
+                      >
+                        <i
+                          class="bi bi-book text-white-50"
+                          style="font-size: 1.2rem"
+                        ></i>
+                      </div>
+                      {% endif %}
+                    </td>
+                    <td>
+                      <strong class="text-white">{{ book.name }}</strong>
+                    </td>
+                    <td>
+                      {% if book.author_books %} {% for author in
+                      book.author_books %}
+                      <strong class="text-white">{{ author.fio }}</strong>
+                      {% endfor %} {% else %}
+                      <strong class="text-white">Нет авторов</strong>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if book.year_edition %}
+                      <strong class="text-white"
+                        >{{ book.year_edition }}</strong
+                      >
+                      {% else %}
+                      <span class="text-white-50">-</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      <div class="btn-group btn-group-sm" role="group">
+                        <a
+                          href="{{ url_for('main.book_view', 
+                                book_id=book.id,
+                                page1=page if page else 1,
+                                id=language.id,
+                                return_search=return_search,
+                                return_page=return_page,
+                                return_to='language_card') }}"
+                          class="btn btn-outline-light"
+                          title="Просмотр книги"
+                        >
+                          <i class="bi bi-eye"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            <!-- ПАГИНАЦИЯ КНИГ -->
+            {% if pagination_books and pagination_books.pages > 1 %}
+            <div class="pagination-container mt-3">
+              <nav aria-label="Навигация по страницам книг">
+                <ul
+                  class="pagination pagination-sm justify-content-center mb-0"
+                  id="transparentPagination"
+                >
+                  <li
+                    class="page-item {% if pagination_books.page == 1 %}disabled{% endif %}"
+                  >
+                    <a
+                      class="page-link"
+                      href="{{ url_for('main.language_card', 
+                               language_id=language.id, 
+                               page_books=1, 
+                               page_interpreters=pagination_interpreters.page if pagination_interpreters else 1,
+                               return_page=return_page) }}"
+                    >
+                      <i class="bi bi-chevron-double-left"></i>
+                    </a>
+                  </li>
+                  <li
+                    class="page-item {% if pagination_books.page == 1 %}disabled{% endif %}"
+                  >
+                    <a
+                      class="page-link"
+                      href="{{ url_for('main.language_card', 
+                               language_id=language.id, 
+                               page_books=pagination_books.prev_num, 
+                               page_interpreters=pagination_interpreters.page if pagination_interpreters else 1,
+                               return_page=return_page) }}"
+                    >
+                      <i class="bi bi-chevron-left"></i>
+                    </a>
+                  </li>
+
+                  {% set left = pagination_books.page - 2 %} {% set right =
+                  pagination_books.page + 2 %} {% if left < 1 %}{% set left = 1
+                  %}{% endif %} {% if right > pagination_books.pages %}{% set
+                  right = pagination_books.pages %}{% endif %} {% if left > 1 %}
+                  <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                  </li>
+                  {% endif %} {% for p in range(left, right + 1) %}
+                  <li
+                    class="page-item {% if p == pagination_books.page %}active{% endif %}"
+                  >
+                    <a
+                      class="page-link"
+                      href="{{ url_for('main.language_card', 
+                               language_id=language.id, 
+                               page_books=p, 
+                               page_interpreters=pagination_interpreters.page if pagination_interpreters else 1,
+                               return_page=return_page) }}"
+                    >
+                      {{ p }}
+                    </a>
+                  </li>
+                  {% endfor %} {% if right < pagination_books.pages %}
+                  <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                  </li>
+                  {% endif %}
+
+                  <li
+                    class="page-item {% if pagination_books.page == pagination_books.pages %}disabled{% endif %}"
+                  >
+                    <a
+                      class="page-link"
+                      href="{{ url_for('main.language_card', 
+                                language_id=language.id, 
+                                page_books=pagination_books.next_num, 
+                                page_interpreters=pagination_interpreters.page if pagination_interpreters else 1,
+                                return_page=return_page) }}"
+                    >
+                      <i class="bi bi-chevron-right"></i>
+                    </a>
+                  </li>
+                  <li
+                    class="page-item {% if pagination_books.page == pagination_books.pages %}disabled{% endif %}"
+                  >
+                    <a
+                      class="page-link"
+                      href="{{ url_for('main.language_card', 
+                               language_id=language.id, 
+                               page_books=pagination_books.pages, 
+                               page_interpreters=pagination_interpreters.page if pagination_interpreters else 1,
+                               return_page=return_page) }}"
+                    >
+                      <i class="bi bi-chevron-double-right"></i>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+
+              <div class="text-center text-white-50 small mt-2">
+                Показано: {{ pagination_books.items|length }} из {{
+                pagination_books.total }} книг
+                <span class="mx-2">|</span>
+                Страница {{ pagination_books.page }} из {{
+                pagination_books.pages }}
+              </div>
+            </div>
+            {% endif %} {% else %}
+            <div class="alert alert-warning transparent-alert mt-3">
+              <i class="bi bi-exclamation-triangle"></i>
+              На этом языке пока нет книг
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- Вкладка 3: Переводчики с языка -->
+          <div class="tab-pane fade" id="interpreters" role="tabpanel">
+            <h5 class="fw-bold text-white">
+              <i class="bi bi-translate"></i> Переводчики с этого языка:
+            </h5>
+            {% if pagination_interpreters and pagination_interpreters.items %}
+            <div class="table-responsive">
+              <table class="table table-hover transparent-table">
+                <thead class="transparent-table-header">
+                  <tr>
+                    <th style="width: 60%">ФИО переводчика</th>
+                    <th style="width: 40%">Действия</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for interpreter in pagination_interpreters.items %}
+                  <tr>
+                    <td>
+                      <strong class="text-white">{{ interpreter.fio }}</strong>
+                    </td>
+                    <td>
+                      <div class="btn-group btn-group-sm" role="group">
+                        <a
+                          href="{{ url_for('main.interpreter_card', interpreter_id=interpreter.id) }}"
+                          class="btn btn-outline-light"
+                          title="Просмотр карточки переводчика"
+                        >
+                          <i class="bi bi-eye"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            <!-- ПАГИНАЦИЯ ПЕРЕВОДЧИКОВ -->
+            {% if pagination_interpreters and pagination_interpreters.pages > 1
+            %}
+            <div class="pagination-container mt-3">
+              <nav aria-label="Навигация по страницам переводчиков">
+                <ul
+                  class="pagination pagination-sm justify-content-center mb-0"
+                  id="transparentPagination"
+                >
+                  <li
+                    class="page-item {% if pagination_interpreters.page == 1 %}disabled{% endif %}"
+                  >
+                    <a
+                      class="page-link"
+                      href="{{ url_for('main.language_card', 
+                               language_id=language.id, 
+                               page_interpreters=1,
+                               page_books=pagination_books.page if pagination_books else 1,
+                               return_page=return_page) }}"
+                    >
+                      <i class="bi bi-chevron-double-left"></i>
+                    </a>
+                  </li>
+                  <li
+                    class="page-item {% if pagination_interpreters.page == 1 %}disabled{% endif %}"
+                  >
+                    <a
+                      class="page-link"
+                      href="{{ url_for('main.language_card', 
+                               language_id=language.id, 
+                               page_interpreters=pagination_interpreters.prev_num,
+                               page_books=pagination_books.page if pagination_books else 1,
+                               return_page=return_page) }}"
+                    >
+                      <i class="bi bi-chevron-left"></i>
+                    </a>
+                  </li>
+
+                  {% set left = pagination_interpreters.page - 2 %} {% set right
+                  = pagination_interpreters.page + 2 %} {% if left < 1 %}{% set
+                  left = 1 %}{% endif %} {% if right >
+                  pagination_interpreters.pages %}{% set right =
+                  pagination_interpreters.pages %}{% endif %} {% if left > 1 %}
+                  <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                  </li>
+                  {% endif %} {% for p in range(left, right + 1) %}
+                  <li
+                    class="page-item {% if p == pagination_interpreters.page %}active{% endif %}"
+                  >
+                    <a
+                      class="page-link"
+                      href="{{ url_for('main.language_card', 
+                               language_id=language.id, 
+                               page_interpreters=p,
+                               page_books=pagination_books.page if pagination_books else 1,
+                               return_page=return_page) }}"
+                    >
+                      {{ p }}
+                    </a>
+                  </li>
+                  {% endfor %} {% if right < pagination_interpreters.pages %}
+                  <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                  </li>
+                  {% endif %}
+
+                  <li
+                    class="page-item {% if pagination_interpreters.page == pagination_interpreters.pages %}disabled{% endif %}"
+                  >
+                    <a
+                      class="page-link"
+                      href="{{ url_for('main.language_card', 
+                                language_id=language.id, 
+                                page_interpreters=pagination_interpreters.next_num,
+                                page_books=pagination_books.page if pagination_books else 1,
+                                return_page=return_page) }}"
+                    >
+                      <i class="bi bi-chevron-right"></i>
+                    </a>
+                  </li>
+                  <li
+                    class="page-item {% if pagination_interpreters.page == pagination_interpreters.pages %}disabled{% endif %}"
+                  >
+                    <a
+                      class="page-link"
+                      href="{{ url_for('main.language_card', 
+                               language_id=language.id, 
+                               page_interpreters=pagination_interpreters.pages,
+                               page_books=pagination_books.page if pagination_books else 1,
+                               return_page=return_page) }}"
+                    >
+                      <i class="bi bi-chevron-double-right"></i>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+
+              <div class="text-center text-white-50 small mt-2">
+                Показано: {{ pagination_interpreters.items|length }} из {{
+                pagination_interpreters.total }} переводчиков
+                <span class="mx-2">|</span>
+                Страница {{ pagination_interpreters.page }} из {{
+                pagination_interpreters.pages }}
+              </div>
+            </div>
+            {% endif %} {% else %}
+            <div class="alert alert-warning transparent-alert mt-3">
+              <i class="bi bi-exclamation-triangle"></i>
+              Нет переводчиков, работающих с этого языка
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="card-footer transparent-card-footer">
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="text-white-50">
+            <i class="bi bi-info-circle"></i> ID: {{ language.id }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Сохранение активной вкладки
+  document.addEventListener("DOMContentLoaded", function () {
+    const tabs = document.querySelectorAll(
+      '#languageCardTabs button[data-bs-toggle="tab"]',
+    );
+    tabs.forEach((tab) => {
+      tab.addEventListener("shown.bs.tab", function (e) {
+        localStorage.setItem("activeLanguageCardTab", e.target.id);
+      });
+    });
+
+    const activeTab = localStorage.getItem("activeLanguageCardTab");
+    if (activeTab) {
+      const tabElement = document.getElementById(activeTab);
+      if (tabElement) {
+        const tab = new bootstrap.Tab(tabElement);
+        tab.show();
+      }
+    }
+  });
+</script>
+
+<style>
+  /* 1. ПОЛНОСТЬЮ УБИРАЕМ ВСЕ ФОНЫ */
+  .transparent-card,
+  .transparent-card *,
+  .transparent-card .card-body,
+  .transparent-card .card-header,
+  .transparent-card .card-footer,
+  .transparent-card .table,
+  .transparent-card .table-responsive,
+  .transparent-card thead,
+  .transparent-card tbody,
+  .transparent-card tr,
+  .transparent-card td,
+  .transparent-card th {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
+  /* 2. КАРТОЧКА - ТОЛЬКО РАМКА */
+  .transparent-card {
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  .transparent-card-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 12px 12px 0 0 !important;
+  }
+
+  .transparent-card-body {
+    padding: 1.5rem;
+  }
+
+  /* 3. СТИЛИ ДЛЯ ВКЛАДОК */
+  .nav-tabs .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    border: none;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s;
+  }
+
+  .nav-tabs .nav-link:hover {
+    border-color: transparent;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+
+  .nav-tabs .nav-link.active {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-bottom: 2px solid #fff;
+  }
+
+  .nav-tabs .nav-link i {
+    margin-right: 6px;
+  }
+
+  .card-header-tabs {
+    margin-right: -0.625rem;
+    margin-bottom: -0.75rem;
+    margin-left: -0.625rem;
+    border-bottom: 0;
+  }
+
+  .tab-pane {
+    padding-top: 1rem;
+  }
+
+  /* 4. ПРОЗРАЧНАЯ ТАБЛИЦА */
+  .transparent-table {
+    width: 100% !important;
+  }
+
+  .transparent-table thead th {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    color: #ffffff !important;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.15) !important;
+  }
+
+  .transparent-table tbody tr {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+  }
+  .transparent-table tbody tr:nth-of-type(odd) {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+  }
+  .transparent-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  .transparent-table td {
+    color: #ffffff !important;
+  }
+  .transparent-table th {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  /* 5. ПРОЗРАЧНЫЙ КОММЕНТАРИЙ */
+  .transparent-comment {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-left: 4px solid rgba(255, 255, 255, 0.3) !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    max-height: 300px;
+    overflow-y: auto;
+    display: block;
+  }
+  .transparent-comment a {
+    color: #a8d8ff !important;
+  }
+  .transparent-comment h1,
+  .transparent-comment h2,
+  .transparent-comment h3,
+  .transparent-comment h4,
+  .transparent-comment h5,
+  .transparent-comment h6 {
+    color: #ffffff !important;
+  }
+  .transparent-comment blockquote {
+    border-left: 4px solid rgba(255, 255, 255, 0.3);
+    padding-left: 1rem;
+    margin: 0.5rem 0;
+    color: rgba(255, 255, 255, 0.7);
+  }
+  .transparent-comment table td,
+  .transparent-comment table th {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.3rem 0.5rem;
+  }
+  .transparent-comment table th {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  .transparent-comment::-webkit-scrollbar {
+    width: 6px;
+  }
+  .transparent-comment::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+  .transparent-comment::-webkit-scrollbar-thumb {
+    background: var(--main-color);
+    border-radius: 3px;
+  }
+  .transparent-comment::-webkit-scrollbar-thumb:hover {
+    background: #e6b800;
+  }
+
+  /* 6. ПРОЗРАЧНЫЙ АЛЕРТ */
+  .transparent-alert {
+    background-color: rgba(13, 202, 240, 0.15) !important;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(13, 202, 240, 0.3) !important;
+    color: #ffffff !important;
+  }
+  .transparent-alert i {
+    color: #0dcaf0 !important;
+  }
+  .transparent-alert .text-white {
+    color: #ffffff !important;
+  }
+
+  /* 7. КНОПКИ В ТАБЛИЦЕ */
+  .btn-group .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    min-height: 36px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.9rem;
+  }
+  .btn-group .btn i {
+    font-size: 1.1rem;
+  }
+  .btn-outline-light {
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+  }
+  .btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-color: #ffffff !important;
+    color: #ffffff !important;
+  }
+
+  /* 8. ПАГИНАЦИЯ - ИСПРАВЛЕННЫЙ СТИЛЬ */
+  .pagination-container {
+    background-color: rgba(0, 0, 0, 0.25) !important;
+    backdrop-filter: blur(8px);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  #transparentPagination .page-link,
+  #transparentPagination .page-link:focus,
+  #transparentPagination .page-link:visited {
+    background-color: transparent !important;
+    background: transparent !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+    transition: all 0.3s ease;
+  }
+
+  #transparentPagination .page-item:not(.active) .page-link:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+  }
+
+  /* АКТИВНАЯ СТРАНИЦА - ЗОЛОТОЙ ФОН, ЧЕРНЫЙ ТЕКСТ */
+  #transparentPagination .page-item.active .page-link,
+  #transparentPagination .page-item.active .page-link:hover,
+  #transparentPagination .page-item.active .page-link:focus {
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+  }
+
+  #transparentPagination .page-item.disabled .page-link,
+  #transparentPagination .page-item.disabled .page-link:hover {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  /* 9. ОБЩИЕ СТИЛИ */
+  .text-white {
+    color: #ffffff !important;
+  }
+  .text-white-50 {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+  .bg-opacity-75 {
+    --bs-bg-opacity: 0.75;
+  }
+
+  /* 10. Стили для кнопки "Редактировать" */
+  .btn-edit {
+    background-color: transparent !important;
+    color: var(--main-color) !important;
+    border: 2px solid var(--main-color) !important;
+    transition: all 0.3s ease !important;
+    font-weight: 500 !important;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-edit:hover {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 194, 0, 0.3);
+  }
+
+  .btn-edit:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 6px rgba(255, 194, 0, 0.2);
+  }
+
+  .btn-edit:focus {
+    box-shadow: 0 0 0 3px rgba(255, 194, 0, 0.4);
+    outline: none;
+  }
+
+  /* 11. АДАПТИВНОСТЬ */
+  @media (max-width: 768px) {
+    .card-body {
+      padding: 1rem !important;
+    }
+    .d-flex.justify-content-between {
+      flex-direction: column;
+      align-items: stretch !important;
+      gap: 1rem;
+    }
+    .btn-lg {
+      width: 100%;
+    }
+    .nav-tabs .nav-link {
+      font-size: 0.85rem;
+      padding: 0.4rem 0.7rem;
+    }
+    .nav-tabs .nav-link i {
+      margin-right: 4px;
+    }
+    .transparent-table td,
+    .transparent-table th {
+      padding: 0.3rem 0.4rem;
+      font-size: 0.85rem;
+    }
+    .btn-group .btn {
+      min-width: 32px;
+      min-height: 32px;
+      padding: 0.2rem 0.4rem;
+      font-size: 0.8rem;
+    }
+    .pagination-container {
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: center !important;
+    }
+  }
+
+  /* 12. СТИЛЬ ДЛЯ ЯЧЕЙКИ С КОММЕНТАРИЕМ */
+  .comment-cell {
+    max-height: 300px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    padding-right: 10px;
+    display: block;
+  }
+
+  .comment-cell::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .comment-cell::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+
+  .comment-cell::-webkit-scrollbar-thumb {
+    background: var(--main-color);
+    border-radius: 3px;
+  }
+
+  .comment-cell::-webkit-scrollbar-thumb:hover {
+    background: #e6b800;
+  }
+
+  /* 13. ПЛАВНОЕ УВЕЛИЧЕНИЕ ОБЛОЖЕК ПРИ НАВЕДЕНИИ */
+  .book-cover-thumbnail {
+    transition:
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    border-radius: 4px;
+    will-change: transform;
+  }
+
+  .book-cover-thumbnail:hover {
+    transform: scale(2.5);
+    z-index: 1000;
+    position: relative;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  }
+</style>
+{% endblock %}
