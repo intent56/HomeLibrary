@@ -158,9 +158,10 @@ content %}
                 <thead class="transparent-table-header">
                   <tr>
                     <th style="width: 10%">Обложка</th>
-                    <th style="width: 45%">Название</th>
-                    <th style="width: 35%">Авторы</th>
+                    <th style="width: 30%">Название</th>
+                    <th style="width: 25%">Авторы</th>
                     <th style="width: 10%">Год</th>
+                    <th style="width: 25%">Издатель</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -220,6 +221,16 @@ content %}
                       >
                       {% else %}
                       <strong class="text-white">-</strong>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if book.publisher_books %} {% for publisher in
+                      book.publisher_books %}
+                      <strong class="text-white">{{ publisher.name }}</strong>
+                      {% endfor %} {% else %}
+                      <span class="text-light-50"
+                        ><i class="bi bi-tag"></i> Нет издателя</span
+                      >
                       {% endif %}
                     </td>
                   </tr>
