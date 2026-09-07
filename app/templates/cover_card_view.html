@@ -111,8 +111,9 @@ content %}
                   <tr>
                     <th style="width: 10%">Обложка</th>
                     <th style="width: 30%">Название</th>
-                    <th style="width: 35%">Авторы</th>
-                    <th style="width: 25%">Действия</th>
+                    <th style="width: 25%">Авторы</th>
+                    <th style="width: 10%">Год</th>
+                    <th style="width: 25%">Издатель</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -169,21 +170,23 @@ content %}
                       {% endif %}
                     </td>
                     <td>
-                      <div class="btn-group btn-group-sm" role="group">
-                        <a
-                          href="{{ url_for('main.book_view', 
-                                book_id=book.id,
-                                page1=page if page else 1,
-                                id=cover.id,
-                                return_search=return_search,
-                                return_page=return_page,
-                                return_to='cover_card') }}"
-                          class="btn btn-outline-light"
-                          title="Просмотр книги"
-                        >
-                          <i class="bi bi-eye"></i>
-                        </a>
-                      </div>
+                      {% if book.year_edition %}
+                      <strong class="text-white"
+                        >{{ book.year_edition }}</strong
+                      >
+                      {% else %}
+                      <strong class="text-white">-</strong>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if book.publisher_books %} {% for publisher in
+                      book.publisher_books %}
+                      <strong class="text-white">{{ publisher.name }}</strong>
+                      {% endfor %} {% else %}
+                      <span class="text-light-50"
+                        ><i class="bi bi-tag"></i> Нет издателя</span
+                      >
+                      {% endif %}
                     </td>
                   </tr>
                   {% endfor %}

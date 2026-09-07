@@ -128,8 +128,10 @@ content %}
                 <thead class="transparent-table-header">
                   <tr>
                     <th style="width: 10%">Обложка</th>
-                    <th style="width: 55%">Название</th>
-                    <th style="width: 35%">Авторы</th>
+                    <th style="width: 20%">Название</th>
+                    <th style="width: 25%">Авторы</th>
+                    <th style="width: 10%">Год</th>
+                    <th style="width: 25%">Издатель</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -183,6 +185,34 @@ content %}
                       >
                       {% endfor %} {% else %}
                       <span class="text-white-50 small">Нет авторов</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if book.year_edition %}
+                      <strong class="text-white"
+                        >{{ book.year_edition }}</strong
+                      >
+                      {% else %}
+                      <strong class="text-white">-</strong>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if book.year_edition %}
+                      <strong class="text-white"
+                        >{{ book.year_edition }}</strong
+                      >
+                      {% else %}
+                      <strong class="text-white">-</strong>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if book.publisher_books %} {% for publisher in
+                      book.publisher_books %}
+                      <strong class="text-white">{{ publisher.name }}</strong>
+                      {% endfor %} {% else %}
+                      <span class="text-light-50"
+                        ><i class="bi bi-tag"></i> Нет издателя</span
+                      >
                       {% endif %}
                     </td>
                   </tr>

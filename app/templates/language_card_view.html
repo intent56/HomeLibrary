@@ -150,8 +150,9 @@ content %}
                   <tr>
                     <th style="width: 10%">Обложка</th>
                     <th style="width: 40%">Название</th>
-                    <th style="width: 15%">Год</th>
                     <th style="width: 35%">Авторы</th>
+                    <th style="width: 15%">Год</th>
+                    <th style="width: 25%">Переводчики</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -197,15 +198,6 @@ content %}
                       <strong class="text-white">{{ book.name }}</strong>
                     </td>
                     <td>
-                      {% if book.year_edition %}
-                      <span class="badge bg-secondary bg-opacity-75 text-white"
-                        >{{ book.year_edition }}</span
-                      >
-                      {% else %}
-                      <span class="text-white-50">-</span>
-                      {% endif %}
-                    </td>
-                    <td>
                       {% if book.author_books %} {% for author in
                       book.author_books %}
                       <span
@@ -214,6 +206,23 @@ content %}
                       >
                       {% endfor %} {% else %}
                       <span class="text-white-50 small">Нет авторов</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if book.year_edition %}
+                      <strong class="text-white"
+                        >{{ book.year_edition }}</strong
+                      >
+                      {% else %}
+                      <strong class="text-white">-</strong>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if book.interpreter_books %} {% for interpreter in
+                      book.interpreter_books %}
+                      <strong class="text-white">{{ interpreter.name }}</strong>
+                      {% endfor %} {% else %}
+                      <strong class="text-white">Нет переводчика</strong>
                       {% endif %}
                     </td>
                   </tr>
