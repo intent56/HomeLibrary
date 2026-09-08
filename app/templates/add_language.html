@@ -1,135 +1,178 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %} {% block body_class %}bg-page2{% endblock %} {% block
+content %}
 <div class="row">
   <div class="col-lg-8 mx-auto">
+    <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h2><i class="bi bi-plus-circle"></i> Добавление языка</h2>
-        <h5 class="text-muted">Заполните информацию о языке</h5>
+        <h2 class="text-white">
+          <i class="bi bi-plus-circle"></i> Добавление языка
+        </h2>
+        <span class="badge bg-opacity-75 text-white fs-6"
+          >Все поля необязательны, кроме отмеченных *</span
+        >
       </div>
-      <a
-        href="{{ url_for('main.language_list') }}"
-        class="btn btn-outline-secondary"
-      >
-        <i class="bi bi-arrow-left"></i> Назад к списку
-      </a>
+      <div class="d-flex gap-2">
+        <a
+          href="{{ url_for('main.language_list') }}"
+          class="btn btn-outline-light"
+        >
+          <i class="bi bi-arrow-left"></i> Назад к списку
+        </a>
+      </div>
     </div>
 
     <form method="POST" action="{{ url_for('main.add_language') }}" novalidate>
       {{ form.csrf_token }}
       <input type="hidden" name="book_id" value="{{ book_id }}" />
 
-      <!-- Информация о языке -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-primary text-white">
-          <h5 class="mb-0">
-            <i class="bi bi-info-circle"></i> Информация о языке
-          </h5>
+      <!-- Вкладки -->
+      <div class="card shadow-sm mb-4 transparent-card">
+        <div class="card-header transparent-card-header">
+          <ul
+            class="nav nav-tabs card-header-tabs"
+            id="languageTabs"
+            role="tablist"
+          >
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link active"
+                id="main-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#main"
+                type="button"
+                role="tab"
+              >
+                <i class="bi bi-info-circle"></i> Основное
+              </button>
+            </li>
+          </ul>
         </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="mb-3">
-                {{ form.code.label(class="form-label fw-bold") }}
-                <span class="text-danger">*</span>
-                {{ form.code(class="form-control" + (" is-invalid" if
-                form.code.errors else ""), placeholder="Например: 'ru'",
-                id="languageCode") }} {% if form.code.errors %}
-                <div class="invalid-feedback d-block">
-                  {% for error in form.code.errors %} {{ error }} {% endfor %}
-                </div>
-                {% endif %}
-                <div class="form-text">
-                  Код языка (например: ru, en, fr, de)
-                </div>
+        <div class="card-body transparent-card-body">
+          <div class="tab-content" id="languageTabsContent">
+            <!-- Вкладка: Основная информация -->
+            <div class="tab-pane fade show active" id="main" role="tabpanel">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    {{ form.code.label(class="form-label fw-bold text-white") }}
+                    <span class="text-danger">*</span>
+                    {{ form.code(class="form-control bg-transparent text-white
+                    border-light" + (" is-invalid" if form.code.errors else ""),
+                    placeholder="Например: 'ru'", id="languageCode") }} {% if
+                    form.code.errors %}
+                    <div class="invalid-feedback d-block">
+                      {% for error in form.code.errors %} {{ error }} {% endfor
+                      %}
+                    </div>
+                    {% endif %}
+                    <div class="form-text text-white-50">
+                      Код языка (например: ru, en, fr, de)
+                    </div>
 
-                <!-- Визуализация кода -->
-                <div id="codePreview" class="mt-2">
-                  <span class="badge bg-secondary" id="codeBadge">ru</span>
+                    <!-- Визуализация кода -->
+                    <div id="codePreview" class="mt-2">
+                      <span class="badge bg-secondary" id="codeBadge">ru</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    {{ form.name.label(class="form-label fw-bold text-white") }}
+                    <span class="text-danger">*</span>
+                    {{ form.name(class="form-control bg-transparent text-white
+                    border-light" + (" is-invalid" if form.name.errors else ""),
+                    placeholder="Например: 'Русский'", id="languageName") }} {%
+                    if form.name.errors %}
+                    <div class="invalid-feedback d-block">
+                      {% for error in form.name.errors %} {{ error }} {% endfor
+                      %}
+                    </div>
+                    {% endif %}
+                    <div class="form-text text-white-50">Название языка</div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="col-md-6">
-              <div class="mb-3">
-                {{ form.name.label(class="form-label fw-bold") }}
-                <span class="text-danger">*</span>
-                {{ form.name(class="form-control" + (" is-invalid" if
-                form.name.errors else ""), placeholder="Например: 'Русский'",
-                id="languageName") }} {% if form.name.errors %}
-                <div class="invalid-feedback d-block">
-                  {% for error in form.name.errors %} {{ error }} {% endfor %}
-                </div>
-                {% endif %}
-                <div class="form-text">Название языка</div>
-              </div>
-            </div>
-          </div>
 
-          <!-- Флаг языка (эмодзи) -->
-          <div class="mb-3">
-            <label class="form-label fw-bold">Флаг языка</label>
-            <div class="row">
-              <div class="col-md-8">
-                <select class="form-select" id="languageFlag">
-                  <option value="🇷🇺">🇷🇺 Русский</option>
-                  <option value="🇬🇧">🇬🇧 Английский</option>
-                  <option value="🇫🇷">🇫🇷 Французский</option>
-                  <option value="🇩🇪">🇩🇪 Немецкий</option>
-                  <option value="🇪🇸">🇪🇸 Испанский</option>
-                  <option value="🇮🇹">🇮🇹 Итальянский</option>
-                  <option value="🇨🇳">🇨🇳 Китайский</option>
-                  <option value="🇯🇵">🇯🇵 Японский</option>
-                  <option value="🇦🇪">🇦🇪 Арабский</option>
-                  <option value="🇵🇹">🇵🇹 Португальский</option>
-                  <option value="🇰🇷">🇰🇷 Корейский</option>
-                  <option value="🇮🇳">🇮🇳 Хинди</option>
-                  <option value="🇹🇷">🇹🇷 Турецкий</option>
-                  <option value="🇵🇱">🇵🇱 Польский</option>
-                  <option value="🇺🇦">🇺🇦 Украинский</option>
-                  <option value="🇧🇾">🇧🇾 Белорусский</option>
-                  <option value="🇰🇿">🇰🇿 Казахский</option>
-                </select>
+              <!-- Флаг языка (эмодзи) -->
+              <div class="mb-3">
+                <label class="form-label fw-bold text-white">Флаг языка</label>
+                <div class="row">
+                  <div class="col-md-8">
+                    <select
+                      class="form-select bg-transparent text-white border-light"
+                      id="languageFlag"
+                    >
+                      <option value="🇷🇺">🇷🇺 Русский</option>
+                      <option value="🇬🇧">🇬🇧 Английский</option>
+                      <option value="🇫🇷">🇫🇷 Французский</option>
+                      <option value="🇩🇪">🇩🇪 Немецкий</option>
+                      <option value="🇪🇸">🇪🇸 Испанский</option>
+                      <option value="🇮🇹">🇮🇹 Итальянский</option>
+                      <option value="🇨🇳">🇨🇳 Китайский</option>
+                      <option value="🇯🇵">🇯🇵 Японский</option>
+                      <option value="🇦🇪">🇦🇪 Арабский</option>
+                      <option value="🇵🇹">🇵🇹 Португальский</option>
+                      <option value="🇰🇷">🇰🇷 Корейский</option>
+                      <option value="🇮🇳">🇮🇳 Хинди</option>
+                      <option value="🇹🇷">🇹🇷 Турецкий</option>
+                      <option value="🇵🇱">🇵🇱 Польский</option>
+                      <option value="🇺🇦">🇺🇦 Украинский</option>
+                      <option value="🇧🇾">🇧🇾 Белорусский</option>
+                      <option value="🇰🇿">🇰🇿 Казахский</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4">
+                    <div
+                      class="p-2 bg-transparent rounded text-center"
+                      style="
+                        font-size: 2rem;
+                        border: 2px solid rgba(255, 255, 255, 0.3);
+                        border-radius: 8px;
+                      "
+                      id="flagDisplay"
+                    >
+                      🇷🇺
+                    </div>
+                  </div>
+                </div>
+                <div class="form-text text-white-50">
+                  Выберите флаг для языка (для отображения в списке)
+                </div>
               </div>
-              <div class="col-md-4">
-                <div
-                  class="p-2 bg-light rounded text-center"
-                  style="font-size: 2rem"
-                  id="flagDisplay"
+
+              <div class="mb-3">
+                {{ form.comment.label(class="form-label fw-bold text-white") }}
+                {{ form.comment(class="form-control bg-transparent text-white
+                border-light", rows="3", placeholder="Например: 'Русский язык'")
+                }}
+                <div class="form-text text-white-50">
+                  Комментарии, примечания
+                </div>
+              </div>
+
+              <!-- Информация о книгах (для справки) -->
+              <div class="alert alert-info transparent-alert mt-3">
+                <i class="bi bi-info-circle text-white"></i>
+                <strong class="text-white">Книг на этом языке:</strong>
+                <span class="text-white">0</span>
+                <span class="ms-3 text-white-50 small"
+                  >(будут добавляться при редактировании книг)</span
                 >
-                  🇷🇺
-                </div>
               </div>
             </div>
-            <div class="form-text">
-              Выберите флаг для языка (для отображения в списке)
-            </div>
-          </div>
-
-          <div class="mb-3">
-            {{ form.comment.label(class="form-label fw-bold") }} {{
-            form.comment(class="form-control", rows="3", placeholder="Например:
-            'Русский язык'") }}
-            <div class="form-text">Комментарии, примечания</div>
-          </div>
-
-          <!-- Информация о книгах (для справки) -->
-          <div class="alert alert-info mt-3">
-            <i class="bi bi-info-circle"></i>
-            <strong>Книг на этом языке:</strong> 0
-            <span class="ms-3 text-muted small"
-              >(будут добавляться при редактировании книг)</span
-            >
           </div>
         </div>
       </div>
 
       <!-- Кнопки действия -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-body">
+      <div class="card shadow-sm mb-4 transparent-card">
+        <div class="card-body transparent-card-body">
           <div
             class="d-flex justify-content-between align-items-center flex-wrap gap-2"
           >
             <div>
-              <span class="text-muted">
+              <span class="text-white-50">
                 <i class="bi bi-info-circle"></i>
                 Поля с <span class="text-danger">*</span> обязательны для
                 заполнения
@@ -138,11 +181,11 @@
             <div class="d-flex gap-2">
               <a
                 href="{{ url_for('main.language_list') }}"
-                class="btn btn-secondary btn-lg"
+                class="btn btn-outline-light btn-lg"
               >
                 <i class="bi bi-x-circle"></i> Отмена
               </a>
-              {{ form.submit(class="btn btn-primary btn-lg") }}
+              {{ form.submit(class="btn btn-edit btn-lg") }}
             </div>
           </div>
         </div>
@@ -193,116 +236,227 @@
       });
     }
 
-    // Подтверждение перед выходом без сохранения
-    const form = document.querySelector("form");
-    let formChanged = false;
-
-    form.querySelectorAll("input, textarea, select").forEach((element) => {
-      element.addEventListener("change", function () {
-        formChanged = true;
+    // --- Сохранение активной вкладки ---
+    const tabs = document.querySelectorAll(
+      '#languageTabs button[data-bs-toggle="tab"]',
+    );
+    tabs.forEach((tab) => {
+      tab.addEventListener("shown.bs.tab", function (e) {
+        localStorage.setItem("activeAddLanguageTab", e.target.id);
       });
     });
 
-    window.addEventListener("beforeunload", function (e) {
-      if (formChanged) {
-        e.preventDefault();
-        e.returnValue =
-          "Вы не сохранили изменения. Вы уверены, что хотите покинуть страницу?";
+    const activeTab = localStorage.getItem("activeAddLanguageTab");
+    if (activeTab) {
+      const tabElement = document.getElementById(activeTab);
+      if (tabElement) {
+        const tab = new bootstrap.Tab(tabElement);
+        tab.show();
       }
-    });
-
-    form.addEventListener("submit", function () {
-      formChanged = false;
-    });
+    }
   });
 </script>
 
 <style>
-  /* Стили для полей ввода с placeholder */
-  .form-control::placeholder {
-    color: #adb5bd;
-    font-style: italic;
-    font-size: 0.9rem;
-    opacity: 0.7;
+  /* 1. ПОЛНОСТЬЮ УБИРАЕМ ВСЕ ФОНЫ */
+  .transparent-card,
+  .transparent-card *,
+  .transparent-card .card-body,
+  .transparent-card .card-header,
+  .transparent-card .card-footer,
+  .transparent-card .table,
+  .transparent-card .table-responsive,
+  .transparent-card thead,
+  .transparent-card tbody,
+  .transparent-card tr,
+  .transparent-card td,
+  .transparent-card th {
+    background: transparent !important;
+    background-color: transparent !important;
   }
 
-  /* Стили для заполненных полей */
-  .form-control:not(:placeholder-shown) {
-    color: #212529;
-    font-weight: 500;
-    border-color: #86b7fe;
-    background-color: #f8f9fa;
+  /* 2. КАРТОЧКА - ТОЛЬКО РАМКА */
+  .transparent-card {
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
   }
 
-  .form-control:not(:placeholder-shown):focus {
-    background-color: #ffffff;
-    border-color: #86b7fe;
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  .transparent-card-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 12px 12px 0 0 !important;
   }
 
-  /* Стили для textarea */
-  textarea.form-control::placeholder {
-    color: #adb5bd;
-    font-style: italic;
-    font-size: 0.9rem;
-    opacity: 0.7;
+  .transparent-card-body {
+    padding: 1.5rem;
   }
 
-  textarea.form-control:not(:placeholder-shown) {
-    color: #212529;
-    font-weight: 500;
-    border-color: #86b7fe;
-    background-color: #f8f9fa;
-  }
-
-  /* Анимация для полей при фокусе */
-  .form-control:focus::placeholder {
-    opacity: 0.4;
-    transition: opacity 0.2s ease;
-  }
-
-  /* Стили для карточек */
-  .card {
+  /* 3. СТИЛИ ДЛЯ ВКЛАДОК */
+  .nav-tabs .nav-link {
+    color: rgba(255, 255, 255, 0.8);
     border: none;
-    transition: transform 0.2s;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s;
   }
 
-  .card:hover {
-    transform: translateY(-2px);
+  .nav-tabs .nav-link:hover {
+    border-color: transparent;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
   }
 
-  .card-header {
-    border-bottom: none;
-    font-weight: 500;
+  .nav-tabs .nav-link.active {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-bottom: 2px solid #fff;
   }
 
-  .card-header i {
-    margin-right: 8px;
+  .nav-tabs .nav-link i {
+    margin-right: 6px;
   }
 
-  .form-label {
-    font-weight: 500;
-    margin-bottom: 0.25rem;
+  .card-header-tabs {
+    margin-right: -0.625rem;
+    margin-bottom: -0.75rem;
+    margin-left: -0.625rem;
+    border-bottom: 0;
   }
 
-  .form-text {
-    font-size: 0.8rem;
-    color: #6c757d;
-    margin-top: 0.25rem;
+  .tab-pane {
+    padding-top: 1rem;
   }
 
-  .text-danger {
-    font-weight: bold;
+  /* 4. ПРОЗРАЧНЫЕ ПОЛЯ ВВОДА */
+  .form-control.bg-transparent {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.2s;
   }
 
-  .form-control:focus {
-    border-color: #86b7fe;
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  .form-control.bg-transparent::placeholder {
+    color: rgba(255, 255, 255, 0.5);
   }
 
+  .form-control.bg-transparent:focus {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+  }
+
+  .form-control.bg-transparent.is-invalid {
+    border-color: #dc3545 !important;
+  }
+
+  /* 5. ПРОЗРАЧНЫЕ SELECT ПОЛЯ */
+  .form-select.bg-transparent {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+  }
+
+  .form-select.bg-transparent:focus {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+  }
+
+  .form-select.bg-transparent option {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
+
+  .form-select.bg-transparent option:hover {
+    background-color: #808080 !important;
+    color: #ffffff !important;
+  }
+
+  .form-select.bg-transparent option:checked {
+    background-color: #808080 !important;
+    color: #ffffff !important;
+  }
+
+  /* 6. ПРОЗРАЧНЫЙ АЛЕРТ */
+  .transparent-alert {
+    background-color: rgba(13, 202, 240, 0.15) !important;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(13, 202, 240, 0.3) !important;
+    color: #ffffff !important;
+  }
+
+  .transparent-alert i {
+    color: #0dcaf0 !important;
+  }
+
+  .transparent-alert .text-white {
+    color: #ffffff !important;
+  }
+
+  /* 7. ОБЩИЕ СТИЛИ */
+  .text-white {
+    color: #ffffff !important;
+  }
+
+  .text-white-50 {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  .bg-opacity-75 {
+    --bs-bg-opacity: 0.75;
+  }
+
+  /* 8. КНОПКИ */
+  .btn-outline-light {
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+  }
+
+  .btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-color: #ffffff !important;
+    color: #ffffff !important;
+  }
+
+  .btn-edit {
+    background-color: transparent !important;
+    color: var(--main-color) !important;
+    border: 2px solid var(--main-color) !important;
+    transition: all 0.3s ease !important;
+    font-weight: 500 !important;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-edit:hover {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 194, 0, 0.3);
+  }
+
+  .btn-edit:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 6px rgba(255, 194, 0, 0.2);
+  }
+
+  .btn-edit:focus {
+    box-shadow: 0 0 0 3px rgba(255, 194, 0, 0.4);
+    outline: none;
+  }
+
+  .btn-lg {
+    padding: 0.5rem 1rem;
+    font-size: 1.1rem;
+  }
+
+  /* 9. АДАПТИВНОСТЬ */
   @media (max-width: 768px) {
     .card-body {
-      padding: 1rem;
+      padding: 1rem !important;
     }
 
     .d-flex.justify-content-between {
@@ -314,21 +468,38 @@
     .btn-lg {
       width: 100%;
     }
+
+    .nav-tabs .nav-link {
+      font-size: 0.85rem;
+      padding: 0.4rem 0.7rem;
+    }
+
+    .nav-tabs .nav-link i {
+      margin-right: 4px;
+    }
   }
 
-  .btn {
-    transition: all 0.2s;
-  }
+  @media (max-width: 576px) {
+    .row.g-3 {
+      --bs-gutter-y: 0.5rem;
+    }
 
-  .btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    .input-group {
+      flex-wrap: wrap;
+    }
+
+    .input-group .btn {
+      margin-top: 0.5rem;
+      width: 100%;
+    }
   }
 
   /* Стили для предпросмотра кода */
   #codeBadge {
     font-size: 1rem;
     padding: 0.35rem 0.75rem;
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
   }
 
   /* Стили для отображения флага */
