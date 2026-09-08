@@ -25,148 +25,177 @@ content %}
     >
       {{ form.csrf_token }}
 
+      <!-- Вкладки -->
       <div class="card shadow-sm mb-4 transparent-card">
         <div class="card-header transparent-card-header">
-          <h5 class="mb-0 text-white">
-            <i class="bi bi-info-circle"></i> Информация об агрегаторе
-          </h5>
+          <ul
+            class="nav nav-tabs card-header-tabs"
+            id="aggregatorTabs"
+            role="tablist"
+          >
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link active"
+                id="main-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#main"
+                type="button"
+                role="tab"
+              >
+                <i class="bi bi-info-circle"></i> Основное
+              </button>
+            </li>
+          </ul>
         </div>
         <div class="card-body transparent-card-body">
-          <div class="row">
-            <div class="col-md-6">
+          <div class="tab-content" id="aggregatorTabsContent">
+            <!-- Вкладка: Основная информация -->
+            <div class="tab-pane fade show active" id="main" role="tabpanel">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    {{ form.name.label(class="form-label fw-bold text-white") }}
+                    <span class="text-danger">*</span>
+                    {{ form.name(class="form-control bg-transparent text-white
+                    border-light" + (" is-invalid" if form.name.errors else ""),
+                    placeholder="Например: Ozon") }} {% if form.name.errors %}
+                    <div class="invalid-feedback d-block">
+                      {% for error in form.name.errors %} {{ error }} {% endfor
+                      %}
+                    </div>
+                    {% endif %}
+                    <div class="form-text text-white-50">
+                      Название агрегатора
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    {{ form.code.label(class="form-label fw-bold text-white") }}
+                    <span class="text-danger">*</span>
+                    {{ form.code(class="form-control bg-transparent text-white
+                    border-light" + (" is-invalid" if form.code.errors else ""),
+                    placeholder="Например: ozon") }} {% if form.code.errors %}
+                    <div class="invalid-feedback d-block">
+                      {% for error in form.code.errors %} {{ error }} {% endfor
+                      %}
+                    </div>
+                    {% endif %}
+                    <div class="form-text text-white-50">
+                      Уникальный код агрегатора
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div class="mb-3">
-                {{ form.name.label(class="form-label fw-bold text-white") }}
+                {{ form.url_template.label(class="form-label fw-bold
+                text-white") }}
                 <span class="text-danger">*</span>
-                {{ form.name(class="form-control bg-transparent text-white
-                border-light" + (" is-invalid" if form.name.errors else ""),
-                placeholder="Например: Ozon") }} {% if form.name.errors %}
-                <div class="invalid-feedback d-block">
-                  {% for error in form.name.errors %} {{ error }} {% endfor %}
-                </div>
-                {% endif %}
-                <div class="form-text text-white-50">Название агрегатора</div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="mb-3">
-                {{ form.code.label(class="form-label fw-bold text-white") }}
-                <span class="text-danger">*</span>
-                {{ form.code(class="form-control bg-transparent text-white
-                border-light" + (" is-invalid" if form.code.errors else ""),
-                placeholder="Например: ozon") }} {% if form.code.errors %}
-                <div class="invalid-feedback d-block">
-                  {% for error in form.code.errors %} {{ error }} {% endfor %}
-                </div>
-                {% endif %}
-                <div class="form-text text-white-50">
-                  Уникальный код агрегатора
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="mb-3">
-            {{ form.url_template.label(class="form-label fw-bold text-white") }}
-            <span class="text-danger">*</span>
-            {{ form.url_template(class="form-control bg-transparent text-white
-            border-light" + (" is-invalid" if form.url_template.errors else ""),
-            placeholder="https://www.ozon.ru/search/?text={query}") }} {% if
-            form.url_template.errors %}
-            <div class="invalid-feedback d-block">
-              {% for error in form.url_template.errors %} {{ error }} {% endfor
-              %}
-            </div>
-            {% endif %}
-            <div class="form-text text-white-50">
-              Шаблон URL с <code class="text-white-50">{query}</code> - вместо
-              него будет подставлен поисковый запрос
-              <br />
-              <small class="text-white-50"
-                >Пример:
-                <code class="text-white-50"
-                  >https://example.com/search?q={query}</code
-                ></small
-              >
-            </div>
-          </div>
-
-          <div class="mb-3">
-            {{ form.icon.label(class="form-label fw-bold text-white") }} {{
-            form.icon(class="form-control bg-transparent text-white
-            border-light" + (" is-invalid" if form.icon.errors else ""),
-            placeholder="bi-box-seam") }} {% if form.icon.errors %}
-            <div class="invalid-feedback d-block">
-              {% for error in form.icon.errors %} {{ error }} {% endfor %}
-            </div>
-            {% endif %}
-            <div class="form-text text-white-50">
-              Иконка из библиотеки
-              <a
-                href="https://icons.getbootstrap.com/"
-                target="_blank"
-                class="text-light"
-                >Bootstrap Icons</a
-              >
-              <br />
-              <small class="text-white-50"
-                >Пример: <code class="text-white-50">bi-box-seam</code>,
-                <code class="text-white-50">bi-bag</code>,
-                <code class="text-white-50">bi-book</code></small
-              >
-            </div>
-            <div class="mt-2">
-              <span class="badge bg-light bg-opacity-75 text-dark"
-                >Предпросмотр:</span
-              >
-              <i
-                class="bi {{ form.icon.data or 'bi-box-seam' }} fs-4 text-white"
-                id="iconPreview"
-              ></i>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6">
-              <div class="mb-3 form-check">
-                {{ form.is_active(class="form-check-input bg-transparent
-                border-light") }} {{
-                form.is_active.label(class="form-check-label text-white") }}
-                <div class="form-text text-white-50">
-                  Если активно, агрегатор будет доступен для поиска
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="mb-3">
-                {{ form.search_type.label(class="form-label fw-bold text-white")
-                }} {{ form.search_type(class="form-select bg-transparent
+                {{ form.url_template(class="form-control bg-transparent
                 text-white border-light" + (" is-invalid" if
-                form.search_type.errors else "")) }} {% if
-                form.search_type.errors %}
+                form.url_template.errors else ""),
+                placeholder="https://www.ozon.ru/search/?text={query}") }} {% if
+                form.url_template.errors %}
                 <div class="invalid-feedback d-block">
-                  {% for error in form.search_type.errors %} {{ error }} {%
+                  {% for error in form.url_template.errors %} {{ error }} {%
                   endfor %}
                 </div>
                 {% endif %}
                 <div class="form-text text-white-50">
-                  <strong>Стандартный</strong> - открытие URL с запросом<br />
-                  <strong>Редирект</strong> - специальная обработка с
-                  перекодировкой
+                  Шаблон URL с <code class="text-white-50">{query}</code> -
+                  вместо него будет подставлен поисковый запрос
+                  <br />
+                  <small class="text-white-50"
+                    >Пример:
+                    <code class="text-white-50"
+                      >https://example.com/search?q={query}</code
+                    ></small
+                  >
+                </div>
+              </div>
+
+              <div class="mb-3">
+                {{ form.icon.label(class="form-label fw-bold text-white") }} {{
+                form.icon(class="form-control bg-transparent text-white
+                border-light" + (" is-invalid" if form.icon.errors else ""),
+                placeholder="bi-box-seam") }} {% if form.icon.errors %}
+                <div class="invalid-feedback d-block">
+                  {% for error in form.icon.errors %} {{ error }} {% endfor %}
+                </div>
+                {% endif %}
+                <div class="form-text text-white-50">
+                  Иконка из библиотеки
+                  <a
+                    href="https://icons.getbootstrap.com/"
+                    target="_blank"
+                    class="text-light"
+                    >Bootstrap Icons</a
+                  >
+                  <br />
+                  <small class="text-white-50"
+                    >Пример: <code class="text-white-50">bi-box-seam</code>,
+                    <code class="text-white-50">bi-bag</code>,
+                    <code class="text-white-50">bi-book</code></small
+                  >
+                </div>
+                <div class="mt-2">
+                  <span class="badge bg-light bg-opacity-75 text-dark"
+                    >Предпросмотр:</span
+                  >
+                  <i
+                    class="bi {{ form.icon.data or 'bi-box-seam' }} fs-4 text-white"
+                    id="iconPreview"
+                  ></i>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3 form-check">
+                    {{ form.is_active(class="form-check-input") }} {{
+                    form.is_active.label(class="form-check-label text-white") }}
+                    <div class="form-text text-white-50">
+                      Если активно, агрегатор будет доступен для поиска
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    {{ form.search_type.label(class="form-label fw-bold
+                    text-white") }} {{ form.search_type(class="form-select
+                    bg-transparent text-white border-light" + (" is-invalid" if
+                    form.search_type.errors else "")) }} {% if
+                    form.search_type.errors %}
+                    <div class="invalid-feedback d-block">
+                      {% for error in form.search_type.errors %} {{ error }} {%
+                      endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="form-text text-white-50">
+                      <strong>Стандартный</strong> - открытие URL с запросом<br />
+                      <strong>Редирект</strong> - специальная обработка с
+                      перекодировкой
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                {{ form.comment.label(class="form-label fw-bold text-white") }}
+                {{ form.comment(class="form-control bg-transparent text-white
+                border-light", rows="3", placeholder="Дополнительная информация
+                об агрегаторе...") }}
+                <div class="form-text text-white-50">
+                  Комментарии, примечания
                 </div>
               </div>
             </div>
           </div>
-
-          <div class="mb-3">
-            {{ form.comment.label(class="form-label fw-bold text-white") }} {{
-            form.comment(class="form-control bg-transparent text-white
-            border-light", rows="3", placeholder="Дополнительная информация об
-            агрегаторе...") }}
-            <div class="form-text text-white-50">Комментарии, примечания</div>
-          </div>
         </div>
       </div>
 
+      <!-- Кнопки действия -->
       <div class="card shadow-sm mb-4 transparent-card">
         <div class="card-body transparent-card-body">
           <div
@@ -186,7 +215,7 @@ content %}
               >
                 <i class="bi bi-x-circle"></i> Отмена
               </a>
-              {{ form.submit(class="btn btn-primary btn-lg") }}
+              {{ form.submit(class="btn btn-edit btn-lg") }}
             </div>
           </div>
         </div>
@@ -231,27 +260,24 @@ content %}
       });
     }
 
-    // Подтверждение перед выходом без сохранения
-    const form = document.querySelector("form");
-    let formChanged = false;
-
-    form.querySelectorAll("input, textarea, select").forEach((element) => {
-      element.addEventListener("change", function () {
-        formChanged = true;
+    // --- Сохранение активной вкладки ---
+    const tabs = document.querySelectorAll(
+      '#aggregatorTabs button[data-bs-toggle="tab"]',
+    );
+    tabs.forEach((tab) => {
+      tab.addEventListener("shown.bs.tab", function (e) {
+        localStorage.setItem("activeAddAggregatorTab", e.target.id);
       });
     });
 
-    window.addEventListener("beforeunload", function (e) {
-      if (formChanged) {
-        e.preventDefault();
-        e.returnValue =
-          "Вы не сохранили изменения. Вы уверены, что хотите покинуть страницу?";
+    const activeTab = localStorage.getItem("activeAddAggregatorTab");
+    if (activeTab) {
+      const tabElement = document.getElementById(activeTab);
+      if (tabElement) {
+        const tab = new bootstrap.Tab(tabElement);
+        tab.show();
       }
-    });
-
-    form.addEventListener("submit", function () {
-      formChanged = false;
-    });
+    }
   });
 </script>
 
@@ -263,7 +289,12 @@ content %}
   .transparent-card .card-header,
   .transparent-card .card-footer,
   .transparent-card .table,
-  .transparent-card .table-responsive {
+  .transparent-card .table-responsive,
+  .transparent-card thead,
+  .transparent-card tbody,
+  .transparent-card tr,
+  .transparent-card td,
+  .transparent-card th {
     background: transparent !important;
     background-color: transparent !important;
   }
@@ -280,19 +311,55 @@ content %}
     border-radius: 12px 12px 0 0 !important;
   }
 
-  /* 3. ТЕКСТЫ БЕЛЫМ */
-  .text-white {
-    color: #ffffff !important;
-  }
-  .text-white-50 {
-    color: rgba(255, 255, 255, 0.7) !important;
+  .transparent-card-body {
+    padding: 1.5rem;
   }
 
-  /* 4. ПОЛЯ ВВОДА */
+  /* 3. СТИЛИ ДЛЯ ВКЛАДОК */
+  .nav-tabs .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    border: none;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s;
+  }
+
+  .nav-tabs .nav-link:hover {
+    border-color: transparent;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+
+  .nav-tabs .nav-link.active {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-bottom: 2px solid #fff;
+  }
+
+  .nav-tabs .nav-link i {
+    margin-right: 6px;
+  }
+
+  .card-header-tabs {
+    margin-right: -0.625rem;
+    margin-bottom: -0.75rem;
+    margin-left: -0.625rem;
+    border-bottom: 0;
+  }
+
+  .tab-pane {
+    padding-top: 1rem;
+  }
+
+  /* 4. ПРОЗРАЧНЫЕ ПОЛЯ ВВОДА */
   .form-control.bg-transparent {
     background-color: rgba(255, 255, 255, 0.1) !important;
     color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.2s;
+  }
+
+  .form-control.bg-transparent::placeholder {
+    color: rgba(255, 255, 255, 0.5);
   }
 
   .form-control.bg-transparent:focus {
@@ -301,41 +368,64 @@ content %}
     box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
   }
 
-  .form-control.bg-transparent::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+  .form-control.bg-transparent.is-invalid {
+    border-color: #dc3545 !important;
   }
 
-  /* 5. SELECT ПОЛЯ */
+  /* 5. ПРОЗРАЧНЫЕ SELECT ПОЛЯ */
   .form-select.bg-transparent {
-    background-color: rgba(255, 255, 255, 0.1) !important;
+    background-color: #000000 !important;
     color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='white' d='M8 11L3 6h10z'/%3e%3c/svg%3e");
   }
 
   .form-select.bg-transparent:focus {
-    background-color: rgba(255, 255, 255, 0.2) !important;
+    background-color: #000000 !important;
+    color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.5) !important;
     box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
   }
 
   .form-select.bg-transparent option {
-    background-color: #343a40;
-    color: #ffffff;
+    background-color: #000000 !important;
+    color: #ffffff !important;
   }
 
-  /* 6. CHECKBOX */
-  .form-check-input.bg-transparent {
+  .form-select.bg-transparent option:hover {
+    background-color: #808080 !important;
+    color: #ffffff !important;
+  }
+
+  .form-select.bg-transparent option:checked {
+    background-color: #808080 !important;
+    color: #ffffff !important;
+  }
+
+  /* 6. ЧЕКБОКСЫ - ИСПРАВЛЕННЫЙ ЦВЕТ */
+  .form-check-input {
     background-color: rgba(255, 255, 255, 0.1) !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
   }
 
-  .form-check-input.bg-transparent:checked {
-    background-color: #0d6efd !important;
-    border-color: #0d6efd !important;
+  .form-check-input:checked {
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
   }
 
-  /* 7. КНОПКИ */
+  /* 7. ОБЩИЕ СТИЛИ */
+  .text-white {
+    color: #ffffff !important;
+  }
+
+  .text-white-50 {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  .bg-opacity-75 {
+    --bs-bg-opacity: 0.75;
+  }
+
+  /* 8. КНОПКИ */
   .btn-outline-light {
     color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
@@ -347,17 +437,42 @@ content %}
     color: #ffffff !important;
   }
 
-  .btn-primary {
-    background-color: rgba(13, 110, 253, 0.8) !important;
-    border-color: rgba(13, 110, 253, 0.8) !important;
+  .btn-edit {
+    background-color: transparent !important;
+    color: var(--main-color) !important;
+    border: 2px solid var(--main-color) !important;
+    transition: all 0.3s ease !important;
+    font-weight: 500 !important;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
   }
 
-  .btn-primary:hover {
-    background-color: rgba(13, 110, 253, 1) !important;
-    border-color: rgba(13, 110, 253, 1) !important;
+  .btn-edit:hover {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 194, 0, 0.3);
   }
 
-  /* 8. КОД */
+  .btn-edit:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 6px rgba(255, 194, 0, 0.2);
+  }
+
+  .btn-edit:focus {
+    box-shadow: 0 0 0 3px rgba(255, 194, 0, 0.4);
+    outline: none;
+  }
+
+  .btn-lg {
+    padding: 0.5rem 1rem;
+    font-size: 1.1rem;
+  }
+
+  /* 9. КОД */
   code.text-white-50 {
     color: rgba(255, 255, 255, 0.7) !important;
     background: rgba(255, 255, 255, 0.1) !important;
@@ -365,7 +480,7 @@ content %}
     border-radius: 4px;
   }
 
-  /* 9. ССЫЛКИ */
+  /* 10. ССЫЛКИ */
   a.text-light {
     color: #a8d8ff !important;
   }
@@ -374,12 +489,12 @@ content %}
     color: #ffffff !important;
   }
 
-  /* 10. ПРЕДПРОСМОТР ИКОНКИ */
+  /* 11. ПРЕДПРОСМОТР ИКОНКИ */
   #iconPreview {
     transition: all 0.3s ease;
   }
 
-  /* 11. АДАПТИВНОСТЬ */
+  /* 12. АДАПТИВНОСТЬ */
   @media (max-width: 768px) {
     .card-body {
       padding: 1rem !important;
@@ -392,6 +507,30 @@ content %}
     }
 
     .btn-lg {
+      width: 100%;
+    }
+
+    .nav-tabs .nav-link {
+      font-size: 0.85rem;
+      padding: 0.4rem 0.7rem;
+    }
+
+    .nav-tabs .nav-link i {
+      margin-right: 4px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .row.g-3 {
+      --bs-gutter-y: 0.5rem;
+    }
+
+    .input-group {
+      flex-wrap: wrap;
+    }
+
+    .input-group .btn {
+      margin-top: 0.5rem;
       width: 100%;
     }
   }
