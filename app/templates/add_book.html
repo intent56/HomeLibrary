@@ -750,7 +750,7 @@ content %}
               >
                 <i class="bi bi-x-circle"></i> Отмена
               </a>
-              {{ form.submit(class="btn btn-primary btn-lg") }}
+              {{ form.submit(class="btn btn-edit btn-lg") }}
             </div>
           </div>
         </div>
@@ -1663,6 +1663,48 @@ content %}
     max-height: 150px;
     border-radius: 8px;
     border: 2px solid rgba(255, 255, 255, 0.3);
+  }
+  /* Стили для кнопок "Добавить автора" */
+  .btn-edit {
+    background-color: transparent !important;
+    color: var(--main-color) !important;
+    border: 2px solid var(--main-color) !important;
+    transition: all 0.3s ease !important;
+    font-weight: 500 !important;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-edit:hover {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 194, 0, 0.3);
+  }
+
+  .btn-edit:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 6px rgba(255, 194, 0, 0.2);
+  }
+
+  .btn-edit:focus {
+    box-shadow: 0 0 0 3px rgba(255, 194, 0, 0.4);
+    outline: none;
+  }
+
+  /* Маленькие кнопки (для карточек) */
+  .btn-edit-sm {
+    padding: 0.25rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  /* Большие кнопки (для основных действий) */
+  .btn-edit-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
   }
 
   /* 16. АДАПТИВНОСТЬ */
