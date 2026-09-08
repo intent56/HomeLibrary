@@ -1,50 +1,66 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %} {% block body_class %}bg-page2{% endblock %} {% block
+content %}
 <div class="row">
   <div class="col-lg-8 mx-auto">
+    <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h2><i class="bi bi-plus-circle"></i> Добавление автора</h2>
-        <h5 class="text-muted">Заполните информацию об авторе</h5>
+        <h2 class="text-white">
+          <i class="bi bi-plus-circle"></i> Добавление автора
+        </h2>
+        <span class="badge bg-opacity-75 text-white fs-6"
+          >Все поля необязательны, кроме отмеченных *</span
+        >
       </div>
-      <a
-        href="{{ url_for('main.author_list') }}"
-        class="btn btn-outline-secondary"
-      >
-        <i class="bi bi-arrow-left"></i> Назад к списку
-      </a>
+      <div class="d-flex gap-2">
+        <a
+          href="{{ url_for('main.author_list') }}"
+          class="btn btn-outline-light"
+        >
+          <i class="bi bi-arrow-left"></i> Назад к списку
+        </a>
+      </div>
     </div>
 
     <!-- Поиск автора в интернете -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-header bg-info text-white">
-        <h5 class="mb-0">
+    <div class="card shadow-sm mb-4 transparent-card">
+      <div class="card-header transparent-card-header">
+        <h5 class="mb-0 text-white">
           <i class="bi bi-cloud-download"></i> Найти автора в интернете
         </h5>
       </div>
-      <div class="card-body">
+      <div class="card-body transparent-card-body">
         <div class="row g-3">
           <div class="col-md-3">
-            <label for="authorSourceSelect" class="form-label fw-bold"
+            <label
+              for="authorSourceSelect"
+              class="form-label fw-bold text-white"
               >Источник</label
             >
-            <select class="form-select" id="authorSourceSelect">
+            <select
+              class="form-select bg-transparent text-white border-light"
+              id="authorSourceSelect"
+            >
               <option value="">Все источники</option>
             </select>
           </div>
           <div class="col-md-7">
-            <label for="authorSearchQuery" class="form-label fw-bold"
+            <label for="authorSearchQuery" class="form-label fw-bold text-white"
               >Имя автора</label
             >
             <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-person"></i></span>
+              <span
+                class="input-group-text bg-transparent text-white border-light"
+                ><i class="bi bi-person"></i
+              ></span>
               <input
                 type="text"
-                class="form-control"
+                class="form-control bg-transparent text-white border-light"
                 id="authorSearchQuery"
                 placeholder="Например: 'Лев Толстой'"
               />
               <button
-                class="btn btn-success"
+                class="btn btn-outline-light"
                 type="button"
                 id="searchAuthorBtn"
               >
@@ -53,9 +69,9 @@
             </div>
           </div>
           <div class="col-md-2">
-            <label class="form-label">&nbsp;</label>
+            <label class="form-label text-white"> </label>
             <button
-              class="btn btn-secondary w-100"
+              class="btn btn-outline-light w-100"
               type="button"
               id="clearAuthorSearchBtn"
             >
@@ -64,13 +80,13 @@
           </div>
         </div>
         <div class="mt-2">
-          <div id="authorSearchStatus" class="form-text"></div>
+          <div id="authorSearchStatus" class="form-text text-white-50"></div>
         </div>
 
         <!-- Результаты поиска -->
         <div id="authorSearchResults" class="mt-3" style="display: none">
-          <h6>Найденные авторы:</h6>
-          <div id="authorResultsList" class="list-group"></div>
+          <h6 class="text-white">Найденные авторы:</h6>
+          <div id="authorResultsList" class="list-group bg-transparent"></div>
         </div>
       </div>
     </div>
@@ -85,8 +101,8 @@
       <input type="hidden" name="book_id" value="{{ book_id }}" />
 
       <!-- Вкладки -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-primary text-white">
+      <div class="card shadow-sm mb-4 transparent-card">
+        <div class="card-header transparent-card-header">
           <ul
             class="nav nav-tabs card-header-tabs"
             id="authorTabs"
@@ -106,7 +122,7 @@
             </li>
           </ul>
         </div>
-        <div class="card-body">
+        <div class="card-body transparent-card-body">
           <div class="tab-content" id="authorTabsContent">
             <!-- Вкладка: Основная информация -->
             <div class="tab-pane fade show active" id="main" role="tabpanel">
@@ -114,9 +130,11 @@
               <div class="row">
                 <div class="col-md-4">
                   <div class="mb-3">
-                    {{ form.lastname.label(class="form-label fw-bold") }}
+                    {{ form.lastname.label(class="form-label fw-bold
+                    text-white") }}
                     <span class="text-danger">*</span>
-                    {{ form.lastname(class="form-control" + (" is-invalid" if
+                    {{ form.lastname(class="form-control bg-transparent
+                    text-white border-light" + (" is-invalid" if
                     form.lastname.errors else ""), placeholder="Например:
                     'Толстой'", id="authorLastname") }} {% if
                     form.lastname.errors %}
@@ -125,30 +143,35 @@
                       endfor %}
                     </div>
                     {% endif %}
-                    <div class="form-text">Фамилия автора</div>
+                    <div class="form-text text-white-50">Фамилия автора</div>
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="mb-3">
-                    {{ form.firstname.label(class="form-label fw-bold") }} {{
-                    form.firstname(class="form-control", placeholder="Например:
-                    'Лев'", id="authorFirstname") }}
-                    <div class="form-text">Имя автора</div>
+                    {{ form.firstname.label(class="form-label fw-bold
+                    text-white") }} {{ form.firstname(class="form-control
+                    bg-transparent text-white border-light",
+                    placeholder="Например: 'Лев'", id="authorFirstname") }}
+                    <div class="form-text text-white-50">Имя автора</div>
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="mb-3">
-                    {{ form.secondname.label(class="form-label fw-bold") }} {{
-                    form.secondname(class="form-control", placeholder="Например:
-                    'Николаевич'", id="authorSecondname") }}
-                    <div class="form-text">Отчество автора</div>
+                    {{ form.secondname.label(class="form-label fw-bold
+                    text-white") }} {{ form.secondname(class="form-control
+                    bg-transparent text-white border-light",
+                    placeholder="Например: 'Николаевич'", id="authorSecondname")
+                    }}
+                    <div class="form-text text-white-50">Отчество автора</div>
                   </div>
                 </div>
               </div>
-              <div class="alert alert-info">
-                <i class="bi bi-info-circle"></i>
-                <strong>ФИО будет сформировано автоматически:</strong>
-                <span id="fioPreview" class="fw-bold ms-2 text-primary"
+              <div class="alert alert-info transparent-alert">
+                <i class="bi bi-info-circle text-white"></i>
+                <strong class="text-white"
+                  >ФИО будет сформировано автоматически:</strong
+                >
+                <span id="fioPreview" class="fw-bold ms-2 text-white"
                   >Не указано</span
                 >
               </div>
@@ -156,33 +179,33 @@
               <!-- Ссылки и дополнительная информация -->
               <div class="mt-3">
                 <div class="mb-3">
-                  {{ form.ref_author.label(class="form-label fw-bold") }}
+                  {{ form.ref_author.label(class="form-label fw-bold
+                  text-white") }}
                   <div class="input-group">
-                    <span class="input-group-text"
+                    <span
+                      class="input-group-text bg-transparent text-white border-light"
                       ><i class="bi bi-globe"></i
                     ></span>
-                    {{ form.ref_author(class="form-control",
-                    placeholder="Например:
+                    {{ form.ref_author(class="form-control bg-transparent
+                    text-white border-light", placeholder="Например:
                     'https://ru.wikipedia.org/wiki/Толстой_Лев_Николаевич'",
                     id="authorRef") }}
                   </div>
-                  <div class="form-text">
+                  <div class="form-text text-white-50">
                     Ссылка на страницу с информацией об авторе
                   </div>
                 </div>
 
                 <div class="mb-3">
-                  <label for="authorPhoto" class="form-label fw-bold"
-                    >Фото автора</label
-                  >
+                  {{ form.photo.label(class="form-label fw-bold text-white") }}
                   <input
                     type="file"
-                    class="form-control"
+                    class="form-control bg-transparent text-white border-light"
                     id="authorPhoto"
                     name="photo"
                     accept="image/*"
                   />
-                  <div class="form-text">
+                  <div class="form-text text-white-50">
                     Загрузите фотографию автора (JPG, PNG, GIF)
                   </div>
                   <div
@@ -200,11 +223,12 @@
                 </div>
 
                 <div class="mb-3">
-                  {{ form.comment.label(class="form-label fw-bold") }} {{
-                  form.comment(class="form-control", rows="4",
-                  placeholder="Например: 'Великий русский писатель и
-                  мыслитель'", id="authorComment") }}
-                  <div class="form-text">
+                  {{ form.comment.label(class="form-label fw-bold text-white")
+                  }} {{ form.comment(class="form-control bg-transparent
+                  text-white border-light", rows="4", placeholder="Например:
+                  'Великий русский писатель и мыслитель'", id="authorComment")
+                  }}
+                  <div class="form-text text-white-50">
                     Комментарии, примечания, дополнительная информация
                   </div>
                 </div>
@@ -215,13 +239,13 @@
       </div>
 
       <!-- Кнопки действия -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-body">
+      <div class="card shadow-sm mb-4 transparent-card">
+        <div class="card-body transparent-card-body">
           <div
             class="d-flex justify-content-between align-items-center flex-wrap gap-2"
           >
             <div>
-              <span class="text-muted">
+              <span class="text-white-50">
                 <i class="bi bi-info-circle"></i>
                 Поля с <span class="text-danger">*</span> обязательны для
                 заполнения
@@ -230,11 +254,11 @@
             <div class="d-flex gap-2">
               <a
                 href="{{ url_for('main.author_list') }}"
-                class="btn btn-secondary btn-lg"
+                class="btn btn-outline-light btn-lg"
               >
                 <i class="bi bi-x-circle"></i> Отмена
               </a>
-              {{ form.submit(class="btn btn-primary btn-lg") }}
+              {{ form.submit(class="btn btn-edit btn-lg") }}
             </div>
           </div>
         </div>
@@ -355,18 +379,19 @@
             data.forEach((author) => {
               const item = document.createElement("a");
               item.href = "#";
-              item.className = "list-group-item list-group-item-action";
+              item.className =
+                "list-group-item list-group-item-action bg-transparent text-white border-light";
               item.innerHTML = `
                         <div class="d-flex w-100 justify-content-between">
-                            <h6 class="mb-1">${author.name}</h6>
-                            <small class="text-muted">${author.source || "Источник неизвестен"}</small>
+                            <h6 class="mb-1 text-white">${author.name}</h6>
+                            <small class="text-white-50">${author.source || "Источник неизвестен"}</small>
                         </div>
-                        <p class="mb-1 small text-muted">
+                        <p class="mb-1 small text-white-50">
                             Книг: ${author.books_count || "неизвестно"}
                             ${author.birth_date ? `, ${author.birth_date}` : ""}
                             ${author.death_date ? `- ${author.death_date}` : ""}
                         </p>
-                        ${author.top_subjects ? `<p class="mb-1 small text-muted">Темы: ${author.top_subjects.join(", ")}</p>` : ""}
+                        ${author.top_subjects ? `<p class="mb-1 small text-white-50">Темы: ${author.top_subjects.join(", ")}</p>` : ""}
                     `;
               item.addEventListener("click", function (e) {
                 e.preventDefault();
@@ -386,7 +411,7 @@
             statusDiv.innerHTML = `
                     <span class="text-danger">❌ ${error.message}</span>
                     <br>
-                    <button class="btn btn-sm btn-outline-secondary mt-1" onclick="manualAuthorEntry()">
+                    <button class="btn btn-sm btn-outline-light mt-1" onclick="manualAuthorEntry()">
                         <i class="bi bi-pencil"></i> Ввести данные вручную
                     </button>
                 `;
@@ -437,7 +462,7 @@
     window.manualAuthorEntry = function () {
       const statusDiv = document.getElementById("authorSearchStatus");
       statusDiv.innerHTML = "📝 Введите данные автора вручную в форму ниже.";
-      statusDiv.className = "form-text text-muted";
+      statusDiv.className = "form-text text-white-50";
       document.querySelector("form").scrollIntoView({ behavior: "smooth" });
     };
 
@@ -447,7 +472,8 @@
       .addEventListener("click", function () {
         document.getElementById("authorSearchResults").style.display = "none";
         document.getElementById("authorSearchStatus").textContent = "";
-        document.getElementById("authorSearchStatus").className = "form-text";
+        document.getElementById("authorSearchStatus").className =
+          "form-text text-white-50";
         document.getElementById("authorSearchQuery").value = "";
       });
 
@@ -465,7 +491,7 @@
 
       preview.textContent = parts.length ? parts.join(" ") : "Не указано";
       preview.className =
-        "fw-bold ms-2 " + (parts.length ? "text-primary" : "text-muted");
+        "fw-bold ms-2 " + (parts.length ? "text-white" : "text-white-50");
     }
 
     // --- Обработчики для обновления предпросмотра ФИО ---
@@ -556,11 +582,45 @@
 </script>
 
 <style>
-  /* Стили для вкладок */
+  /* 1. ПОЛНОСТЬЮ УБИРАЕМ ВСЕ ФОНЫ */
+  .transparent-card,
+  .transparent-card *,
+  .transparent-card .card-body,
+  .transparent-card .card-header,
+  .transparent-card .card-footer,
+  .transparent-card .table,
+  .transparent-card .table-responsive,
+  .transparent-card thead,
+  .transparent-card tbody,
+  .transparent-card tr,
+  .transparent-card td,
+  .transparent-card th {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
+  /* 2. КАРТОЧКА - ТОЛЬКО РАМКА */
+  .transparent-card {
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  .transparent-card-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 12px 12px 0 0 !important;
+  }
+
+  .transparent-card-body {
+    padding: 1.5rem;
+  }
+
+  /* 3. СТИЛИ ДЛЯ ВКЛАДОК */
   .nav-tabs .nav-link {
     color: rgba(255, 255, 255, 0.8);
     border: none;
     padding: 0.5rem 1rem;
+    transition: all 0.2s;
   }
 
   .nav-tabs .nav-link:hover {
@@ -590,71 +650,154 @@
     padding-top: 1rem;
   }
 
-  /* Стили для полей ввода с placeholder */
-  .form-control::placeholder {
-    color: #adb5bd;
-    font-style: italic;
-    font-size: 0.9rem;
-    opacity: 0.7;
+  /* 4. ПРОЗРАЧНЫЕ ПОЛЯ ВВОДА */
+  .form-control.bg-transparent {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.2s;
   }
 
-  .form-control:not(:placeholder-shown) {
-    color: #212529;
-    font-weight: 500;
-    border-color: #86b7fe;
-    background-color: #f8f9fa;
+  .form-control.bg-transparent::placeholder {
+    color: rgba(255, 255, 255, 0.5);
   }
 
-  .form-control:not(:placeholder-shown):focus {
-    background-color: #ffffff;
-    border-color: #86b7fe;
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  .form-control.bg-transparent:focus {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
   }
 
-  textarea.form-control::placeholder {
-    color: #adb5bd;
-    font-style: italic;
-    font-size: 0.9rem;
-    opacity: 0.7;
+  .form-control.bg-transparent.is-invalid {
+    border-color: #dc3545 !important;
   }
 
-  textarea.form-control:not(:placeholder-shown) {
-    color: #212529;
-    font-weight: 500;
-    border-color: #86b7fe;
-    background-color: #f8f9fa;
+  /* 5. ПРОЗРАЧНЫЕ SELECT ПОЛЯ */
+  .form-select.bg-transparent {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
   }
 
-  .form-control:focus::placeholder {
-    opacity: 0.4;
-    transition: opacity 0.2s ease;
+  .form-select.bg-transparent:focus {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
   }
 
-  #authorSearchResults {
-    max-height: 300px;
-    overflow-y: auto;
+  .form-select.bg-transparent option {
+    background-color: #000000 !important;
+    color: #ffffff !important;
   }
 
+  .form-select.bg-transparent option:hover {
+    background-color: #808080 !important;
+    color: #ffffff !important;
+  }
+
+  .form-select.bg-transparent option:checked {
+    background-color: #808080 !important;
+    color: #ffffff !important;
+  }
+
+  /* 6. ПРОЗРАЧНЫЕ INPUT-GROUP */
+  .input-group-text.bg-transparent {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+  }
+
+  /* 7. ПРОЗРАЧНЫЙ АЛЕРТ */
+  .transparent-alert {
+    background-color: rgba(13, 202, 240, 0.15) !important;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(13, 202, 240, 0.3) !important;
+    color: #ffffff !important;
+  }
+
+  .transparent-alert i {
+    color: #0dcaf0 !important;
+  }
+
+  .transparent-alert .text-white {
+    color: #ffffff !important;
+  }
+
+  /* 8. ОБЩИЕ СТИЛИ */
+  .text-white {
+    color: #ffffff !important;
+  }
+
+  .text-white-50 {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  .bg-opacity-75 {
+    --bs-bg-opacity: 0.75;
+  }
+
+  /* 9. КНОПКИ */
+  .btn-outline-light {
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+  }
+
+  .btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-color: #ffffff !important;
+    color: #ffffff !important;
+  }
+
+  .btn-edit {
+    background-color: transparent !important;
+    color: var(--main-color) !important;
+    border: 2px solid var(--main-color) !important;
+    transition: all 0.3s ease !important;
+    font-weight: 500 !important;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-edit:hover {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 194, 0, 0.3);
+  }
+
+  .btn-edit:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 6px rgba(255, 194, 0, 0.2);
+  }
+
+  .btn-edit:focus {
+    box-shadow: 0 0 0 3px rgba(255, 194, 0, 0.4);
+    outline: none;
+  }
+
+  .btn-lg {
+    padding: 0.5rem 1rem;
+    font-size: 1.1rem;
+  }
+
+  /* 10. РЕЗУЛЬТАТЫ ПОИСКА */
   #authorSearchResults .list-group-item {
-    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
     transition: all 0.2s;
   }
 
   #authorSearchResults .list-group-item:hover {
-    background-color: #f8f9fa;
+    background-color: rgba(255, 255, 255, 0.15) !important;
     transform: translateX(4px);
   }
 
-  .btn .spinner-border {
-    width: 1rem;
-    height: 1rem;
-  }
-
-  #authorSearchStatus {
-    min-height: 1.5rem;
-    transition: all 0.3s ease;
-  }
-
+  /* 11. ПРЕДПРОСМОТР ФОТО */
   #photoPreviewContainer {
     display: none;
   }
@@ -662,51 +805,13 @@
   #photoPreview {
     max-height: 150px;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
   }
 
-  /* Стили для карточек */
-  .card {
-    border: none;
-    transition: transform 0.2s;
-  }
-
-  .card:hover {
-    transform: translateY(-2px);
-  }
-
-  .card-header {
-    border-bottom: none;
-    font-weight: 500;
-  }
-
-  .card-header i {
-    margin-right: 8px;
-  }
-
-  .form-label {
-    font-weight: 500;
-    margin-bottom: 0.25rem;
-  }
-
-  .form-text {
-    font-size: 0.8rem;
-    color: #6c757d;
-    margin-top: 0.25rem;
-  }
-
-  .text-danger {
-    font-weight: bold;
-  }
-
-  .form-control:focus {
-    border-color: #86b7fe;
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-  }
-
+  /* 12. АДАПТИВНОСТЬ */
   @media (max-width: 768px) {
     .card-body {
-      padding: 1rem;
+      padding: 1rem !important;
     }
 
     .d-flex.justify-content-between {
@@ -718,15 +823,30 @@
     .btn-lg {
       width: 100%;
     }
+
+    .nav-tabs .nav-link {
+      font-size: 0.85rem;
+      padding: 0.4rem 0.7rem;
+    }
+
+    .nav-tabs .nav-link i {
+      margin-right: 4px;
+    }
   }
 
-  .btn {
-    transition: all 0.2s;
-  }
+  @media (max-width: 576px) {
+    .row.g-3 {
+      --bs-gutter-y: 0.5rem;
+    }
 
-  .btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    .input-group {
+      flex-wrap: wrap;
+    }
+
+    .input-group .btn {
+      margin-top: 0.5rem;
+      width: 100%;
+    }
   }
 </style>
 {% endblock %}
