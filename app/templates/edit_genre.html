@@ -11,9 +11,10 @@ content %}
         <h5 class="text-white fw-bold fs-3 mt-2">{{ genre.name }}</h5>
       </div>
       <a
-        href="{{ request.args.get('next') or url_for('main.genre_list', page=return_page, search=return_search) }}"
+        href="{{url_for('main.genre_list', 
+                 page=return_page, 
+                 search=return_search) }}"
         class="btn btn-outline-light d-flex align-items-center"
-        id="backButton"
       >
         <i class="bi bi-arrow-left"></i> &nbsp;Назад
       </a>
@@ -110,8 +111,9 @@ content %}
                   <thead class="transparent-table-header">
                     <tr>
                       <th style="width: 10%">Обложка</th>
-                      <th style="width: 50%">Название</th>
-                      <th style="width: 20%">Год</th>
+                      <th style="width: 30%">Название</th>
+                      <th style="width: 30%">Авторы</th>
+                      <th style="width: 10%">Год</th>
                       <th style="width: 20%">Действия</th>
                     </tr>
                   </thead>
@@ -123,7 +125,7 @@ content %}
                         <img
                           src="data:image/jpeg;base64,{{ book.cover|b64encode }}"
                           alt="{{ book.name }}"
-                          class="img-thumbnail"
+                          class="img-thumbnail book-cover-thumbnail"
                           style="
                             width: 40px;
                             height: 56px;
@@ -156,38 +158,40 @@ content %}
                       </td>
                       <td>
                         <strong class="text-white">{{ book.name }}</strong>
-                        {% if book.fullname %}
-                        <br /><small class="text-white-50"
-                          >{{ book.fullname|truncate(50) }}</small
+                      </td>
+                      <td>
+                        {% if book.author_books %} {% for author in
+                        book.author_books %}
+                        <strong class="text-white">{{ author.fio }}</strong>
+                        {% endfor %} {% else %}
+                        <span class="text-light-50"
+                          ><i class="bi bi-tag"></i> Нет автора</span
                         >
                         {% endif %}
                       </td>
                       <td>
                         {% if book.year_edition %}
-                        <span
-                          class="badge bg-secondary bg-opacity-75 text-white"
-                          >{{ book.year_edition }}</span
+                        <strong class="text-white"
+                          >{{ book.year_edition }}</strong
                         >
                         {% else %}
                         <span class="text-white-50">-</span>
                         {% endif %}
                       </td>
                       <td>
-                        <!-- ВЫРАВНЕННЫЕ КНОПКИ ДЕЙСТВИЙ -->
                         <div class="btn-group btn-group-sm" role="group">
                           <a
-                            href="{{ url_for('main.book_detail', book_id=book.id) }}"
+                            href="{{ url_for('main.book_view', 
+                                book_id=book.id,
+                                page1=page if page else 1,
+                                id=genre.id,
+                                return_search=return_search,
+                                return_page=return_page,
+                                return_to='edit_genre') }}"
                             class="btn btn-outline-light"
                             title="Просмотр книги"
                           >
                             <i class="bi bi-eye"></i>
-                          </a>
-                          <a
-                            href="{{ url_for('main.edit_book', book_id=book.id) }}"
-                            class="btn btn-outline-light"
-                            title="Редактировать книгу"
-                          >
-                            <i class="bi bi-pencil"></i>
                           </a>
                         </div>
                       </td>
@@ -366,24 +370,6 @@ content %}
       }
     }
   });
-
-  // --- Умная кнопка "Назад" ---
-  const backButton = document.getElementById("backButton");
-  if (backButton) {
-    // Если есть referrer (переход с другой страницы этого же сайта)
-    if (
-      document.referrer &&
-      document.referrer.includes(window.location.hostname)
-    ) {
-      backButton.href = document.referrer;
-    }
-    // Если передан параметр next, используем его (имеет приоритет)
-    const urlParams = new URLSearchParams(window.location.search);
-    const next = urlParams.get("next");
-    if (next) {
-      backButton.href = next;
-    }
-  }
 </script>
 
 <!-- СТИЛИ -->
@@ -706,6 +692,22 @@ content %}
   .btn-edit-lg {
     padding: 0.75rem 1.5rem;
     font-size: 1.1rem;
+  }
+  /* 15. ПЛАВНОЕ УВЕЛИЧЕНИЕ ОБЛОЖЕК ПРИ НАВЕДЕНИИ */
+  .book-cover-thumbnail {
+    transition:
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    border-radius: 4px;
+    will-change: transform;
+  }
+
+  .book-cover-thumbnail:hover {
+    transform: scale(2.5);
+    z-index: 1000;
+    position: relative;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
   }
 </style>
 {% endblock %}
