@@ -16,7 +16,7 @@ content %}
         class="btn btn-outline-light d-flex align-items-center"
         id="backButton"
       >
-        <i class="bi bi-arrow-left"></i> &nbsp;Назад
+        <i class="bi bi-arrow-left"></i>  Назад
       </a>
     </div>
 
@@ -41,10 +41,9 @@ content %}
               <div class="mb-3">
                 {{ form.name.label(class="form-label fw-bold text-white") }}
                 <span class="text-danger">*</span>
-                {{ form.name(class="form-control bg-transparent text-white
-                border-light" + (" is-invalid" if form.name.errors else ""),
-                placeholder="Например: Google Books") }} {% if form.name.errors
-                %}
+                {{ form.name(class="form-control custom-input" + (" is-invalid"
+                if form.name.errors else ""), placeholder="Например: Google
+                Books") }} {% if form.name.errors %}
                 <div class="invalid-feedback d-block">
                   {% for error in form.name.errors %} {{ error }} {% endfor %}
                 </div>
@@ -56,10 +55,9 @@ content %}
               <div class="mb-3">
                 {{ form.code.label(class="form-label fw-bold text-white") }}
                 <span class="text-danger">*</span>
-                {{ form.code(class="form-control bg-transparent text-white
-                border-light" + (" is-invalid" if form.code.errors else ""),
-                placeholder="Например: google_books") }} {% if form.code.errors
-                %}
+                {{ form.code(class="form-control custom-input" + (" is-invalid"
+                if form.code.errors else ""), placeholder="Например:
+                google_books") }} {% if form.code.errors %}
                 <div class="invalid-feedback d-block">
                   {% for error in form.code.errors %} {{ error }} {% endfor %}
                 </div>
@@ -73,8 +71,8 @@ content %}
 
           <div class="mb-3">
             {{ form.url.label(class="form-label fw-bold text-white") }} {{
-            form.url(class="form-control bg-transparent text-white border-light"
-            + (" is-invalid" if form.url.errors else ""),
+            form.url(class="form-control custom-input" + (" is-invalid" if
+            form.url.errors else ""),
             placeholder="https://www.googleapis.com/books/v1/") }} {% if
             form.url.errors %}
             <div class="invalid-feedback d-block">
@@ -89,9 +87,8 @@ content %}
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3 form-check">
-                {{ form.is_active(class="form-check-input bg-transparent
-                border-light", style="accent-color: var(--main-color);") }} {{
-                form.is_active.label(class="form-check-label text-white") }}
+                {{ form.is_active(class="form-check-input custom-checkbox") }}
+                {{ form.is_active.label(class="form-check-label text-white") }}
                 <div class="form-text text-white-50">
                   Если активно, источник будет доступен для поиска
                 </div>
@@ -102,22 +99,21 @@ content %}
           <div class="row mb-3">
             <div class="col-md-4">
               <div class="form-check">
-                {{ form.chk_books(class="form-check-input bg-transparent
-                border-light", style="accent-color: var(--main-color);") }} {{
-                form.chk_books.label(class="form-check-label text-white") }}
+                {{ form.chk_books(class="form-check-input custom-checkbox") }}
+                {{ form.chk_books.label(class="form-check-label text-white") }}
               </div>
             </div>
             <div class="col-md-4">
               <div class="form-check">
-                {{ form.chk_authors(class="form-check-input bg-transparent
-                border-light", style="accent-color: var(--main-color);") }} {{
-                form.chk_authors.label(class="form-check-label text-white") }}
+                {{ form.chk_authors(class="form-check-input custom-checkbox") }}
+                {{ form.chk_authors.label(class="form-check-label text-white")
+                }}
               </div>
             </div>
             <div class="col-md-4">
               <div class="form-check">
-                {{ form.chk_interpreters(class="form-check-input bg-transparent
-                border-light", style="accent-color: var(--main-color);") }} {{
+                {{ form.chk_interpreters(class="form-check-input
+                custom-checkbox") }} {{
                 form.chk_interpreters.label(class="form-check-label text-white")
                 }}
               </div>
@@ -126,9 +122,8 @@ content %}
 
           <div class="mb-3">
             {{ form.comment.label(class="form-label fw-bold text-white") }} {{
-            form.comment(class="form-control bg-transparent text-white
-            border-light", rows="3", placeholder="Дополнительная информация об
-            источнике...") }}
+            form.comment(class="form-control custom-input", rows="3",
+            placeholder="Дополнительная информация об источнике...") }}
             <div class="form-text text-white-50">Комментарии, примечания</div>
           </div>
         </div>
@@ -256,35 +251,37 @@ content %}
     padding: 1.5rem;
   }
 
-  /* 4. ПРОЗРАЧНЫЕ ПОЛЯ ВВОДА */
-  .form-control.bg-transparent {
-    background-color: rgba(255, 255, 255, 0.1) !important;
+  /* 4. НОВЫЙ СТИЛЬ ДЛЯ ПОЛЕЙ ВВОДА - ЧЕРНЫЙ ФОН, БЕЛЫЙ ТЕКСТ */
+  .custom-input {
+    background-color: #000000 !important;
     color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
     transition: all 0.2s;
   }
 
-  .form-control.bg-transparent::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+  .custom-input::placeholder {
+    color: var(--main-color) !important; /* main-color */
+    font-weight: 300;
   }
 
-  .form-control.bg-transparent:focus {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    border-color: rgba(255, 255, 255, 0.5) !important;
+  .custom-input:focus {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
     box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
   }
 
-  .form-control.bg-transparent.is-invalid {
+  .custom-input.is-invalid {
     border-color: #dc3545 !important;
   }
 
   /* 5. СТИЛИ ДЛЯ CHECKBOX */
-  .form-check-input.bg-transparent {
+  .custom-checkbox {
     background-color: rgba(255, 255, 255, 0.15) !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
   }
 
-  .form-check-input.bg-transparent:checked {
+  .custom-checkbox:checked {
     background-color: var(--main-color) !important;
     border-color: var(--main-color) !important;
   }

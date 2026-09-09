@@ -16,7 +16,7 @@ content %}
                  search=return_search) }}"
         class="btn btn-outline-light d-flex align-items-center"
       >
-        <i class="bi bi-arrow-left"></i> &nbsp;Назад к списку
+        <i class="bi bi-arrow-left"></i>  Назад к списку
       </a>
     </div>
 
@@ -68,8 +68,8 @@ content %}
               <div class="mb-3">
                 {{ form.format.label(class="form-label fw-bold text-white") }}
                 <span class="text-danger">*</span>
-                {{ form.format(class="form-control bg-transparent text-white
-                border-light" + (" is-invalid" if form.format.errors else ""),
+                {{ form.format(class="form-control custom-input" + ("
+                is-invalid" if form.format.errors else ""),
                 placeholder="Например: A4, A5, B5") }} {% if form.format.errors
                 %}
                 <div class="invalid-feedback d-block">
@@ -83,10 +83,9 @@ content %}
                 <div class="col-md-6">
                   <div class="mb-3">
                     {{ form.width.label(class="form-label fw-bold text-white")
-                    }} {{ form.width(class="form-control bg-transparent
-                    text-white border-light" + (" is-invalid" if
-                    form.width.errors else ""), type="number", min="0",
-                    placeholder="210") }} {% if form.width.errors %}
+                    }} {{ form.width(class="form-control custom-input" + ("
+                    is-invalid" if form.width.errors else ""), type="number",
+                    min="0", placeholder="210") }} {% if form.width.errors %}
                     <div class="invalid-feedback d-block">
                       {% for error in form.width.errors %} {{ error }} {% endfor
                       %}
@@ -100,10 +99,9 @@ content %}
                 <div class="col-md-6">
                   <div class="mb-3">
                     {{ form.height.label(class="form-label fw-bold text-white")
-                    }} {{ form.height(class="form-control bg-transparent
-                    text-white border-light" + (" is-invalid" if
-                    form.height.errors else ""), type="number", min="0",
-                    placeholder="297") }} {% if form.height.errors %}
+                    }} {{ form.height(class="form-control custom-input" + ("
+                    is-invalid" if form.height.errors else ""), type="number",
+                    min="0", placeholder="297") }} {% if form.height.errors %}
                     <div class="invalid-feedback d-block">
                       {% for error in form.height.errors %} {{ error }} {%
                       endfor %}
@@ -118,9 +116,8 @@ content %}
 
               <div class="mb-3">
                 {{ form.comment.label(class="form-label fw-bold text-white") }}
-                {{ form.comment(class="form-control bg-transparent text-white
-                border-light", rows="3", placeholder="Дополнительная информация
-                о формате...") }}
+                {{ form.comment(class="form-control custom-input", rows="3",
+                placeholder="Дополнительная информация о формате...") }}
                 <div class="form-text text-white-50">
                   Комментарии, примечания
                 </div>
@@ -457,7 +454,31 @@ content %}
     border-radius: 12px 12px 0 0 !important;
   }
 
-  /* 3. СТИЛИ ДЛЯ ВКЛАДОК */
+  /* 3. НОВЫЙ СТИЛЬ ДЛЯ ПОЛЕЙ ВВОДА - ЧЕРНЫЙ ФОН, БЕЛЫЙ ТЕКСТ */
+  .custom-input {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.2s;
+  }
+
+  .custom-input::placeholder {
+    color: var(--main-color) !important; /* main-color */
+    font-weight: 300;
+  }
+
+  .custom-input:focus {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+  }
+
+  .custom-input.is-invalid {
+    border-color: #dc3545 !important;
+  }
+
+  /* 4. СТИЛИ ДЛЯ ВКЛАДОК */
   .nav-tabs .nav-link {
     color: rgba(255, 255, 255, 0.8);
     border: none;
@@ -490,28 +511,6 @@ content %}
 
   .tab-pane {
     padding-top: 1rem;
-  }
-
-  /* 4. ПРОЗРАЧНЫЕ ПОЛЯ ВВОДА */
-  .form-control.bg-transparent {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-    transition: all 0.2s;
-  }
-
-  .form-control.bg-transparent::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-  }
-
-  .form-control.bg-transparent:focus {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    border-color: rgba(255, 255, 255, 0.5) !important;
-    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
-  }
-
-  .form-control.bg-transparent.is-invalid {
-    border-color: #dc3545 !important;
   }
 
   /* 5. НОВЫЙ СТИЛЬ ДЛЯ АЛЕРТА - ИСПОЛЬЗУЕТ var(--main-color) */
@@ -687,7 +686,7 @@ content %}
     }
   }
 
-  /* Стили для кнопок "Сохранить изменения" */
+  /* 12. Стили для кнопок "Сохранить изменения" */
   .btn-edit {
     background-color: transparent !important;
     color: var(--main-color) !important;
@@ -729,7 +728,8 @@ content %}
     padding: 0.75rem 1.5rem;
     font-size: 1.1rem;
   }
-  /* 15. ПЛАВНОЕ УВЕЛИЧЕНИЕ ОБЛОЖЕК ПРИ НАВЕДЕНИИ */
+
+  /* 13. ПЛАВНОЕ УВЕЛИЧЕНИЕ ОБЛОЖЕК ПРИ НАВЕДЕНИИ */
   .book-cover-thumbnail {
     transition:
       transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),

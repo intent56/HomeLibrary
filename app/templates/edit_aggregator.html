@@ -16,7 +16,7 @@ content %}
         class="btn btn-outline-light d-flex align-items-center"
         id="backButton"
       >
-        <i class="bi bi-arrow-left"></i> &nbsp;Назад
+        <i class="bi bi-arrow-left"></i>  Назад
       </a>
     </div>
 
@@ -41,9 +41,9 @@ content %}
               <div class="mb-3">
                 {{ form.name.label(class="form-label fw-bold text-white") }}
                 <span class="text-danger">*</span>
-                {{ form.name(class="form-control bg-transparent text-white
-                border-light" + (" is-invalid" if form.name.errors else ""),
-                placeholder="Например: Ozon") }} {% if form.name.errors %}
+                {{ form.name(class="form-control custom-input" + (" is-invalid"
+                if form.name.errors else ""), placeholder="Например: Ozon") }}
+                {% if form.name.errors %}
                 <div class="invalid-feedback d-block">
                   {% for error in form.name.errors %} {{ error }} {% endfor %}
                 </div>
@@ -55,9 +55,9 @@ content %}
               <div class="mb-3">
                 {{ form.code.label(class="form-label fw-bold text-white") }}
                 <span class="text-danger">*</span>
-                {{ form.code(class="form-control bg-transparent text-white
-                border-light" + (" is-invalid" if form.code.errors else ""),
-                placeholder="Например: ozon") }} {% if form.code.errors %}
+                {{ form.code(class="form-control custom-input" + (" is-invalid"
+                if form.code.errors else ""), placeholder="Например: ozon") }}
+                {% if form.code.errors %}
                 <div class="invalid-feedback d-block">
                   {% for error in form.code.errors %} {{ error }} {% endfor %}
                 </div>
@@ -72,8 +72,8 @@ content %}
           <div class="mb-3">
             {{ form.url_template.label(class="form-label fw-bold text-white") }}
             <span class="text-danger">*</span>
-            {{ form.url_template(class="form-control bg-transparent text-white
-            border-light" + (" is-invalid" if form.url_template.errors else ""),
+            {{ form.url_template(class="form-control custom-input" + ("
+            is-invalid" if form.url_template.errors else ""),
             placeholder="https://www.ozon.ru/search/?text={query}") }} {% if
             form.url_template.errors %}
             <div class="invalid-feedback d-block">
@@ -96,9 +96,9 @@ content %}
 
           <div class="mb-3">
             {{ form.icon.label(class="form-label fw-bold text-white") }} {{
-            form.icon(class="form-control bg-transparent text-white
-            border-light" + (" is-invalid" if form.icon.errors else ""),
-            placeholder="bi-box-seam") }} {% if form.icon.errors %}
+            form.icon(class="form-control custom-input" + (" is-invalid" if
+            form.icon.errors else ""), placeholder="bi-box-seam") }} {% if
+            form.icon.errors %}
             <div class="invalid-feedback d-block">
               {% for error in form.icon.errors %} {{ error }} {% endfor %}
             </div>
@@ -132,9 +132,8 @@ content %}
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3 form-check">
-                {{ form.is_active(class="form-check-input bg-transparent
-                border-light", style="accent-color: var(--main-color);") }} {{
-                form.is_active.label(class="form-check-label text-white") }}
+                {{ form.is_active(class="form-check-input custom-checkbox") }}
+                {{ form.is_active.label(class="form-check-label text-white") }}
                 <div class="form-text text-white-50">
                   Если активно, агрегатор будет доступен для поиска
                 </div>
@@ -143,9 +142,8 @@ content %}
             <div class="col-md-6">
               <div class="mb-3">
                 {{ form.search_type.label(class="form-label fw-bold text-white")
-                }} {{ form.search_type(class="form-select bg-transparent
-                text-white border-light" + (" is-invalid" if
-                form.search_type.errors else "")) }} {% if
+                }} {{ form.search_type(class="form-select custom-select" + ("
+                is-invalid" if form.search_type.errors else "")) }} {% if
                 form.search_type.errors %}
                 <div class="invalid-feedback d-block">
                   {% for error in form.search_type.errors %} {{ error }} {%
@@ -163,9 +161,8 @@ content %}
 
           <div class="mb-3">
             {{ form.comment.label(class="form-label fw-bold text-white") }} {{
-            form.comment(class="form-control bg-transparent text-white
-            border-light", rows="3", placeholder="Дополнительная информация об
-            агрегаторе...") }}
+            form.comment(class="form-control custom-input", rows="3",
+            placeholder="Дополнительная информация об агрегаторе...") }}
             <div class="form-text text-white-50">Комментарии, примечания</div>
           </div>
         </div>
@@ -325,59 +322,77 @@ content %}
     padding: 1.5rem;
   }
 
-  /* 4. ТЕКСТЫ БЕЛЫМ */
+  /* 4. НОВЫЙ СТИЛЬ ДЛЯ ПОЛЕЙ ВВОДА - ЧЕРНЫЙ ФОН, БЕЛЫЙ ТЕКСТ */
+  .custom-input {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.2s;
+  }
+
+  .custom-input::placeholder {
+    color: var(--main-color) !important; /* main-color */
+    font-weight: 300;
+  }
+
+  .custom-input:focus {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+  }
+
+  .custom-input.is-invalid {
+    border-color: #dc3545 !important;
+  }
+
+  /* 5. НОВЫЙ СТИЛЬ ДЛЯ SELECT ПОЛЕЙ */
+  .custom-select {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='white' d='M8 11L3 6h10z'/%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+
+  .custom-select:focus {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+  }
+
+  .custom-select option {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
+
+  .custom-select option:hover {
+    background-color: #1a1a1a !important;
+  }
+
+  /* 6. СТИЛИ ДЛЯ CHECKBOX - ИЗМЕНЕНЫ */
+  .custom-checkbox {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+  }
+
+  .custom-checkbox:checked {
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
+  }
+
+  /* 7. ТЕКСТЫ БЕЛЫМ */
   .text-white {
     color: #ffffff !important;
   }
   .text-white-50 {
     color: rgba(255, 255, 255, 0.7) !important;
-  }
-
-  /* 5. ПОЛЯ ВВОДА */
-  .form-control.bg-transparent {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-  }
-
-  .form-control.bg-transparent:focus {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    border-color: rgba(255, 255, 255, 0.5) !important;
-    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
-  }
-
-  .form-control.bg-transparent::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-  }
-
-  /* 6. SELECT ПОЛЯ */
-  .form-select.bg-transparent {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='white' d='M8 11L3 6h10z'/%3e%3c/svg%3e");
-  }
-
-  .form-select.bg-transparent:focus {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    border-color: rgba(255, 255, 255, 0.5) !important;
-    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
-  }
-
-  .form-select.bg-transparent option {
-    background-color: #343a40;
-    color: #ffffff;
-  }
-
-  /* 7. СТИЛИ ДЛЯ CHECKBOX - ИЗМЕНЕНЫ */
-  .form-check-input.bg-transparent {
-    background-color: rgba(255, 255, 255, 0.15) !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-  }
-
-  .form-check-input.bg-transparent:checked {
-    background-color: var(--main-color) !important;
-    border-color: var(--main-color) !important;
   }
 
   /* 8. КНОПКИ */
