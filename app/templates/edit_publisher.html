@@ -14,7 +14,7 @@ content %}
         href="{{url_for('main.publisher_list', page=return_page, search=return_search) }}"
         class="btn btn-outline-light d-flex align-items-center"
       >
-        <i class="bi bi-arrow-left"></i> &nbsp;Назад к списку
+        <i class="bi bi-arrow-left"></i>  Назад к списку
       </a>
     </div>
 
@@ -66,10 +66,9 @@ content %}
               <div class="mb-3">
                 {{ form.name.label(class="form-label fw-bold text-white") }}
                 <span class="text-danger">*</span>
-                {{ form.name(class="form-control bg-transparent text-white
-                border-light" + (" is-invalid" if form.name.errors else ""),
-                placeholder="Например: АСТ, Эксмо, Альфа-книга") }} {% if
-                form.name.errors %}
+                {{ form.name(class="form-control custom-input" + (" is-invalid"
+                if form.name.errors else ""), placeholder="Например: АСТ, Эксмо,
+                Альфа-книга") }} {% if form.name.errors %}
                 <div class="invalid-feedback d-block">
                   {% for error in form.name.errors %} {{ error }} {% endfor %}
                 </div>
@@ -81,13 +80,11 @@ content %}
                 {{ form.ref_publisher.label(class="form-label fw-bold
                 text-white") }}
                 <div class="input-group">
-                  <span
-                    class="input-group-text bg-transparent text-white border-light"
+                  <span class="input-group-text custom-input-group"
                     ><i class="bi bi-globe"></i
                   ></span>
-                  {{ form.ref_publisher(class="form-control bg-transparent
-                  text-white border-light", placeholder="Например:
-                  https://example.com") }}
+                  {{ form.ref_publisher(class="form-control custom-input",
+                  placeholder="Например: https://example.com") }}
                 </div>
                 <div class="form-text text-white-50">
                   Ссылка на страницу с информацией об издателе
@@ -96,9 +93,8 @@ content %}
 
               <div class="mb-3">
                 {{ form.comment.label(class="form-label fw-bold text-white") }}
-                {{ form.comment(class="form-control bg-transparent text-white
-                border-light", rows="3", placeholder="Дополнительная информация
-                об издателе...") }}
+                {{ form.comment(class="form-control custom-input", rows="3",
+                placeholder="Дополнительная информация об издателе...") }}
                 <div class="form-text text-white-50">
                   Комментарии, примечания, дополнительная информация
                 </div>
@@ -435,7 +431,39 @@ content %}
     border-radius: 12px 12px 0 0 !important;
   }
 
-  /* 3. СТИЛИ ДЛЯ ВКЛАДОК */
+  /* 3. НОВЫЙ СТИЛЬ ДЛЯ ПОЛЕЙ ВВОДА - ЧЕРНЫЙ ФОН, БЕЛЫЙ ТЕКСТ */
+  .custom-input {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.2s;
+  }
+
+  .custom-input::placeholder {
+    color: var(--main-color) !important; /* main-color */
+    font-weight: 300;
+  }
+
+  .custom-input:focus {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+  }
+
+  .custom-input.is-invalid {
+    border-color: #dc3545 !important;
+  }
+
+  /* 4. НОВЫЙ СТИЛЬ ДЛЯ INPUT-GROUP */
+  .custom-input-group {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-right: none !important;
+  }
+
+  /* 5. СТИЛИ ДЛЯ ВКЛАДОК */
   .nav-tabs .nav-link {
     color: rgba(255, 255, 255, 0.8);
     border: none;
@@ -470,29 +498,7 @@ content %}
     padding-top: 1rem;
   }
 
-  /* 4. ПРОЗРАЧНЫЕ ПОЛЯ ВВОДА */
-  .form-control.bg-transparent {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-    transition: all 0.2s;
-  }
-
-  .form-control.bg-transparent::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-  }
-
-  .form-control.bg-transparent:focus {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    border-color: rgba(255, 255, 255, 0.5) !important;
-    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
-  }
-
-  .form-control.bg-transparent.is-invalid {
-    border-color: #dc3545 !important;
-  }
-
-  /* 5. ПРОЗРАЧНЫЙ АЛЕРТ (для предупреждений) */
+  /* 6. ПРОЗРАЧНЫЙ АЛЕРТ (для предупреждений) */
   .transparent-alert {
     background-color: rgba(13, 202, 240, 0.15) !important;
     backdrop-filter: blur(5px);
@@ -506,7 +512,7 @@ content %}
     color: #ffffff !important;
   }
 
-  /* 6. ПРОЗРАЧНАЯ ТАБЛИЦА */
+  /* 7. ПРОЗРАЧНАЯ ТАБЛИЦА */
   .transparent-table {
     width: 100% !important;
   }
@@ -533,7 +539,7 @@ content %}
     color: rgba(255, 255, 255, 0.7) !important;
   }
 
-  /* 7. КНОПКИ В ТАБЛИЦЕ */
+  /* 8. КНОПКИ В ТАБЛИЦЕ */
   .btn-group .btn {
     display: inline-flex;
     align-items: center;
@@ -556,7 +562,7 @@ content %}
     color: #ffffff !important;
   }
 
-  /* 8. ПАГИНАЦИЯ - ИСПРАВЛЕННЫЙ СТИЛЬ */
+  /* 9. ПАГИНАЦИЯ - ИСПРАВЛЕННЫЙ СТИЛЬ */
   .pagination-container {
     background-color: rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(8px);
@@ -598,7 +604,7 @@ content %}
     color: rgba(255, 255, 255, 0.2) !important;
   }
 
-  /* 9. ОБЩИЕ СТИЛИ */
+  /* 10. ОБЩИЕ СТИЛИ */
   .text-white {
     color: #ffffff !important;
   }
@@ -609,7 +615,7 @@ content %}
     --bs-bg-opacity: 0.75;
   }
 
-  /* 10. АДАПТИВНОСТЬ */
+  /* 11. АДАПТИВНОСТЬ */
   @media (max-width: 768px) {
     .card-body {
       padding: 1rem !important;
@@ -647,7 +653,7 @@ content %}
     }
   }
 
-  /* Стили для кнопок "Сохранить изменения" */
+  /* 12. Стили для кнопок "Сохранить изменения" */
   .btn-edit {
     background-color: transparent !important;
     color: var(--main-color) !important;
@@ -689,7 +695,8 @@ content %}
     padding: 0.75rem 1.5rem;
     font-size: 1.1rem;
   }
-  /* 15. ПЛАВНОЕ УВЕЛИЧЕНИЕ ОБЛОЖЕК ПРИ НАВЕДЕНИИ */
+
+  /* 13. ПЛАВНОЕ УВЕЛИЧЕНИЕ ОБЛОЖЕК ПРИ НАВЕДЕНИИ */
   .book-cover-thumbnail {
     transition:
       transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
