@@ -130,6 +130,17 @@ content %}
         >
           <i class="bi bi-arrow-left"></i> Назад к жанру
         </a>
+        {% elif  return_to == 'edit_publisher' %}
+        <a
+          href="{{ url_for('main.edit_publisher', 
+                     publisher_id=id,
+                     page=page1,
+                     return_search=return_search,
+                     return_page=return_page) }}"
+          class="btn btn-outline-light d-flex align-items-center"
+        >
+          <i class="bi bi-arrow-left"></i> Назад к издателю
+        </a>
         {% endif %}
       </div>
     </div>
