@@ -74,10 +74,10 @@ content %}
                     {{ form.lastname.label(class="form-label fw-bold
                     text-white") }}
                     <span class="text-danger">*</span>
-                    {{ form.lastname(class="form-control bg-transparent
-                    text-white border-light" + (" is-invalid" if
-                    form.lastname.errors else ""), placeholder="Иванов",
-                    id="authorLastname") }} {% if form.lastname.errors %}
+                    {{ form.lastname(class="form-control custom-input" + ("
+                    is-invalid" if form.lastname.errors else ""),
+                    placeholder="Например, Иванов", id="authorLastname") }} {%
+                    if form.lastname.errors %}
                     <div class="invalid-feedback d-block">
                       {% for error in form.lastname.errors %} {{ error }} {%
                       endfor %}
@@ -90,7 +90,7 @@ content %}
                   <div class="mb-3">
                     {{ form.firstname.label(class="form-label fw-bold
                     text-white") }} {{ form.firstname(class="form-control
-                    bg-transparent text-white border-light", placeholder="Иван",
+                    custom-input", placeholder="Например, Иван",
                     id="authorFirstname") }}
                     <div class="form-text text-white-50">Имя автора</div>
                   </div>
@@ -99,8 +99,8 @@ content %}
                   <div class="mb-3">
                     {{ form.secondname.label(class="form-label fw-bold
                     text-white") }} {{ form.secondname(class="form-control
-                    bg-transparent text-white border-light",
-                    placeholder="Иванович", id="authorSecondname") }}
+                    custom-input", placeholder="Например, Иванович",
+                    id="authorSecondname") }}
                     <div class="form-text text-white-50">Отчество автора</div>
                   </div>
                 </div>
@@ -121,13 +121,12 @@ content %}
                   {{ form.ref_author.label(class="form-label fw-bold
                   text-white") }}
                   <div class="input-group">
-                    <span
-                      class="input-group-text bg-transparent text-white border-light"
+                    <span class="input-group-text custom-input-group"
                       ><i class="bi bi-globe"></i
                     ></span>
-                    {{ form.ref_author(class="form-control bg-transparent
-                    text-white border-light",
-                    placeholder="https://ru.wikipedia.org/wiki/Иванов_Иван_Иванович",
+                    {{ form.ref_author(class="form-control custom-input",
+                    placeholder="Например,
+                    https://ru.wikipedia.org/wiki/Иванов_Иван_Иванович",
                     id="authorRef") }}
                   </div>
                   <div class="form-text text-white-50">
@@ -186,10 +185,9 @@ content %}
 
                 <div class="mb-3">
                   {{ form.comment.label(class="form-label fw-bold text-white")
-                  }} {{ form.comment(class="form-control bg-transparent
-                  text-white border-light", rows="4",
-                  placeholder="Дополнительная информация об авторе...",
-                  id="authorComment") }}
+                  }} {{ form.comment(class="form-control custom-input",
+                  rows="4", placeholder="Дополнительная информация об
+                  авторе...", id="authorComment") }}
                   <div class="form-text text-white-50">
                     Комментарии, примечания, дополнительная информация
                   </div>
@@ -569,6 +567,7 @@ content %}
         tab.show();
       }
     }
+  });
 </script>
 
 <!-- СТИЛИ -->
@@ -602,7 +601,39 @@ content %}
     border-radius: 12px 12px 0 0 !important;
   }
 
-  /* 3. СТИЛИ ДЛЯ ВКЛАДОК */
+  /* 3. НОВЫЙ СТИЛЬ ДЛЯ ПОЛЕЙ ВВОДА - ЧЕРНЫЙ ФОН, БЕЛЫЙ ТЕКСТ */
+  .custom-input {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.2s;
+  }
+
+  .custom-input::placeholder {
+    color: var(--main-color) !important; /* Белый чуть заблюренный */
+    font-weight: 300;
+  }
+
+  .custom-input:focus {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+  }
+
+  .custom-input.is-invalid {
+    border-color: #dc3545 !important;
+  }
+
+  /* 4. НОВЫЙ СТИЛЬ ДЛЯ INPUT-GROUP */
+  .custom-input-group {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-right: none !important;
+  }
+
+  /* 5. СТИЛИ ДЛЯ ВКЛАДОК */
   .nav-tabs .nav-link {
     color: rgba(255, 255, 255, 0.8);
     border: none;
@@ -637,29 +668,7 @@ content %}
     padding-top: 1rem;
   }
 
-  /* 4. ПРОЗРАЧНЫЕ ПОЛЯ ВВОДА */
-  .form-control.bg-transparent {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-    transition: all 0.2s;
-  }
-
-  .form-control.bg-transparent::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-  }
-
-  .form-control.bg-transparent:focus {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    border-color: rgba(255, 255, 255, 0.5) !important;
-    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
-  }
-
-  .form-control.bg-transparent.is-invalid {
-    border-color: #dc3545 !important;
-  }
-
-  /* 5. НОВЫЙ СТИЛЬ ДЛЯ АЛЕРТА - ИСПОЛЬЗУЕТ var(--main-color) */
+  /* 6. НОВЫЙ СТИЛЬ ДЛЯ АЛЕРТА - ИСПОЛЬЗУЕТ var(--main-color) */
   .custom-alert {
     background-color: rgba(212, 175, 55, 0.2) !important;
     backdrop-filter: blur(5px);
@@ -677,7 +686,7 @@ content %}
     color: #ffffff !important;
   }
 
-  /* 6. ПРОЗРАЧНЫЙ АЛЕРТ (для предупреждений) */
+  /* 7. ПРОЗРАЧНЫЙ АЛЕРТ (для предупреждений) */
   .transparent-alert {
     background-color: rgba(13, 202, 240, 0.15) !important;
     backdrop-filter: blur(5px);
@@ -691,7 +700,7 @@ content %}
     color: #ffffff !important;
   }
 
-  /* 7. ПРОЗРАЧНАЯ ТАБЛИЦА */
+  /* 8. ПРОЗРАЧНАЯ ТАБЛИЦА */
   .transparent-table {
     width: 100% !important;
   }
@@ -718,7 +727,7 @@ content %}
     color: rgba(255, 255, 255, 0.7) !important;
   }
 
-  /* 8. КНОПКИ В ТАБЛИЦЕ */
+  /* 9. КНОПКИ В ТАБЛИЦЕ */
   .btn-group .btn {
     display: inline-flex;
     align-items: center;
@@ -741,7 +750,7 @@ content %}
     color: #ffffff !important;
   }
 
-  /* 9. ПАГИНАЦИЯ - ИСПРАВЛЕННЫЙ СТИЛЬ */
+  /* 10. ПАГИНАЦИЯ - ИСПРАВЛЕННЫЙ СТИЛЬ */
   .pagination-container {
     background-color: rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(8px);
@@ -782,11 +791,12 @@ content %}
     border-color: rgba(255, 255, 255, 0.05) !important;
     color: rgba(255, 255, 255, 0.2) !important;
   }
-  /* 10. НОВЫЙ СТИЛЬ ДЛЯ INPUT ФАЙЛА */
+
+  /* 11. НОВЫЙ СТИЛЬ ДЛЯ INPUT ФАЙЛА */
   .custom-file-input {
-    background-color: rgba(212, 175, 55, 0.15) !important;
+    background-color: #000000 !important;
     color: #ffffff !important;
-    border: 2px solid var(--main-color) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
     border-radius: 8px;
     padding: 0.5rem 0.75rem;
     transition: all 0.3s ease;
@@ -794,14 +804,14 @@ content %}
   }
 
   .custom-file-input:hover {
-    background-color: rgba(212, 175, 55, 0.25) !important;
-    border-color: #000000 !important;
+    background-color: #1a1a1a !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
   }
 
   .custom-file-input:focus {
-    background-color: rgba(212, 175, 55, 0.2) !important;
-    border-color: var(--main-color) !important;
-    box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.2);
+    background-color: #000000 !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
     outline: none;
   }
 
@@ -823,7 +833,7 @@ content %}
     border-color: #000000 !important;
   }
 
-  /* 11. ОБЩИЕ СТИЛИ */
+  /* 12. ОБЩИЕ СТИЛИ */
   .text-white {
     color: #ffffff !important;
   }
@@ -834,7 +844,7 @@ content %}
     --bs-bg-opacity: 0.75;
   }
 
-  /* 12. АДАПТИВНОСТЬ */
+  /* 13. АДАПТИВНОСТЬ */
   @media (max-width: 768px) {
     .card-body {
       padding: 1rem !important;
@@ -871,7 +881,8 @@ content %}
       align-items: center !important;
     }
   }
-  /* Стили для кнопок "Сохранить изменения" */
+
+  /* 14. Стили для кнопок "Сохранить изменения" */
   .btn-edit {
     background-color: transparent !important;
     color: var(--main-color) !important;
@@ -914,7 +925,7 @@ content %}
     font-size: 1.1rem;
   }
 
-  /* 13. ПЛАВНОЕ УВЕЛИЧЕНИЕ ОБЛОЖЕК ПРИ НАВЕДЕНИИ */
+  /* 15. ПЛАВНОЕ УВЕЛИЧЕНИЕ ОБЛОЖЕК ПРИ НАВЕДЕНИИ */
   .book-cover-thumbnail {
     transition:
       transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
