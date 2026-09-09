@@ -97,6 +97,17 @@ content %}
         >
           <i class="bi bi-arrow-left"></i> Назад к автору
         </a>
+        {% elif  return_to == 'edit_cover' %}
+        <a
+          href="{{ url_for('main.edit_cover', 
+                     cover_id=id,
+                     page=page1,
+                     return_search=return_search,
+                     return_page=return_page) }}"
+          class="btn btn-outline-light d-flex align-items-center"
+        >
+          <i class="bi bi-arrow-left"></i> Назад к переплету
+        </a>
         {% endif %}
       </div>
     </div>

@@ -76,7 +76,7 @@ content %}
                     <span class="text-danger">*</span>
                     {{ form.lastname(class="form-control custom-input" + ("
                     is-invalid" if form.lastname.errors else ""),
-                    placeholder="Например, Иванов", id="authorLastname") }} {%
+                    placeholder="Например: Иванов", id="authorLastname") }} {%
                     if form.lastname.errors %}
                     <div class="invalid-feedback d-block">
                       {% for error in form.lastname.errors %} {{ error }} {%
@@ -90,7 +90,7 @@ content %}
                   <div class="mb-3">
                     {{ form.firstname.label(class="form-label fw-bold
                     text-white") }} {{ form.firstname(class="form-control
-                    custom-input", placeholder="Например, Иван",
+                    custom-input", placeholder="Например: Иван",
                     id="authorFirstname") }}
                     <div class="form-text text-white-50">Имя автора</div>
                   </div>
@@ -99,7 +99,7 @@ content %}
                   <div class="mb-3">
                     {{ form.secondname.label(class="form-label fw-bold
                     text-white") }} {{ form.secondname(class="form-control
-                    custom-input", placeholder="Например, Иванович",
+                    custom-input", placeholder="Например: Иванович",
                     id="authorSecondname") }}
                     <div class="form-text text-white-50">Отчество автора</div>
                   </div>
@@ -125,7 +125,7 @@ content %}
                       ><i class="bi bi-globe"></i
                     ></span>
                     {{ form.ref_author(class="form-control custom-input",
-                    placeholder="Например,
+                    placeholder="Например:
                     https://ru.wikipedia.org/wiki/Иванов_Иван_Иванович",
                     id="authorRef") }}
                   </div>
@@ -610,7 +610,7 @@ content %}
   }
 
   .custom-input::placeholder {
-    color: var(--main-color) !important; /* Белый чуть заблюренный */
+    color: var(--main-color) !important; /* main-color */
     font-weight: 300;
   }
 
