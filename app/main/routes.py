@@ -1628,6 +1628,33 @@ def format_list():
                            search=search)
 
 
+@bp.route('/format/<int:format_id>/card')
+def format_card(format_id):
+    format = Format.query.get_or_404(format_id)
+
+    # Получаем параметры для возврата
+    page = request.args.get('page', 1, type=int)
+    return_page = request.args.get('return_page', 1, type=int)
+    return_search = request.args.get('return_search', 1, type=int)
+
+    # Пагинация для книг с этим переплетом
+    books_query = Book.query.filter_by(
+        id_format=format_id).order_by(Book.name.asc())
+    pagination = books_query.paginate(
+        page=page,
+        per_page=Config.ITEMS_PER_PAGE_BOOK,
+        error_out=False
+    )
+
+    return render_template('format_card.html',
+                           format=format,
+                           books=pagination.items,
+                           pagination=pagination,
+                           page=page,
+                           return_page=return_page,
+                           return_search=return_search)
+
+
 @bp.route('/format/<int:format_id>/view')
 def format_view(format_id):
     format_obj = Format.query.get_or_404(format_id)
@@ -2311,7 +2338,7 @@ def cover_card(cover_id):
         id_cover=cover_id).order_by(Book.name.asc())
     pagination = books_query.paginate(
         page=page,
-        per_page=Config.ITEMS_PER_PAGE_COVER,
+        per_page=Config.ITEMS_PER_PAGE_BOOK,
         error_out=False
     )
 
@@ -2336,7 +2363,7 @@ def cover_view(cover_id):
         id_cover=cover_id).order_by(Book.name.asc())
     pagination = books_query.paginate(
         page=page,
-        per_page=Config.ITEMS_PER_PAGE_COVER,
+        per_page=Config.ITEMS_PER_PAGE_BOOK,
         error_out=False
     )
 
