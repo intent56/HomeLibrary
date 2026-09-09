@@ -108,6 +108,17 @@ content %}
         >
           <i class="bi bi-arrow-left"></i> Назад к переплету
         </a>
+        {% elif  return_to == 'edit_format' %}
+        <a
+          href="{{ url_for('main.edit_format', 
+                     format_id=id,
+                     page=page1,
+                     return_search=return_search,
+                     return_page=return_page) }}"
+          class="btn btn-outline-light d-flex align-items-center"
+        >
+          <i class="bi bi-arrow-left"></i> Назад к формату
+        </a>
         {% endif %}
       </div>
     </div>

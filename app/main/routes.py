@@ -2123,8 +2123,8 @@ def genre_view(genre_id):
 
 @bp.route('/format/<int:format_id>/edit', methods=['GET', 'POST'])
 def edit_format(format_id):
-    format_item = Format.query.get_or_404(format_id)
-    form = FormFormat(obj=format_item)
+    format = Format.query.get_or_404(format_id)
+    form = FormFormat(obj=format)
 
     # Получаем параметры для возврата
     page = request.args.get('page', 1, type=int)
@@ -2142,7 +2142,7 @@ def edit_format(format_id):
 
     if form.validate_on_submit():
         try:
-            form.populate_obj(format_item)
+            form.populate_obj(format)
             db.session.commit()
             flash('Формат успешно обновлен!', 'success')
             return redirect(url_for('main.format_list'))
@@ -2152,7 +2152,7 @@ def edit_format(format_id):
 
     return render_template('edit_format.html',
                            form=form,
-                           format_item=format_item,
+                           format=format,
                            books=pagination.items,
                            pagination=pagination,
                            page=page,
@@ -2163,15 +2163,15 @@ def edit_format(format_id):
 
 @bp.route('/format/<int:format_id>/delete', methods=['POST'])
 def delete_format(format_id):
-    format_item = Format.query.get_or_404(format_id)
+    format = Format.query.get_or_404(format_id)
     try:
         # Проверяем, есть ли книги с этим форматом
-        if format_item.fmt_books:
+        if format.fmt_books:
             flash(
-                f'Невозможно удалить формат "{format_item.format}", так как он используется в {len(format_item.fmt_books)} книгах!', 'danger')
+                f'Невозможно удалить формат "{format.format}", так как он используется в {len(format.fmt_books)} книгах!', 'danger')
             return redirect(url_for('main.format_list'))
 
-        db.session.delete(format_item)
+        db.session.delete(format)
         db.session.commit()
         flash('Формат успешно удален!', 'success')
     except SQLAlchemyError as e:
@@ -2259,9 +2259,9 @@ def add_format():
 
     if form.validate_on_submit():
         try:
-            format_item = Format()
-            form.populate_obj(format_item)
-            db.session.add(format_item)
+            format = Format()
+            form.populate_obj(format)
+            db.session.add(format)
             db.session.commit()
             flash('Формат успешно добавлен!', 'success')
             return redirect(url_for('main.format_list'))
