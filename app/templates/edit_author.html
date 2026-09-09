@@ -16,7 +16,6 @@ content %}
                  page=return_page, 
                  search=return_search) }}"
         class="btn btn-outline-light d-flex align-items-center"
-        id="backButton"
       >
         <i class="bi bi-arrow-left"></i> Назад к списку
       </a>
@@ -570,25 +569,6 @@ content %}
         tab.show();
       }
     }
-
-    // --- Умная кнопка "Назад" ---
-    const backButton = document.getElementById("backButton");
-    if (backButton) {
-      // Если есть referrer (переход с другой страницы этого же сайта)
-      if (
-        document.referrer &&
-        document.referrer.includes(window.location.hostname)
-      ) {
-        backButton.href = document.referrer;
-      }
-      // Если передан параметр next, используем его (имеет приоритет)
-      const urlParams = new URLSearchParams(window.location.search);
-      const next = urlParams.get("next");
-      if (next) {
-        backButton.href = next;
-      }
-    }
-  });
 </script>
 
 <!-- СТИЛИ -->
