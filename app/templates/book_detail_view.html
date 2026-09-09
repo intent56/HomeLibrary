@@ -73,7 +73,7 @@ content %}
                      return_page=return_page) }}"
           class="btn btn-outline-light d-flex align-items-center"
         >
-          <i class="bi bi-arrow-left"></i> Назад к языку
+          <i class="bi bi-arrow-left"></i> Назад к переплету
         </a>
         {% elif  return_to == 'format_card' %}
         <a
@@ -84,7 +84,18 @@ content %}
                      return_page=return_page) }}"
           class="btn btn-outline-light d-flex align-items-center"
         >
-          <i class="bi bi-arrow-left"></i> Назад к языку
+          <i class="bi bi-arrow-left"></i> Назад к формату
+        </a>
+        {% elif  return_to == 'edit_author' %}
+        <a
+          href="{{ url_for('main.edit_author', 
+                     author_id=id,
+                     page=page1,
+                     return_search=return_search,
+                     return_page=return_page) }}"
+          class="btn btn-outline-light d-flex align-items-center"
+        >
+          <i class="bi bi-arrow-left"></i> Назад к автору
         </a>
         {% endif %}
       </div>

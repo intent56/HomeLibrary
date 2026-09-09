@@ -12,11 +12,13 @@ content %}
       </div>
       <!-- 2. ИЗМЕНЕННАЯ КНОПКА "НАЗАД" С СОХРАНЕНИЕМ ПАРАМЕТРОВ -->
       <a
-        href="{{ request.args.get('next') or url_for('main.author_list', page=return_page, search=return_search) }}"
+        href="{{ url_for('main.author_list', 
+                 page=return_page, 
+                 search=return_search) }}"
         class="btn btn-outline-light d-flex align-items-center"
         id="backButton"
       >
-        <i class="bi bi-arrow-left"></i> Назад
+        <i class="bi bi-arrow-left"></i> Назад к списку
       </a>
     </div>
 
@@ -207,8 +209,9 @@ content %}
                   <thead class="transparent-table-header">
                     <tr>
                       <th style="width: 10%">Обложка</th>
-                      <th style="width: 50%">Название</th>
-                      <th style="width: 20%">Год</th>
+                      <th style="width: 35%">Название</th>
+                      <th style="width: 10%">Год</th>
+                      <th style="width: 25%">Издатель</th>
                       <th style="width: 20%">Действия</th>
                     </tr>
                   </thead>
@@ -220,7 +223,7 @@ content %}
                         <img
                           src="data:image/jpeg;base64,{{ book.cover|b64encode }}"
                           alt="{{ book.name }}"
-                          class="img-thumbnail"
+                          class="img-thumbnail book-cover-thumbnail"
                           style="
                             width: 40px;
                             height: 56px;
@@ -261,29 +264,37 @@ content %}
                       </td>
                       <td>
                         {% if book.year_edition %}
-                        <span
-                          class="badge bg-secondary bg-opacity-75 text-white"
-                          >{{ book.year_edition }}</span
+                        <strong class="text-white"
+                          >{{ book.year_edition }}</strong
                         >
                         {% else %}
                         <span class="text-white-50">-</span>
                         {% endif %}
                       </td>
                       <td>
+                        {% if book.publisher_books %} {% for publisher in
+                        book.publisher_books %}
+                        <strong class="text-white">{{ publisher.name }}</strong>
+                        {% endfor %} {% else %}
+                        <span class="text-light-50"
+                          ><i class="bi bi-tag"></i> Нет издателя</span
+                        >
+                        {% endif %}
+                      </td>
+                      <td>
                         <div class="btn-group btn-group-sm" role="group">
                           <a
-                            href="{{ url_for('main.book_detail', book_id=book.id) }}"
+                            href="{{ url_for('main.book_view', 
+                                book_id=book.id,
+                                page1=page if page else 1,
+                                id=author.id,
+                                return_search=return_search,
+                                return_page=return_page,
+                                return_to='edit_author') }}"
                             class="btn btn-outline-light"
                             title="Просмотр книги"
                           >
                             <i class="bi bi-eye"></i>
-                          </a>
-                          <a
-                            href="{{ url_for('main.edit_book', book_id=book.id) }}"
-                            class="btn btn-outline-light"
-                            title="Редактировать книгу"
-                          >
-                            <i class="bi bi-pencil"></i>
                           </a>
                         </div>
                       </td>
@@ -306,7 +317,11 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('main.edit_author', author_id=author.id, page=1, return_page=return_page, return_search=return_search) }}"
+                        href="{{ url_for('main.edit_author', 
+                                 author_id=author.id, 
+                                 page=1, 
+                                 return_page=return_page, 
+                                 return_search=return_search) }}"
                       >
                         <i class="bi bi-chevron-double-left"></i>
                       </a>
@@ -316,7 +331,11 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('main.edit_author', author_id=author.id, page=pagination.prev_num, return_page=return_page, return_search=return_search) }}"
+                        href="{{ url_for('main.edit_author', 
+                                 author_id=author.id, 
+                                 page=pagination.prev_num, 
+                                 return_page=return_page, 
+                                 return_search=return_search) }}"
                       >
                         <i class="bi bi-chevron-left"></i>
                       </a>
@@ -335,7 +354,11 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('main.edit_author', author_id=author.id, page=p, return_page=return_page, return_search=return_search) }}"
+                        href="{{ url_for('main.edit_author', 
+                                 author_id=author.id, 
+                                 page=p, 
+                                 return_page=return_page, 
+                                 return_search=return_search) }}"
                       >
                         {{ p }}
                       </a>
@@ -351,7 +374,11 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('main.edit_author', author_id=author.id, page=pagination.next_num, return_page=return_page, return_search=return_search) }}"
+                        href="{{ url_for('main.edit_author', 
+                                 author_id=author.id, 
+                                 page=pagination.next_num, 
+                                 return_page=return_page, 
+                                 return_search=return_search) }}"
                       >
                         <i class="bi bi-chevron-right"></i>
                       </a>
@@ -361,7 +388,11 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('main.edit_author', author_id=author.id, page=pagination.pages, return_page=return_page, return_search=return_search) }}"
+                        href="{{ url_for('main.edit_author', 
+                                 author_id=author.id, 
+                                 page=pagination.pages, 
+                                 return_page=return_page, 
+                                 return_search=return_search) }}"
                       >
                         <i class="bi bi-chevron-double-right"></i>
                       </a>
@@ -901,6 +932,23 @@ content %}
   .btn-edit-lg {
     padding: 0.75rem 1.5rem;
     font-size: 1.1rem;
+  }
+
+  /* 13. ПЛАВНОЕ УВЕЛИЧЕНИЕ ОБЛОЖЕК ПРИ НАВЕДЕНИИ */
+  .book-cover-thumbnail {
+    transition:
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    border-radius: 4px;
+    will-change: transform;
+  }
+
+  .book-cover-thumbnail:hover {
+    transform: scale(2.5);
+    z-index: 1000;
+    position: relative;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
   }
 </style>
 {% endblock %}
