@@ -314,7 +314,12 @@ content %}
                       <td>
                         {% if book.author_books %} {% for author in
                         book.author_books %}
-                        <strong class="text-white">{{ author.fio }}</strong>
+                        <strong class="text-white"
+                          >{{ author.lastname }} {% if author.firstname %} {{
+                          author.firstname.0 }}.{% endif %} {% if
+                          author.secondname %} {{ author.secondname.0 }}.{%
+                          endif %}</strong
+                        ><br />
                         {% endfor %} {% else %}
                         <span class="text-light-50"
                           ><i class="bi bi-tag"></i> Нет автора</span
