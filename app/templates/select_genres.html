@@ -44,20 +44,19 @@ content %}
             hx-select="#searchResults"
           >
             <div class="input-group">
-              <span
-                class="input-group-text bg-transparent text-white border-light"
+              <span class="input-group-text custom-input-group"
                 ><i class="bi bi-tags"></i
               ></span>
               <input
                 type="text"
-                class="form-control bg-transparent text-white border-light"
+                class="form-control custom-search-input"
                 id="genreSearch"
                 name="q"
                 placeholder="Начните вводить название жанра..."
                 autocomplete="off"
               />
               <span
-                class="input-group-text bg-transparent border-light"
+                class="input-group-text custom-input-group"
                 id="loading"
                 style="display: none"
               >
@@ -78,7 +77,7 @@ content %}
         <div class="mt-3">
           <a
             href="{{ url_for('main.add_genre') }}?book_id={{ book.id }}"
-            class="btn btn-warning"
+            class="btn btn-edit"
           >
             <i class="bi bi-plus-circle"></i> Добавить новый жанр
           </a>
@@ -107,7 +106,7 @@ content %}
             data-genre-id="{{ genre.id }}"
           >
             <div>
-              <i class="bi bi-tag text-primary me-2"></i>
+              <i class="bi bi-tag me-2" style="color: var(--main-color)"></i>
               <strong class="text-white">{{ genre.name }}</strong>
               {% if genre.id in pending_added %}
               <span class="badge bg-warning bg-opacity-75 text-dark ms-2"
@@ -161,18 +160,18 @@ content %}
           <div class="d-flex gap-2">
             <a
               href="{{ url_for('main.save_genres_changes', book_id=book.id) }}"
-              class="btn btn-success btn-lg"
+              class="btn btn-edit btn-lg d-flex align-items-center"
               id="saveBtn"
             >
-              <i class="bi bi-check-circle"></i>
+              <i class="bi bi-check-circle me-2"></i>
               {% if has_changes %}Сохранить{% else %}Готово{% endif %}
             </a>
             <a
               href="{{ url_for('main.cancel_genres_changes', book_id=book.id) }}"
-              class="btn btn-outline-light btn-lg"
+              class="btn btn-outline-light btn-lg d-flex align-items-center"
               id="cancelChangesBtn"
             >
-              <i class="bi bi-arrow-counterclockwise"></i> Отмена
+              <i class="bi bi-arrow-counterclockwise me-2"></i> Отмена
             </a>
           </div>
         </div>
@@ -307,9 +306,9 @@ content %}
 
       if (saveBtn) {
           if (hasChanges) {
-              saveBtn.innerHTML = '<i class="bi bi-check-circle"></i> Сохранить';
+              saveBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i> Сохранить';
           } else {
-              saveBtn.innerHTML = '<i class="bi bi-check-circle"></i> Готово';
+              saveBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i> Готово';
           }
       }
   }
@@ -433,24 +432,38 @@ content %}
     color: rgba(255, 255, 255, 0.7) !important;
   }
 
-  /* 5. ПОЛЯ ВВОДА */
-  .form-control.bg-transparent {
-    background-color: rgba(255, 255, 255, 0.1) !important;
+  /* 5. НОВЫЙ СТИЛЬ ДЛЯ INPUT-GROUP (иконки в поле поиска) */
+  .custom-input-group {
+    background-color: #000000 !important;
     color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-right: none !important;
   }
 
-  .form-control.bg-transparent:focus {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    border-color: rgba(255, 255, 255, 0.5) !important;
-    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+  /* 6. НОВЫЙ СТИЛЬ ДЛЯ ПОЛЯ ПОИСКА */
+  .custom-search-input {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.2s;
+    font-weight: normal;
   }
 
-  .form-control.bg-transparent::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+  .custom-search-input::placeholder {
+    color: #000000 !important;
+    font-weight: normal;
+    opacity: 0.8;
   }
 
-  /* 6. КНОПКИ */
+  .custom-search-input:focus {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    font-weight: bold !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 194, 0, 0.3);
+  }
+
+  /* 7. КНОПКИ */
   .btn-outline-light {
     color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
@@ -462,17 +475,43 @@ content %}
     color: #ffffff !important;
   }
 
-  .btn-success {
-    background-color: rgba(25, 135, 84, 0.8) !important;
-    border-color: rgba(25, 135, 84, 0.8) !important;
+  /* 8. НОВЫЙ СТИЛЬ ДЛЯ КНОПОК "ДОБАВИТЬ НОВЫЙ ЖАНР" И "ГОТОВО" */
+  .btn-edit {
+    background-color: transparent !important;
+    color: var(--main-color) !important;
+    border: 2px solid var(--main-color) !important;
+    transition: all 0.3s ease !important;
+    font-weight: 500 !important;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
   }
 
-  .btn-success:hover {
-    background-color: rgba(25, 135, 84, 1) !important;
-    border-color: rgba(25, 135, 84, 1) !important;
+  .btn-edit:hover {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 194, 0, 0.3);
   }
 
-  /* 7. БЕЙДЖИ */
+  .btn-edit:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 6px rgba(255, 194, 0, 0.2);
+  }
+
+  .btn-edit:focus {
+    box-shadow: 0 0 0 3px rgba(255, 194, 0, 0.4);
+    outline: none;
+  }
+
+  .btn-edit-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+  }
+
+  /* 9. БЕЙДЖИ */
   .badge.bg-warning {
     background-color: rgba(255, 193, 7, 0.7) !important;
   }
@@ -481,7 +520,7 @@ content %}
     background-color: rgba(220, 53, 69, 0.7) !important;
   }
 
-  /* 8. АДАПТИВНОСТЬ */
+  /* 10. АДАПТИВНОСТЬ */
   @media (max-width: 768px) {
     .card-body {
       padding: 1rem !important;
