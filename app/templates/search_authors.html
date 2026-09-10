@@ -9,16 +9,6 @@
         <i class="bi bi-person-circle text-primary me-2"></i>
         <div class="d-inline-block">
           <strong>{{ author.fio }}</strong>
-          {% if author.firstname %}
-          <span class="text-muted ms-2">
-            <i class="bi bi-person"></i> {{ author.firstname }} {% if
-            author.secondname %} {{ author.secondname }} {% endif %}
-          </span>
-          {% endif %} {% if author.lastname %}
-          <span class="text-muted ms-2 small">
-            <i class="bi bi-card-text"></i> {{ author.lastname }}
-          </span>
-          {% endif %}
         </div>
       </div>
       <button
