@@ -1,18 +1,21 @@
 <div id="searchResults">
   {% if authors %}
-  <div class="list-group">
+  <div class="list-group transparent-list-group">
     {% for author in authors %}
     <div
-      class="list-group-item d-flex justify-content-between align-items-center"
+      class="list-group-item transparent-list-group-item d-flex justify-content-between align-items-center"
     >
       <div>
-        <i class="bi bi-person-circle text-primary me-2"></i>
+        <i
+          class="bi bi-person-circle me-2"
+          style="color: var(--main-color)"
+        ></i>
         <div class="d-inline-block">
-          <strong>{{ author.fio }}</strong>
+          <strong class="text-white fw-bold">{{ author.fio }}</strong>
         </div>
       </div>
       <button
-        class="btn btn-primary btn-sm add-author-btn"
+        class="btn btn-edit btn-sm add-author-btn"
         data-author-id="{{ author.id }}"
       >
         <i class="bi bi-plus-circle"></i> Добавить
@@ -20,18 +23,19 @@
     </div>
     {% endfor %}
   </div>
-  <div class="mt-2 text-muted small">
+  <div class="mt-2 text-white-50 small">
     <i class="bi bi-info-circle"></i> Найдено авторов: {{ authors|length }}
   </div>
   {% else %}
-  <div class="alert alert-info mt-2" role="alert">
+  <div class="alert alert-info transparent-alert mt-2" role="alert">
     <i class="bi bi-info-circle"></i>
-    <strong>Авторы не найдены</strong>
-    <p class="mb-0 mt-1">
+    <strong class="text-white">Авторы не найдены</strong>
+    <p class="mb-0 mt-1 text-white-50">
       Попробуйте изменить поисковый запрос или
       <a
         href="{{ url_for('main.add_author') }}?book_id={{ request.args.get('book_id', 0) }}"
         class="alert-link"
+        style="color: var(--main-color)"
       >
         <i class="bi bi-plus-circle"></i> Добавить нового автора
       </a>
@@ -39,3 +43,68 @@
   </div>
   {% endif %}
 </div>
+
+<style>
+  /* Прозрачный список */
+  .transparent-list-group-item {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+    transition: all 0.2s;
+  }
+
+  .transparent-list-group-item:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  /* Белый жирный текст */
+  .text-white {
+    color: #ffffff !important;
+  }
+  .text-white-50 {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  /* Кнопка "Добавить" в стиле btn-edit */
+  .btn-edit {
+    background-color: transparent !important;
+    color: var(--main-color) !important;
+    border: 2px solid var(--main-color) !important;
+    transition: all 0.3s ease !important;
+    font-weight: 500 !important;
+    padding: 0.25rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-edit:hover {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 194, 0, 0.3);
+  }
+
+  .btn-edit:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 6px rgba(255, 194, 0, 0.2);
+  }
+
+  .btn-edit:focus {
+    box-shadow: 0 0 0 3px rgba(255, 194, 0, 0.4);
+    outline: none;
+  }
+
+  /* Прозрачный алерт */
+  .transparent-alert {
+    background-color: rgba(13, 202, 240, 0.15) !important;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(13, 202, 240, 0.3) !important;
+    color: #ffffff !important;
+  }
+
+  .transparent-alert i {
+    color: #0dcaf0 !important;
+  }
+</style>
