@@ -111,7 +111,12 @@ content %}
                 style="color: var(--main-color)"
               ></i>
               <strong class="text-white">{{ author.fio }}</strong>
-              {% if author.id in pending_added %}
+              {% if author.firstname %}
+              <span class="text-white-50"
+                >({{ author.firstname }}{% if author.secondname %} {{
+                author.secondname }}{% endif %})</span
+              >
+              {% endif %} {% if author.id in pending_added %}
               <span class="badge bg-warning bg-opacity-75 text-dark ms-2"
                 >будет добавлен</span
               >
@@ -163,17 +168,17 @@ content %}
           <div class="d-flex gap-2">
             <a
               href="{{ url_for('main.book_detail', book_id=book.id) }}"
-              class="btn btn-edit btn-lg"
+              class="btn btn-edit btn-lg d-flex align-items-center"
               id="saveBtn"
             >
-              <i class="bi bi-check-circle"></i> Готово
+              <i class="bi bi-check-circle me-2"></i> Готово
             </a>
             <a
               href="{{ url_for('main.book_detail', book_id=book.id) }}"
-              class="btn btn-outline-light btn-lg"
+              class="btn btn-outline-light btn-lg d-flex align-items-center"
               id="cancelChangesBtn"
             >
-              <i class="bi bi-arrow-counterclockwise"></i> Отмена
+              <i class="bi bi-arrow-counterclockwise me-2"></i> Отмена
             </a>
           </div>
         </div>
@@ -309,9 +314,9 @@ content %}
 
       if (saveBtn) {
           if (hasChanges) {
-              saveBtn.innerHTML = '<i class="bi bi-check-circle"></i> Сохранить';
+              saveBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i> Сохранить';
           } else {
-              saveBtn.innerHTML = '<i class="bi bi-check-circle"></i> Готово';
+              saveBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i> Готово';
           }
       }
   }
