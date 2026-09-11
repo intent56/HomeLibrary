@@ -7,7 +7,7 @@
                 <div class="mb-3">
                     <div class="bg-transparent d-inline-flex align-items-center justify-content-center" 
                          style="width: 100px; height: 100px; border: 2px solid rgba(255,255,255,0.3);">
-                        <i class="bi bi-globe display-1 text-white-50"></i>
+                        <i class="bi bi-globe display-1 main-text-color"></i>
                     </div>
                 </div>
                 <!-- БЛОК С НАЗВАНИЕМ ЯЗЫКА С ФИКСИРОВАННОЙ ВЫСОТОЙ -->
@@ -42,18 +42,18 @@
                                          return_page=pagination.page if pagination else 1,
                                          return_search=search) }}" 
                        class="btn btn-outline-light btn-sm" title="Просмотр карточки языка">
-                        <i class="bi bi-eye"></i>
+                        <i class="bi bi-eye main-text-color"></i>
                     </a>
                     <a href="{{ url_for('main.edit_language', 
                                   language_id=language.id, 
                                   return_page=pagination.page if pagination else 1,
                                   return_search=search) }}" 
                        class="btn btn-outline-light btn-sm" title="Редактировать язык">
-                        <i class="bi bi-pencil"></i>
+                        <i class="bi bi-pencil main-text-color"></i>
                     </a>
                     <button type="button" class="btn btn-outline-light btn-sm" title="Удалить язык" 
                             data-bs-toggle="modal" data-bs-target="#deleteLanguageModal{{ language.id }}">
-                        <i class="bi bi-trash"></i>
+                        <i class="bi bi-trash main-text-color"></i>
                     </button>
                 </div>
             </div>
