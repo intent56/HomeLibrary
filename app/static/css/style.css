@@ -955,5 +955,5 @@ textarea.form-control:not(:placeholder-shown) {
 
 /* Основной цвет */
 .main-text-color {
-  color: #d4af37; 
+  color: #d4af37 !important; 
 }
