@@ -1,8 +1,4 @@
 /* Стили для начальной страницы с эффектом погружения */
-@font-face {
-  font-family: "Lobster";
-  src: url("../fonts/Lobster/Lobster.ttf") format("truetype");
-}
 * {
   margin: 0;
   padding: 0;
@@ -66,7 +62,6 @@ img {
 }
 
 h1 {
-  font-family: "Pompadur", sans-serif;
   position: relative;
   color: #d4af37;
   font-size: 80px;
