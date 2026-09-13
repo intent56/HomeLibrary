@@ -37,10 +37,7 @@ content %}
               class="form-label fw-bold text-white"
               >Источник</label
             >
-            <select
-              class="form-select bg-transparent text-white border-light"
-              id="interpreterSourceSelect"
-            >
+            <select class="custom-select" id="interpreterSourceSelect">
               <option value="">Все источники</option>
             </select>
           </div>
@@ -51,13 +48,12 @@ content %}
               >Имя переводчика</label
             >
             <div class="input-group">
-              <span
-                class="input-group-text bg-transparent text-white border-light"
+              <span class="input-group-text custom-input-group"
                 ><i class="bi bi-person"></i
               ></span>
               <input
                 type="text"
-                class="form-control bg-transparent text-white border-light"
+                class="form-control custom-input"
                 id="interpreterSearchQuery"
                 placeholder="Например: 'Нора Галь'"
               />
@@ -153,11 +149,10 @@ content %}
                     {{ form.lastname.label(class="form-label fw-bold
                     text-white") }}
                     <span class="text-danger">*</span>
-                    {{ form.lastname(class="form-control bg-transparent
-                    text-white border-light" + (" is-invalid" if
-                    form.lastname.errors else ""), placeholder="Например:
-                    'Галь'", id="interpreterLastname") }} {% if
-                    form.lastname.errors %}
+                    {{ form.lastname(class="form-control custom-input" + ("
+                    is-invalid" if form.lastname.errors else ""),
+                    placeholder="Например: 'Галь'", id="interpreterLastname") }}
+                    {% if form.lastname.errors %}
                     <div class="invalid-feedback d-block">
                       {% for error in form.lastname.errors %} {{ error }} {%
                       endfor %}
@@ -172,9 +167,8 @@ content %}
                   <div class="mb-3">
                     {{ form.firstname.label(class="form-label fw-bold
                     text-white") }} {{ form.firstname(class="form-control
-                    bg-transparent text-white border-light",
-                    placeholder="Например: 'Нора'", id="interpreterFirstname")
-                    }}
+                    custom-input", placeholder="Например: 'Нора'",
+                    id="interpreterFirstname") }}
                     <div class="form-text text-white-50">Имя переводчика</div>
                   </div>
                 </div>
@@ -182,8 +176,7 @@ content %}
                   <div class="mb-3">
                     {{ form.secondname.label(class="form-label fw-bold
                     text-white") }} {{ form.secondname(class="form-control
-                    bg-transparent text-white border-light",
-                    placeholder="Например: 'Яковлевна'",
+                    custom-input", placeholder="Например: 'Яковлевна'",
                     id="interpreterSecondname") }}
                     <div class="form-text text-white-50">
                       Отчество переводчика
@@ -191,8 +184,8 @@ content %}
                   </div>
                 </div>
               </div>
-              <div class="alert alert-info transparent-alert">
-                <i class="bi bi-info-circle text-white"></i>
+              <div class="alert custom-alert" role="alert">
+                <i class="bi bi-info-circle"></i>
                 <strong class="text-white"
                   >ФИО будет сформировано автоматически:</strong
                 >
@@ -207,12 +200,11 @@ content %}
                   {{ form.ref_interpreter.label(class="form-label fw-bold
                   text-white") }}
                   <div class="input-group">
-                    <span
-                      class="input-group-text bg-transparent text-white border-light"
+                    <span class="input-group-text custom-input-group"
                       ><i class="bi bi-globe"></i
                     ></span>
-                    {{ form.ref_interpreter(class="form-control bg-transparent
-                    text-white border-light", placeholder="Например:
+                    {{ form.ref_interpreter(class="form-control custom-input",
+                    placeholder="Например:
                     'https://ru.wikipedia.org/wiki/Галь_Нора_Яковлевна'",
                     id="interpreterRef") }}
                   </div>
@@ -225,7 +217,7 @@ content %}
                   {{ form.photo.label(class="form-label fw-bold text-white") }}
                   <input
                     type="file"
-                    class="form-control bg-transparent text-white border-light"
+                    class="form-control custom-file-input"
                     id="interpreterPhoto"
                     name="photo"
                     accept="image/*"
@@ -249,10 +241,9 @@ content %}
 
                 <div class="mb-3">
                   {{ form.comment.label(class="form-label fw-bold text-white")
-                  }} {{ form.comment(class="form-control bg-transparent
-                  text-white border-light", rows="4", placeholder="Например:
-                  'Выдающийся переводчик, литературовед'",
-                  id="interpreterComment") }}
+                  }} {{ form.comment(class="form-control custom-input",
+                  rows="4", placeholder="Например: 'Выдающийся переводчик,
+                  литературовед'", id="interpreterComment") }}
                   <div class="form-text text-white-50">
                     Комментарии, примечания, дополнительная информация
                   </div>
@@ -276,14 +267,10 @@ content %}
                   >Добавить язык</label
                 >
                 <div class="input-group">
-                  <span
-                    class="input-group-text bg-transparent text-white border-light"
+                  <span class="input-group-text custom-input-group"
                     ><i class="bi bi-search"></i
                   ></span>
-                  <select
-                    class="form-select bg-transparent text-white border-light"
-                    id="languageSelect"
-                  >
+                  <select class="custom-select" id="languageSelect">
                     <option value="">Выберите язык...</option>
                     {% for language in languages %}
                     <option value="{{ language.id }}">
@@ -789,7 +776,120 @@ content %}
     padding: 1.5rem;
   }
 
-  /* 3. СТИЛИ ДЛЯ ВКЛАДОК */
+  /* 3. НОВЫЙ СТИЛЬ ДЛЯ ПОЛЕЙ ВВОДА - ЧЕРНЫЙ ФОН, БЕЛЫЙ ТЕКСТ */
+  .custom-input {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.2s;
+  }
+
+  .custom-input::placeholder {
+    color: var(--main-color) !important;
+    font-weight: 300;
+  }
+
+  .custom-input:focus {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+  }
+
+  .custom-input.is-invalid {
+    border-color: #dc3545 !important;
+  }
+
+  /* 4. НОВЫЙ СТИЛЬ ДЛЯ SELECT ПОЛЕЙ */
+  .custom-select {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='white' d='M8 11L3 6h10z'/%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 0.75rem center !important;
+    background-size: 16px 12px !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    padding-right: 2.5rem !important;
+  }
+
+  .custom-select:focus {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+  }
+
+  .custom-select option {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
+
+  .custom-select option:hover {
+    background-color: #808080 !important;
+    color: #ffffff !important;
+  }
+
+  .custom-select option:checked {
+    background-color: #808080 !important;
+    color: #ffffff !important;
+  }
+
+  .custom-select::-ms-expand {
+    display: none !important;
+  }
+
+  /* 5. НОВЫЙ СТИЛЬ ДЛЯ INPUT-GROUP */
+  .custom-input-group {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-right: none !important;
+  }
+
+  /* 6. НОВЫЙ СТИЛЬ ДЛЯ INPUT ФАЙЛА */
+  .custom-file-input {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .custom-file-input:hover {
+    background-color: #1a1a1a !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+  }
+
+  .custom-file-input:focus {
+    background-color: #000000 !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+    outline: none;
+  }
+
+  .custom-file-input::file-selector-button {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    border: 2px solid var(--main-color) !important;
+    border-radius: 6px;
+    padding: 0.3rem 0.8rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .custom-file-input::file-selector-button:hover {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: #000000 !important;
+  }
+
+  /* 7. СТИЛИ ДЛЯ ВКЛАДОК */
   .nav-tabs .nav-link {
     color: rgba(255, 255, 255, 0.8);
     border: none;
@@ -824,81 +924,25 @@ content %}
     padding-top: 1rem;
   }
 
-  /* 4. ПРОЗРАЧНЫЕ ПОЛЯ ВВОДА */
-  .form-control.bg-transparent {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-    transition: all 0.2s;
-  }
-
-  .form-control.bg-transparent::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-  }
-
-  .form-control.bg-transparent:focus {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    border-color: rgba(255, 255, 255, 0.5) !important;
-    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
-  }
-
-  .form-control.bg-transparent.is-invalid {
-    border-color: #dc3545 !important;
-  }
-
-  /* 5. ПРОЗРАЧНЫЕ SELECT ПОЛЯ */
-  .form-select.bg-transparent {
-    background-color: #000000 !important;
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-  }
-
-  .form-select.bg-transparent:focus {
-    background-color: #000000 !important;
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.5) !important;
-    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
-  }
-
-  .form-select.bg-transparent option {
-    background-color: #000000 !important;
-    color: #ffffff !important;
-  }
-
-  .form-select.bg-transparent option:hover {
-    background-color: #808080 !important;
-    color: #ffffff !important;
-  }
-
-  .form-select.bg-transparent option:checked {
-    background-color: #808080 !important;
-    color: #ffffff !important;
-  }
-
-  /* 6. ПРОЗРАЧНЫЕ INPUT-GROUP */
-  .input-group-text.bg-transparent {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-    color: #ffffff !important;
-  }
-
-  /* 7. ПРОЗРАЧНЫЙ АЛЕРТ */
-  .transparent-alert {
-    background-color: rgba(13, 202, 240, 0.15) !important;
+  /* 8. НОВЫЙ СТИЛЬ ДЛЯ АЛЕРТА - ИСПОЛЬЗУЕТ var(--main-color) */
+  .custom-alert {
+    background-color: rgba(212, 175, 55, 0.2) !important;
     backdrop-filter: blur(5px);
-    border: 1px solid rgba(13, 202, 240, 0.3) !important;
+    border: 1px solid var(--main-color) !important;
+    color: #ffffff !important;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+  }
+
+  .custom-alert i {
+    color: var(--main-color) !important;
+  }
+
+  .custom-alert .text-white {
     color: #ffffff !important;
   }
 
-  .transparent-alert i {
-    color: #0dcaf0 !important;
-  }
-
-  .transparent-alert .text-white {
-    color: #ffffff !important;
-  }
-
-  /* 8. ОБЩИЕ СТИЛИ */
+  /* 9. ОБЩИЕ СТИЛИ */
   .text-white {
     color: #ffffff !important;
   }
@@ -911,7 +955,7 @@ content %}
     --bs-bg-opacity: 0.75;
   }
 
-  /* 9. КНОПКИ */
+  /* 10. КНОПКИ */
   .btn-outline-light {
     color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
@@ -958,7 +1002,7 @@ content %}
     font-size: 1.1rem;
   }
 
-  /* 10. РЕЗУЛЬТАТЫ ПОИСКА */
+  /* 11. РЕЗУЛЬТАТЫ ПОИСКА */
   #interpreterSearchResults .list-group-item {
     background-color: rgba(255, 255, 255, 0.05) !important;
     border-color: rgba(255, 255, 255, 0.1) !important;
@@ -971,7 +1015,7 @@ content %}
     transform: translateX(4px);
   }
 
-  /* 11. ПРЕДПРОСМОТР ФОТО */
+  /* 12. ПРЕДПРОСМОТР ФОТО */
   #photoPreviewContainer {
     display: none;
   }
@@ -982,7 +1026,7 @@ content %}
     border: 2px solid rgba(255, 255, 255, 0.3);
   }
 
-  /* 12. ЯЗЫКИ */
+  /* 13. ЯЗЫКИ */
   #selectedLanguagesList .badge {
     font-size: 1rem;
     padding: 0.5rem 0.75rem;
@@ -998,7 +1042,7 @@ content %}
     opacity: 1;
   }
 
-  /* 13. АДАПТИВНОСТЬ */
+  /* 14. АДАПТИВНОСТЬ */
   @media (max-width: 768px) {
     .card-body {
       padding: 1rem !important;
