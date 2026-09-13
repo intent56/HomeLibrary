@@ -173,6 +173,21 @@ def edit_book(book_id):
     book = Book.query.get_or_404(book_id)
     form = FormBook(obj=book)
 
+    # === ЗАПОЛНЯЕМ CHOICES ДЛЯ SELECT-ПОЛЕЙ ПЕРЕД РЕНДЕРИНГОМ ===
+    # Необходимо для корректной работы WTForms и валидации значений
+    form.id_cover.choices = [(0, 'Не указан')] + [
+        (c.id, f'{c.code} - {c.name}')
+        for c in Cover.query.order_by(Cover.name).all()
+    ]
+    form.id_language.choices = [(0, 'Не указан')] + [
+        (l.id, f'{l.code} - {l.name}')
+        for l in Language.query.order_by(Language.name).all()
+    ]
+    form.id_format.choices = [(0, 'Не указан')] + [
+        (f.id, f'{f.format}')
+        for f in Format.query.order_by(Format.format).all()
+    ]
+
     if form.validate_on_submit():
         try:
             form.populate_obj(book)

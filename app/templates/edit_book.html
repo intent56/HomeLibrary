@@ -161,17 +161,65 @@ content %}
               </div>
               <div class="mb-3">
                 {{ form.id_language.label(class="form-label fw-bold text-white")
-                }} {{ form.id_language(class="form-select bg-transparent
-                text-white border-light" + (" is-invalid" if
-                form.id_language.errors else "")) }} {% if
-                form.id_language.errors %}
+                }}
+                <div class="input-group">
+                  {{ form.id_language(class="form-select d-none",
+                  id="languageSelect") }}
+                  <input
+                    type="text"
+                    class="form-control bg-transparent text-white border-light"
+                    id="languageSearchInput"
+                    placeholder="Введите название или код языка..."
+                    hx-get="{{ url_for('main.search_languages_ajax') }}"
+                    hx-trigger="keyup changed delay:300ms, search"
+                    hx-target="#languageResults"
+                    hx-indicator="#languageSearchSpinner"
+                    hx-vals='{"book_id": 0}'
+                  />
+                  <button
+                    class="btn btn-outline-light"
+                    type="button"
+                    data-bs-toggle="modal"
+                    data-bs-target="#languageModal"
+                  >
+                    <i class="bi bi-search"></i>
+                  </button>
+                  <span
+                    id="languageSearchSpinner"
+                    class="spinner-border spinner-border-sm htmx-indicator text-white"
+                    role="status"
+                    style="margin-left: 8px"
+                  ></span>
+                </div>
+                <div
+                  id="languageResults"
+                  class="list-group mt-2 bg-transparent"
+                  style="max-height: 200px; overflow-y: auto"
+                ></div>
+                <div id="selectedLanguageDisplay" class="mt-2">
+                  <span
+                    class="badge btn-outline-light bg-opacity-75 text-white"
+                    id="selectedLanguageBadge"
+                    style="display: none"
+                  >
+                    <i class="bi bi-check-circle"></i> Выбран:
+                    <span id="selectedLanguageName"></span>
+                  </span>
+                </div>
+                <input
+                  type="hidden"
+                  id="selectedLanguageId"
+                  name="id_language"
+                  value="{{ book.id_language or '' }}"
+                />
+                {% if form.id_language.errors %}
                 <div class="invalid-feedback d-block">
                   {% for error in form.id_language.errors %} {{ error }} {%
                   endfor %}
                 </div>
                 {% endif %}
                 <div class="form-text text-white-50">
-                  Язык, на котором написана книга
+                  Начните вводить название или код языка для поиска.
                 </div>
               </div>
             </div>
@@ -273,16 +321,66 @@ content %}
                 <div class="col-md-6">
                   <div class="mb-3">
                     {{ form.id_format.label(class="form-label fw-bold
-                    text-white") }} {{ form.id_format(class="form-select
-                    bg-transparent text-white border-light" + (" is-invalid" if
-                    form.id_format.errors else "")) }} {% if
-                    form.id_format.errors %}
+                    text-white") }}
+                    <!-- HTMX-ПОИСК ДЛЯ ФОРМАТА -->
+                    <div class="input-group">
+                      {{ form.id_format(class="form-select d-none",
+                      id="formatSelect") }}
+                      <input
+                        type="text"
+                        class="form-control bg-transparent text-white border-light"
+                        id="formatSearchInput"
+                        placeholder="Начните вводить формат книги..."
+                        hx-get="{{ url_for('main.search_formats_ajax') }}"
+                        hx-trigger="keyup changed delay:300ms, search"
+                        hx-target="#formatResults"
+                        hx-indicator="#formatSearchSpinner"
+                      />
+                      <button
+                        class="btn btn-outline-light"
+                        type="button"
+                        data-bs-toggle="modal"
+                        data-bs-target="#formatModal"
+                      >
+                        <i class="bi bi-search"></i>
+                      </button>
+                      <span
+                        id="formatSearchSpinner"
+                        class="spinner-border spinner-border-sm htmx-indicator text-white"
+                        role="status"
+                        style="margin-left: 8px"
+                      ></span>
+                    </div>
+                    <div
+                      id="formatResults"
+                      class="list-group mt-2 bg-transparent"
+                      style="max-height: 200px; overflow-y: auto"
+                    ></div>
+                    <div id="selectedFormatDisplay" class="mt-2">
+                      <span
+                        class="badge btn-outline-light bg-opacity-75 text-white"
+                        id="selectedFormatBadge"
+                        style="display: none"
+                      >
+                        <i class="bi bi-check-circle"></i> Выбран:
+                        <span id="selectedFormatName"></span>
+                      </span>
+                    </div>
+                    <input
+                      type="hidden"
+                      id="selectedFormatId"
+                      name="id_format"
+                      value="{{ book.id_format or '' }}"
+                    />
+                    {% if form.id_format.errors %}
                     <div class="invalid-feedback d-block">
                       {% for error in form.id_format.errors %} {{ error }} {%
                       endfor %}
                     </div>
                     {% endif %}
-                    <div class="form-text text-white-50">Формат книги</div>
+                    <div class="form-text text-white-50">
+                      Начните вводить формат книги для поиска.
+                    </div>
                   </div>
                 </div>
               </div>
@@ -438,6 +536,109 @@ content %}
         </div>
       </div>
 
+      <!-- Модальные окна -->
+      <!-- Модальное окно для поиска языка -->
+      <div
+        class="modal fade"
+        id="languageModal"
+        tabindex="-1"
+        aria-labelledby="languageModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content bg-dark text-light border-light">
+            <div class="modal-header border-secondary">
+              <h5 class="modal-title text-white" id="languageModalLabel">
+                <i class="bi bi-translate text-info"></i> Поиск языка
+              </h5>
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <input
+                  type="text"
+                  class="form-control bg-transparent text-white border-light"
+                  id="modalLanguageSearch"
+                  placeholder="Введите название или код языка..."
+                />
+              </div>
+              <div
+                id="modalLanguageResults"
+                class="list-group bg-transparent"
+                style="max-height: 400px; overflow-y: auto"
+              >
+                <!-- Результаты будут загружены сюда -->
+              </div>
+            </div>
+            <div class="modal-footer border-secondary">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Закрыть
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Модальное окно для поиска формата -->
+      <div
+        class="modal fade"
+        id="formatModal"
+        tabindex="-1"
+        aria-labelledby="formatModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content bg-dark text-light border-light">
+            <div class="modal-header border-secondary">
+              <h5 class="modal-title text-white" id="formatModalLabel">
+                <i class="bi bi-aspect-ratio text-info"></i> Поиск формата
+              </h5>
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <input
+                  type="text"
+                  class="form-control bg-transparent text-white border-light"
+                  id="modalFormatSearch"
+                  placeholder="Введите формат книги..."
+                />
+              </div>
+              <div
+                id="modalFormatResults"
+                class="list-group bg-transparent"
+                style="max-height: 400px; overflow-y: auto"
+              >
+                <!-- Результаты будут загружены сюда -->
+              </div>
+            </div>
+            <div class="modal-footer border-secondary">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Закрыть
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Кнопки действия -->
       <div class="card shadow-sm mb-4 transparent-card">
         <div class="card-body transparent-card-body">
@@ -458,7 +659,7 @@ content %}
               >
                 <i class="bi bi-x-circle"></i> Отмена
               </a>
-              <button type="submit" class="btn btn-primary btn-lg">
+              <button type="submit" class="btn btn-edit btn-lg">
                 <i class="bi bi-save"></i> Сохранить изменения
               </button>
             </div>
@@ -520,6 +721,39 @@ content %}
       });
     }
 
+    // --- Инициализация выбранных значений языка и формата ---
+    // Для языка
+    const langSelect = document.getElementById("languageSelect");
+    const selectedLangId = document.getElementById("selectedLanguageId").value;
+    if (selectedLangId && langSelect) {
+      for (let option of langSelect.options) {
+        if (option.value == selectedLangId) {
+          document.getElementById("selectedLanguageName").textContent =
+            option.text;
+          document.getElementById("selectedLanguageBadge").style.display =
+            "inline-block";
+          document.getElementById("languageSearchInput").value = option.text;
+          break;
+        }
+      }
+    }
+
+    // Для формата
+    const formatSelect = document.getElementById("formatSelect");
+    const selectedFormatId = document.getElementById("selectedFormatId").value;
+    if (selectedFormatId && formatSelect) {
+      for (let option of formatSelect.options) {
+        if (option.value == selectedFormatId) {
+          document.getElementById("selectedFormatName").textContent =
+            option.text;
+          document.getElementById("selectedFormatBadge").style.display =
+            "inline-block";
+          document.getElementById("formatSearchInput").value = option.text;
+          break;
+        }
+      }
+    }
+
     // --- Подтверждение перед выходом без сохранения ---
     const form = document.querySelector("form");
     let formChanged = false;
@@ -561,9 +795,133 @@ content %}
       }
     }
   });
+
+  // --- HTMX обработка для языка и формата ---
+  document.addEventListener("htmx:afterSwap", function (event) {
+    // Обработка результатов поиска языка
+    if (
+      event.target.id === "languageResults" ||
+      event.target.id === "modalLanguageResults"
+    ) {
+      const items = event.target.querySelectorAll(".list-group-item");
+      items.forEach((item) => {
+        item.addEventListener("click", function () {
+          const id = this.dataset.id;
+          const name = this.dataset.name;
+          selectLanguage(id, name);
+          const modal = bootstrap.Modal.getInstance(
+            document.getElementById("languageModal"),
+          );
+          if (modal) modal.hide();
+        });
+      });
+    }
+
+    // Обработка результатов поиска формата
+    if (
+      event.target.id === "formatResults" ||
+      event.target.id === "modalFormatResults"
+    ) {
+      const items = event.target.querySelectorAll(".list-group-item");
+      items.forEach((item) => {
+        item.addEventListener("click", function () {
+          const id = this.dataset.id;
+          const name = this.dataset.name;
+          selectFormat(id, name);
+          const modal = bootstrap.Modal.getInstance(
+            document.getElementById("formatModal"),
+          );
+          if (modal) modal.hide();
+        });
+      });
+    }
+  });
+
+  // Функции выбора языка и формата
+  function selectLanguage(id, name) {
+    document.getElementById("selectedLanguageId").value = id;
+    document.getElementById("selectedLanguageName").textContent = name;
+    document.getElementById("selectedLanguageBadge").style.display =
+      "inline-block";
+    document.getElementById("languageSearchInput").value = name;
+    document.getElementById("languageResults").innerHTML = "";
+    const select = document.getElementById("languageSelect");
+    for (let option of select.options) {
+      if (option.value == id) {
+        select.value = id;
+        break;
+      }
+    }
+  }
+
+  function selectFormat(id, name) {
+    document.getElementById("selectedFormatId").value = id;
+    document.getElementById("selectedFormatName").textContent = name;
+    document.getElementById("selectedFormatBadge").style.display =
+      "inline-block";
+    document.getElementById("formatSearchInput").value = name;
+    document.getElementById("formatResults").innerHTML = "";
+    const select = document.getElementById("formatSelect");
+    for (let option of select.options) {
+      if (option.value == id) {
+        select.value = id;
+        break;
+      }
+    }
+  }
+
+  // --- Поиск в модальных окнах ---
+  document
+    .getElementById("modalLanguageSearch")
+    ?.addEventListener("keyup", function () {
+      const query = this.value.trim();
+      if (query.length >= 2) {
+        htmx.ajax(
+          "GET",
+          '{{ url_for("main.search_languages_ajax") }}?q=' +
+            encodeURIComponent(query) +
+            "&book_id=0",
+          "#modalLanguageResults",
+        );
+      } else {
+        document.getElementById("modalLanguageResults").innerHTML =
+          '<div class="text-white-50 p-3">Введите минимум 2 символа для поиска.</div>';
+      }
+    });
+
+  document
+    .getElementById("modalFormatSearch")
+    ?.addEventListener("keyup", function () {
+      const query = this.value.trim();
+      if (query.length >= 1) {
+        htmx.ajax(
+          "GET",
+          '{{ url_for("main.search_formats_ajax") }}?q=' +
+            encodeURIComponent(query),
+          "#modalFormatResults",
+        );
+      } else {
+        document.getElementById("modalFormatResults").innerHTML =
+          '<div class="text-white-50 p-3">Введите формат для поиска.</div>';
+      }
+    });
+
+  // --- Обработка выбора при клике на кнопку поиска (открытие модалки) ---
+  document
+    .querySelector('[data-bs-target="#languageModal"]')
+    ?.addEventListener("click", function () {
+      document.getElementById("modalLanguageResults").innerHTML = "";
+      document.getElementById("modalLanguageSearch").value = "";
+    });
+
+  document
+    .querySelector('[data-bs-target="#formatModal"]')
+    ?.addEventListener("click", function () {
+      document.getElementById("modalFormatResults").innerHTML = "";
+      document.getElementById("modalFormatSearch").value = "";
+    });
 </script>
 
-<!-- СТИЛИ -->
 <style>
   /* 1. ПОЛНОСТЬЮ УБИРАЕМ ВСЕ ФОНЫ */
   .transparent-card,
@@ -592,6 +950,10 @@ content %}
   .transparent-card-header {
     border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
     border-radius: 12px 12px 0 0 !important;
+  }
+
+  .transparent-card-body {
+    padding: 1.5rem;
   }
 
   /* 3. СТИЛИ ДЛЯ ВКЛАДОК */
@@ -653,32 +1015,66 @@ content %}
 
   /* 5. ПРОЗРАЧНЫЕ SELECT ПОЛЯ */
   .form-select.bg-transparent {
-    background-color: rgba(255, 255, 255, 0.1) !important;
+    background-color: #000000 !important;
     color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='white' d='M8 11L3 6h10z'/%3e%3c/svg%3e");
   }
 
   .form-select.bg-transparent:focus {
-    background-color: rgba(255, 255, 255, 0.2) !important;
+    background-color: #000000 !important;
+    color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.5) !important;
     box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
   }
 
   .form-select.bg-transparent option {
-    background-color: #343a40;
-    color: #ffffff;
+    background-color: #000000 !important;
+    color: #ffffff !important;
   }
 
-  /* 6. ОБЩИЕ СТИЛИ */
+  .form-select.bg-transparent option:hover {
+    background-color: #808080 !important;
+    color: #ffffff !important;
+  }
+
+  .form-select.bg-transparent option:checked {
+    background-color: #808080 !important;
+    color: #ffffff !important;
+  }
+
+  /* 6. ПРОЗРАЧНЫЕ INPUT-GROUP */
+  .input-group-text.bg-transparent {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+  }
+
+  /* 7. ПРОЗРАЧНЫЙ АЛЕРТ */
+  .transparent-alert {
+    background-color: rgba(13, 202, 240, 0.15) !important;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(13, 202, 240, 0.3) !important;
+    color: #ffffff !important;
+  }
+
+  .transparent-alert i {
+    color: #0dcaf0 !important;
+  }
+
+  .transparent-alert .text-white {
+    color: #ffffff !important;
+  }
+
+  /* 8. ОБЩИЕ СТИЛИ ДЛЯ ТЕКСТА */
   .text-white {
     color: #ffffff !important;
   }
+
   .text-white-50 {
     color: rgba(255, 255, 255, 0.7) !important;
   }
 
-  /* 7. КНОПКИ */
+  /* 9. КНОПКИ */
   .btn-outline-light {
     color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
@@ -690,25 +1086,230 @@ content %}
     color: #ffffff !important;
   }
 
-  /* 8. АДАПТИВНОСТЬ */
+  .btn-primary {
+    background-color: rgba(13, 110, 253, 0.8) !important;
+    border-color: rgba(13, 110, 253, 0.8) !important;
+  }
+
+  .btn-primary:hover {
+    background-color: rgba(13, 110, 253, 1) !important;
+    border-color: rgba(13, 110, 253, 1) !important;
+  }
+
+  .btn-success {
+    background-color: rgba(25, 135, 84, 0.8) !important;
+    border-color: rgba(25, 135, 84, 0.8) !important;
+  }
+
+  .btn-success:hover {
+    background-color: rgba(25, 135, 84, 1) !important;
+    border-color: rgba(25, 135, 84, 1) !important;
+  }
+
+  /* 10. МОДАЛЬНЫЕ ОКНА */
+  .modal-content.bg-dark {
+    background-color: rgba(33, 37, 41, 0.95) !important;
+    backdrop-filter: blur(10px);
+  }
+
+  .modal-content .border-light {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .modal-header.border-secondary,
+  .modal-footer.border-secondary {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .modal-title.text-white {
+    color: #ffffff !important;
+  }
+
+  .btn-close-white {
+    filter: brightness(0) invert(1);
+  }
+
+  /* 11. РЕЗУЛЬТАТЫ ПОИСКА */
+  #searchResults .list-group-item {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    transition: all 0.2s;
+  }
+
+  #searchResults .list-group-item:hover {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    transform: translateX(4px);
+  }
+
+  #languageResults .list-group-item,
+  #formatResults .list-group-item,
+  #modalLanguageResults .list-group-item,
+  #modalFormatResults .list-group-item {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    transition: all 0.2s;
+  }
+
+  #languageResults .list-group-item:hover,
+  #formatResults .list-group-item:hover,
+  #modalLanguageResults .list-group-item:hover,
+  #modalFormatResults .list-group-item:hover {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    transform: translateX(4px);
+  }
+
+  /* 12. БЕЙДЖИ */
+  .badge.bg-info {
+    background-color: rgba(13, 202, 240, 0.7) !important;
+    color: #ffffff !important;
+  }
+
+  .badge.bg-success {
+    background-color: rgba(25, 135, 84, 0.7) !important;
+    color: #ffffff !important;
+  }
+
+  .badge.bg-primary {
+    background-color: rgba(13, 110, 253, 0.7) !important;
+    color: #ffffff !important;
+  }
+
+  .badge.bg-secondary {
+    background-color: rgba(108, 117, 125, 0.7) !important;
+    color: #ffffff !important;
+  }
+
+  .bg-opacity-75 {
+    --bs-bg-opacity: 0.75;
+  }
+
+  /* 13. ГРАНИЦЫ */
+  .border-light {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .border-top.border-light {
+    border-top-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  /* 14. ИНДИКАТОРЫ HTMX */
+  .htmx-indicator {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+  }
+
+  .htmx-request .htmx-indicator {
+    opacity: 1;
+  }
+
+  .htmx-request.htmx-indicator {
+    opacity: 1;
+  }
+
+  #languageSearchSpinner,
+  #formatSearchSpinner {
+    margin-top: 8px;
+    width: 1.2rem;
+    height: 1.2rem;
+    color: #ffffff !important;
+  }
+
+  /* 15. СТИЛИ ДЛЯ ОБЛОЖКИ */
+  #coverPreviewContainer {
+    display: none;
+  }
+
+  #coverPreview {
+    max-height: 150px;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+  }
+
+  /* 16. Стили для кнопки "Сохранить изменения" */
+  .btn-edit {
+    background-color: transparent !important;
+    color: var(--main-color) !important;
+    border: 2px solid var(--main-color) !important;
+    transition: all 0.3s ease !important;
+    font-weight: 500 !important;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+  }
+
+  .btn-edit:hover {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 194, 0, 0.3);
+  }
+
+  .btn-edit:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 6px rgba(255, 194, 0, 0.2);
+  }
+
+  .btn-edit:focus {
+    box-shadow: 0 0 0 3px rgba(255, 194, 0, 0.4);
+    outline: none;
+  }
+
+  /* Маленькие кнопки (для карточек) */
+  .btn-edit-sm {
+    padding: 0.25rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  /* Большие кнопки (для основных действий) */
+  .btn-edit-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+  }
+
+  /* 17. АДАПТИВНОСТЬ */
   @media (max-width: 768px) {
     .card-body {
       padding: 1rem !important;
     }
+
     .d-flex.justify-content-between {
       flex-direction: column;
       align-items: stretch !important;
       gap: 1rem;
     }
+
     .btn-lg {
       width: 100%;
     }
+
     .nav-tabs .nav-link {
       font-size: 0.85rem;
       padding: 0.4rem 0.7rem;
     }
+
     .nav-tabs .nav-link i {
       margin-right: 4px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .modal-dialog {
+      margin: 1rem;
+    }
+
+    .modal-body {
+      padding: 1rem;
+    }
+
+    #languageResults,
+    #formatResults,
+    #modalLanguageResults,
+    #modalFormatResults {
+      max-height: 150px !important;
     }
   }
 </style>
