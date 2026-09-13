@@ -32,10 +32,7 @@ content %}
             <label for="sourceSelect" class="form-label fw-bold text-white"
               >Источник</label
             >
-            <select
-              class="form-select bg-transparent text-white border-light"
-              id="sourceSelect"
-            >
+            <select class="custom-select" id="sourceSelect">
               <option value="">Все источники</option>
             </select>
           </div>
@@ -44,13 +41,12 @@ content %}
               >Поиск по названию или ISBN</label
             >
             <div class="input-group">
-              <span
-                class="input-group-text bg-transparent text-white border-light"
+              <span class="input-group-text custom-input-group"
                 ><i class="bi bi-search"></i
               ></span>
               <input
                 type="text"
-                class="form-control bg-transparent text-white border-light"
+                class="form-control custom-input"
                 id="searchQuery"
                 placeholder="Например: 'Война и мир' или '978-5-17-123456-7'"
               />
@@ -93,19 +89,15 @@ content %}
               >Поиск на сайтах-агрегаторах</label
             >
             <div class="input-group">
-              <span
-                class="input-group-text bg-transparent text-white border-light"
+              <span class="input-group-text custom-input-group"
                 ><i class="bi bi-link-45deg"></i
               ></span>
-              <select
-                class="form-select bg-transparent text-white border-light"
-                id="aggregatorSelect"
-              >
+              <select class="custom-select" id="aggregatorSelect">
                 <option value="">Выберите агрегатор...</option>
               </select>
               <input
                 type="text"
-                class="form-control bg-transparent text-white border-light"
+                class="form-control custom-input"
                 id="aggregatorSearchQuery"
                 placeholder="Например: 'Война и мир'"
               />
@@ -224,8 +216,8 @@ content %}
                   <div class="mb-3">
                     {{ form.name.label(class="form-label fw-bold text-white") }}
                     <span class="text-danger">*</span>
-                    {{ form.name(class="form-control bg-transparent text-white
-                    border-light" + (" is-invalid" if form.name.errors else ""),
+                    {{ form.name(class="form-control custom-input" + ("
+                    is-invalid" if form.name.errors else ""),
                     placeholder="Например: 'Война и мир'", id="bookName") }} {%
                     if form.name.errors %}
                     <div class="invalid-feedback d-block">
@@ -243,10 +235,10 @@ content %}
                     {{ form.location.label(class="form-label fw-bold
                     text-white") }}
                     <span class="text-danger">*</span>
-                    {{ form.location(class="form-control bg-transparent
-                    text-white border-light" + (" is-invalid" if
-                    form.location.errors else ""), placeholder="Например: 'Полка
-                    3, Стеллаж 2'") }} {% if form.location.errors %}
+                    {{ form.location(class="form-control custom-input" + ("
+                    is-invalid" if form.location.errors else ""),
+                    placeholder="Например: 'Полка 3, Стеллаж 2'") }} {% if
+                    form.location.errors %}
                     <div class="invalid-feedback d-block">
                       {% for error in form.location.errors %} {{ error }} {%
                       endfor %}
@@ -260,9 +252,9 @@ content %}
               </div>
               <div class="mb-3">
                 {{ form.fullname.label(class="form-label fw-bold text-white") }}
-                {{ form.fullname(class="form-control bg-transparent text-white
-                border-light", placeholder="Например: 'Война и мир. Том 1'",
-                id="bookFullname") }}
+                {{ form.fullname(class="form-control custom-input",
+                placeholder="Например: 'Война и мир. Том 1'", id="bookFullname")
+                }}
                 <div class="form-text text-white-50">
                   Полное название, включая подзаголовок
                 </div>
@@ -275,7 +267,7 @@ content %}
                   id="languageSelect") }}
                   <input
                     type="text"
-                    class="form-control bg-transparent text-white border-light"
+                    class="form-control custom-input"
                     id="languageSearchInput"
                     placeholder="Введите название или код языка..."
                     hx-get="{{ url_for('main.search_languages_ajax') }}"
@@ -339,8 +331,8 @@ content %}
                   <div class="mb-3">
                     {{ form.seria_global.label(class="form-label fw-bold
                     text-white") }} {{ form.seria_global(class="form-control
-                    bg-transparent text-white border-light",
-                    placeholder="Например: 'Русская классика'") }}
+                    custom-input", placeholder="Например: 'Русская классика'")
+                    }}
                     <div class="form-text text-white-50">
                       Глобальная серия (большой цикл)
                     </div>
@@ -350,8 +342,7 @@ content %}
                   <div class="mb-3">
                     {{ form.seria_local.label(class="form-label fw-bold
                     text-white") }} {{ form.seria_local(class="form-control
-                    bg-transparent text-white border-light",
-                    placeholder="Например: 'Романы-эпопеи'") }}
+                    custom-input", placeholder="Например: 'Романы-эпопеи'") }}
                     <div class="form-text text-white-50">
                       Локальная серия внутри глобальной
                     </div>
@@ -362,9 +353,8 @@ content %}
                 <div class="col-md-4">
                   <div class="mb-3">
                     {{ form.edition.label(class="form-label fw-bold text-white")
-                    }} {{ form.edition(class="form-control bg-transparent
-                    text-white border-light", placeholder="Например: '3-е
-                    издание'") }}
+                    }} {{ form.edition(class="form-control custom-input",
+                    placeholder="Например: '3-е издание'") }}
                     <div class="form-text text-white-50">
                       Номер или название издания
                     </div>
@@ -374,10 +364,10 @@ content %}
                   <div class="mb-3">
                     {{ form.year_edition.label(class="form-label fw-bold
                     text-white") }} {{ form.year_edition(class="form-control
-                    bg-transparent text-white border-light" + (" is-invalid" if
-                    form.year_edition.errors else ""), type="number",
-                    min="1000", max="2100", placeholder="Например: '2024'") }}
-                    {% if form.year_edition.errors %}
+                    custom-input" + (" is-invalid" if form.year_edition.errors
+                    else ""), type="number", min="1000", max="2100",
+                    placeholder="Например: '2024'") }} {% if
+                    form.year_edition.errors %}
                     <div class="invalid-feedback d-block">
                       {% for error in form.year_edition.errors %} {{ error }} {%
                       endfor %}
@@ -389,11 +379,10 @@ content %}
                 <div class="col-md-4">
                   <div class="mb-3">
                     {{ form.pages.label(class="form-label fw-bold text-white")
-                    }} {{ form.pages(class="form-control bg-transparent
-                    text-white border-light" + (" is-invalid" if
-                    form.pages.errors else ""), type="number", min="0",
-                    placeholder="Например: '350'", id="bookPages") }} {% if
-                    form.pages.errors %}
+                    }} {{ form.pages(class="form-control custom-input" + ("
+                    is-invalid" if form.pages.errors else ""), type="number",
+                    min="0", placeholder="Например: '350'", id="bookPages") }}
+                    {% if form.pages.errors %}
                     <div class="invalid-feedback d-block">
                       {% for error in form.pages.errors %} {{ error }} {% endfor
                       %}
@@ -413,10 +402,9 @@ content %}
                 <div class="col-md-6">
                   <div class="mb-3">
                     {{ form.id_cover.label(class="form-label fw-bold
-                    text-white") }} {{ form.id_cover(class="form-select
-                    bg-transparent text-white border-light" + (" is-invalid" if
-                    form.id_cover.errors else "")) }} {% if form.id_cover.errors
-                    %}
+                    text-white") }} {{ form.id_cover(class="custom-select" + ("
+                    is-invalid" if form.id_cover.errors else "")) }} {% if
+                    form.id_cover.errors %}
                     <div class="invalid-feedback d-block">
                       {% for error in form.id_cover.errors %} {{ error }} {%
                       endfor %}
@@ -437,7 +425,7 @@ content %}
                       id="formatSelect") }}
                       <input
                         type="text"
-                        class="form-control bg-transparent text-white border-light"
+                        class="form-control custom-input"
                         id="formatSearchInput"
                         placeholder="Начните вводить формат книги..."
                         hx-get="{{ url_for('main.search_formats_ajax') }}"
@@ -498,10 +486,9 @@ content %}
                   <div class="mb-3">
                     {{ form.circulation.label(class="form-label fw-bold
                     text-white") }} {{ form.circulation(class="form-control
-                    bg-transparent text-white border-light" + (" is-invalid" if
-                    form.circulation.errors else ""), type="number", min="0",
-                    placeholder="Например: '5000'") }} {% if
-                    form.circulation.errors %}
+                    custom-input" + (" is-invalid" if form.circulation.errors
+                    else ""), type="number", min="0", placeholder="Например:
+                    '5000'") }} {% if form.circulation.errors %}
                     <div class="invalid-feedback d-block">
                       {% for error in form.circulation.errors %} {{ error }} {%
                       endfor %}
@@ -515,14 +502,10 @@ content %}
                     {{ form.price.label(class="form-label fw-bold text-white")
                     }}
                     <div class="input-group">
-                      {{ form.price(class="form-control bg-transparent
-                      text-white border-light" + (" is-invalid" if
-                      form.price.errors else ""), type="number", step="0.01",
-                      min="0", placeholder="Например: '599.99'") }}
-                      <span
-                        class="input-group-text bg-transparent text-white border-light"
-                        >₽</span
-                      >
+                      {{ form.price(class="form-control custom-input" + ("
+                      is-invalid" if form.price.errors else ""), type="number",
+                      step="0.01", min="0", placeholder="Например: '599.99'") }}
+                      <span class="input-group-text custom-input-group">₽</span>
                     </div>
                     {% if form.price.errors %}
                     <div class="invalid-feedback d-block">
@@ -542,9 +525,8 @@ content %}
                 <div class="col-md-6">
                   <div class="mb-3">
                     {{ form.barcode.label(class="form-label fw-bold text-white")
-                    }} {{ form.barcode(class="form-control bg-transparent
-                    text-white border-light", placeholder="Например:
-                    '978-5-17-123456-7'") }}
+                    }} {{ form.barcode(class="form-control custom-input",
+                    placeholder="Например: '978-5-17-123456-7'") }}
                     <div class="form-text text-white-50">
                       Штрих-код или артикул
                     </div>
@@ -553,9 +535,9 @@ content %}
                 <div class="col-md-6">
                   <div class="mb-3">
                     {{ form.isbn.label(class="form-label fw-bold text-white") }}
-                    {{ form.isbn(class="form-control bg-transparent text-white
-                    border-light", placeholder="Например: '978-5-17-123456-7'",
-                    id="bookIsbn") }}
+                    {{ form.isbn(class="form-control custom-input",
+                    placeholder="Например: '978-5-17-123456-7'", id="bookIsbn")
+                    }}
                     <div class="form-text text-white-50">
                       Международный стандартный книжный номер
                     </div>
@@ -568,18 +550,18 @@ content %}
             <div class="tab-pane fade" id="content" role="tabpanel">
               <div class="mb-3">
                 {{ form.summary.label(class="form-label fw-bold text-white") }}
-                {{ form.summary(class="form-control bg-transparent text-white
-                border-light", rows="4", placeholder="Например: 'Краткая
-                аннотация к книге...'", id="bookSummary") }}
+                {{ form.summary(class="form-control custom-input", rows="4",
+                placeholder="Например: 'Краткая аннотация к книге...'",
+                id="bookSummary") }}
                 <div class="form-text text-white-50">
                   Краткое описание содержания книги
                 </div>
               </div>
               <div class="mb-3">
                 {{ form.content.label(class="form-label fw-bold text-white") }}
-                {{ form.content(class="form-control bg-transparent text-white
-                border-light", rows="6", placeholder="Например: 'Подробное
-                содержание или оглавление...'") }}
+                {{ form.content(class="form-control custom-input", rows="6",
+                placeholder="Например: 'Подробное содержание или
+                оглавление...'") }}
                 <div class="form-text text-white-50">
                   Полное содержание или оглавление книги
                 </div>
@@ -590,9 +572,9 @@ content %}
             <div class="tab-pane fade" id="cover" role="tabpanel">
               <div class="mb-3">
                 {{ form.cover.label(class="form-label fw-bold text-white") }} {{
-                form.cover(class="form-control bg-transparent text-white
-                border-light" + (" is-invalid" if form.cover.errors else ""),
-                accept="image/*") }} {% if form.cover.errors %}
+                form.cover(class="form-control custom-file-input" + ("
+                is-invalid" if form.cover.errors else ""), accept="image/*") }}
+                {% if form.cover.errors %}
                 <div class="invalid-feedback d-block">
                   {% for error in form.cover.errors %} {{ error }} {% endfor %}
                 </div>
@@ -615,9 +597,9 @@ content %}
               </div>
               <div class="mb-3">
                 {{ form.add_info.label(class="form-label fw-bold text-white") }}
-                {{ form.add_info(class="form-control bg-transparent text-white
-                border-light", rows="3", placeholder="Например: 'Любая
-                дополнительная информация о книге...'", id="bookAddInfo") }}
+                {{ form.add_info(class="form-control custom-input", rows="3",
+                placeholder="Например: 'Любая дополнительная информация о
+                книге...'", id="bookAddInfo") }}
                 <div class="form-text text-white-50">
                   Примечания, пометки, дополнительная информация
                 </div>
@@ -653,7 +635,7 @@ content %}
               <div class="mb-3">
                 <input
                   type="text"
-                  class="form-control bg-transparent text-white border-light"
+                  class="form-control custom-input"
                   id="modalLanguageSearch"
                   placeholder="Введите название или код языка..."
                 />
@@ -704,7 +686,7 @@ content %}
               <div class="mb-3">
                 <input
                   type="text"
-                  class="form-control bg-transparent text-white border-light"
+                  class="form-control custom-input"
                   id="modalFormatSearch"
                   placeholder="Введите формат книги..."
                 />
@@ -1390,7 +1372,120 @@ content %}
     padding: 1.5rem;
   }
 
-  /* 3. СТИЛИ ДЛЯ ВКЛАДОК */
+  /* 3. НОВЫЙ СТИЛЬ ДЛЯ ПОЛЕЙ ВВОДА - ЧЕРНЫЙ ФОН, БЕЛЫЙ ТЕКСТ */
+  .custom-input {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.2s;
+  }
+
+  .custom-input::placeholder {
+    color: var(--main-color) !important;
+    font-weight: 300;
+  }
+
+  .custom-input:focus {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+  }
+
+  .custom-input.is-invalid {
+    border-color: #dc3545 !important;
+  }
+
+  /* 4. НОВЫЙ СТИЛЬ ДЛЯ SELECT ПОЛЕЙ - С SVG-СТРЕЛКОЙ */
+  .custom-select {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='white' d='M8 11L3 6h10z'/%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 0.75rem center !important;
+    background-size: 16px 12px !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    padding-right: 2.5rem !important;
+  }
+
+  .custom-select:focus {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+  }
+
+  .custom-select option {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
+
+  .custom-select option:hover {
+    background-color: #808080 !important;
+    color: #ffffff !important;
+  }
+
+  .custom-select option:checked {
+    background-color: #808080 !important;
+    color: #ffffff !important;
+  }
+
+  .custom-select::-ms-expand {
+    display: none !important;
+  }
+
+  /* 5. НОВЫЙ СТИЛЬ ДЛЯ INPUT-GROUP */
+  .custom-input-group {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-right: none !important;
+  }
+
+  /* 6. НОВЫЙ СТИЛЬ ДЛЯ INPUT ФАЙЛА */
+  .custom-file-input {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .custom-file-input:hover {
+    background-color: #1a1a1a !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+  }
+
+  .custom-file-input:focus {
+    background-color: #000000 !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+    outline: none;
+  }
+
+  .custom-file-input::file-selector-button {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    border: 2px solid var(--main-color) !important;
+    border-radius: 6px;
+    padding: 0.3rem 0.8rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .custom-file-input::file-selector-button:hover {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: #000000 !important;
+  }
+
+  /* 7. СТИЛИ ДЛЯ ВКЛАДОК */
   .nav-tabs .nav-link {
     color: rgba(255, 255, 255, 0.8);
     border: none;
@@ -1425,69 +1520,7 @@ content %}
     padding-top: 1rem;
   }
 
-  /* 4. ПРОЗРАЧНЫЕ ПОЛЯ ВВОДА */
-  .form-control.bg-transparent {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-    transition: all 0.2s;
-  }
-
-  .form-control.bg-transparent::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-  }
-
-  .form-control.bg-transparent:focus {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    border-color: rgba(255, 255, 255, 0.5) !important;
-    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
-  }
-
-  .form-control.bg-transparent.is-invalid {
-    border-color: #dc3545 !important;
-  }
-
-  /* 5. ПРОЗРАЧНЫЕ SELECT ПОЛЯ */
-  /* 1. Обычное состояние */
-  .form-select.bg-transparent {
-    background-color: #000000 !important; /* Черный фон */
-    color: #ffffff !important; /* Белый текст */
-    border-color: rgba(255, 255, 255, 0.3) !important;
-  }
-
-  /* 2. Состояние фокуса (когда элемент активен) */
-  .form-select.bg-transparent:focus {
-    background-color: #000000 !important; /* Черный фон (как в обычном состоянии) */
-    color: #ffffff !important; /* Белый текст */
-    border-color: rgba(255, 255, 255, 0.5) !important;
-    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
-  }
-
-  /* 3. Стили для всех элементов <option> внутри списка */
-  .form-select.bg-transparent option {
-    background-color: #000000 !important; /* Черный фон для всех пунктов */
-    color: #ffffff !important; /* Белый текст для всех пунктов */
-  }
-
-  /* 4. Стили для элемента <option>, на который наведен курсор (hover) */
-  .form-select.bg-transparent option:hover {
-    background-color: #808080 !important; /* Серый фон при наведении */
-    color: #ffffff !important; /* Белый текст */
-  }
-
-  /* 5. Стили для выбранного элемента <option> (checked) */
-  .form-select.bg-transparent option:checked {
-    background-color: #808080 !important; /* Серый фон для выбранного пункта */
-    color: #ffffff !important; /* Белый текст */
-  }
-  /* 6. ПРОЗРАЧНЫЕ INPUT-GROUP */
-  .input-group-text.bg-transparent {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-    color: #ffffff !important;
-  }
-
-  /* 7. ПРОЗРАЧНЫЙ АЛЕРТ */
+  /* 8. ПРОЗРАЧНЫЙ АЛЕРТ */
   .transparent-alert {
     background-color: rgba(13, 202, 240, 0.15) !important;
     backdrop-filter: blur(5px);
@@ -1503,7 +1536,7 @@ content %}
     color: #ffffff !important;
   }
 
-  /* 8. ОБЩИЕ СТИЛИ ДЛЯ ТЕКСТА */
+  /* 9. ОБЩИЕ СТИЛИ */
   .text-white {
     color: #ffffff !important;
   }
@@ -1512,7 +1545,11 @@ content %}
     color: rgba(255, 255, 255, 0.7) !important;
   }
 
-  /* 9. КНОПКИ */
+  .bg-opacity-75 {
+    --bs-bg-opacity: 0.75;
+  }
+
+  /* 10. КНОПКИ */
   .btn-outline-light {
     color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
@@ -1524,147 +1561,6 @@ content %}
     color: #ffffff !important;
   }
 
-  .btn-primary {
-    background-color: rgba(13, 110, 253, 0.8) !important;
-    border-color: rgba(13, 110, 253, 0.8) !important;
-  }
-
-  .btn-primary:hover {
-    background-color: rgba(13, 110, 253, 1) !important;
-    border-color: rgba(13, 110, 253, 1) !important;
-  }
-
-  .btn-success {
-    background-color: rgba(25, 135, 84, 0.8) !important;
-    border-color: rgba(25, 135, 84, 0.8) !important;
-  }
-
-  .btn-success:hover {
-    background-color: rgba(25, 135, 84, 1) !important;
-    border-color: rgba(25, 135, 84, 1) !important;
-  }
-
-  /* 10. МОДАЛЬНЫЕ ОКНА */
-  .modal-content.bg-dark {
-    background-color: rgba(33, 37, 41, 0.95) !important;
-    backdrop-filter: blur(10px);
-  }
-
-  .modal-content .border-light {
-    border-color: rgba(255, 255, 255, 0.2) !important;
-  }
-
-  .modal-header.border-secondary,
-  .modal-footer.border-secondary {
-    border-color: rgba(255, 255, 255, 0.1) !important;
-  }
-
-  .modal-title.text-white {
-    color: #ffffff !important;
-  }
-
-  .btn-close-white {
-    filter: brightness(0) invert(1);
-  }
-
-  /* 11. РЕЗУЛЬТАТЫ ПОИСКА */
-  #searchResults .list-group-item {
-    background-color: rgba(255, 255, 255, 0.05) !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
-    color: #ffffff !important;
-    transition: all 0.2s;
-  }
-
-  #searchResults .list-group-item:hover {
-    background-color: rgba(255, 255, 255, 0.15) !important;
-    transform: translateX(4px);
-  }
-
-  #languageResults .list-group-item,
-  #formatResults .list-group-item,
-  #modalLanguageResults .list-group-item,
-  #modalFormatResults .list-group-item {
-    background-color: rgba(255, 255, 255, 0.05) !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
-    color: #ffffff !important;
-    transition: all 0.2s;
-  }
-
-  #languageResults .list-group-item:hover,
-  #formatResults .list-group-item:hover,
-  #modalLanguageResults .list-group-item:hover,
-  #modalFormatResults .list-group-item:hover {
-    background-color: rgba(255, 255, 255, 0.15) !important;
-    transform: translateX(4px);
-  }
-
-  /* 12. БЕЙДЖИ */
-  .badge.bg-info {
-    background-color: rgba(13, 202, 240, 0.7) !important;
-    color: #ffffff !important;
-  }
-
-  .badge.bg-success {
-    background-color: rgba(25, 135, 84, 0.7) !important;
-    color: #ffffff !important;
-  }
-
-  .badge.bg-primary {
-    background-color: rgba(13, 110, 253, 0.7) !important;
-    color: #ffffff !important;
-  }
-
-  .badge.bg-secondary {
-    background-color: rgba(108, 117, 125, 0.7) !important;
-    color: #ffffff !important;
-  }
-
-  .bg-opacity-75 {
-    --bs-bg-opacity: 0.75;
-  }
-
-  /* 13. ГРАНИЦЫ */
-  .border-light {
-    border-color: rgba(255, 255, 255, 0.2) !important;
-  }
-
-  .border-top.border-light {
-    border-top-color: rgba(255, 255, 255, 0.2) !important;
-  }
-
-  /* 14. ИНДИКАТОРЫ HTMX */
-  .htmx-indicator {
-    opacity: 0;
-    transition: opacity 500ms ease-in;
-  }
-
-  .htmx-request .htmx-indicator {
-    opacity: 1;
-  }
-
-  .htmx-request.htmx-indicator {
-    opacity: 1;
-  }
-
-  #languageSearchSpinner,
-  #formatSearchSpinner {
-    margin-top: 8px;
-    width: 1.2rem;
-    height: 1.2rem;
-    color: #ffffff !important;
-  }
-
-  /* 15. СТИЛИ ДЛЯ ОБЛОЖКИ */
-  #coverPreviewContainer {
-    display: none;
-  }
-
-  #coverPreview {
-    max-height: 150px;
-    border-radius: 8px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-  }
-  /* Стили для кнопок "Добавить автора" */
   .btn-edit {
     background-color: transparent !important;
     color: var(--main-color) !important;
@@ -1695,19 +1591,119 @@ content %}
     outline: none;
   }
 
-  /* Маленькие кнопки (для карточек) */
-  .btn-edit-sm {
-    padding: 0.25rem 0.8rem;
-    font-size: 0.85rem;
-  }
-
-  /* Большие кнопки (для основных действий) */
-  .btn-edit-lg {
-    padding: 0.75rem 1.5rem;
+  .btn-lg {
+    padding: 0.5rem 1rem;
     font-size: 1.1rem;
   }
 
-  /* 16. АДАПТИВНОСТЬ */
+  /* 11. МОДАЛЬНЫЕ ОКНА */
+  .modal-content.bg-dark {
+    background-color: rgba(33, 37, 41, 0.95) !important;
+    backdrop-filter: blur(10px);
+  }
+
+  .modal-content .border-light {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .modal-header.border-secondary,
+  .modal-footer.border-secondary {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .modal-title.text-white {
+    color: #ffffff !important;
+  }
+
+  .btn-close-white {
+    filter: brightness(0) invert(1);
+  }
+
+  /* 12. РЕЗУЛЬТАТЫ ПОИСКА */
+  #searchResults .list-group-item,
+  #languageResults .list-group-item,
+  #formatResults .list-group-item,
+  #modalLanguageResults .list-group-item,
+  #modalFormatResults .list-group-item {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    transition: all 0.2s;
+  }
+
+  #searchResults .list-group-item:hover,
+  #languageResults .list-group-item:hover,
+  #formatResults .list-group-item:hover,
+  #modalLanguageResults .list-group-item:hover,
+  #modalFormatResults .list-group-item:hover {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    transform: translateX(4px);
+  }
+
+  /* 13. БЕЙДЖИ */
+  .badge.bg-info {
+    background-color: rgba(13, 202, 240, 0.7) !important;
+    color: #ffffff !important;
+  }
+
+  .badge.bg-success {
+    background-color: rgba(25, 135, 84, 0.7) !important;
+    color: #ffffff !important;
+  }
+
+  .badge.bg-primary {
+    background-color: rgba(13, 110, 253, 0.7) !important;
+    color: #ffffff !important;
+  }
+
+  .badge.bg-secondary {
+    background-color: rgba(108, 117, 125, 0.7) !important;
+    color: #ffffff !important;
+  }
+
+  /* 14. ГРАНИЦЫ */
+  .border-light {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .border-top.border-light {
+    border-top-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  /* 15. ИНДИКАТОРЫ HTMX */
+  .htmx-indicator {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+  }
+
+  .htmx-request .htmx-indicator {
+    opacity: 1;
+  }
+
+  .htmx-request.htmx-indicator {
+    opacity: 1;
+  }
+
+  #languageSearchSpinner,
+  #formatSearchSpinner {
+    margin-top: 8px;
+    width: 1.2rem;
+    height: 1.2rem;
+    color: #ffffff !important;
+  }
+
+  /* 16. ОБЛОЖКА */
+  #coverPreviewContainer {
+    display: none;
+  }
+
+  #coverPreview {
+    max-height: 150px;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+  }
+
+  /* 17. АДАПТИВНОСТЬ */
   @media (max-width: 768px) {
     .card-body {
       padding: 1rem !important;
@@ -1750,5 +1746,4 @@ content %}
     }
   }
 </style>
-
 {% endblock %}
