@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block body_class %}bg-page4{% endblock %} {% block
+{% extends "base.html" %} {% block body_class %}bg-page2{% endblock %} {% block
 content %}
 <div class="row">
   <div class="col-lg-10 mx-auto">
@@ -435,35 +435,40 @@ content %}
     color: rgba(255, 255, 255, 0.7) !important;
   }
 
-  /* 5. НОВЫЙ СТИЛЬ ДЛЯ INPUT-GROUP (иконки в поле поиска) */
+  /* 5. СТИЛЬ ДЛЯ INPUT-GROUP (иконки в поле поиска) - как в author_list.html */
   .custom-input-group {
-    background-color: #000000 !important;
+    background-color: transparent !important;
     color: #ffffff !important;
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
     border-right: none !important;
   }
 
-  /* 6. НОВЫЙ СТИЛЬ ДЛЯ ПОЛЯ ПОИСКА */
+  /* 6. СТИЛЬ ДЛЯ ПОЛЯ ПОИСКА - как в author_list.html */
   .custom-search-input {
-    background-color: var(--main-color) !important;
-    color: #000000 !important;
+    background-color: #000000 !important;
+    color: var(--main-color) !important;
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    transition: all 0.2s;
+    transition: background-color 0.2s;
     font-weight: normal;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 
   .custom-search-input::placeholder {
-    color: #000000 !important;
+    color: var(--main-color) !important;
     font-weight: normal;
-    opacity: 0.8;
+    text-shadow: none !important;
+    opacity: 1 !important;
   }
 
   .custom-search-input:focus {
-    background-color: var(--main-color) !important;
-    color: #000000 !important;
+    background-color: #000000 !important;
+    color: var(--main-color) !important;
     font-weight: bold !important;
     border-color: rgba(255, 255, 255, 0.6) !important;
-    box-shadow: 0 0 0 0.2rem rgba(255, 194, 0, 0.3);
+    box-shadow: 0 0 0 0.25rem rgba(255, 194, 0, 0.3);
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 
   /* 7. КНОПКИ */
