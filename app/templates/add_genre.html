@@ -55,10 +55,9 @@ content %}
               <div class="mb-3">
                 {{ form.name.label(class="form-label fw-bold text-white") }}
                 <span class="text-danger">*</span>
-                {{ form.name(class="form-control bg-transparent text-white
-                border-light" + (" is-invalid" if form.name.errors else ""),
-                placeholder="Например: 'Фантастика'") }} {% if form.name.errors
-                %}
+                {{ form.name(class="form-control custom-input" + (" is-invalid"
+                if form.name.errors else ""), placeholder="Например:
+                'Фантастика'") }} {% if form.name.errors %}
                 <div class="invalid-feedback d-block">
                   {% for error in form.name.errors %} {{ error }} {% endfor %}
                 </div>
@@ -68,9 +67,9 @@ content %}
 
               <div class="mb-3">
                 {{ form.comment.label(class="form-label fw-bold text-white") }}
-                {{ form.comment(class="form-control bg-transparent text-white
-                border-light", rows="3", placeholder="Например: 'Жанр научной
-                фантастики и футуризма'") }}
+                {{ form.comment(class="form-control custom-input", rows="3",
+                placeholder="Например: 'Жанр научной фантастики и футуризма'")
+                }}
                 <div class="form-text text-white-50">
                   Комментарии, примечания (можно использовать HTML-разметку)
                 </div>
@@ -166,7 +165,120 @@ content %}
     padding: 1.5rem;
   }
 
-  /* 3. СТИЛИ ДЛЯ ВКЛАДОК */
+  /* 3. НОВЫЙ СТИЛЬ ДЛЯ ПОЛЕЙ ВВОДА - ЧЕРНЫЙ ФОН, БЕЛЫЙ ТЕКСТ */
+  .custom-input {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    transition: all 0.2s;
+  }
+
+  .custom-input::placeholder {
+    color: var(--main-color) !important;
+    font-weight: 300;
+  }
+
+  .custom-input:focus {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+  }
+
+  .custom-input.is-invalid {
+    border-color: #dc3545 !important;
+  }
+
+  /* 4. НОВЫЙ СТИЛЬ ДЛЯ SELECT ПОЛЕЙ */
+  .custom-select {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='white' d='M8 11L3 6h10z'/%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 0.75rem center !important;
+    background-size: 16px 12px !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    padding-right: 2.5rem !important;
+  }
+
+  .custom-select:focus {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+  }
+
+  .custom-select option {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
+
+  .custom-select option:hover {
+    background-color: #808080 !important;
+    color: #ffffff !important;
+  }
+
+  .custom-select option:checked {
+    background-color: #808080 !important;
+    color: #ffffff !important;
+  }
+
+  .custom-select::-ms-expand {
+    display: none !important;
+  }
+
+  /* 5. НОВЫЙ СТИЛЬ ДЛЯ INPUT-GROUP */
+  .custom-input-group {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-right: none !important;
+  }
+
+  /* 6. НОВЫЙ СТИЛЬ ДЛЯ INPUT ФАЙЛА */
+  .custom-file-input {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .custom-file-input:hover {
+    background-color: #1a1a1a !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+  }
+
+  .custom-file-input:focus {
+    background-color: #000000 !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+    outline: none;
+  }
+
+  .custom-file-input::file-selector-button {
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
+    border: 2px solid var(--main-color) !important;
+    border-radius: 6px;
+    padding: 0.3rem 0.8rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .custom-file-input::file-selector-button:hover {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: #000000 !important;
+  }
+
+  /* 7. СТИЛИ ДЛЯ ВКЛАДОК */
   .nav-tabs .nav-link {
     color: rgba(255, 255, 255, 0.8);
     border: none;
@@ -201,29 +313,25 @@ content %}
     padding-top: 1rem;
   }
 
-  /* 4. ПРОЗРАЧНЫЕ ПОЛЯ ВВОДА */
-  .form-control.bg-transparent {
-    background-color: rgba(255, 255, 255, 0.1) !important;
+  /* 8. НОВЫЙ СТИЛЬ ДЛЯ АЛЕРТА - ИСПОЛЬЗУЕТ var(--main-color) */
+  .custom-alert {
+    background-color: rgba(212, 175, 55, 0.2) !important;
+    backdrop-filter: blur(5px);
+    border: 1px solid var(--main-color) !important;
     color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-    transition: all 0.2s;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
   }
 
-  .form-control.bg-transparent::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+  .custom-alert i {
+    color: var(--main-color) !important;
   }
 
-  .form-control.bg-transparent:focus {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    border-color: rgba(255, 255, 255, 0.5) !important;
-    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+  .custom-alert .text-white {
+    color: #ffffff !important;
   }
 
-  .form-control.bg-transparent.is-invalid {
-    border-color: #dc3545 !important;
-  }
-
-  /* 5. ОБЩИЕ СТИЛИ */
+  /* 9. ОБЩИЕ СТИЛИ */
   .text-white {
     color: #ffffff !important;
   }
@@ -236,7 +344,7 @@ content %}
     --bs-bg-opacity: 0.75;
   }
 
-  /* 6. КНОПКИ */
+  /* 10. КНОПКИ */
   .btn-outline-light {
     color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
@@ -283,7 +391,7 @@ content %}
     font-size: 1.1rem;
   }
 
-  /* 7. АДАПТИВНОСТЬ */
+  /* 11. АДАПТИВНОСТЬ */
   @media (max-width: 768px) {
     .card-body {
       padding: 1rem !important;
