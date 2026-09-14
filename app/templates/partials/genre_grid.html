@@ -19,15 +19,6 @@
                         <i class="bi bi-book"></i> Книг: {{ genre.book_genres|length }}
                     </span>
                 </p>
-                <!-- Краткая информация о жанре -->
-                <p class="card-text text-white-50 small">
-                    <i class="bi bi-info-circle"></i> 
-                    {% if genre.book_genres %}
-                        Используется в {{ genre.book_genres|length }} книгах
-                    {% else %}
-                        Не используется в книгах
-                    {% endif %}
-                </p>
             </div>
             <div class="card-footer bg-transparent border-top-0 mt-auto">
                 <div class="d-flex justify-content-center gap-2">
