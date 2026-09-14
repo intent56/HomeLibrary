@@ -10,17 +10,19 @@ content %}
         <h2 class="text-white">
           <i class="bi bi-bookmark"></i> Справочник переплетов
         </h2>
-        <p class="text-white-50 mb-0">Всего типов: {{ total_covers }}</p>
+        <p class="text-white-50 mb-0">
+          Всего типов: {{ pagination.total if pagination else total_covers }}
+        </p>
       </div>
       <div class="d-flex gap-2 flex-wrap justify-content-center">
-        <!-- 2. КНОПКА "НА ГЛАВНУЮ" - БЕЛЫЙ ТЕКСТ -->
+        <!-- КНОПКА "НА ГЛАВНУЮ" -->
         <a
           href="{{ url_for('main.index') }}"
           class="btn btn-outline-light d-flex align-items-center"
         >
           <i class="bi bi-house me-1"></i> На главную
         </a>
-        <!-- ИЗМЕНЕННАЯ КНОПКА "ДОБАВИТЬ ПЕРЕПЛЕТ" - ИСПОЛЬЗУЕТ КЛАСС btn-edit -->
+        <!-- КНОПКА "ДОБАВИТЬ ПЕРЕПЛЕТ" -->
         <a
           href="{{ url_for('main.add_cover') }}"
           class="btn btn-edit d-flex align-items-center"
@@ -30,261 +32,387 @@ content %}
       </div>
     </div>
 
-    <!-- 3. КАРТОЧКИ СТАТИСТИКИ С ПРОЗРАЧНЫМ ФОНОМ И БЕЛЫМ ТЕКСТОМ -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div
-          class="card transparent-card-stat border border-white border-opacity-50"
-        >
-          <div class="card-body text-center">
-            <h6 class="card-title text-white-50">Всего типов переплетов</h6>
-            <h2 class="text-white mb-0">{{ total_covers }}</h2>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div
-          class="card transparent-card-stat border border-white border-opacity-50"
-        >
-          <div class="card-body text-center">
-            <h6 class="card-title text-white-50">Книг с переплетами</h6>
-            <h2 class="text-white mb-0">{{ total_books_with_covers }}</h2>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div
-          class="card transparent-card-stat border border-white border-opacity-50"
-        >
-          <div class="card-body text-center">
-            <h6 class="card-title text-white-50">На странице</h6>
-            <h2 class="text-white mb-0">{{ covers|length }}</h2>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Сетка типов обложек с выравниванием карточек -->
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-      {% for cover in covers %}
-      <div class="col">
-        <!-- 4. КАРТОЧКА ПЕРЕПЛЕТА С ПРОЗРАЧНЫМ ФОНОМ И БЕЛОЙ РАМКОЙ -->
-        <div
-          class="card h-100 d-flex flex-column transparent-card-cover border border-white border-opacity-50"
-        >
-          <!-- Заголовок с прозрачным фоном и фиксированной высотой -->
+    <!-- Сетка типов переплетов -->
+    <div class="row" id="coverGridContainer">
+      <div class="row" id="coverGrid">
+        {% for cover in covers %}
+        <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+          <!-- КАРТОЧКА ПЕРЕПЛЕТА С БЕЛОЙ РАМКОЙ -->
           <div
-            class="card-header transparent-card-header d-flex justify-content-between align-items-center"
-            style="min-height: 80px"
+            class="card h-100 shadow-sm hover-lift border border-white border-opacity-50 transparent-card-cover"
           >
-            <div class="d-flex flex-column overflow-hidden" style="flex: 1">
-              <!-- ИЗМЕНЕННЫЙ БЕЙДЖ - ТЕПЕРЬ НА ОТДЕЛЬНОЙ СТРОКЕ -->
-              <span
-                class="badge custom-badge mb-1"
-                style="align-self: flex-start; font-size: 0.9rem"
-              >
-                {{ cover.code }}
-              </span>
-              <!-- ИЗМЕНЕННЫЙ БЛОК С НАЗВАНИЕМ - НА СЛЕДУЮЩЕЙ СТРОКЕ -->
+            <!-- ВЕРХНЯЯ ЧАСТЬ КАРТОЧКИ: КОД В ЛЕВОМ ВЕРХНЕМ УГЛУ -->
+            <div
+              class="card-header bg-transparent border-0 d-flex justify-content-start align-items-center pt-3 pb-0"
+              style="min-height: 40px"
+            >
+              <span class="badge custom-badge"> {{ cover.code }} </span>
+            </div>
+
+            <!-- ОСНОВНАЯ ЧАСТЬ: КАРТИНКА ПО ЦЕНТРУ, НАЗВАНИЕ ПОД НЕЙ, "КНИГ:" ПОД НАЗВАНИЕМ -->
+            <div class="card-body text-center d-flex flex-column">
+              <div class="mb-3">
+                <div
+                  class="bg-transparent d-inline-flex align-items-center justify-content-center transparent-icon-circle"
+                  style="
+                    width: 100px;
+                    height: 100px;
+                    border: 2px solid rgba(255, 255, 255, 0.3);
+                  "
+                >
+                  <i class="bi bi-bookmark display-1 main-text-color"></i>
+                </div>
+              </div>
+              <!-- НАЗВАНИЕ ПЕРЕПЛЕТА -->
               <h5
-                class="mb-0 text-white text-start"
+                class="card-title text-white"
                 style="
-                  font-size: 1rem;
+                  min-height: 3.6rem;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
                   word-break: break-word;
                   line-height: 1.3;
                 "
               >
                 {{ cover.name }}
               </h5>
-            </div>
-            <div class="btn-group btn-group-sm flex-shrink-0 ms-2" role="group">
-              <a
-                href="{{ url_for('main.cover_view', cover_id=cover.id, 
-                                         return_page=pagination.page if pagination else 1) }}"
-                class="btn btn-outline-light"
-                title="Просмотр карточки переплета"
-              >
-                <i class="bi bi-eye"></i>
-              </a>
-              <a
-                href="{{ url_for('main.edit_cover', cover_id=cover.id, 
-                                         return_page=pagination.page if pagination else 1) }}"
-                class="btn btn-outline-light"
-                title="Редактировать переплет"
-              >
-                <i class="bi bi-pencil"></i>
-              </a>
-              <button
-                type="button"
-                class="btn btn-outline-light"
-                title="Удалить переплет"
-                data-bs-toggle="modal"
-                data-bs-target="#deleteCoverModal{{ cover.id }}"
-              >
-                <i class="bi bi-trash"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- Основное содержимое с фиксированной минимальной высотой -->
-          <div class="card-body d-flex flex-column" style="min-height: 150px">
-            <div class="d-flex align-items-center mb-3">
-              <div class="p-3 me-3 flex-shrink-0 transparent-icon-circle">
-                <i class="bi bi-bookmark display-6 text-white-50"></i>
-              </div>
-              <div class="overflow-hidden">
+              <!-- "КНИГ:" -->
+              <p class="card-text">
                 <span class="badge custom-badge">
                   <i class="bi bi-book"></i> Книг: {{ cover.cvr_books|length }}
                 </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Модальное окно подтверждения удаления (адаптировано для тёмной темы) -->
-      <div class="modal fade" id="deleteCoverModal{{ cover.id }}" tabindex="-1">
-        <div class="modal-dialog">
-          <div class="modal-content bg-dark text-light">
-            <div class="modal-header border-secondary">
-              <h5 class="modal-title">
-                <i class="bi bi-exclamation-triangle text-danger"></i>
-                Подтверждение удаления
-              </h5>
-              <button
-                type="button"
-                class="btn-close btn-close-white"
-                data-bs-dismiss="modal"
-              ></button>
-            </div>
-            <div class="modal-body">
-              <p>
-                Вы уверены, что хотите удалить тип переплета
-                <strong>"{{ cover.name }}"</strong>?
               </p>
-              {% if cover.cvr_books %}
-              <div class="alert alert-warning transparent-alert">
-                <i class="bi bi-exclamation-triangle"></i>
-                Переплет используется в {{ cover.cvr_books|length }} книгах.
-                Удаление невозможно!
-              </div>
-              {% endif %}
-              <p class="text-white-50 small">Это действие необратимо!</p>
             </div>
-            <div class="modal-footer border-secondary">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Отмена
-              </button>
-              {% if not cover.cvr_books %}
-              <form
-                method="POST"
-                action="{{ url_for('main.delete_cover', cover_id=cover.id) }}"
-                style="display: inline"
-              >
-                <input
-                  type="hidden"
-                  name="csrf_token"
-                  value="{{ csrf_token() }}"
-                />
-                <button type="submit" class="btn btn-danger">
-                  <i class="bi bi-trash"></i> Удалить
+
+            <!-- FOOTER С КНОПКАМИ ДЕЙСТВИЙ -->
+            <div class="card-footer bg-transparent border-top-0 mt-auto">
+              <div class="d-flex justify-content-center gap-2">
+                <a
+                  href="{{ url_for('main.cover_view', 
+                              cover_id=cover.id, 
+                              return_page=pagination.page if pagination else 1) }}"
+                  class="btn btn-outline-light btn-sm"
+                  title="Просмотр карточки"
+                >
+                  <i class="bi bi-eye main-text-color"></i>
+                </a>
+                <a
+                  href="{{ url_for('main.edit_cover', 
+                                       cover_id=cover.id, 
+                                       return_page=pagination.page if pagination else 1) }}"
+                  class="btn btn-outline-light btn-sm"
+                  title="Редактировать"
+                >
+                  <i class="bi bi-pencil main-text-color"></i>
+                </a>
+                <button
+                  type="button"
+                  class="btn btn-outline-light btn-sm"
+                  title="Удалить"
+                  data-bs-toggle="modal"
+                  data-bs-target="#deleteCoverModal{{ cover.id }}"
+                >
+                  <i class="bi bi-trash main-text-color"></i>
                 </button>
-              </form>
-              {% else %}
-              <button type="button" class="btn btn-secondary" disabled>
-                <i class="bi bi-lock"></i> Используется в книгах
-              </button>
-              {% endif %}
+              </div>
             </div>
           </div>
         </div>
+
+        <!-- МОДАЛЬНОЕ ОКНО ПОДТВЕРЖДЕНИЯ УДАЛЕНИЯ -->
+        <div
+          class="modal fade"
+          id="deleteCoverModal{{ cover.id }}"
+          tabindex="-1"
+        >
+          <div class="modal-dialog">
+            <div class="modal-content bg-dark text-light">
+              <div class="modal-header border-secondary">
+                <h5 class="modal-title">
+                  <i class="bi bi-exclamation-triangle text-danger"></i>
+                  Подтверждение удаления
+                </h5>
+                <button
+                  type="button"
+                  class="btn-close btn-close-white"
+                  data-bs-dismiss="modal"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <p>
+                  Вы уверены, что хотите удалить тип переплета
+                  <strong>"{{ cover.name }}"</strong>?
+                </p>
+                {% if cover.cvr_books %}
+                <div class="alert alert-warning transparent-alert">
+                  <i class="bi bi-exclamation-triangle"></i>
+                  Переплет используется в {{ cover.cvr_books|length }} книгах.
+                  Удаление невозможно!
+                </div>
+                {% endif %}
+                <p class="text-white-50 small">Это действие необратимо!</p>
+              </div>
+              <div class="modal-footer border-secondary">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Отмена
+                </button>
+                {% if not cover.cvr_books %}
+                <form
+                  method="POST"
+                  action="{{ url_for('main.delete_cover', cover_id=cover.id) }}"
+                  style="display: inline"
+                >
+                  <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                  />
+                  <input
+                    type="hidden"
+                    name="page"
+                    value="{{ pagination.page if pagination else 1 }}"
+                  />
+                  <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-trash"></i> Удалить
+                  </button>
+                </form>
+                {% else %}
+                <button type="button" class="btn btn-secondary" disabled>
+                  <i class="bi bi-lock"></i> Используется в книгах
+                </button>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+          <div class="text-center py-5">
+            <i class="bi bi-bookmark display-1 text-white-50"></i>
+            <p class="text-white-50 mt-3">Переплеты не найдены</p>
+            <a href="{{ url_for('main.add_cover') }}" class="btn btn-edit">
+              <i class="bi bi-plus-circle"></i> Добавить первый переплет
+            </a>
+          </div>
+        </div>
+        {% endfor %}
       </div>
-      {% endfor %}
     </div>
+
+    <!-- ПАГИНАЦИЯ -->
+    {% if pagination and pagination.pages > 1 %}
+    <div class="row">
+      <div class="col-12">
+        <div class="pagination-container mt-4">
+          <nav aria-label="Навигация по страницам">
+            <ul
+              class="pagination pagination-sm justify-content-center mb-0"
+              id="transparentPagination"
+            >
+              <li
+                class="page-item {% if pagination.page == 1 %}disabled{% endif %}"
+              >
+                <a
+                  class="page-link"
+                  href="{{ url_for('main.cover_list', page=1) }}"
+                >
+                  <i class="bi bi-chevron-double-left"></i>
+                </a>
+              </li>
+              <li
+                class="page-item {% if pagination.page == 1 %}disabled{% endif %}"
+              >
+                <a
+                  class="page-link"
+                  href="{{ url_for('main.cover_list', page=pagination.prev_num) }}"
+                >
+                  <i class="bi bi-chevron-left"></i>
+                </a>
+              </li>
+
+              {% set left = pagination.page - 2 %} {% set right =
+              pagination.page + 2 %} {% if left < 1 %}{% set left = 1 %}{% endif
+              %} {% if right > pagination.pages %}{% set right =
+              pagination.pages %}{% endif %} {% if left > 1 %}
+              <li class="page-item disabled">
+                <span class="page-link">...</span>
+              </li>
+              {% endif %} {% for p in range(left, right + 1) %}
+              <li
+                class="page-item {% if p == pagination.page %}active{% endif %}"
+              >
+                <a
+                  class="page-link"
+                  href="{{ url_for('main.cover_list', page=p) }}"
+                >
+                  {{ p }}
+                </a>
+              </li>
+              {% endfor %} {% if right < pagination.pages %}
+              <li class="page-item disabled">
+                <span class="page-link">...</span>
+              </li>
+              {% endif %}
+
+              <li
+                class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}"
+              >
+                <a
+                  class="page-link"
+                  href="{{ url_for('main.cover_list', page=pagination.next_num) }}"
+                >
+                  <i class="bi bi-chevron-right"></i>
+                </a>
+              </li>
+              <li
+                class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}"
+              >
+                <a
+                  class="page-link"
+                  href="{{ url_for('main.cover_list', page=pagination.pages) }}"
+                >
+                  <i class="bi bi-chevron-double-right"></i>
+                </a>
+              </li>
+            </ul>
+          </nav>
+
+          <div class="text-center text-white-50 small mt-2">
+            Показано: {{ pagination.items|length }} из {{ pagination.total }}
+            записей
+            <span class="mx-2">|</span>
+            Страница {{ pagination.page }} из {{ pagination.pages }}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
   </div>
 </div>
 
-<!-- СТИЛИ ДЛЯ ПРОЗРАЧНЫХ КАРТОЧЕК И ЭЛЕМЕНТОВ -->
+<!-- СТИЛИ -->
 <style>
-  /* 1. Стиль для карточек статистики */
-  .transparent-card-stat {
+  /* 1. УБИРАЕМ ВСЕ ПОДЛОЖКИ ДО ФОНА */
+  #coverGrid,
+  #coverGrid * {
+    background: transparent !important;
+  }
+
+  /* Исключение — карточки с полупрозрачным фоном */
+  #coverGrid .transparent-card-cover {
     background-color: rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
     transition: all 0.3s ease;
-    color: #ffffff !important;
+    min-height: 380px;
   }
 
-  .transparent-card-stat:hover {
-    background-color: rgba(0, 0, 0, 0.35) !important;
-    transform: translateY(-2px);
-  }
-
-  /* 2. Стиль для карточек переплетов */
-  .transparent-card-cover {
-    background-color: rgba(0, 0, 0, 0.2) !important;
-    backdrop-filter: blur(5px);
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.5) !important;
-    min-height: 320px; /* ФИКСИРОВАННАЯ МИНИМАЛЬНАЯ ВЫСОТА */
-  }
-
-  .transparent-card-cover:hover {
-    background-color: rgba(0, 0, 0, 0.35) !important;
+  #coverGrid .transparent-card-cover:hover {
+    background-color: rgba(0, 0, 0, 0.4) !important;
     transform: translateY(-4px);
   }
 
-  /* 3. Стиль для заголовка карточки переплета */
-  .transparent-card-header {
-    background-color: rgba(0, 0, 0, 0.3) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  /* 2. БЕЛАЯ РАМКА ДЛЯ КАРТОЧЕК */
+  #coverGrid .card.border-white {
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
   }
 
-  /* 4. Стиль для иконки в карточке переплета */
+  /* 3. ИКОНКА В ЦЕНТРЕ КАРТОЧКИ */
   .transparent-icon-circle {
     background-color: rgba(255, 255, 255, 0.1) !important;
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 12px;
   }
 
-  /* 5. Стиль для бейджей */
-  .bg-opacity-75 {
-    --bs-bg-opacity: 0.75;
+  .main-text-color {
+    color: var(--main-color) !important;
   }
 
-  /* НОВЫЙ СТИЛЬ ДЛЯ БЕЙДЖА КОДА - ИСПОЛЬЗУЕТ var(--main-color) */
-  .custom-badge {
+  /* 4. БЕЙДЖ */
+  /* НОВЫЙ СТИЛЬ ДЛЯ БЕЙДЖА "КНИГ" — ВЫСОКАЯ СПЕЦИФИЧНОСТЬ */
+  #coverGrid .custom-badge,
+  #coverGrid .badge.custom-badge,
+  #coverGrid .card-text .custom-badge {
     background-color: var(--main-color) !important;
     color: #000000 !important;
-    font-weight: 500;
-    padding: 0.35rem 0.75rem;
+    font-weight: 500 !important;
+    padding: 0.5rem 1rem !important;
   }
 
-  /* 6. Стиль для полупрозрачного алерта в модальном окне */
-  .transparent-alert {
-    background: rgba(255, 193, 7, 0.15) !important;
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 193, 7, 0.3) !important;
+  /* 5. КАРТОЧКА: ЗАГОЛОВОК, ТЕКСТ, ФУТЕР */
+  #coverGrid .card-title {
+    color: #ffffff !important;
+    min-height: 3.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    word-break: break-word;
+    line-height: 1.3;
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    padding: 0 0.25rem;
+  }
+
+  #coverGrid .card-footer {
+    padding: 0.75rem 1rem 1rem 1rem;
+  }
+
+  /* 6. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ */
+  .pagination-container {
+    background-color: rgba(0, 0, 0, 0.25) !important;
+    backdrop-filter: blur(8px);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  #transparentPagination .page-link,
+  #transparentPagination .page-link:focus,
+  #transparentPagination .page-link:visited {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+    transition: all 0.2s ease;
+  }
+
+  #transparentPagination .page-item:not(.active) .page-link:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
     color: #ffffff !important;
   }
 
-  .transparent-alert i {
-    color: #ffc107 !important;
+  /* АКТИВНАЯ СТРАНИЦА - ЦВЕТ MAIN-COLOR, ЧЁРНЫЙ ТЕКСТ */
+  #transparentPagination .page-item.active .page-link,
+  #transparentPagination .page-item.active .page-link:hover,
+  #transparentPagination .page-item.active .page-link:focus {
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
+    color: #000000 !important;
+    box-shadow: none !important;
   }
 
-  /* 7. Цвет текста */
-  .text-white-50 {
-    color: rgba(255, 255, 255, 0.7) !important;
+  #transparentPagination .page-item.disabled .page-link,
+  #transparentPagination .page-item.disabled .page-link:hover {
+    background-color: transparent !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    color: rgba(255, 255, 255, 0.2) !important;
+    cursor: not-allowed;
   }
 
+  /* 7. ОБЩИЕ СТИЛИ */
   .text-white {
     color: #ffffff !important;
   }
 
-  /* 8. Кнопки */
+  .text-white-50 {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  /* 8. КНОПКИ */
   .btn-outline-light {
     color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
@@ -296,7 +424,6 @@ content %}
     color: #ffffff !important;
   }
 
-  /* НОВЫЙ СТИЛЬ ДЛЯ КНОПКИ "ДОБАВИТЬ ПЕРЕПЛЕТ" */
   .btn-edit {
     background-color: transparent !important;
     color: var(--main-color) !important;
@@ -327,19 +454,40 @@ content %}
     outline: none;
   }
 
-  /* 9. Адаптивность */
+  /* 9. МОДАЛЬНОЕ ОКНО */
+  .modal-content.bg-dark {
+    background-color: rgba(33, 37, 41, 0.95) !important;
+    backdrop-filter: blur(10px);
+  }
+
+  .transparent-alert {
+    background: rgba(255, 193, 7, 0.15) !important;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 193, 7, 0.3) !important;
+    color: #ffffff !important;
+  }
+
+  .transparent-alert i {
+    color: #ffc107 !important;
+  }
+
+  /* 10. АДАПТИВНОСТЬ */
   @media (max-width: 768px) {
-    .transparent-card-stat {
-      margin-bottom: 1rem;
+    .pagination-container {
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: center !important;
+    }
+  }
+
+  @media (max-width: 576px) {
+    #coverGrid .transparent-card-cover {
+      min-height: 340px;
     }
 
-    .card-header h5 {
+    #coverGrid .card-title {
+      min-height: 3rem;
       font-size: 1rem;
-    }
-
-    .btn-group.btn-group-sm .btn {
-      padding: 0.25rem 0.4rem;
-      font-size: 0.75rem;
     }
   }
 </style>
