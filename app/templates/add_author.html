@@ -84,6 +84,39 @@ content %}
           <h6 class="text-white">Найденные авторы:</h6>
           <div id="authorResultsList" class="list-group bg-transparent"></div>
         </div>
+
+        <!-- АГРЕГАТОРЫ -->
+        <div class="row g-3 mt-2 pt-2 border-top border-light">
+          <div class="col-md-9">
+            <label for="aggregatorSelect" class="form-label fw-bold text-white"
+              >Поиск на сайтах-агрегаторах</label
+            >
+            <div class="input-group">
+              <span class="input-group-text custom-input-group"
+                ><i class="bi bi-link-45deg"></i
+              ></span>
+              <select class="custom-select" id="aggregatorSelect">
+                <option value="">Выберите агрегатор...</option>
+              </select>
+              <input
+                type="text"
+                class="form-control custom-input"
+                id="aggregatorSearchQuery"
+                placeholder="Например: 'Лев Толстой'"
+              />
+              <button
+                class="btn btn-outline-light"
+                type="button"
+                id="searchAggregatorBtn"
+              >
+                <i class="bi bi-search"></i> Найти
+              </button>
+            </div>
+            <div id="aggregatorSearchStatus" class="form-text text-white-50">
+              Выберите агрегатор и введите запрос для поиска.
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -286,9 +319,40 @@ content %}
       });
   }
 
+  // Загрузка агрегаторов
+  function loadAggregators() {
+    const select = document.getElementById("aggregatorSelect");
+    select.innerHTML = '<option value="">Загрузка агрегаторов...</option>';
+
+    fetch("/api/aggregators")
+      .then((response) => {
+        if (!response.ok) throw new Error("Ошибка загрузки агрегаторов");
+        return response.json();
+      })
+      .then((aggregators) => {
+        select.innerHTML = '<option value="">Выберите агрегатор...</option>';
+        aggregators.forEach((agg) => {
+          const option = document.createElement("option");
+          option.value = agg.id;
+          option.dataset.urlTemplate = agg.url_template;
+          option.dataset.searchType = agg.search_type || "standard";
+          option.dataset.icon = agg.icon || "bi-box-seam";
+          option.textContent = agg.name;
+          select.appendChild(option);
+        });
+      })
+      .catch((error) => {
+        console.error("Ошибка загрузки агрегаторов:", error);
+        select.innerHTML =
+          '<option value="">Ошибка загрузки агрегаторов</option>';
+      });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     // Загружаем источники для авторов
     loadAuthorSources();
+    // Загружаем агрегаторы
+    loadAggregators();
 
     // --- Предпросмотр фото ---
     document
@@ -415,6 +479,64 @@ content %}
           });
       });
 
+    // --- Поиск на агрегаторе ---
+    document
+      .getElementById("searchAggregatorBtn")
+      .addEventListener("click", function () {
+        const aggregatorId = document.getElementById("aggregatorSelect").value;
+        const query = document
+          .getElementById("aggregatorSearchQuery")
+          .value.trim();
+        const statusDiv = document.getElementById("aggregatorSearchStatus");
+        const btn = this;
+
+        if (!aggregatorId) {
+          statusDiv.textContent = "Пожалуйста, выберите агрегатор.";
+          statusDiv.className = "form-text text-warning";
+          return;
+        }
+
+        if (!query) {
+          statusDiv.textContent = "Пожалуйста, введите имя автора для поиска.";
+          statusDiv.className = "form-text text-warning";
+          return;
+        }
+
+        // Получаем данные из выбранной опции
+        const select = document.getElementById("aggregatorSelect");
+        const selectedOption = select.options[select.selectedIndex];
+        const urlTemplate = selectedOption.dataset.urlTemplate;
+        const searchType = selectedOption.dataset.searchType || "standard";
+
+        if (!urlTemplate) {
+          statusDiv.textContent = "Ошибка: шаблон URL не найден.";
+          statusDiv.className = "form-text text-danger";
+          return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML =
+          '<span class="spinner-border spinner-border-sm" role="status"></span>';
+
+        const encodedQuery = encodeURIComponent(query);
+
+        if (searchType === "redirect") {
+          // Для Alib.ru используем серверный редирект с перекодировкой
+          window.open(`/go/alib?q=${encodedQuery}`, "_blank");
+          statusDiv.textContent = `Поиск "${query}" выполняется на ${selectedOption.textContent}...`;
+          statusDiv.className = "form-text text-success";
+        } else {
+          // Для стандартных агрегаторов открываем URL
+          const url = urlTemplate.replace("{query}", encodedQuery);
+          window.open(url, "_blank");
+          statusDiv.textContent = `Поиск "${query}" открыт на ${selectedOption.textContent}.`;
+          statusDiv.className = "form-text text-success";
+        }
+
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-search"></i> Найти';
+      });
+
     // --- Функция заполнения формы автора ---
     function fillAuthorForm(author) {
       // Разделяем имя на части
@@ -467,6 +589,12 @@ content %}
         document.getElementById("authorSearchStatus").className =
           "form-text text-white-50";
         document.getElementById("authorSearchQuery").value = "";
+        // Очищаем агрегатор
+        document.getElementById("aggregatorSearchQuery").value = "";
+        document.getElementById("aggregatorSearchStatus").textContent =
+          "Выберите агрегатор и введите запрос для поиска.";
+        document.getElementById("aggregatorSearchStatus").className =
+          "form-text text-white-50";
       });
 
     // --- Предпросмотр ФИО ---
@@ -544,6 +672,14 @@ content %}
       .addEventListener("keypress", function (e) {
         if (e.key === "Enter") {
           document.getElementById("searchAuthorBtn").click();
+        }
+      });
+
+    document
+      .getElementById("aggregatorSearchQuery")
+      .addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          document.getElementById("searchAggregatorBtn").click();
         }
       });
 
@@ -637,12 +773,13 @@ content %}
     color: #ffffff !important;
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='white' d='M8 11L3 6h10z'/%3e%3c/svg%3e") !important;
-    background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    background-size: 16px 12px;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+    background-repeat: no-repeat !important;
+    background-position: right 0.75rem center !important;
+    background-size: 16px 12px !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    padding-right: 2.5rem !important;
   }
 
   .custom-select:focus {
@@ -665,6 +802,10 @@ content %}
   .custom-select option:checked {
     background-color: #808080 !important;
     color: #ffffff !important;
+  }
+
+  .custom-select::-ms-expand {
+    display: none !important;
   }
 
   /* 5. НОВЫЙ СТИЛЬ ДЛЯ INPUT-GROUP */
@@ -852,7 +993,16 @@ content %}
     border: 2px solid rgba(255, 255, 255, 0.3);
   }
 
-  /* 13. АДАПТИВНОСТЬ */
+  /* 13. ГРАНИЦЫ */
+  .border-light {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .border-top.border-light {
+    border-top-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  /* 14. АДАПТИВНОСТЬ */
   @media (max-width: 768px) {
     .card-body {
       padding: 1rem !important;
@@ -891,26 +1041,6 @@ content %}
       margin-top: 0.5rem;
       width: 100%;
     }
-  }
-  /* Принудительное отключение всех нативных и подмешанных стрелок */
-  select.custom-select,
-  .custom-select {
-    background-color: #000000 !important;
-    color: #ffffff !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='white' d='M8 11L3 6h10z'/%3e%3c/svg%3e") !important;
-    background-repeat: no-repeat !important;
-    background-position: right 0.75rem center !important;
-    background-size: 16px 12px !important;
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    appearance: none !important;
-    padding-right: 2.5rem !important;
-  }
-
-  /* Полностью убираем стрелку в IE и старых Edge */
-  .custom-select::-ms-expand {
-    display: none !important;
   }
 </style>
 {% endblock %}
