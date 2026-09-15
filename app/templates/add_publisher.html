@@ -22,6 +22,109 @@ content %}
       </div>
     </div>
 
+    <!-- Поиск издателя в интернете -->
+    <div class="card shadow-sm mb-4 transparent-card">
+      <div class="card-header transparent-card-header">
+        <h5 class="mb-0 text-white">
+          <i class="bi bi-cloud-download"></i> Найти издателя в интернете
+        </h5>
+      </div>
+      <div class="card-body transparent-card-body">
+        <div class="row g-3">
+          <div class="col-md-3">
+            <label
+              for="publisherSourceSelect"
+              class="form-label fw-bold text-white"
+              >Источник</label
+            >
+            <select class="custom-select" id="publisherSourceSelect">
+              <option value="">Все источники</option>
+            </select>
+          </div>
+          <div class="col-md-7">
+            <label
+              for="publisherSearchQuery"
+              class="form-label fw-bold text-white"
+              >Название издателя</label
+            >
+            <div class="input-group">
+              <span class="input-group-text custom-input-group"
+                ><i class="bi bi-building"></i
+              ></span>
+              <input
+                type="text"
+                class="form-control custom-input"
+                id="publisherSearchQuery"
+                placeholder="Например: 'АСТ'"
+              />
+              <button
+                class="btn btn-outline-light"
+                type="button"
+                id="searchPublisherBtn"
+              >
+                <i class="bi bi-search"></i> Найти
+              </button>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label text-white"> </label>
+            <button
+              class="btn btn-outline-light w-100"
+              type="button"
+              id="clearPublisherSearchBtn"
+            >
+              <i class="bi bi-arrow-counterclockwise"></i>
+            </button>
+          </div>
+        </div>
+        <div class="mt-2">
+          <div id="publisherSearchStatus" class="form-text text-white-50"></div>
+        </div>
+
+        <!-- Результаты поиска -->
+        <div id="publisherSearchResults" class="mt-3" style="display: none">
+          <h6 class="text-white">Найденные издатели:</h6>
+          <div
+            id="publisherResultsList"
+            class="list-group bg-transparent"
+          ></div>
+        </div>
+
+        <!-- АГРЕГАТОРЫ -->
+        <div class="row g-3 mt-2 pt-2 border-top border-light">
+          <div class="col-md-9">
+            <label for="aggregatorSelect" class="form-label fw-bold text-white"
+              >Поиск на сайтах-агрегаторах</label
+            >
+            <div class="input-group">
+              <span class="input-group-text custom-input-group"
+                ><i class="bi bi-link-45deg"></i
+              ></span>
+              <select class="custom-select" id="aggregatorSelect">
+                <option value="">Выберите агрегатор...</option>
+              </select>
+              <input
+                type="text"
+                class="form-control custom-input"
+                id="aggregatorSearchQuery"
+                placeholder="Например: 'АСТ'"
+              />
+              <button
+                class="btn btn-outline-light"
+                type="button"
+                id="searchAggregatorBtn"
+              >
+                <i class="bi bi-search"></i> Найти
+              </button>
+            </div>
+            <div id="aggregatorSearchStatus" class="form-text text-white-50">
+              Выберите агрегатор и введите запрос для поиска.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <form method="POST" action="{{ url_for('main.add_publisher') }}" novalidate>
       {{ form.csrf_token }}
       <input type="hidden" name="book_id" value="{{ book_id }}" />
@@ -146,7 +249,66 @@ content %}
 </div>
 
 <script>
+  // Загрузка источников для издателей
+  function loadPublisherSources() {
+    const select = document.getElementById("publisherSourceSelect");
+    select.innerHTML = '<option value="">Загрузка источников...</option>';
+
+    fetch("/api/sources?type=publishers")
+      .then((response) => {
+        if (!response.ok) throw new Error("Ошибка загрузки источников");
+        return response.json();
+      })
+      .then((sources) => {
+        select.innerHTML = '<option value="">Все источники</option>';
+        sources.forEach((source) => {
+          const option = document.createElement("option");
+          option.value = source.id;
+          option.textContent = source.name;
+          select.appendChild(option);
+        });
+      })
+      .catch((error) => {
+        console.error("Ошибка загрузки источников:", error);
+        select.innerHTML =
+          '<option value="">Ошибка загрузки источников</option>';
+      });
+  }
+
+  // Загрузка агрегаторов
+  function loadAggregators() {
+    const select = document.getElementById("aggregatorSelect");
+    select.innerHTML = '<option value="">Загрузка агрегаторов...</option>';
+
+    fetch("/api/aggregators")
+      .then((response) => {
+        if (!response.ok) throw new Error("Ошибка загрузки агрегаторов");
+        return response.json();
+      })
+      .then((aggregators) => {
+        select.innerHTML = '<option value="">Выберите агрегатор...</option>';
+        aggregators.forEach((agg) => {
+          const option = document.createElement("option");
+          option.value = agg.id;
+          option.dataset.urlTemplate = agg.url_template;
+          option.dataset.searchType = agg.search_type || "standard";
+          option.dataset.icon = agg.icon || "bi-box-seam";
+          option.textContent = agg.name;
+          select.appendChild(option);
+        });
+      })
+      .catch((error) => {
+        console.error("Ошибка загрузки агрегаторов:", error);
+        select.innerHTML =
+          '<option value="">Ошибка загрузки агрегаторов</option>';
+      });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
+    // Загружаем источники и агрегаторы
+    loadPublisherSources();
+    loadAggregators();
+
     // Предпросмотр ссылки
     const urlInput = document.getElementById("publisherUrl");
     const urlPreview = document.getElementById("urlPreview");
@@ -200,6 +362,226 @@ content %}
         }
       });
     }
+
+    // --- Поиск издателя ---
+    document
+      .getElementById("searchPublisherBtn")
+      .addEventListener("click", function () {
+        const sourceId = document.getElementById("publisherSourceSelect").value;
+        const query = document
+          .getElementById("publisherSearchQuery")
+          .value.trim();
+        const statusDiv = document.getElementById("publisherSearchStatus");
+        const resultsDiv = document.getElementById("publisherSearchResults");
+        const resultsList = document.getElementById("publisherResultsList");
+        const btn = this;
+
+        if (!query) {
+          statusDiv.textContent = "Введите название издателя для поиска.";
+          statusDiv.className = "form-text text-warning";
+          return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML =
+          '<span class="spinner-border spinner-border-sm" role="status"></span>';
+
+        statusDiv.textContent = "Поиск...";
+        statusDiv.className = "form-text text-primary";
+        resultsDiv.style.display = "none";
+
+        let url = `/api/search?type=publisher&query=${encodeURIComponent(query)}`;
+        if (sourceId) {
+          url += `&source_id=${sourceId}`;
+        }
+
+        fetch(url)
+          .then((response) => {
+            const contentType = response.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+              throw new Error("Сервер вернул не JSON ответ.");
+            }
+            if (response.status === 429) {
+              throw new Error("Превышен лимит запросов. Попробуйте позже.");
+            }
+            if (!response.ok) {
+              return response.json().then((err) => {
+                throw new Error(err.error || "Ошибка запроса");
+              });
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (data.error) {
+              throw new Error(data.error);
+            }
+
+            if (!data || data.length === 0) {
+              statusDiv.textContent = "Издатели не найдены.";
+              statusDiv.className = "form-text text-warning";
+              return;
+            }
+
+            statusDiv.textContent = `Найдено ${data.length} издателей. Выберите нужного:`;
+            statusDiv.className = "form-text text-success";
+
+            resultsList.innerHTML = "";
+            data.forEach((publisher) => {
+              const item = document.createElement("a");
+              item.href = "#";
+              item.className =
+                "list-group-item list-group-item-action bg-transparent text-white border-light";
+              item.innerHTML = `
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1 text-white">${publisher.name}</h6>
+                            <small class="text-white-50">${publisher.source || "Источник неизвестен"}</small>
+                        </div>
+                        ${publisher.url ? `<p class="mb-1 small text-white-50">Сайт: ${publisher.url}</p>` : ""}
+                    `;
+              item.addEventListener("click", function (e) {
+                e.preventDefault();
+                fillPublisherForm(publisher);
+                resultsDiv.style.display = "none";
+                document.getElementById("publisherSearchStatus").innerHTML =
+                  "✅ Издатель выбран! Поля заполнены.";
+                document.getElementById("publisherSearchStatus").className =
+                  "form-text text-success";
+              });
+              resultsList.appendChild(item);
+            });
+            resultsDiv.style.display = "block";
+          })
+          .catch((error) => {
+            console.error("Ошибка поиска:", error);
+            statusDiv.innerHTML = `
+                    <span class="text-danger">❌ ${error.message}</span>
+                    <br>
+                    <button class="btn btn-sm btn-outline-light mt-1" onclick="manualPublisherEntry()">
+                        <i class="bi bi-pencil"></i> Ввести данные вручную
+                    </button>
+                `;
+            statusDiv.className = "form-text";
+          })
+          .finally(() => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-search"></i> Найти';
+          });
+      });
+
+    // --- Поиск на агрегаторе ---
+    document
+      .getElementById("searchAggregatorBtn")
+      .addEventListener("click", function () {
+        const aggregatorId = document.getElementById("aggregatorSelect").value;
+        const query = document
+          .getElementById("aggregatorSearchQuery")
+          .value.trim();
+        const statusDiv = document.getElementById("aggregatorSearchStatus");
+        const btn = this;
+
+        if (!aggregatorId) {
+          statusDiv.textContent = "Пожалуйста, выберите агрегатор.";
+          statusDiv.className = "form-text text-warning";
+          return;
+        }
+
+        if (!query) {
+          statusDiv.textContent =
+            "Пожалуйста, введите название издателя для поиска.";
+          statusDiv.className = "form-text text-warning";
+          return;
+        }
+
+        const select = document.getElementById("aggregatorSelect");
+        const selectedOption = select.options[select.selectedIndex];
+        const urlTemplate = selectedOption.dataset.urlTemplate;
+        const searchType = selectedOption.dataset.searchType || "standard";
+
+        if (!urlTemplate) {
+          statusDiv.textContent = "Ошибка: шаблон URL не найден.";
+          statusDiv.className = "form-text text-danger";
+          return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML =
+          '<span class="spinner-border spinner-border-sm" role="status"></span>';
+
+        const encodedQuery = encodeURIComponent(query);
+
+        if (searchType === "redirect") {
+          window.open(`/go/alib?q=${encodedQuery}`, "_blank");
+          statusDiv.textContent = `Поиск "${query}" выполняется на ${selectedOption.textContent}...`;
+          statusDiv.className = "form-text text-success";
+        } else {
+          const url = urlTemplate.replace("{query}", encodedQuery);
+          window.open(url, "_blank");
+          statusDiv.textContent = `Поиск "${query}" открыт на ${selectedOption.textContent}.`;
+          statusDiv.className = "form-text text-success";
+        }
+
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-search"></i> Найти';
+      });
+
+    // --- Функция заполнения формы издателя ---
+    function fillPublisherForm(publisher) {
+      document.getElementById("publisherName").value = publisher.name || "";
+      if (publisher.url) {
+        document.getElementById("publisherUrl").value = publisher.url;
+        // Триггерим предпросмотр ссылки
+        document
+          .getElementById("publisherUrl")
+          .dispatchEvent(new Event("input"));
+      }
+      if (publisher.comment) {
+        document.querySelector('textarea[name="comment"]').value =
+          publisher.comment;
+      }
+    }
+
+    // --- Ручной ввод издателя ---
+    window.manualPublisherEntry = function () {
+      const statusDiv = document.getElementById("publisherSearchStatus");
+      statusDiv.innerHTML = "📝 Введите данные издателя вручную в форму ниже.";
+      statusDiv.className = "form-text text-white-50";
+      document.querySelector("form").scrollIntoView({ behavior: "smooth" });
+    };
+
+    // --- Очистка результатов поиска ---
+    document
+      .getElementById("clearPublisherSearchBtn")
+      .addEventListener("click", function () {
+        document.getElementById("publisherSearchResults").style.display =
+          "none";
+        document.getElementById("publisherSearchStatus").textContent = "";
+        document.getElementById("publisherSearchStatus").className =
+          "form-text text-white-50";
+        document.getElementById("publisherSearchQuery").value = "";
+        // Очищаем агрегатор
+        document.getElementById("aggregatorSearchQuery").value = "";
+        document.getElementById("aggregatorSearchStatus").textContent =
+          "Выберите агрегатор и введите запрос для поиска.";
+        document.getElementById("aggregatorSearchStatus").className =
+          "form-text text-white-50";
+      });
+
+    // --- Обработка Enter ---
+    document
+      .getElementById("publisherSearchQuery")
+      .addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          document.getElementById("searchPublisherBtn").click();
+        }
+      });
+
+    document
+      .getElementById("aggregatorSearchQuery")
+      .addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          document.getElementById("searchAggregatorBtn").click();
+        }
+      });
 
     // --- Сохранение активной вкладки ---
     const tabs = document.querySelectorAll(
@@ -280,7 +662,7 @@ content %}
     border-color: #dc3545 !important;
   }
 
-  /* 4. НОВЫЙ СТИЛЬ ДЛЯ SELECT ПОЛЕЙ */
+  /* 4. НОВЫЙ СТИЛЬ ДЛЯ SELECT ПОЛЕЙ - С SVG-СТРЕЛКОЙ */
   .custom-select {
     background-color: #000000 !important;
     color: #ffffff !important;
@@ -404,25 +786,7 @@ content %}
     padding-top: 1rem;
   }
 
-  /* 8. НОВЫЙ СТИЛЬ ДЛЯ АЛЕРТА - ИСПОЛЬЗУЕТ var(--main-color) */
-  .custom-alert {
-    background-color: rgba(212, 175, 55, 0.2) !important;
-    backdrop-filter: blur(5px);
-    border: 1px solid var(--main-color) !important;
-    color: #ffffff !important;
-    padding: 0.75rem 1.25rem;
-    border-radius: 8px;
-  }
-
-  .custom-alert i {
-    color: var(--main-color) !important;
-  }
-
-  .custom-alert .text-white {
-    color: #ffffff !important;
-  }
-
-  /* 9. ОБЩИЕ СТИЛИ */
+  /* 8. ОБЩИЕ СТИЛИ */
   .text-white {
     color: #ffffff !important;
   }
@@ -435,7 +799,7 @@ content %}
     --bs-bg-opacity: 0.75;
   }
 
-  /* 10. КНОПКИ */
+  /* 9. КНОПКИ */
   .btn-outline-light {
     color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
@@ -482,7 +846,7 @@ content %}
     font-size: 1.1rem;
   }
 
-  /* 11. ПРЕДПРОСМОТР ССЫЛКИ */
+  /* 10. ПРЕДПРОСМОТР ССЫЛКИ */
   #urlPreview {
     animation: fadeIn 0.3s ease;
   }
@@ -512,7 +876,50 @@ content %}
     text-decoration: underline;
   }
 
-  /* 12. АДАПТИВНОСТЬ */
+  /* 11. РЕЗУЛЬТАТЫ ПОИСКА */
+  #publisherSearchResults .list-group-item {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #ffffff !important;
+    transition: all 0.2s;
+  }
+
+  #publisherSearchResults .list-group-item:hover {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    transform: translateX(4px);
+  }
+
+  /* 12. БЕЙДЖИ */
+  .badge.bg-info {
+    background-color: rgba(13, 202, 240, 0.7) !important;
+    color: #ffffff !important;
+  }
+
+  .badge.bg-success {
+    background-color: rgba(25, 135, 84, 0.7) !important;
+    color: #ffffff !important;
+  }
+
+  .badge.bg-primary {
+    background-color: rgba(13, 110, 253, 0.7) !important;
+    color: #ffffff !important;
+  }
+
+  .badge.bg-secondary {
+    background-color: rgba(108, 117, 125, 0.7) !important;
+    color: #ffffff !important;
+  }
+
+  /* 13. ГРАНИЦЫ */
+  .border-light {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .border-top.border-light {
+    border-top-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  /* 14. АДАПТИВНОСТЬ */
   @media (max-width: 768px) {
     .card-body {
       padding: 1rem !important;
