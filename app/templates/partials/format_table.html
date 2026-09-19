@@ -140,24 +140,28 @@
     {% endif %}
 </div>
 
-<!-- Модальные окна для удаления (адаптированы для тёмной темы) -->
+<!-- Модальные окна для удаления (стиль как в aggregator_table.html) -->
 {% for format in formats %}
 <div class="modal fade" id="deleteModal{{ format.id }}" tabindex="-1">
     <div class="modal-dialog">
-        <div class="modal-content bg-dark text-light">
+        <div class="modal-content bg-dark text-light border border-white border-opacity-50">
             <div class="modal-header border-secondary">
-                <h5 class="modal-title"><i class="bi bi-exclamation-triangle text-danger"></i> Подтверждение удаления</h5>
+                <h5 class="modal-title text-danger">
+                    <i class="bi bi-exclamation-triangle"></i> Подтверждение удаления
+                </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p>Вы уверены, что хотите удалить формат <strong>"{{ format.format }}"</strong>?</p>
+                <p class="text-danger fw-bold">
+                    Вы уверены, что хотите удалить формат <strong>"{{ format.format }}"</strong>?
+                </p>
                 {% if format.fmt_books %}
                     <div class="alert alert-warning transparent-alert">
                         <i class="bi bi-exclamation-triangle"></i>
                         Формат используется в {{ format.fmt_books|length }} книгах. Удаление невозможно!
                     </div>
                 {% endif %}
-                <p class="text-white-50 small">Это действие необратимо!</p>
+                <p class="text-danger">Это действие необратимо!</p>
             </div>
             <div class="modal-footer border-secondary">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
