@@ -1,7 +1,7 @@
 <div class="row" id="languageGrid">
     {% for language in languages %}
     <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
-        <!-- 2. КАРТОЧКА С БЕЛОЙ РАМКОЙ -->
+        <!-- КАРТОЧКА С БЕЛОЙ РАМКОЙ -->
         <div class="card h-100 shadow-sm hover-lift border border-white border-opacity-50 transparent-card">
             <div class="card-body text-center d-flex flex-column">
                 <div class="mb-3">
@@ -51,42 +51,15 @@
                        class="btn btn-outline-light btn-sm" title="Редактировать язык">
                         <i class="bi bi-pencil main-text-color"></i>
                     </a>
-                    <button type="button" class="btn btn-outline-light btn-sm" title="Удалить язык" 
-                            data-bs-toggle="modal" data-bs-target="#deleteLanguageModal{{ language.id }}">
+                    <!-- КНОПКА УДАЛЕНИЯ С data-атрибутами -->
+                    <button type="button" 
+                            class="btn btn-outline-light btn-sm btn-delete-language" 
+                            title="Удалить язык"
+                            data-language-id="{{ language.id }}"
+                            data-language-name="{{ language.name }}"
+                            data-language-books="{{ language.lang_books|length }}">
                         <i class="bi bi-trash main-text-color"></i>
                     </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Модальное окно подтверждения удаления -->
-    <div class="modal fade" id="deleteLanguageModal{{ language.id }}" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content bg-dark text-light">
-                <div class="modal-header border-secondary">
-                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle text-danger"></i> Подтверждение удаления</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Вы уверены, что хотите удалить язык <strong>"{{ language.name }}"</strong>?</p>
-                    {% if language.lang_books %}
-                        <div class="alert alert-warning transparent-alert">
-                            <i class="bi bi-exclamation-triangle"></i>
-                            Язык привязан к {{ language.lang_books|length }} книг(е/ам). Удаление может нарушить связи!
-                        </div>
-                    {% endif %}
-                    <p class="text-white-50 small">Это действие необратимо!</p>
-                </div>
-                <div class="modal-footer border-secondary">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                    <form method="POST" action="{{ url_for('main.delete_language', language_id=language.id) }}" style="display: inline;">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <input type="hidden" name="page" value="{{ pagination.page }}">
-                        <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-trash"></i> Удалить
-                        </button>
-                    </form>
                 </div>
             </div>
         </div>
@@ -104,7 +77,7 @@
     {% endfor %}
 </div>
 
-<!-- 3. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ -->
+<!-- ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ -->
 {% if pagination and pagination.pages > 1 %}
 <div class="row">
     <div class="col-12">
@@ -191,6 +164,36 @@
 </div>
 {% endif %}
 
+<!-- ЕДИНОЕ МОДАЛЬНОЕ ОКНО ПОДТВЕРЖДЕНИЯ УДАЛЕНИЯ ЯЗЫКА -->
+<div class="modal fade" id="deleteLanguageModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-light border border-white border-opacity-50">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-danger">
+                    <i class="bi bi-exclamation-triangle"></i> Подтверждение удаления
+                </h5>
+                <button type="button" class="btn-close btn-close-white" id="closeLanguageModalBtn"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-danger fw-bold" id="deleteLanguageModalMessage">
+                    Вы уверены, что хотите удалить язык?
+                </p>
+                <div id="deleteLanguageWarning" class="alert alert-warning transparent-alert" style="display: none;">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <span id="deleteLanguageWarningText"></span>
+                </div>
+                <p class="text-danger">Это действие необратимо!</p>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" id="cancelDeleteLanguageBtn">Отмена</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteLanguageBtn">
+                    <i class="bi bi-trash"></i> Удалить
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- СТИЛИ ДЛЯ ПРОЗРАЧНЫХ КАРТОЧЕК И ПАГИНАЦИИ -->
 <style>
 /* 1. УБИРАЕМ ВСЕ ПОДЛОЖКИ ДО ФОНА */
@@ -217,7 +220,7 @@
     border: 1px solid rgba(255, 255, 255, 0.5) !important;
 }
 
-/* 3. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ - УСИЛЕННЫЕ СТИЛИ */
+/* 3. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ */
 #languageGrid .pagination-container {
     background-color: rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(8px);
@@ -226,7 +229,7 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Базовый стиль для всех ссылок пагинации */
+/* Базовый стиль для НЕактивных ссылок пагинации */
 #languageGrid .pagination .page-link,
 #languageGrid .pagination .page-link:focus,
 #languageGrid .pagination .page-link:visited {
@@ -237,19 +240,30 @@
 }
 
 /* Стиль при наведении для НЕактивных страниц */
-#languageGrid .pagination .page-item:not(.active) .page-link:hover {
+#languageGrid .pagination .page-item:not(.active):not(.disabled) .page-link:hover {
     background-color: rgba(255, 255, 255, 0.1) !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
     color: #ffffff !important;
 }
 
-/* Стиль для АКТИВНОЙ страницы */
-#languageGrid .pagination .page-item.active .page-link,
-#languageGrid .pagination .page-item.active .page-link:hover,
-#languageGrid .pagination .page-item.active .page-link:focus {
+/* ============================================================ */
+/* СТИЛЬ ДЛЯ АКТИВНОЙ СТРАНИЦЫ - ВСЕГДА ЧЁРНЫЙ ТЕКСТ НА ЖЁЛТОМ ФОНЕ */
+/* ============================================================ */
+#languageGrid .pagination .page-item.active .page-link {
     background-color: var(--main-color) !important;
     border-color: var(--main-color) !important;
     color: #000000 !important;
+    font-weight: bold !important;
+}
+
+/* Отключаем изменение цвета для активной страницы при любых взаимодействиях */
+#languageGrid .pagination .page-item.active .page-link:hover,
+#languageGrid .pagination .page-item.active .page-link:focus,
+#languageGrid .pagination .page-item.active .page-link:active {
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
+    color: #000000 !important;
+    font-weight: bold !important;
     box-shadow: none !important;
 }
 
@@ -281,7 +295,7 @@
     padding: 0 0.25rem;
 }
 
-/* НОВЫЙ СТИЛЬ ДЛЯ БЕЙДЖА "КНИГ" */
+/* СТИЛЬ ДЛЯ БЕЙДЖА "КНИГ" */
 #languageGrid .custom-badge {
     background-color: var(--main-color) !important;
     color: #000000 !important;
@@ -327,10 +341,135 @@
     #languageGrid .transparent-card {
         min-height: 340px;
     }
-    
+
     #languageGrid .card-title {
         min-height: 3rem;
         font-size: 1rem;
     }
 }
 </style>
+
+<!-- JAVASCRIPT ДЛЯ МОДАЛЬНОГО ОКНА И ПАГИНАЦИИ -->
+<script>
+// Переменная для хранения ID удаляемого языка
+let deleteLanguageId = null;
+
+// Функция для закрытия модального окна
+function closeLanguageModal() {
+    const modalElement = document.getElementById('deleteLanguageModal');
+    if (modalElement) {
+        const modal = bootstrap.Modal.getInstance(modalElement);
+        if (modal) {
+            modal.hide();
+        } else {
+            const newModal = new bootstrap.Modal(modalElement);
+            newModal.hide();
+        }
+    }
+}
+
+// Функция для открытия модального окна
+function openDeleteLanguageModal(languageId, languageName, booksCount) {
+    deleteLanguageId = languageId;
+    document.getElementById('deleteLanguageModalMessage').innerHTML = 
+        `Вы уверены, что хотите удалить язык <strong>"${languageName}"</strong>?`;
+
+    const warningBlock = document.getElementById('deleteLanguageWarning');
+    const warningText = document.getElementById('deleteLanguageWarningText');
+
+    if (booksCount > 0) {
+        warningText.textContent = `Язык привязан к ${booksCount} книг(е/ам). Удаление может нарушить связи!`;
+        warningBlock.style.display = 'block';
+    } else {
+        warningBlock.style.display = 'none';
+    }
+
+    const modalElement = document.getElementById('deleteLanguageModal');
+    let modal = bootstrap.Modal.getInstance(modalElement);
+    if (!modal) {
+        modal = new bootstrap.Modal(modalElement);
+    }
+    modal.show();
+}
+
+// ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
+document.addEventListener('DOMContentLoaded', function() {
+    // Обработчики для модального окна
+    document.getElementById('cancelDeleteLanguageBtn').addEventListener('click', closeLanguageModal);
+    document.getElementById('closeLanguageModalBtn').addEventListener('click', closeLanguageModal);
+
+    document.getElementById('confirmDeleteLanguageBtn').addEventListener('click', function() {
+        if (!deleteLanguageId) return;
+
+        // Создаём форму для POST-запроса
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/language/${deleteLanguageId}/delete`;
+
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrf_token';
+        csrfInput.value = '{{ csrf_token() }}';
+        form.appendChild(csrfInput);
+
+        const pageInput = document.createElement('input');
+        pageInput.type = 'hidden';
+        pageInput.name = 'page';
+        pageInput.value = '{{ pagination.page if pagination else 1 }}';
+        form.appendChild(pageInput);
+
+        document.body.appendChild(form);
+        form.submit();
+        closeLanguageModal();
+    });
+
+    // ДЕЛЕГИРОВАНИЕ СОБЫТИЙ: обработчик для всех кнопок удаления языка
+    document.body.addEventListener('click', function(e) {
+        const deleteBtn = e.target.closest('.btn-delete-language');
+        if (deleteBtn) {
+            e.preventDefault();
+            const languageId = deleteBtn.dataset.languageId;
+            const languageName = deleteBtn.dataset.languageName;
+            const booksCount = parseInt(deleteBtn.dataset.languageBooks) || 0;
+            if (languageId && languageName) {
+                openDeleteLanguageModal(languageId, languageName, booksCount);
+            }
+        }
+    });
+});
+
+// ============================================================
+// ПАГИНАЦИЯ: применяем инлайн-стили ТОЛЬКО для активной страницы
+// ============================================================
+function makePaginationTransparent() {
+    const paginationLinks = document.querySelectorAll('#transparentPagination .page-link');
+    
+    paginationLinks.forEach(link => {
+        const pageItem = link.closest('.page-item');
+        const isActive = pageItem?.classList.contains('active');
+
+        if (isActive) {
+            // Для активной страницы принудительно ставим чёрный текст на жёлтом фоне
+            link.style.setProperty('background-color', 'var(--main-color)', 'important');
+            link.style.setProperty('border-color', 'var(--main-color)', 'important');
+            link.style.setProperty('color', '#000000', 'important');
+            link.style.setProperty('font-weight', 'bold', 'important');
+        }
+        // Для остальных ничего не трогаем — работает через CSS
+    });
+}
+
+document.addEventListener('DOMContentLoaded', makePaginationTransparent);
+
+document.addEventListener('htmx:afterSwap', function(event) {
+    if (event.detail.target.id === 'languageGridContainer') {
+        setTimeout(makePaginationTransparent, 50);
+    }
+});
+
+document.addEventListener('htmx:afterSettle', function(event) {
+    if (event.detail.target.id === 'languageGridContainer') {
+        setTimeout(makePaginationTransparent, 50);
+    }
+});
+</script>

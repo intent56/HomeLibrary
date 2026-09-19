@@ -213,6 +213,7 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+/* Базовый стиль для НЕактивных ссылок пагинации */
 #genreGrid .pagination .page-link,
 #genreGrid .pagination .page-link:focus,
 #genreGrid .pagination .page-link:visited {
@@ -222,21 +223,35 @@
     transition: all 0.2s ease;
 }
 
-#genreGrid .pagination .page-item:not(.active) .page-link:hover {
+/* Стиль при наведении для НЕактивных страниц */
+#genreGrid .pagination .page-item:not(.active):not(.disabled) .page-link:hover {
     background-color: rgba(255, 255, 255, 0.1) !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
     color: #ffffff !important;
 }
 
-#genreGrid .pagination .page-item.active .page-link,
-#genreGrid .pagination .page-item.active .page-link:hover,
-#genreGrid .pagination .page-item.active .page-link:focus {
+/* ============================================================ */
+/* СТИЛЬ ДЛЯ АКТИВНОЙ СТРАНИЦЫ - ВСЕГДА ЧЁРНЫЙ ТЕКСТ НА ЖЁЛТОМ ФОНЕ */
+/* ============================================================ */
+#genreGrid .pagination .page-item.active .page-link {
     background-color: var(--main-color) !important;
     border-color: var(--main-color) !important;
     color: #000000 !important;
+    font-weight: bold !important;
+}
+
+/* Отключаем изменение цвета для активной страницы при любых взаимодействиях */
+#genreGrid .pagination .page-item.active .page-link:hover,
+#genreGrid .pagination .page-item.active .page-link:focus,
+#genreGrid .pagination .page-item.active .page-link:active {
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
+    color: #000000 !important;
+    font-weight: bold !important;
     box-shadow: none !important;
 }
 
+/* Стиль для отключенных страниц */
 #genreGrid .pagination .page-item.disabled .page-link,
 #genreGrid .pagination .page-item.disabled .page-link:hover {
     background-color: transparent !important;
@@ -401,36 +416,24 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Пагинация
+// ============================================================
+// ПАГИНАЦИЯ: применяем инлайн-стили ТОЛЬКО для активной страницы
+// ============================================================
 function makePaginationTransparent() {
     const paginationLinks = document.querySelectorAll('#transparentPagination .page-link');
+    
     paginationLinks.forEach(link => {
-        link.style.setProperty('background-color', 'transparent', 'important');
-        link.style.setProperty('background', 'transparent', 'important');
-        link.style.setProperty('border-color', 'rgba(255, 255, 255, 0.15)', 'important');
-        link.style.setProperty('color', '#ffffff', 'important');
+        const pageItem = link.closest('.page-item');
+        const isActive = pageItem?.classList.contains('active');
 
-        link.addEventListener('mouseenter', function() {
-            this.style.setProperty('background-color', 'rgba(255, 255, 255, 0.1)', 'important');
-            this.style.setProperty('border-color', 'rgba(255, 255, 255, 0.3)', 'important');
-        });
-        link.addEventListener('mouseleave', function() {
-            this.style.setProperty('background-color', 'transparent', 'important');
-            this.style.setProperty('border-color', 'rgba(255, 255, 255, 0.15)', 'important');
-        });
-    });
-
-    const activeLinks = document.querySelectorAll('#transparentPagination .page-item.active .page-link');
-    activeLinks.forEach(link => {
-        link.style.setProperty('background-color', 'rgba(13, 110, 253, 0.4)', 'important');
-        link.style.setProperty('border-color', 'rgba(13, 110, 253, 0.6)', 'important');
-    });
-
-    const disabledLinks = document.querySelectorAll('#transparentPagination .page-item.disabled .page-link');
-    disabledLinks.forEach(link => {
-        link.style.setProperty('background-color', 'transparent', 'important');
-        link.style.setProperty('border-color', 'rgba(255, 255, 255, 0.05)', 'important');
-        link.style.setProperty('color', 'rgba(255, 255, 255, 0.2)', 'important');
+        if (isActive) {
+            // Для активной страницы принудительно ставим чёрный текст на жёлтом фоне
+            link.style.setProperty('background-color', 'var(--main-color)', 'important');
+            link.style.setProperty('border-color', 'var(--main-color)', 'important');
+            link.style.setProperty('color', '#000000', 'important');
+            link.style.setProperty('font-weight', 'bold', 'important');
+        }
+        // Для остальных ничего не трогаем — работает через CSS
     });
 }
 
