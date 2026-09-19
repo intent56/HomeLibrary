@@ -1,7 +1,7 @@
 <div class="row" id="authorGrid">
     {% for author in authors %}
     <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
-        <!-- 2. КАРТОЧКА С БЕЛОЙ РАМКОЙ -->
+        <!-- КАРТОЧКА С БЕЛОЙ РАМКОЙ -->
         <div class="card h-100 shadow-sm hover-lift border border-white border-opacity-50 transparent-card">
             <div class="card-body text-center d-flex flex-column">
                 <div class="mb-3">
@@ -17,7 +17,7 @@
                         </div>
                     {% endif %}
                 </div>
-                <!-- БЛОК С ФИО АВТОРА С ФИКСИРОВАННОЙ ВЫСОТОЙ -->
+                <!-- БЛОК С ФИО АВТОРА -->
                 <h5 class="card-title" style="min-height: 3.6rem; display: flex; align-items: center; justify-content: center; word-break: break-word; line-height: 1.3;">
                     {{ author.fio }}
                 </h5>
@@ -52,23 +52,27 @@
         </div>
     </div>
 
-    <!-- Модальное окно подтверждения удаления -->
+    <!-- МОДАЛЬНОЕ ОКНО ПОДТВЕРЖДЕНИЯ УДАЛЕНИЯ (СТИЛЬ КАК В book_list.html) -->
     <div class="modal fade" id="deleteAuthorModal{{ author.id }}" tabindex="-1">
         <div class="modal-dialog">
-            <div class="modal-content bg-dark text-light">
+            <div class="modal-content bg-dark text-light border border-white border-opacity-50">
                 <div class="modal-header border-secondary">
-                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle text-danger"></i> Подтверждение удаления</h5>
+                    <h5 class="modal-title text-danger">
+                        <i class="bi bi-exclamation-triangle"></i> Подтверждение удаления
+                    </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Вы уверены, что хотите удалить автора <strong>"{{ author.fio }}"</strong>?</p>
+                    <p class="text-danger fw-bold">
+                        Вы уверены, что хотите удалить автора <strong>"{{ author.fio }}"</strong>?
+                    </p>
                     {% if author.book_authors %}
                         <div class="alert alert-warning transparent-alert">
                             <i class="bi bi-exclamation-triangle"></i>
                             Автор привязан к {{ author.book_authors|length }} книг(е/ам). Удаление может нарушить связи!
                         </div>
                     {% endif %}
-                    <p class="text-white-50 small">Это действие необратимо!</p>
+                    <p class="text-danger">Это действие необратимо!</p>
                 </div>
                 <div class="modal-footer border-secondary">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
@@ -96,7 +100,7 @@
     {% endfor %}
 </div>
 
-<!-- 3. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ -->
+<!-- ПАГИНАЦИЯ -->
 {% if pagination and pagination.pages > 1 %}
 <div class="row">
     <div class="col-12">
@@ -183,7 +187,7 @@
 </div>
 {% endif %}
 
-<!-- СТИЛИ ДЛЯ ПРОЗРАЧНЫХ КАРТОЧЕК И ПАГИНАЦИИ -->
+<!-- СТИЛИ -->
 <style>
 /* 1. УБИРАЕМ ВСЕ ПОДЛОЖКИ ДО ФОНА */
 #authorGrid,
@@ -191,7 +195,7 @@
     background: transparent !important;
 }
 
-/* Исключение — делаем фон для карточек, чтобы текст был читаем */
+/* 2. ФОН ДЛЯ КАРТОЧЕК */
 #authorGrid .transparent-card {
     background-color: rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(5px);
@@ -204,12 +208,11 @@
     transform: translateY(-4px);
 }
 
-/* 2. БЕЛАЯ РАМКА ДЛЯ КАРТОЧЕК (уже добавлена в классы) */
 #authorGrid .card.border-white {
     border: 1px solid rgba(255, 255, 255, 0.5) !important;
 }
 
-/* 3. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ - УСИЛЕННЫЕ СТИЛИ */
+/* 3. ПАГИНАЦИЯ */
 #authorGrid .pagination-container {
     background-color: rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(8px);
@@ -218,7 +221,6 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Базовый стиль для всех ссылок пагинации */
 #authorGrid .pagination .page-link,
 #authorGrid .pagination .page-link:focus,
 #authorGrid .pagination .page-link:visited {
@@ -228,14 +230,12 @@
     transition: all 0.2s ease;
 }
 
-/* Стиль при наведении для НЕактивных страниц */
 #authorGrid .pagination .page-item:not(.active) .page-link:hover {
     background-color: rgba(255, 255, 255, 0.1) !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
     color: #ffffff !important;
 }
 
-/* Стиль для АКТИВНОЙ страницы */
 #authorGrid .pagination .page-item.active .page-link,
 #authorGrid .pagination .page-item.active .page-link:hover,
 #authorGrid .pagination .page-item.active .page-link:focus {
@@ -245,7 +245,6 @@
     box-shadow: none !important;
 }
 
-/* Стиль для отключенных страниц */
 #authorGrid .pagination .page-item.disabled .page-link,
 #authorGrid .pagination .page-item.disabled .page-link:hover {
     background-color: transparent !important;
@@ -254,12 +253,12 @@
     cursor: not-allowed;
 }
 
-/* Текст в пагинации */
+/* 4. ТЕКСТ В ПАГИНАЦИИ */
 #authorGrid .text-white-50 {
     color: rgba(255, 255, 255, 0.7) !important;
 }
 
-/* Цвет текста в карточках */
+/* 5. ЗАГОЛОВОК КАРТОЧКИ */
 #authorGrid .card-title {
     color: #ffffff !important;
     min-height: 3.6rem;
@@ -273,7 +272,7 @@
     padding: 0 0.25rem;
 }
 
-/* Бейджи */
+/* 6. БЕЙДЖИ */
 #authorGrid .badge {
     background-color: var(--main-color) !important;
     color: #000000 !important;
@@ -281,7 +280,7 @@
     padding: 0.5rem 1rem;
 }
 
-/* Кнопки в карточках */
+/* 7. КНОПКИ В КАРТОЧКАХ */
 #authorGrid .btn-outline-light {
     color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
@@ -293,12 +292,34 @@
     color: #ffffff !important;
 }
 
-/* Модальное окно */
+/* 8. МОДАЛЬНОЕ ОКНО — ЦВЕТА И ШРИФТЫ КАК В book_list.html */
 #authorGrid .modal-content.bg-dark {
     background-color: rgba(33, 37, 41, 0.95) !important;
     backdrop-filter: blur(10px);
 }
 
+#authorGrid .modal-content.border {
+    border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+#authorGrid .modal-header.border-secondary,
+#authorGrid .modal-footer.border-secondary {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+#authorGrid .modal-title.text-danger {
+    color: #dc3545 !important;
+}
+
+#authorGrid .modal-body .text-danger {
+    color: #dc3545 !important;
+}
+
+#authorGrid .modal-body .text-danger.fw-bold {
+    font-weight: 700 !important;
+}
+
+/* Прозрачный алерт в модальном окне */
 #authorGrid .transparent-alert {
     background: rgba(255, 193, 7, 0.15) !important;
     backdrop-filter: blur(5px);
@@ -306,7 +327,34 @@
     color: #ffffff !important;
 }
 
-/* Адаптивность */
+#authorGrid .transparent-alert i {
+    color: #ffc107 !important;
+}
+
+/* Кнопки в модальном окне */
+#authorGrid .modal-footer .btn-secondary {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+    color: #ffffff !important;
+}
+
+#authorGrid .modal-footer .btn-secondary:hover {
+    background-color: #5c636a !important;
+    border-color: #565e64 !important;
+}
+
+#authorGrid .modal-footer .btn-danger {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+    color: #ffffff !important;
+}
+
+#authorGrid .modal-footer .btn-danger:hover {
+    background-color: #bb2d3b !important;
+    border-color: #b02a37 !important;
+}
+
+/* 9. АДАПТИВНОСТЬ */
 @media (max-width: 768px) {
     #authorGrid .pagination-container {
         flex-direction: column;
@@ -319,7 +367,7 @@
     #authorGrid .transparent-card {
         min-height: 340px;
     }
-    
+
     #authorGrid .card-title {
         min-height: 3rem;
         font-size: 1rem;
