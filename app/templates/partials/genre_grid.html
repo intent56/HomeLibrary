@@ -1,7 +1,7 @@
 <div class="row" id="genreGrid">
     {% for genre in genres %}
     <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
-        <!-- 2. КАРТОЧКА С БЕЛОЙ РАМКОЙ -->
+        <!-- КАРТОЧКА С БЕЛОЙ РАМКОЙ -->
         <div class="card h-100 shadow-sm hover-lift border border-white border-opacity-50 transparent-card">
             <div class="card-body text-center d-flex flex-column">
                 <div class="mb-3">
@@ -10,7 +10,6 @@
                         <i class="bi bi-tags display-1 main-text-color"></i>
                     </div>
                 </div>
-                <!-- БЛОК С НАЗВАНИЕМ ЖАНРА С ФИКСИРОВАННОЙ ВЫСОТОЙ -->
                 <h5 class="card-title text-white" style="min-height: 3.6rem; display: flex; align-items: center; justify-content: center; word-break: break-word; line-height: 1.3;">
                     {{ genre.name }}
                 </h5>
@@ -36,42 +35,15 @@
                        class="btn btn-outline-light btn-sm" title="Редактировать">
                         <i class="bi bi-pencil main-text-color"></i>
                     </a>
-                    <button type="button" class="btn btn-outline-light btn-sm" title="Удалить" 
-                            data-bs-toggle="modal" data-bs-target="#deleteGenreModal{{ genre.id }}">
+                    <!-- КНОПКА УДАЛЕНИЯ С data-атрибутами -->
+                    <button type="button" 
+                            class="btn btn-outline-light btn-sm btn-delete-genre" 
+                            title="Удалить"
+                            data-genre-id="{{ genre.id }}"
+                            data-genre-name="{{ genre.name }}"
+                            data-genre-books="{{ genre.book_genres|length }}">
                         <i class="bi bi-trash main-text-color"></i>
                     </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Модальное окно подтверждения удаления -->
-    <div class="modal fade" id="deleteGenreModal{{ genre.id }}" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content bg-dark text-light">
-                <div class="modal-header border-secondary">
-                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle text-danger"></i> Подтверждение удаления</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Вы уверены, что хотите удалить жанр <strong>"{{ genre.name }}"</strong>?</p>
-                    {% if genre.book_genres %}
-                        <div class="alert alert-warning transparent-alert">
-                            <i class="bi bi-exclamation-triangle"></i>
-                            Жанр привязан к {{ genre.book_genres|length }} книг(е/ам). Удаление может нарушить связи!
-                        </div>
-                    {% endif %}
-                    <p class="text-white-50 small">Это действие необратимо!</p>
-                </div>
-                <div class="modal-footer border-secondary">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                    <form method="POST" action="{{ url_for('main.delete_genre', genre_id=genre.id) }}" style="display: inline;">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <input type="hidden" name="page" value="{{ pagination.page }}">
-                        <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-trash"></i> Удалить
-                        </button>
-                    </form>
                 </div>
             </div>
         </div>
@@ -89,7 +61,7 @@
     {% endfor %}
 </div>
 
-<!-- 3. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ -->
+<!-- ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ -->
 {% if pagination and pagination.pages > 1 %}
 <div class="row">
     <div class="col-12">
@@ -176,6 +148,36 @@
 </div>
 {% endif %}
 
+<!-- ЕДИНОЕ МОДАЛЬНОЕ ОКНО ПОДТВЕРЖДЕНИЯ УДАЛЕНИЯ ЖАНРА -->
+<div class="modal fade" id="deleteGenreModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-light border border-white border-opacity-50">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-danger">
+                    <i class="bi bi-exclamation-triangle"></i> Подтверждение удаления
+                </h5>
+                <button type="button" class="btn-close btn-close-white" id="closeGenreModalBtn"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-danger fw-bold" id="deleteGenreModalMessage">
+                    Вы уверены, что хотите удалить жанр?
+                </p>
+                <div id="deleteGenreWarning" class="alert alert-warning transparent-alert" style="display: none;">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <span id="deleteGenreWarningText"></span>
+                </div>
+                <p class="text-danger">Это действие необратимо!</p>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" id="cancelDeleteGenreBtn">Отмена</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteGenreBtn">
+                    <i class="bi bi-trash"></i> Удалить
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- СТИЛИ ДЛЯ ПРОЗРАЧНЫХ КАРТОЧЕК И ПАГИНАЦИИ -->
 <style>
 /* 1. УБИРАЕМ ВСЕ ПОДЛОЖКИ ДО ФОНА */
@@ -202,7 +204,7 @@
     border: 1px solid rgba(255, 255, 255, 0.5) !important;
 }
 
-/* 3. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ - УСИЛЕННЫЕ СТИЛИ */
+/* 3. ПАГИНАЦИЯ С ПРОЗРАЧНЫМИ КНОПКАМИ */
 #genreGrid .pagination-container {
     background-color: rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(8px);
@@ -211,7 +213,6 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Базовый стиль для всех ссылок пагинации */
 #genreGrid .pagination .page-link,
 #genreGrid .pagination .page-link:focus,
 #genreGrid .pagination .page-link:visited {
@@ -221,14 +222,12 @@
     transition: all 0.2s ease;
 }
 
-/* Стиль при наведении для НЕактивных страниц */
 #genreGrid .pagination .page-item:not(.active) .page-link:hover {
     background-color: rgba(255, 255, 255, 0.1) !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
     color: #ffffff !important;
 }
 
-/* Стиль для АКТИВНОЙ страницы */
 #genreGrid .pagination .page-item.active .page-link,
 #genreGrid .pagination .page-item.active .page-link:hover,
 #genreGrid .pagination .page-item.active .page-link:focus {
@@ -238,7 +237,6 @@
     box-shadow: none !important;
 }
 
-/* Стиль для отключенных страниц */
 #genreGrid .pagination .page-item.disabled .page-link,
 #genreGrid .pagination .page-item.disabled .page-link:hover {
     background-color: transparent !important;
@@ -247,12 +245,10 @@
     cursor: not-allowed;
 }
 
-/* Текст в пагинации */
 #genreGrid .text-white-50 {
     color: rgba(255, 255, 255, 0.7) !important;
 }
 
-/* Цвет текста в карточках */
 #genreGrid .card-title {
     color: #ffffff !important;
     min-height: 3.6rem;
@@ -266,7 +262,6 @@
     padding: 0 0.25rem;
 }
 
-/* НОВЫЙ СТИЛЬ ДЛЯ БЕЙДЖА "КНИГ" */
 #genreGrid .custom-badge {
     background-color: var(--main-color) !important;
     color: #000000 !important;
@@ -274,7 +269,6 @@
     padding: 0.5rem 1rem;
 }
 
-/* Кнопки в карточках */
 #genreGrid .btn-outline-light {
     color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
@@ -286,7 +280,7 @@
     color: #ffffff !important;
 }
 
-/* Модальное окно */
+/* Модальное окно - единый стиль с book_list.html */
 #genreGrid .modal-content.bg-dark {
     background-color: rgba(33, 37, 41, 0.95) !important;
     backdrop-filter: blur(10px);
@@ -299,7 +293,6 @@
     color: #ffffff !important;
 }
 
-/* Адаптивность */
 @media (max-width: 768px) {
     #genreGrid .pagination-container {
         flex-direction: column;
@@ -312,10 +305,146 @@
     #genreGrid .transparent-card {
         min-height: 340px;
     }
-    
     #genreGrid .card-title {
         min-height: 3rem;
         font-size: 1rem;
     }
 }
 </style>
+
+<!-- JAVASCRIPT ДЛЯ МОДАЛЬНОГО ОКНА И ПАГИНАЦИИ -->
+<script>
+// Переменная для хранения ID удаляемого жанра
+let deleteGenreId = null;
+
+// Функция для закрытия модального окна
+function closeGenreModal() {
+    const modalElement = document.getElementById('deleteGenreModal');
+    if (modalElement) {
+        const modal = bootstrap.Modal.getInstance(modalElement);
+        if (modal) {
+            modal.hide();
+        } else {
+            const newModal = new bootstrap.Modal(modalElement);
+            newModal.hide();
+        }
+    }
+}
+
+// Функция для открытия модального окна
+function openDeleteGenreModal(genreId, genreName, booksCount) {
+    deleteGenreId = genreId;
+    document.getElementById('deleteGenreModalMessage').innerHTML = 
+        `Вы уверены, что хотите удалить жанр <strong>"${genreName}"</strong>?`;
+
+    const warningBlock = document.getElementById('deleteGenreWarning');
+    const warningText = document.getElementById('deleteGenreWarningText');
+
+    if (booksCount > 0) {
+        warningText.textContent = `Жанр привязан к ${booksCount} книг(е/ам). Удаление может нарушить связи!`;
+        warningBlock.style.display = 'block';
+    } else {
+        warningBlock.style.display = 'none';
+    }
+
+    const modalElement = document.getElementById('deleteGenreModal');
+    let modal = bootstrap.Modal.getInstance(modalElement);
+    if (!modal) {
+        modal = new bootstrap.Modal(modalElement);
+    }
+    modal.show();
+}
+
+// ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
+document.addEventListener('DOMContentLoaded', function() {
+    // Обработчики для модального окна
+    document.getElementById('cancelDeleteGenreBtn').addEventListener('click', closeGenreModal);
+    document.getElementById('closeGenreModalBtn').addEventListener('click', closeGenreModal);
+
+    document.getElementById('confirmDeleteGenreBtn').addEventListener('click', function() {
+        if (!deleteGenreId) return;
+
+        // Создаём форму для POST-запроса
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/genre/${deleteGenreId}/delete`;
+
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrf_token';
+        csrfInput.value = '{{ csrf_token() }}';
+        form.appendChild(csrfInput);
+
+        const pageInput = document.createElement('input');
+        pageInput.type = 'hidden';
+        pageInput.name = 'page';
+        pageInput.value = '{{ pagination.page if pagination else 1 }}';
+        form.appendChild(pageInput);
+
+        document.body.appendChild(form);
+        form.submit();
+        closeGenreModal();
+    });
+
+    // ДЕЛЕГИРОВАНИЕ СОБЫТИЙ: обработчик для всех кнопок удаления жанра
+    document.body.addEventListener('click', function(e) {
+        const deleteBtn = e.target.closest('.btn-delete-genre');
+        if (deleteBtn) {
+            e.preventDefault();
+            const genreId = deleteBtn.dataset.genreId;
+            const genreName = deleteBtn.dataset.genreName;
+            const booksCount = parseInt(deleteBtn.dataset.genreBooks) || 0;
+            if (genreId && genreName) {
+                openDeleteGenreModal(genreId, genreName, booksCount);
+            }
+        }
+    });
+});
+
+// Пагинация
+function makePaginationTransparent() {
+    const paginationLinks = document.querySelectorAll('#transparentPagination .page-link');
+    paginationLinks.forEach(link => {
+        link.style.setProperty('background-color', 'transparent', 'important');
+        link.style.setProperty('background', 'transparent', 'important');
+        link.style.setProperty('border-color', 'rgba(255, 255, 255, 0.15)', 'important');
+        link.style.setProperty('color', '#ffffff', 'important');
+
+        link.addEventListener('mouseenter', function() {
+            this.style.setProperty('background-color', 'rgba(255, 255, 255, 0.1)', 'important');
+            this.style.setProperty('border-color', 'rgba(255, 255, 255, 0.3)', 'important');
+        });
+        link.addEventListener('mouseleave', function() {
+            this.style.setProperty('background-color', 'transparent', 'important');
+            this.style.setProperty('border-color', 'rgba(255, 255, 255, 0.15)', 'important');
+        });
+    });
+
+    const activeLinks = document.querySelectorAll('#transparentPagination .page-item.active .page-link');
+    activeLinks.forEach(link => {
+        link.style.setProperty('background-color', 'rgba(13, 110, 253, 0.4)', 'important');
+        link.style.setProperty('border-color', 'rgba(13, 110, 253, 0.6)', 'important');
+    });
+
+    const disabledLinks = document.querySelectorAll('#transparentPagination .page-item.disabled .page-link');
+    disabledLinks.forEach(link => {
+        link.style.setProperty('background-color', 'transparent', 'important');
+        link.style.setProperty('border-color', 'rgba(255, 255, 255, 0.05)', 'important');
+        link.style.setProperty('color', 'rgba(255, 255, 255, 0.2)', 'important');
+    });
+}
+
+document.addEventListener('DOMContentLoaded', makePaginationTransparent);
+
+document.addEventListener('htmx:afterSwap', function(event) {
+    if (event.detail.target.id === 'genreGridContainer') {
+        setTimeout(makePaginationTransparent, 50);
+    }
+});
+
+document.addEventListener('htmx:afterSettle', function(event) {
+    if (event.detail.target.id === 'genreGridContainer') {
+        setTimeout(makePaginationTransparent, 50);
+    }
+});
+</script>
