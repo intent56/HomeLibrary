@@ -89,18 +89,14 @@ content %}
             <div class="card-footer bg-transparent border-top-0 mt-auto">
               <div class="d-flex justify-content-center gap-2">
                 <a
-                  href="{{ url_for('main.cover_view', 
-                              cover_id=cover.id, 
-                              return_page=pagination.page if pagination else 1) }}"
+                  href="{{ url_for('main.cover_view', cover_id=cover.id, return_page=pagination.page if pagination else 1) }}"
                   class="btn btn-outline-light btn-sm"
                   title="Просмотр карточки"
                 >
                   <i class="bi bi-eye main-text-color"></i>
                 </a>
                 <a
-                  href="{{ url_for('main.edit_cover', 
-                                       cover_id=cover.id, 
-                                       return_page=pagination.page if pagination else 1) }}"
+                  href="{{ url_for('main.edit_cover', cover_id=cover.id, return_page=pagination.page if pagination else 1) }}"
                   class="btn btn-outline-light btn-sm"
                   title="Редактировать"
                 >
@@ -120,17 +116,19 @@ content %}
           </div>
         </div>
 
-        <!-- МОДАЛЬНОЕ ОКНО ПОДТВЕРЖДЕНИЯ УДАЛЕНИЯ -->
+        <!-- МОДАЛЬНОЕ ОКНО ПОДТВЕРЖДЕНИЯ УДАЛЕНИЯ (стиль как в aggregator_table.html) -->
         <div
           class="modal fade"
           id="deleteCoverModal{{ cover.id }}"
           tabindex="-1"
         >
           <div class="modal-dialog">
-            <div class="modal-content bg-dark text-light">
+            <div
+              class="modal-content bg-dark text-light border border-white border-opacity-50"
+            >
               <div class="modal-header border-secondary">
-                <h5 class="modal-title">
-                  <i class="bi bi-exclamation-triangle text-danger"></i>
+                <h5 class="modal-title text-danger">
+                  <i class="bi bi-exclamation-triangle"></i>
                   Подтверждение удаления
                 </h5>
                 <button
@@ -140,7 +138,7 @@ content %}
                 ></button>
               </div>
               <div class="modal-body">
-                <p>
+                <p class="text-danger fw-bold">
                   Вы уверены, что хотите удалить тип переплета
                   <strong>"{{ cover.name }}"</strong>?
                 </p>
@@ -151,7 +149,7 @@ content %}
                   Удаление невозможно!
                 </div>
                 {% endif %}
-                <p class="text-white-50 small">Это действие необратимо!</p>
+                <p class="text-danger">Это действие необратимо!</p>
               </div>
               <div class="modal-footer border-secondary">
                 <button
@@ -294,7 +292,6 @@ content %}
     {% endif %}
   </div>
 </div>
-
 <!-- СТИЛИ -->
 <style>
   /* 1. УБИРАЕМ ВСЕ ПОДЛОЖКИ ДО ФОНА */
@@ -333,7 +330,6 @@ content %}
   }
 
   /* 4. БЕЙДЖ */
-  /* НОВЫЙ СТИЛЬ ДЛЯ БЕЙДЖА "КНИГ" — ВЫСОКАЯ СПЕЦИФИЧНОСТЬ */
   #coverGrid .custom-badge,
   #coverGrid .badge.custom-badge,
   #coverGrid .card-text .custom-badge {
@@ -454,10 +450,33 @@ content %}
     outline: none;
   }
 
-  /* 9. МОДАЛЬНОЕ ОКНО */
+  /* 9. МОДАЛЬНОЕ ОКНО (стиль как в aggregator_table.html) */
   .modal-content.bg-dark {
     background-color: rgba(33, 37, 41, 0.95) !important;
     backdrop-filter: blur(10px);
+  }
+
+  /* Белая рамка вокруг модального окна */
+  .modal-content.bg-dark.border-white {
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  }
+
+  /* Красный заголовок модального окна */
+  .modal-title.text-danger {
+    color: #dc3545 !important;
+    font-weight: 500;
+  }
+
+  /* Красное сообщение */
+  .modal-body .text-danger.fw-bold {
+    color: #dc3545 !important;
+    font-weight: 600 !important;
+    font-size: 1rem;
+  }
+
+  /* Красный текст о необратимости */
+  .modal-body .text-danger {
+    color: #dc3545 !important;
   }
 
   .transparent-alert {
