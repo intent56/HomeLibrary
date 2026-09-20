@@ -6,11 +6,10 @@
             <thead>
                 <tr>
                     <th style="width: 8%">Обложка</th>
-                    <th style="width: 20%">Название</th>
+                    <th style="width: 28%">Название</th>
                     <th style="width: 22%">Авторы</th>
                     <th style="width: 22%">Переводчики</th>
                     <th style="width: 13%">Жанры</th>
-                    <th style="width: 8%">Год</th>
                     <th style="width: 7%">Действия</th>
                 </tr>
             </thead>
@@ -53,7 +52,10 @@
                                  return_page=pagination.page if pagination else 1) }}"
                             class="badge mb-1 d-block text-decoration-none" style="font-size: 0.85rem; cursor: pointer;"
                             title="Просмотр карточки автора">
-                            <i class="bi bi-person"></i> {{ author.fio }}
+                            <i class="bi bi-person"></i> {{ author.lastname }} {% if author.firstname %} 
+                                                         {{ author.firstname.0 }}.{% endif %} 
+                                                         {% if  author.secondname %} {{ author.secondname.0 }}.
+                                                         {% endif %}
                         </a>
                         {% endfor %}
                         {% else %}
@@ -75,7 +77,9 @@
                                  return_page=pagination.page if pagination else 1,) }}"
                             class="badge mb-1 d-block text-decoration-none" style="font-size: 0.85rem; cursor: pointer;"
                             title="Просмотр карточки переводчика">
-                            <i class="bi bi-translate"></i> {{ interpreter.fio }}
+                            <i class="bi bi-translate"></i> {{ interpreter.lastname }} {% if interpreter.firstname %} 
+                                                            {{ interpreter.firstname.0 }}.{% endif %} {% if
+                                                    interpreter.secondname %} {{ interpreter.secondname.0 }}.{% endif %}
                         </a>
                         {% endfor %}
                         {% else %}
@@ -102,13 +106,6 @@
                         {% endfor %}
                         {% else %}
                         <span class="text-light-50"><i class="bi bi-tag"></i> Нет жанров</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if book.year_edition %}
-                        <strong>{{ book.year_edition }}</strong>
-                        {% else %}
-                        <strong>-</strong>
                         {% endif %}
                     </td>
                     <td>
