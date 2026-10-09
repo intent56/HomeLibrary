@@ -1,7 +1,6 @@
 import io
 from datetime import datetime
 import requests
-from bs4 import BeautifulSoup
 from sqlalchemy import and_, or_
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 import logging
@@ -69,54 +68,6 @@ def index():
 
     return render_template('index.html',
                            total_books=total_books)
-
-
-@bp.route("/books_poetry/")
-def books_poetry():
-    page = request.args.get("page", 1, type=int)
-    que = Book.query
-    que = que.join(Book.genre_books.and_(Genre.name == "Поэзия"))
-
-    books = que.order_by(Book.name).paginate(
-        page=page, per_page=current_app.config["ITEMS_PER_PAGE_BOOK"]
-    )
-    return render_template("books.html", books=books, source=1)
-
-
-@bp.route("/books_fantastic/")
-def books_fantastic():
-    page = request.args.get("page", 1, type=int)
-    que = Book.query
-    que = que.join(Book.genre_books.and_(Genre.name.like("%фантастика%")))
-
-    books = que.order_by(Book.name).paginate(
-        page=page, per_page=current_app.config["ITEMS_PER_PAGE_BOOK"]
-    )
-    return render_template("books.html", books=books, source=2)
-
-
-@bp.route("/books_dictionary/")
-def books_dictionary():
-    page = request.args.get("page", 1, type=int)
-    que = Book.query
-    que = que.join(Book.genre_books.and_(Genre.name.like("Словари%")))
-
-    books = que.order_by(Book.name).paginate(
-        page=page, per_page=current_app.config["ITEMS_PER_PAGE_BOOK"]
-    )
-    return render_template("books.html", books=books, source=3)
-
-
-@bp.route("/books_children/")
-def books_children():
-    page = request.args.get("page", 1, type=int)
-    que = Book.query
-    que = que.join(Book.genre_books.and_(Genre.name.like("Детская%")))
-
-    books = que.order_by(Book.name).paginate(
-        page=page, per_page=current_app.config["ITEMS_PER_PAGE_BOOK"]
-    )
-    return render_template("books.html", books=books, source=4)
 
 
 @bp.route('/book/add', methods=['GET', 'POST'])
