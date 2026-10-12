@@ -5,7 +5,7 @@ content %}
     <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h2 class="text-white">
+        <h2 class="main-text-color">
           <i class="bi bi-plus-circle"></i> Добавление новой книги
         </h2>
         <span class="badge bg-opacity-75 text-white fs-6"
@@ -22,14 +22,14 @@ content %}
     <!-- Поиск в интернете -->
     <div class="card shadow-sm mb-4 transparent-card">
       <div class="card-header transparent-card-header">
-        <h5 class="mb-0 text-white">
+        <h5 class="mb-0 main-text-color">
           <i class="bi bi-cloud-download"></i> Найти книгу в интернете
         </h5>
       </div>
       <div class="card-body transparent-card-body">
         <div class="row g-3">
           <div class="col-md-3">
-            <label for="sourceSelect" class="form-label fw-bold text-white"
+            <label for="sourceSelect" class="form-label fw-bold main-text-color"
               >Источник</label
             >
             <select class="custom-select" id="sourceSelect">
@@ -37,7 +37,7 @@ content %}
             </select>
           </div>
           <div class="col-md-4">
-            <label for="searchQuery" class="form-label fw-bold text-white"
+            <label for="searchQuery" class="form-label fw-bold main-text-color"
               >Поиск по названию или ISBN</label
             >
             <div class="input-group">
@@ -53,7 +53,7 @@ content %}
             </div>
           </div>
           <div class="col-md-3">
-            <label class="form-label fw-bold text-white"> </label>
+            <label class="form-label fw-bold main-text-color"> </label>
             <div class="d-flex gap-2">
               <button
                 class="btn btn-outline-light flex-grow-1"
@@ -78,14 +78,16 @@ content %}
 
         <!-- Результаты поиска -->
         <div id="searchResults" class="mt-3" style="display: none">
-          <h6 class="text-white">Найденные книги:</h6>
+          <h6 class="main-text-color">Найденные книги:</h6>
           <div id="resultsList" class="list-group bg-transparent"></div>
         </div>
 
         <!-- Агрегаторы -->
         <div class="row g-3 mt-2 pt-2 border-top border-light">
           <div class="col-md-9">
-            <label for="aggregatorSelect" class="form-label fw-bold text-white"
+            <label
+              for="aggregatorSelect"
+              class="form-label fw-bold main-text-color"
               >Поиск на сайтах-агрегаторах</label
             >
             <div class="input-group">
@@ -214,7 +216,8 @@ content %}
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    {{ form.name.label(class="form-label fw-bold text-white") }}
+                    {{ form.name.label(class="form-label fw-bold
+                    main-text-color") }}
                     <span class="text-danger">*</span>
                     {{ form.name(class="form-control custom-input" + ("
                     is-invalid" if form.name.errors else ""),
@@ -233,7 +236,7 @@ content %}
                 <div class="col-md-6">
                   <div class="mb-3">
                     {{ form.location.label(class="form-label fw-bold
-                    text-white") }}
+                    main-text-color") }}
                     <span class="text-danger">*</span>
                     {{ form.location(class="form-control custom-input" + ("
                     is-invalid" if form.location.errors else ""),
@@ -251,17 +254,17 @@ content %}
                 </div>
               </div>
               <div class="mb-3">
-                {{ form.fullname.label(class="form-label fw-bold text-white") }}
-                {{ form.fullname(class="form-control custom-input",
-                placeholder="Например: 'Война и мир. Том 1'", id="bookFullname")
-                }}
+                {{ form.fullname.label(class="form-label fw-bold
+                main-text-color") }} {{ form.fullname(class="form-control
+                custom-input", placeholder="Например: 'Война и мир. Том 1'",
+                id="bookFullname") }}
                 <div class="form-text text-white-50">
                   Полное название, включая подзаголовок
                 </div>
               </div>
               <div class="mb-3">
-                {{ form.id_language.label(class="form-label fw-bold text-white")
-                }}
+                {{ form.id_language.label(class="form-label fw-bold
+                main-text-color") }}
                 <div class="input-group">
                   {{ form.id_language(class="form-select d-none",
                   id="languageSelect") }}
@@ -286,7 +289,7 @@ content %}
                   </button>
                   <span
                     id="languageSearchSpinner"
-                    class="spinner-border spinner-border-sm htmx-indicator text-white"
+                    class="spinner-border spinner-border-sm htmx-indicator main-text-color"
                     role="status"
                     style="margin-left: 8px"
                   ></span>
@@ -298,7 +301,7 @@ content %}
                 ></div>
                 <div id="selectedLanguageDisplay" class="mt-2">
                   <span
-                    class="badge btn-outline-light bg-opacity-75 text-white"
+                    class="badge btn-outline-light bg-opacity-75 main-text-color"
                     id="selectedLanguageBadge"
                     style="display: none"
                   >
@@ -330,9 +333,9 @@ content %}
                 <div class="col-md-6">
                   <div class="mb-3">
                     {{ form.seria_global.label(class="form-label fw-bold
-                    text-white") }} {{ form.seria_global(class="form-control
-                    custom-input", placeholder="Например: 'Русская классика'")
-                    }}
+                    main-text-color") }} {{
+                    form.seria_global(class="form-control custom-input",
+                    placeholder="Например: 'Русская классика'") }}
                     <div class="form-text text-white-50">
                       Глобальная серия (большой цикл)
                     </div>
@@ -341,7 +344,7 @@ content %}
                 <div class="col-md-6">
                   <div class="mb-3">
                     {{ form.seria_local.label(class="form-label fw-bold
-                    text-white") }} {{ form.seria_local(class="form-control
+                    main-text-color") }} {{ form.seria_local(class="form-control
                     custom-input", placeholder="Например: 'Романы-эпопеи'") }}
                     <div class="form-text text-white-50">
                       Локальная серия внутри глобальной
@@ -352,9 +355,9 @@ content %}
               <div class="row">
                 <div class="col-md-4">
                   <div class="mb-3">
-                    {{ form.edition.label(class="form-label fw-bold text-white")
-                    }} {{ form.edition(class="form-control custom-input",
-                    placeholder="Например: '3-е издание'") }}
+                    {{ form.edition.label(class="form-label fw-bold
+                    main-text-color") }} {{ form.edition(class="form-control
+                    custom-input", placeholder="Например: '3-е издание'") }}
                     <div class="form-text text-white-50">
                       Номер или название издания
                     </div>
@@ -363,9 +366,10 @@ content %}
                 <div class="col-md-4">
                   <div class="mb-3">
                     {{ form.year_edition.label(class="form-label fw-bold
-                    text-white") }} {{ form.year_edition(class="form-control
-                    custom-input" + (" is-invalid" if form.year_edition.errors
-                    else ""), type="number", min="1000", max="2100",
+                    main-text-color") }} {{
+                    form.year_edition(class="form-control custom-input" + ("
+                    is-invalid" if form.year_edition.errors else ""),
+                    type="number", min="1000", max="2100",
                     placeholder="Например: '2024'") }} {% if
                     form.year_edition.errors %}
                     <div class="invalid-feedback d-block">
@@ -378,11 +382,11 @@ content %}
                 </div>
                 <div class="col-md-4">
                   <div class="mb-3">
-                    {{ form.pages.label(class="form-label fw-bold text-white")
-                    }} {{ form.pages(class="form-control custom-input" + ("
-                    is-invalid" if form.pages.errors else ""), type="number",
-                    min="0", placeholder="Например: '350'", id="bookPages") }}
-                    {% if form.pages.errors %}
+                    {{ form.pages.label(class="form-label fw-bold
+                    main-text-color") }} {{ form.pages(class="form-control
+                    custom-input" + (" is-invalid" if form.pages.errors else
+                    ""), type="number", min="0", placeholder="Например: '350'",
+                    id="bookPages") }} {% if form.pages.errors %}
                     <div class="invalid-feedback d-block">
                       {% for error in form.pages.errors %} {{ error }} {% endfor
                       %}
@@ -402,8 +406,8 @@ content %}
                 <div class="col-md-6">
                   <div class="mb-3">
                     {{ form.id_cover.label(class="form-label fw-bold
-                    text-white") }} {{ form.id_cover(class="custom-select" + ("
-                    is-invalid" if form.id_cover.errors else "")) }} {% if
+                    main-text-color") }} {{ form.id_cover(class="custom-select"
+                    + (" is-invalid" if form.id_cover.errors else "")) }} {% if
                     form.id_cover.errors %}
                     <div class="invalid-feedback d-block">
                       {% for error in form.id_cover.errors %} {{ error }} {%
@@ -418,7 +422,7 @@ content %}
                 <div class="col-md-6">
                   <div class="mb-3">
                     {{ form.id_format.label(class="form-label fw-bold
-                    text-white") }}
+                    main-text-color") }}
                     <!-- HTMX-ПОИСК ДЛЯ ФОРМАТА -->
                     <div class="input-group">
                       {{ form.id_format(class="form-select d-none",
@@ -443,7 +447,7 @@ content %}
                       </button>
                       <span
                         id="formatSearchSpinner"
-                        class="spinner-border spinner-border-sm htmx-indicator text-white"
+                        class="spinner-border spinner-border-sm htmx-indicator main-text-color"
                         role="status"
                         style="margin-left: 8px"
                       ></span>
@@ -455,7 +459,7 @@ content %}
                     ></div>
                     <div id="selectedFormatDisplay" class="mt-2">
                       <span
-                        class="badge btn-outline-light bg-opacity-75 text-white"
+                        class="badge btn-outline-light bg-opacity-75 main-text-color"
                         id="selectedFormatBadge"
                         style="display: none"
                       >
@@ -485,7 +489,7 @@ content %}
                 <div class="col-md-6">
                   <div class="mb-3">
                     {{ form.circulation.label(class="form-label fw-bold
-                    text-white") }} {{ form.circulation(class="form-control
+                    main-text-color") }} {{ form.circulation(class="form-control
                     custom-input" + (" is-invalid" if form.circulation.errors
                     else ""), type="number", min="0", placeholder="Например:
                     '5000'") }} {% if form.circulation.errors %}
@@ -499,8 +503,8 @@ content %}
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    {{ form.price.label(class="form-label fw-bold text-white")
-                    }}
+                    {{ form.price.label(class="form-label fw-bold
+                    main-text-color") }}
                     <div class="input-group">
                       {{ form.price(class="form-control custom-input" + ("
                       is-invalid" if form.price.errors else ""), type="number",
@@ -524,9 +528,10 @@ content %}
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    {{ form.barcode.label(class="form-label fw-bold text-white")
-                    }} {{ form.barcode(class="form-control custom-input",
-                    placeholder="Например: '978-5-17-123456-7'") }}
+                    {{ form.barcode.label(class="form-label fw-bold
+                    main-text-color") }} {{ form.barcode(class="form-control
+                    custom-input", placeholder="Например: '978-5-17-123456-7'")
+                    }}
                     <div class="form-text text-white-50">
                       Штрих-код или артикул
                     </div>
@@ -534,10 +539,10 @@ content %}
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    {{ form.isbn.label(class="form-label fw-bold text-white") }}
-                    {{ form.isbn(class="form-control custom-input",
-                    placeholder="Например: '978-5-17-123456-7'", id="bookIsbn")
-                    }}
+                    {{ form.isbn.label(class="form-label fw-bold
+                    main-text-color") }} {{ form.isbn(class="form-control
+                    custom-input", placeholder="Например: '978-5-17-123456-7'",
+                    id="bookIsbn") }}
                     <div class="form-text text-white-50">
                       Международный стандартный книжный номер
                     </div>
@@ -549,19 +554,19 @@ content %}
             <!-- Вкладка 5: Содержание -->
             <div class="tab-pane fade" id="content" role="tabpanel">
               <div class="mb-3">
-                {{ form.summary.label(class="form-label fw-bold text-white") }}
-                {{ form.summary(class="form-control custom-input", rows="4",
-                placeholder="Например: 'Краткая аннотация к книге...'",
-                id="bookSummary") }}
+                {{ form.summary.label(class="form-label fw-bold
+                main-text-color") }} {{ form.summary(class="form-control
+                custom-input", rows="4", placeholder="Например: 'Краткая
+                аннотация к книге...'", id="bookSummary") }}
                 <div class="form-text text-white-50">
                   Краткое описание содержания книги
                 </div>
               </div>
               <div class="mb-3">
-                {{ form.content.label(class="form-label fw-bold text-white") }}
-                {{ form.content(class="form-control custom-input", rows="6",
-                placeholder="Например: 'Подробное содержание или
-                оглавление...'") }}
+                {{ form.content.label(class="form-label fw-bold
+                main-text-color") }} {{ form.content(class="form-control
+                custom-input", rows="6", placeholder="Например: 'Подробное
+                содержание или оглавление...'") }}
                 <div class="form-text text-white-50">
                   Полное содержание или оглавление книги
                 </div>
@@ -571,8 +576,8 @@ content %}
             <!-- Вкладка 6: Обложка -->
             <div class="tab-pane fade" id="cover" role="tabpanel">
               <div class="mb-3">
-                {{ form.cover.label(class="form-label fw-bold text-white") }} {{
-                form.cover(class="form-control custom-file-input" + ("
+                {{ form.cover.label(class="form-label fw-bold main-text-color")
+                }} {{ form.cover(class="form-control custom-file-input" + ("
                 is-invalid" if form.cover.errors else ""), accept="image/*") }}
                 {% if form.cover.errors %}
                 <div class="invalid-feedback d-block">
@@ -596,10 +601,10 @@ content %}
                 </div>
               </div>
               <div class="mb-3">
-                {{ form.add_info.label(class="form-label fw-bold text-white") }}
-                {{ form.add_info(class="form-control custom-input", rows="3",
-                placeholder="Например: 'Любая дополнительная информация о
-                книге...'", id="bookAddInfo") }}
+                {{ form.add_info.label(class="form-label fw-bold
+                main-text-color") }} {{ form.add_info(class="form-control
+                custom-input", rows="3", placeholder="Например: 'Любая
+                дополнительная информация о книге...'", id="bookAddInfo") }}
                 <div class="form-text text-white-50">
                   Примечания, пометки, дополнительная информация
                 </div>
@@ -621,7 +626,7 @@ content %}
         <div class="modal-dialog modal-lg">
           <div class="modal-content bg-dark text-light border-light">
             <div class="modal-header border-secondary">
-              <h5 class="modal-title text-white" id="languageModalLabel">
+              <h5 class="modal-title main-text-color" id="languageModalLabel">
                 <i class="bi bi-translate text-info"></i> Поиск языка
               </h5>
               <button
@@ -672,7 +677,7 @@ content %}
         <div class="modal-dialog modal-lg">
           <div class="modal-content bg-dark text-light border-light">
             <div class="modal-header border-secondary">
-              <h5 class="modal-title text-white" id="formatModalLabel">
+              <h5 class="modal-title main-text-color" id="formatModalLabel">
                 <i class="bi bi-aspect-ratio text-info"></i> Поиск формата
               </h5>
               <button
@@ -979,10 +984,10 @@ content %}
         const item = document.createElement("a");
         item.href = "#";
         item.className =
-          "list-group-item list-group-item-action bg-transparent text-white border-light";
+          "list-group-item list-group-item-action bg-transparent main-text-color border-light";
         item.innerHTML = `
                 <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1 text-white">${book.title || "Без названия"}</h6>
+                    <h6 class="mb-1 main-text-color">${book.title || "Без названия"}</h6>
                     <small class="text-white-50">${book.authors || "Автор не указан"}</small>
                 </div>
                 <p class="mb-1 small text-white-50">${book.publisher || "Издатель не указан"} ${book.published_date ? `(${book.published_date})` : ""}</p>
@@ -1100,7 +1105,7 @@ content %}
       const statusDiv = document.getElementById("searchStatus");
       let html = '<span class="text-success">✅ Найдены авторы: </span>';
       authors.forEach((author) => {
-        html += `<span class="badge bg-primary bg-opacity-75 text-white me-1">${author}</span>`;
+        html += `<span class="badge bg-primary bg-opacity-75 main-text-color me-1">${author}</span>`;
       });
       html +=
         '<br><small class="text-white-50">Вы можете добавить их вручную в соответствующем разделе.</small>';
@@ -1111,7 +1116,7 @@ content %}
     // --- Предложение издателя ---
     function showPublisherSuggestion(publisher) {
       const statusDiv = document.getElementById("searchStatus");
-      statusDiv.innerHTML += `<br><span class="text-success">✅ Найден издатель: </span><span class="badge bg-secondary bg-opacity-75 text-white">${publisher}</span>`;
+      statusDiv.innerHTML += `<br><span class="text-success">✅ Найден издатель: </span><span class="badge bg-secondary bg-opacity-75 main-text-color">${publisher}</span>`;
       statusDiv.className = "form-text";
     }
 
@@ -1532,7 +1537,7 @@ content %}
     color: #0dcaf0 !important;
   }
 
-  .transparent-alert .text-white {
+  .transparent-alert .main-text-color {
     color: #ffffff !important;
   }
 
@@ -1611,7 +1616,7 @@ content %}
     border-color: rgba(255, 255, 255, 0.1) !important;
   }
 
-  .modal-title.text-white {
+  .modal-title.main-text-color {
     color: #ffffff !important;
   }
 
