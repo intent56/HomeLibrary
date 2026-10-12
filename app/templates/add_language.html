@@ -5,7 +5,7 @@ content %}
     <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h2 class="text-white">
+        <h2 class="main-text-color">
           <i class="bi bi-plus-circle"></i> Добавление языка
         </h2>
         <span class="badge bg-opacity-75 text-white fs-6"
@@ -55,7 +55,8 @@ content %}
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    {{ form.code.label(class="form-label fw-bold text-white") }}
+                    {{ form.code.label(class="form-label fw-bold
+                    main-text-color") }}
                     <span class="text-danger">*</span>
                     {{ form.code(class="form-control custom-input" + ("
                     is-invalid" if form.code.errors else ""),
@@ -78,7 +79,8 @@ content %}
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    {{ form.name.label(class="form-label fw-bold text-white") }}
+                    {{ form.name.label(class="form-label fw-bold
+                    main-text-color") }}
                     <span class="text-danger">*</span>
                     {{ form.name(class="form-control custom-input" + ("
                     is-invalid" if form.name.errors else ""),
@@ -96,7 +98,9 @@ content %}
 
               <!-- Флаг языка (эмодзи) -->
               <div class="mb-3">
-                <label class="form-label fw-bold text-white">Флаг языка</label>
+                <label class="form-label fw-bold main-text-color"
+                  >Флаг языка</label
+                >
                 <div class="row">
                   <div class="col-md-8">
                     <select class="custom-select" id="languageFlag">
@@ -139,9 +143,10 @@ content %}
               </div>
 
               <div class="mb-3">
-                {{ form.comment.label(class="form-label fw-bold text-white") }}
-                {{ form.comment(class="form-control custom-input", rows="3",
-                placeholder="Например: 'Русский язык'") }}
+                {{ form.comment.label(class="form-label fw-bold
+                main-text-color") }} {{ form.comment(class="form-control
+                custom-input", rows="3", placeholder="Например: 'Русский язык'")
+                }}
                 <div class="form-text text-white-50">
                   Комментарии, примечания
                 </div>
@@ -149,9 +154,9 @@ content %}
 
               <!-- Информация о книгах (для справки) -->
               <div class="alert alert-info transparent-alert mt-3">
-                <i class="bi bi-info-circle text-white"></i>
-                <strong class="text-white">Книг на этом языке:</strong>
-                <span class="text-white">0</span>
+                <i class="bi bi-info-circle main-text-color"></i>
+                <strong class="main-text-color">Книг на этом языке:</strong>
+                <span class="main-text-color">0</span>
                 <span class="ms-3 text-white-50 small"
                   >(будут добавляться при редактировании книг)</span
                 >
@@ -449,7 +454,7 @@ content %}
     color: var(--main-color) !important;
   }
 
-  .custom-alert .text-white {
+  .custom-alert .main-text-color {
     color: #ffffff !important;
   }
 
@@ -465,7 +470,7 @@ content %}
     color: #0dcaf0 !important;
   }
 
-  .transparent-alert .text-white {
+  .transparent-alert .main-text-color {
     color: #ffffff !important;
   }
 

@@ -5,7 +5,7 @@ content %}
     <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h2 class="text-white">
+        <h2 class="main-text-color">
           <i class="bi bi-plus-circle"></i> Добавление агрегатора
         </h2>
         <h5 class="text-white-50">Заполните информацию о сайте-агрегаторе</h5>
@@ -54,7 +54,8 @@ content %}
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    {{ form.name.label(class="form-label fw-bold text-white") }}
+                    {{ form.name.label(class="form-label fw-bold
+                    main-text-color") }}
                     <span class="text-danger">*</span>
                     {{ form.name(class="form-control custom-input" + ("
                     is-invalid" if form.name.errors else ""),
@@ -71,7 +72,8 @@ content %}
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    {{ form.code.label(class="form-label fw-bold text-white") }}
+                    {{ form.code.label(class="form-label fw-bold
+                    main-text-color") }}
                     <span class="text-danger">*</span>
                     {{ form.code(class="form-control custom-input" + ("
                     is-invalid" if form.code.errors else ""),
@@ -90,7 +92,7 @@ content %}
 
               <div class="mb-3">
                 {{ form.url_template.label(class="form-label fw-bold
-                text-white") }}
+                main-text-color") }}
                 <span class="text-danger">*</span>
                 {{ form.url_template(class="form-control custom-input" + ("
                 is-invalid" if form.url_template.errors else ""),
@@ -115,10 +117,10 @@ content %}
               </div>
 
               <div class="mb-3">
-                {{ form.icon.label(class="form-label fw-bold text-white") }} {{
-                form.icon(class="form-control custom-input" + (" is-invalid" if
-                form.icon.errors else ""), placeholder="bi-box-seam") }} {% if
-                form.icon.errors %}
+                {{ form.icon.label(class="form-label fw-bold main-text-color")
+                }} {{ form.icon(class="form-control custom-input" + ("
+                is-invalid" if form.icon.errors else ""),
+                placeholder="bi-box-seam") }} {% if form.icon.errors %}
                 <div class="invalid-feedback d-block">
                   {% for error in form.icon.errors %} {{ error }} {% endfor %}
                 </div>
@@ -143,7 +145,7 @@ content %}
                     >Предпросмотр:</span
                   >
                   <i
-                    class="bi {{ form.icon.data or 'bi-box-seam' }} fs-4 text-white"
+                    class="bi {{ form.icon.data or 'bi-box-seam' }} fs-4 main-text-color"
                     id="iconPreview"
                   ></i>
                 </div>
@@ -154,7 +156,7 @@ content %}
                   <div class="mb-3 form-check">
                     {{ form.is_active(class="form-check-input custom-checkbox")
                     }} {{ form.is_active.label(class="form-check-label
-                    text-white") }}
+                    main-text-color") }}
                     <div class="form-text text-white-50">
                       Если активно, агрегатор будет доступен для поиска
                     </div>
@@ -163,8 +165,9 @@ content %}
                 <div class="col-md-6">
                   <div class="mb-3">
                     {{ form.search_type.label(class="form-label fw-bold
-                    text-white") }} {{ form.search_type(class="custom-select" +
-                    (" is-invalid" if form.search_type.errors else "")) }} {% if
+                    main-text-color") }} {{
+                    form.search_type(class="custom-select" + (" is-invalid" if
+                    form.search_type.errors else "")) }} {% if
                     form.search_type.errors %}
                     <div class="invalid-feedback d-block">
                       {% for error in form.search_type.errors %} {{ error }} {%
@@ -181,9 +184,10 @@ content %}
               </div>
 
               <div class="mb-3">
-                {{ form.comment.label(class="form-label fw-bold text-white") }}
-                {{ form.comment(class="form-control custom-input", rows="3",
-                placeholder="Дополнительная информация об агрегаторе...") }}
+                {{ form.comment.label(class="form-label fw-bold
+                main-text-color") }} {{ form.comment(class="form-control
+                custom-input", rows="3", placeholder="Дополнительная информация
+                об агрегаторе...") }}
                 <div class="form-text text-white-50">
                   Комментарии, примечания
                 </div>
@@ -231,7 +235,7 @@ content %}
     if (iconInput && iconPreview) {
       iconInput.addEventListener("input", function () {
         const iconClass = this.value.trim() || "bi-box-seam";
-        iconPreview.className = "bi " + iconClass + " fs-4 text-white";
+        iconPreview.className = "bi " + iconClass + " fs-4 main-text-color";
       });
     }
 
@@ -475,7 +479,7 @@ content %}
     color: var(--main-color) !important;
   }
 
-  .custom-alert .text-white {
+  .custom-alert .main-text-color {
     color: #ffffff !important;
   }
 

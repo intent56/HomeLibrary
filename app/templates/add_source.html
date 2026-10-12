@@ -5,7 +5,7 @@ content %}
     <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h2 class="text-white">
+        <h2 class="main-text-color">
           <i class="bi bi-plus-circle"></i> Добавление источника
         </h2>
         <span class="badge bg-opacity-75 text-white fs-6"
@@ -54,7 +54,8 @@ content %}
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    {{ form.name.label(class="form-label fw-bold text-white") }}
+                    {{ form.name.label(class="form-label fw-bold
+                    main-text-color") }}
                     <span class="text-danger">*</span>
                     {{ form.name(class="form-control custom-input" + ("
                     is-invalid" if form.name.errors else ""),
@@ -72,7 +73,8 @@ content %}
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    {{ form.code.label(class="form-label fw-bold text-white") }}
+                    {{ form.code.label(class="form-label fw-bold
+                    main-text-color") }}
                     <span class="text-danger">*</span>
                     {{ form.code(class="form-control custom-input" + ("
                     is-invalid" if form.code.errors else ""),
@@ -91,9 +93,9 @@ content %}
               </div>
 
               <div class="mb-3">
-                {{ form.url.label(class="form-label fw-bold text-white") }} {{
-                form.url(class="form-control custom-input" + (" is-invalid" if
-                form.url.errors else ""), placeholder="Например:
+                {{ form.url.label(class="form-label fw-bold main-text-color") }}
+                {{ form.url(class="form-control custom-input" + (" is-invalid"
+                if form.url.errors else ""), placeholder="Например:
                 'https://www.googleapis.com/books/v1/'") }} {% if
                 form.url.errors %}
                 <div class="invalid-feedback d-block">
@@ -110,7 +112,7 @@ content %}
                   <div class="mb-3 form-check">
                     {{ form.is_active(class="form-check-input custom-checkbox")
                     }} {{ form.is_active.label(class="form-check-label
-                    text-white") }}
+                    main-text-color") }}
                     <div class="form-text text-white-50">
                       Если активно, источник будет доступен для поиска
                     </div>
@@ -123,15 +125,15 @@ content %}
                   <div class="form-check">
                     {{ form.chk_books(class="form-check-input custom-checkbox")
                     }} {{ form.chk_books.label(class="form-check-label
-                    text-white") }}
+                    main-text-color") }}
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="form-check">
                     {{ form.chk_authors(class="form-check-input
                     custom-checkbox") }} {{
-                    form.chk_authors.label(class="form-check-label text-white")
-                    }}
+                    form.chk_authors.label(class="form-check-label
+                    main-text-color") }}
                   </div>
                 </div>
                 <div class="col-md-4">
@@ -139,15 +141,16 @@ content %}
                     {{ form.chk_interpreters(class="form-check-input
                     custom-checkbox") }} {{
                     form.chk_interpreters.label(class="form-check-label
-                    text-white") }}
+                    main-text-color") }}
                   </div>
                 </div>
               </div>
 
               <div class="mb-3">
-                {{ form.comment.label(class="form-label fw-bold text-white") }}
-                {{ form.comment(class="form-control custom-input", rows="3",
-                placeholder="Например: 'API Google Books для поиска книг'") }}
+                {{ form.comment.label(class="form-label fw-bold
+                main-text-color") }} {{ form.comment(class="form-control
+                custom-input", rows="3", placeholder="Например: 'API Google
+                Books для поиска книг'") }}
                 <div class="form-text text-white-50">
                   Комментарии, примечания
                 </div>
@@ -405,7 +408,7 @@ content %}
     color: var(--main-color) !important;
   }
 
-  .custom-alert .text-white {
+  .custom-alert .main-text-color {
     color: #ffffff !important;
   }
 
@@ -421,7 +424,7 @@ content %}
     color: #0dcaf0 !important;
   }
 
-  .transparent-alert .text-white {
+  .transparent-alert .main-text-color {
     color: #ffffff !important;
   }
 

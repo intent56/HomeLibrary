@@ -5,7 +5,7 @@ content %}
     <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h2 class="text-white">
+        <h2 class="main-text-color">
           <i class="bi bi-translate"></i> Добавление переводчика
         </h2>
         <span class="badge bg-opacity-75 text-white fs-6"
@@ -25,7 +25,7 @@ content %}
     <!-- Поиск переводчика в интернете -->
     <div class="card shadow-sm mb-4 transparent-card">
       <div class="card-header transparent-card-header">
-        <h5 class="mb-0 text-white">
+        <h5 class="mb-0 main-text-color">
           <i class="bi bi-cloud-download"></i> Найти переводчика в интернете
         </h5>
       </div>
@@ -34,7 +34,7 @@ content %}
           <div class="col-md-3">
             <label
               for="interpreterSourceSelect"
-              class="form-label fw-bold text-white"
+              class="form-label fw-bold main-text-color"
               >Источник</label
             >
             <select class="custom-select" id="interpreterSourceSelect">
@@ -44,7 +44,7 @@ content %}
           <div class="col-md-7">
             <label
               for="interpreterSearchQuery"
-              class="form-label fw-bold text-white"
+              class="form-label fw-bold main-text-color"
               >Имя переводчика</label
             >
             <div class="input-group">
@@ -67,7 +67,7 @@ content %}
             </div>
           </div>
           <div class="col-md-2">
-            <label class="form-label text-white"> </label>
+            <label class="form-label main-text-color"> </label>
             <button
               class="btn btn-outline-light w-100"
               type="button"
@@ -86,7 +86,7 @@ content %}
 
         <!-- Результаты поиска -->
         <div id="interpreterSearchResults" class="mt-3" style="display: none">
-          <h6 class="text-white">Найденные переводчики:</h6>
+          <h6 class="main-text-color">Найденные переводчики:</h6>
           <div
             id="interpreterResultsList"
             class="list-group bg-transparent"
@@ -96,7 +96,9 @@ content %}
         <!-- АГРЕГАТОРЫ -->
         <div class="row g-3 mt-2 pt-2 border-top border-light">
           <div class="col-md-9">
-            <label for="aggregatorSelect" class="form-label fw-bold text-white"
+            <label
+              for="aggregatorSelect"
+              class="form-label fw-bold main-text-color"
               >Поиск на сайтах-агрегаторах</label
             >
             <div class="input-group">
@@ -180,7 +182,7 @@ content %}
                 <div class="col-md-4">
                   <div class="mb-3">
                     {{ form.lastname.label(class="form-label fw-bold
-                    text-white") }}
+                    main-text-color") }}
                     <span class="text-danger">*</span>
                     {{ form.lastname(class="form-control custom-input" + ("
                     is-invalid" if form.lastname.errors else ""),
@@ -199,7 +201,7 @@ content %}
                 <div class="col-md-4">
                   <div class="mb-3">
                     {{ form.firstname.label(class="form-label fw-bold
-                    text-white") }} {{ form.firstname(class="form-control
+                    main-text-color") }} {{ form.firstname(class="form-control
                     custom-input", placeholder="Например: 'Нора'",
                     id="interpreterFirstname") }}
                     <div class="form-text text-white-50">Имя переводчика</div>
@@ -208,7 +210,7 @@ content %}
                 <div class="col-md-4">
                   <div class="mb-3">
                     {{ form.secondname.label(class="form-label fw-bold
-                    text-white") }} {{ form.secondname(class="form-control
+                    main-text-color") }} {{ form.secondname(class="form-control
                     custom-input", placeholder="Например: 'Яковлевна'",
                     id="interpreterSecondname") }}
                     <div class="form-text text-white-50">
@@ -219,10 +221,12 @@ content %}
               </div>
               <div class="alert custom-alert" role="alert">
                 <i class="bi bi-info-circle"></i>
-                <strong class="text-white"
+                <strong class="main-text-color"
                   >ФИО будет сформировано автоматически:</strong
                 >
-                <span id="fioPreviewInterpreter" class="fw-bold ms-2 text-white"
+                <span
+                  id="fioPreviewInterpreter"
+                  class="fw-bold ms-2 main-text-color"
                   >Не указано</span
                 >
               </div>
@@ -231,7 +235,7 @@ content %}
               <div class="mt-3">
                 <div class="mb-3">
                   {{ form.ref_interpreter.label(class="form-label fw-bold
-                  text-white") }}
+                  main-text-color") }}
                   <div class="input-group">
                     <span class="input-group-text custom-input-group"
                       ><i class="bi bi-globe"></i
@@ -247,7 +251,8 @@ content %}
                 </div>
 
                 <div class="mb-3">
-                  {{ form.photo.label(class="form-label fw-bold text-white") }}
+                  {{ form.photo.label(class="form-label fw-bold
+                  main-text-color") }}
                   <input
                     type="file"
                     class="form-control custom-file-input"
@@ -273,10 +278,10 @@ content %}
                 </div>
 
                 <div class="mb-3">
-                  {{ form.comment.label(class="form-label fw-bold text-white")
-                  }} {{ form.comment(class="form-control custom-input",
-                  rows="4", placeholder="Например: 'Выдающийся переводчик,
-                  литературовед'", id="interpreterComment") }}
+                  {{ form.comment.label(class="form-label fw-bold
+                  main-text-color") }} {{ form.comment(class="form-control
+                  custom-input", rows="4", placeholder="Например: 'Выдающийся
+                  переводчик, литературовед'", id="interpreterComment") }}
                   <div class="form-text text-white-50">
                     Комментарии, примечания, дополнительная информация
                   </div>
@@ -289,14 +294,14 @@ content %}
               <div
                 class="d-flex justify-content-between align-items-center mb-3"
               >
-                <h5 class="fw-bold text-white">
+                <h5 class="fw-bold main-text-color">
                   <i class="bi bi-globe"></i> Языки переводчика
                 </h5>
               </div>
 
               <!-- Выбор языков -->
               <div class="mb-3">
-                <label class="form-label fw-bold text-white"
+                <label class="form-label fw-bold main-text-color"
                   >Добавить язык</label
                 >
                 <div class="input-group">
@@ -330,8 +335,8 @@ content %}
                   class="alert alert-info transparent-alert"
                   id="noLanguagesMessage"
                 >
-                  <i class="bi bi-info-circle text-white"></i>
-                  <span class="text-white">Языки не выбраны</span>
+                  <i class="bi bi-info-circle main-text-color"></i>
+                  <span class="main-text-color">Языки не выбраны</span>
                 </div>
                 <div
                   id="selectedLanguagesList"
@@ -342,9 +347,9 @@ content %}
 
               <!-- Информация о языках -->
               <div class="alert alert-info transparent-alert mt-3">
-                <i class="bi bi-info-circle text-white"></i>
-                <strong class="text-white">Примечание:</strong>
-                <span class="text-white"
+                <i class="bi bi-info-circle main-text-color"></i>
+                <strong class="main-text-color">Примечание:</strong>
+                <span class="main-text-color"
                   >Выбранные языки будут связаны с переводчиком после
                   сохранения</span
                 >
@@ -485,7 +490,7 @@ content %}
         selectedLanguages.forEach((lang) => {
           const badge = document.createElement("span");
           badge.className =
-            "badge bg-info d-flex align-items-center gap-2 p-2 text-white";
+            "badge bg-info d-flex align-items-center gap-2 p-2 main-text-color";
           badge.innerHTML = `
                     <i class="bi bi-globe"></i> ${lang.name}
                     <button type="button" class="btn-close btn-close-white" 
@@ -614,10 +619,10 @@ content %}
               const item = document.createElement("a");
               item.href = "#";
               item.className =
-                "list-group-item list-group-item-action bg-transparent text-white border-light";
+                "list-group-item list-group-item-action bg-transparent main-text-color border-light";
               item.innerHTML = `
                         <div class="d-flex w-100 justify-content-between">
-                            <h6 class="mb-1 text-white">${interpreter.name}</h6>
+                            <h6 class="mb-1 main-text-color">${interpreter.name}</h6>
                             <small class="text-white-50">${interpreter.source || "Источник неизвестен"}</small>
                         </div>
                         ${interpreter.book ? `<p class="mb-1 small text-white-50">Книга: ${interpreter.book}</p>` : ""}
@@ -780,7 +785,7 @@ content %}
 
       preview.textContent = parts.length ? parts.join(" ") : "Не указано";
       preview.className =
-        "fw-bold ms-2 " + (parts.length ? "text-white" : "text-white-50");
+        "fw-bold ms-2 " + (parts.length ? "main-text-color" : "text-white-50");
     }
 
     // --- Обработчики для обновления предпросмотра ФИО ---
@@ -1074,7 +1079,7 @@ content %}
     color: var(--main-color) !important;
   }
 
-  .custom-alert .text-white {
+  .custom-alert .main-text-color {
     color: #ffffff !important;
   }
 

@@ -5,7 +5,7 @@ content %}
     <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h2 class="text-white">
+        <h2 class="main-text-color">
           <i class="bi bi-plus-circle"></i> Добавление типа переплета
         </h2>
         <span class="badge bg-opacity-75 text-white fs-6"
@@ -54,7 +54,8 @@ content %}
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    {{ form.code.label(class="form-label fw-bold text-white") }}
+                    {{ form.code.label(class="form-label fw-bold
+                    main-text-color") }}
                     <span class="text-danger">*</span>
                     {{ form.code(class="form-control custom-input" + ("
                     is-invalid" if form.code.errors else ""),
@@ -71,7 +72,8 @@ content %}
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    {{ form.name.label(class="form-label fw-bold text-white") }}
+                    {{ form.name.label(class="form-label fw-bold
+                    main-text-color") }}
                     <span class="text-danger">*</span>
                     {{ form.name(class="form-control custom-input" + ("
                     is-invalid" if form.name.errors else ""),
@@ -90,9 +92,10 @@ content %}
               </div>
 
               <div class="mb-3">
-                {{ form.comment.label(class="form-label fw-bold text-white") }}
-                {{ form.comment(class="form-control custom-input", rows="3",
-                placeholder="Например: 'Стандартный твердый переплет'") }}
+                {{ form.comment.label(class="form-label fw-bold
+                main-text-color") }} {{ form.comment(class="form-control
+                custom-input", rows="3", placeholder="Например: 'Стандартный
+                твердый переплет'") }}
                 <div class="form-text text-white-50">
                   Комментарии, примечания (можно использовать HTML-разметку)
                 </div>
@@ -350,7 +353,7 @@ content %}
     color: var(--main-color) !important;
   }
 
-  .custom-alert .text-white {
+  .custom-alert .main-text-color {
     color: #ffffff !important;
   }
 
@@ -366,7 +369,7 @@ content %}
     color: #0dcaf0 !important;
   }
 
-  .transparent-alert .text-white {
+  .transparent-alert .main-text-color {
     color: #ffffff !important;
   }
 
