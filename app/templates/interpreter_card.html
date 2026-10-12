@@ -5,10 +5,10 @@ content %}
     <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h2 class="text-white">
+        <h2 class="main-text-color">
           <i class="bi bi-translate"></i> Карточка переводчика
         </h2>
-        <h5 class="text-white fw-bold fs-3 mt-2">{{ interpreter.fio }}</h5>
+        <h5 class="main-text-color fw-bold fs-3 mt-2">{{ interpreter.fio }}</h5>
       </div>
       <div class="d-flex gap-2">
         <!-- КНОПКА "НАЗАД К СПИСКУ" С СОХРАНЕНИЕМ ПАРАМЕТРОВ -->
@@ -99,28 +99,28 @@ content %}
                 {% endif %}
               </div>
               <div class="col-md-8">
-                <h3 class="mb-3 text-white fw-bold fs-1">
+                <h3 class="mb-3 main-text-color fw-bold fs-1">
                   {{ interpreter.fio }}
                 </h3>
 
                 <table class="table table-borderless transparent-table">
                   <tr>
                     <th style="width: 35%" class="text-white-50">Фамилия:</th>
-                    <td class="text-white fw-bold fs-5">
+                    <td class="main-text-color fw-bold fs-5">
                       {{ interpreter.lastname }}
                     </td>
                   </tr>
                   {% if interpreter.firstname %}
                   <tr>
                     <th class="text-white-50">Имя:</th>
-                    <td class="text-white fw-bold fs-5">
+                    <td class="main-text-color fw-bold fs-5">
                       {{ interpreter.firstname }}
                     </td>
                   </tr>
                   {% endif %} {% if interpreter.secondname %}
                   <tr>
                     <th class="text-white-50">Отчество:</th>
-                    <td class="text-white fw-bold fs-5">
+                    <td class="main-text-color fw-bold fs-5">
                       {{ interpreter.secondname }}
                     </td>
                   </tr>
@@ -142,7 +142,7 @@ content %}
                     <th class="text-white-50">Всего книг:</th>
                     <td>
                       <span
-                        class="badge bg-success bg-opacity-75 text-white fs-6"
+                        class="badge bg-success bg-opacity-75 main-text-color fs-6"
                         >{{ interpreter.book_interpreters|length }}</span
                       >
                     </td>
@@ -152,7 +152,7 @@ content %}
                     <th class="text-white-50">Языки:</th>
                     <td>
                       {% for lang in interpreter.lang_interpreters %}
-                      <span class="badge bg-info bg-opacity-75 text-white"
+                      <span class="badge bg-info bg-opacity-75 main-text-color"
                         >{{ lang.name }}</span
                       >
                       {% endfor %}
@@ -165,7 +165,7 @@ content %}
 
             {% if interpreter.comment %}
             <div class="mt-4">
-              <h5 class="fw-bold text-white">
+              <h5 class="fw-bold main-text-color">
                 <i class="bi bi-chat"></i> Комментарий:
               </h5>
               <div class="p-3 rounded transparent-comment comment-cell">
@@ -177,7 +177,7 @@ content %}
 
           <!-- Вкладка 2: Книги переводчика -->
           <div class="tab-pane fade" id="books" role="tabpanel">
-            <h5 class="fw-bold text-white">
+            <h5 class="fw-bold main-text-color">
               <i class="bi bi-book"></i> Книги переводчика:
             </h5>
             {% if books %}
@@ -231,12 +231,12 @@ content %}
                       {% endif %}
                     </td>
                     <td>
-                      <strong class="text-white">{{ book.name }}</strong>
+                      <strong class="main-text-color">{{ book.name }}</strong>
                     </td>
                     <td>
                       {% if book.author_books %} {% for auth in
                       book.author_books %}
-                      <strong class="text-white"
+                      <strong class="main-text-color"
                         >{{ author.lastname }} {% if author.firstname %} {{
                         author.firstname.0 }}.{% endif %} {% if
                         author.secondname %} {{ author.secondname.0 }}.{% endif

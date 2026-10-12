@@ -5,7 +5,9 @@ content %}
     <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h2 class="text-white"><i class="bi bi-tags"></i> Карточка жанра</h2>
+        <h2 class="main-text-color">
+          <i class="bi bi-tags"></i> Карточка жанра
+        </h2>
       </div>
 
       <div>
@@ -101,14 +103,16 @@ content %}
                 </div>
               </div>
               <div class="col-md-8">
-                <h3 class="mb-3 text-white fw-bold fs-1">{{ genre.name }}</h3>
+                <h3 class="mb-3 main-text-color fw-bold fs-1">
+                  {{ genre.name }}
+                </h3>
 
                 <table class="table table-borderless transparent-table">
                   <tr>
                     <th class="text-white-50">Всего книг:</th>
                     <td>
                       <span
-                        class="badge bg-primary bg-opacity-75 text-white fs-6"
+                        class="badge bg-primary bg-opacity-75 main-text-color fs-6"
                         >{{ genre.book_genres|length }}</span
                       >
                     </td>
@@ -119,7 +123,7 @@ content %}
 
             {% if genre.comment %}
             <div class="mt-4">
-              <h5 class="fw-bold text-white">
+              <h5 class="fw-bold main-text-color">
                 <i class="bi bi-chat"></i> Комментарий:
               </h5>
               <div class="p-3 rounded transparent-comment">
@@ -131,7 +135,7 @@ content %}
 
           <!-- Вкладка 2: Книги в жанре -->
           <div class="tab-pane fade" id="books" role="tabpanel">
-            <h5 class="fw-bold text-white">
+            <h5 class="fw-bold main-text-color">
               <i class="bi bi-book"></i> Книги в жанре:
             </h5>
             {% if books %}
@@ -186,12 +190,12 @@ content %}
                       {% endif %}
                     </td>
                     <td>
-                      <strong class="text-white">{{ book.name }}</strong>
+                      <strong class="main-text-color">{{ book.name }}</strong>
                     </td>
                     <td>
                       {% if book.author_books %} {% for author in
                       book.author_books %}
-                      <strong class="text-white"
+                      <strong class="main-text-color"
                         >{{ author.lastname }} {% if author.firstname %} {{
                         author.firstname.0 }}.{% endif %} {% if
                         author.secondname %} {{ author.secondname.0 }}.{% endif
@@ -205,7 +209,7 @@ content %}
                     </td>
                     <td>
                       {% if book.year_edition %}
-                      <strong class="text-white"
+                      <strong class="main-text-color"
                         >{{ book.year_edition }}</strong
                       >
                       {% else %}
@@ -217,7 +221,8 @@ content %}
                     <td>
                       {% if book.publisher_books %} {% for publisher in
                       book.publisher_books %}
-                      <strong class="text-white">{{ publisher.name }}</strong
+                      <strong class="main-text-color"
+                        >{{ publisher.name }}</strong
                       ><br />
                       {% endfor %} {% else %}
                       <span class="text-light-50"
