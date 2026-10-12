@@ -63,6 +63,63 @@
           backdrop-filter: blur(5px);
         }
       }
+      /* Основные ссылки навигации — цвет как у пунктов подменю */
+      .navbar .nav-link {
+        color: var(--main-color) !important;
+        transition: all 0.2s ease;
+      }
+
+      .navbar .nav-link:hover,
+      .navbar .nav-link:focus {
+        color: #ffffff !important;
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border-radius: 6px;
+      }
+
+      .navbar .nav-link i {
+        margin-right: 8px;
+        color: var(--main-color);
+        transition: color 0.2s ease;
+      }
+
+      .navbar .nav-link:hover i,
+      .navbar .nav-link:focus i {
+        color: #ffffff;
+      }
+
+      /* Логотип тоже в основной цвет */
+      .navbar .navbar-brand {
+        color: var(--main-color) !important;
+        transition: color 0.2s ease;
+      }
+
+      .navbar .navbar-brand:hover {
+        color: #ffffff !important;
+      }
+
+      .navbar .navbar-brand i {
+        color: var(--main-color);
+        transition: color 0.2s ease;
+      }
+
+      .navbar .navbar-brand:hover i {
+        color: #ffffff;
+      }
+
+      /* Кнопка-гамбургер (для мобильных) */
+      .navbar .navbar-toggler {
+        border-color: var(--main-color);
+      }
+
+      .navbar .navbar-toggler-icon {
+        filter: invert(80%) sepia(50%) saturate(500%) hue-rotate(5deg);
+      }
+
+      /* Активная ссылка (Bootstrap добавляет .active) */
+      .navbar .nav-link.active {
+        color: var(--main-color) !important;
+        font-weight: 600;
+      }
     </style>
 
     <script>
