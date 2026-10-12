@@ -5,7 +5,7 @@ content %}
     <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h2 class="text-white">
+        <h2 class="main-text-color">
           <i class="bi bi-person-badge"></i> Карточка автора
         </h2>
       </div>
@@ -116,26 +116,28 @@ content %}
                 {% endif %}
               </div>
               <div class="col-md-8">
-                <h3 class="mb-3 text-white fw-bold fs-1">{{ author.fio }}</h3>
+                <h3 class="mb-3 main-text-color fw-bold fs-1">
+                  {{ author.fio }}
+                </h3>
 
                 <table class="table table-borderless transparent-table">
                   <tr>
                     <th style="width: 35%" class="text-white-50">Фамилия:</th>
-                    <td class="text-white fw-bold fs-5">
+                    <td class="main-text-color fw-bold fs-5">
                       {{ author.lastname }}
                     </td>
                   </tr>
                   {% if author.firstname %}
                   <tr>
                     <th class="text-white-50">Имя:</th>
-                    <td class="text-white fw-bold fs-5">
+                    <td class="main-text-color fw-bold fs-5">
                       {{ author.firstname }}
                     </td>
                   </tr>
                   {% endif %} {% if author.secondname %}
                   <tr>
                     <th class="text-white-50">Отчество:</th>
-                    <td class="text-white fw-bold fs-5">
+                    <td class="main-text-color fw-bold fs-5">
                       {{ author.secondname }}
                     </td>
                   </tr>
@@ -157,7 +159,7 @@ content %}
                     <th class="text-white-50">Всего книг:</th>
                     <td>
                       <span
-                        class="badge bg-primary bg-opacity-75 text-white fs-6"
+                        class="badge bg-primary bg-opacity-75 main-text-color fs-6"
                         >{{ author.book_authors|length }}</span
                       >
                     </td>
@@ -168,7 +170,7 @@ content %}
 
             {% if author.comment %}
             <div class="mt-4">
-              <h5 class="fw-bold text-white">
+              <h5 class="fw-bold main-text-color">
                 <i class="bi bi-chat"></i> Комментарий:
               </h5>
               <div class="p-3 rounded transparent-comment">
@@ -180,7 +182,7 @@ content %}
 
           <!-- Вкладка 2: Книги автора -->
           <div class="tab-pane fade" id="books" role="tabpanel">
-            <h5 class="fw-bold text-white">
+            <h5 class="fw-bold main-text-color">
               <i class="bi bi-book"></i> Книги автора:
             </h5>
             {% if books %}
@@ -234,21 +236,22 @@ content %}
                       {% endif %}
                     </td>
                     <td>
-                      <strong class="text-white">{{ book.name }}</strong>
+                      <strong class="main-text-color">{{ book.name }}</strong>
                     </td>
                     <td>
                       {% if book.year_edition %}
-                      <strong class="text-white"
+                      <strong class="main-text-color"
                         >{{ book.year_edition }}</strong
                       >
                       {% else %}
-                      <strong class="text-white">-</strong>
+                      <strong class="main-text-color">-</strong>
                       {% endif %}
                     </td>
                     <td>
                       {% if book.publisher_books %} {% for publisher in
                       book.publisher_books %}
-                      <strong class="text-white">{{ publisher.name }}</strong
+                      <strong class="main-text-color"
+                        >{{ publisher.name }}</strong
                       ><br />
                       {% endfor %} {% else %}
                       <span class="text-light-50"
@@ -593,7 +596,7 @@ content %}
   .transparent-alert i {
     color: #0dcaf0 !important;
   }
-  .transparent-alert .text-white {
+  .transparent-alert .main-text-color {
     color: #ffffff !important;
   }
 

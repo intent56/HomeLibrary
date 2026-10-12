@@ -5,10 +5,10 @@ content %}
     <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h2 class="text-white">
+        <h2 class="main-text-color">
           <i class="bi bi-pencil-square"></i> Редактирование переводчика
         </h2>
-        <h5 class="text-white fw-bold fs-3 mt-2">{{ interpreter.fio }}</h5>
+        <h5 class="main-text-color fw-bold fs-3 mt-2">{{ interpreter.fio }}</h5>
       </div>
       <a
         href="{{url_for('main.interpreter_list', page=return_page, search=return_search) }}"
@@ -81,7 +81,7 @@ content %}
                 <div class="col-md-4">
                   <div class="mb-3">
                     {{ form.lastname.label(class="form-label fw-bold
-                    text-white") }}
+                    main-text-color") }}
                     <span class="text-danger">*</span>
                     {{ form.lastname(class="form-control custom-input" + ("
                     is-invalid" if form.lastname.errors else ""),
@@ -100,7 +100,7 @@ content %}
                 <div class="col-md-4">
                   <div class="mb-3">
                     {{ form.firstname.label(class="form-label fw-bold
-                    text-white") }} {{ form.firstname(class="form-control
+                    main-text-color") }} {{ form.firstname(class="form-control
                     custom-input", placeholder="Например: Иван",
                     id="interpreterFirstname") }}
                     <div class="form-text text-white-50">Имя переводчика</div>
@@ -109,7 +109,7 @@ content %}
                 <div class="col-md-4">
                   <div class="mb-3">
                     {{ form.secondname.label(class="form-label fw-bold
-                    text-white") }} {{ form.secondname(class="form-control
+                    main-text-color") }} {{ form.secondname(class="form-control
                     custom-input", placeholder="Например: Иванович",
                     id="interpreterSecondname") }}
                     <div class="form-text text-white-50">
@@ -123,7 +123,9 @@ content %}
               <div class="alert custom-alert" role="alert">
                 <i class="bi bi-info-circle"></i>
                 <strong>ФИО будет сформировано автоматически:</strong>
-                <span id="fioPreviewInterpreter" class="fw-bold ms-2 text-white"
+                <span
+                  id="fioPreviewInterpreter"
+                  class="fw-bold ms-2 main-text-color"
                   >{{ interpreter.fio }}</span
                 >
               </div>
@@ -132,7 +134,7 @@ content %}
               <div class="mt-3">
                 <div class="mb-3">
                   {{ form.ref_interpreter.label(class="form-label fw-bold
-                  text-white") }}
+                  main-text-color") }}
                   <div class="input-group">
                     <span class="input-group-text custom-input-group"
                       ><i class="bi bi-globe"></i
@@ -150,7 +152,7 @@ content %}
                 <div class="mb-3">
                   <label
                     for="interpreterPhoto"
-                    class="form-label fw-bold text-white"
+                    class="form-label fw-bold main-text-color"
                     >Фото переводчика</label
                   >
                   {% if interpreter.photo %}
@@ -199,10 +201,10 @@ content %}
                 </div>
 
                 <div class="mb-3">
-                  {{ form.comment.label(class="form-label fw-bold text-white")
-                  }} {{ form.comment(class="form-control custom-input",
-                  rows="4", placeholder="Дополнительная информация о
-                  переводчике...", id="interpreterComment") }}
+                  {{ form.comment.label(class="form-label fw-bold
+                  main-text-color") }} {{ form.comment(class="form-control
+                  custom-input", rows="4", placeholder="Дополнительная
+                  информация о переводчике...", id="interpreterComment") }}
                   <div class="form-text text-white-50">
                     Комментарии, примечания, дополнительная информация
                   </div>
@@ -215,7 +217,7 @@ content %}
               <div
                 class="d-flex justify-content-between align-items-center mb-3"
               >
-                <h5 class="fw-bold text-white">
+                <h5 class="fw-bold main-text-color">
                   <i class="bi bi-globe"></i> Языки переводчика
                 </h5>
                 <a
@@ -229,7 +231,7 @@ content %}
               <div class="d-flex flex-wrap gap-2">
                 {% for language in interpreter.lang_interpreters %}
                 <span
-                  class="badge bg-info bg-opacity-75 text-white"
+                  class="badge bg-info bg-opacity-75 main-text-color"
                   style="font-size: 1rem; padding: 0.5rem 1rem"
                 >
                   <i class="bi bi-globe"></i> {{ language.name }}
@@ -245,7 +247,7 @@ content %}
                 У переводчика пока нет языков.
                 <a
                   href="{{ url_for('main.select_interpreter_languages', interpreter_id=interpreter.id) }}"
-                  class="alert-link text-white"
+                  class="alert-link main-text-color"
                 >
                   Добавить языки
                 </a>
@@ -255,7 +257,7 @@ content %}
 
             <!-- Вкладка 3: Книги -->
             <div class="tab-pane fade" id="books" role="tabpanel">
-              <h5 class="fw-bold text-white">
+              <h5 class="fw-bold main-text-color">
                 <i class="bi bi-book"></i> Книги переводчика
               </h5>
               {% if books %}
@@ -309,12 +311,12 @@ content %}
                         {% endif %}
                       </td>
                       <td>
-                        <strong class="text-white">{{ book.name }}</strong>
+                        <strong class="main-text-color">{{ book.name }}</strong>
                       </td>
                       <td>
                         {% if book.author_books %} {% for author in
                         book.author_books %}
-                        <strong class="text-white"
+                        <strong class="main-text-color"
                           >{{ author.lastname }} {% if author.firstname %} {{
                           author.firstname.0 }}.{% endif %} {% if
                           author.secondname %} {{ author.secondname.0 }}.{%
@@ -526,7 +528,7 @@ content %}
       if (secondname.value) parts.push(secondname.value);
       preview.textContent = parts.length ? parts.join(" ") : "Не указано";
       preview.className =
-        "fw-bold ms-2 " + (parts.length ? "text-white" : "text-white-50");
+        "fw-bold ms-2 " + (parts.length ? "main-text-color" : "text-white-50");
     }
 
     if (lastname) lastname.addEventListener("input", updateFioPreview);
@@ -727,7 +729,7 @@ content %}
     color: var(--main-color) !important;
   }
 
-  .custom-alert .text-white {
+  .custom-alert .main-text-color {
     color: #ffffff !important;
   }
 
@@ -741,7 +743,7 @@ content %}
   .transparent-alert i {
     color: #0dcaf0 !important;
   }
-  .transparent-alert .text-white {
+  .transparent-alert .main-text-color {
     color: #ffffff !important;
   }
 

@@ -5,10 +5,10 @@ content %}
     <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h2 class="text-white">
+        <h2 class="main-text-color">
           <i class="bi bi-pencil-square"></i> Редактирование источника
         </h2>
-        <h5 class="text-white fw-bold fs-3 mt-2">{{ source.name }}</h5>
+        <h5 class="main-text-color fw-bold fs-3 mt-2">{{ source.name }}</h5>
       </div>
       <!-- 2. ИЗМЕНЕННАЯ КНОПКА "НАЗАД" -->
       <a
@@ -30,7 +30,7 @@ content %}
       <!-- ИЗМЕНЕННАЯ КАРТОЧКА "ИНФОРМАЦИЯ ОБ ИСТОЧНИКЕ" -->
       <div class="card shadow-sm mb-4 transparent-card-source">
         <div class="card-header transparent-card-header-source">
-          <h5 class="mb-0 text-white">
+          <h5 class="mb-0 main-text-color">
             <i class="bi bi-info-circle" style="color: var(--main-color)"></i>
             Информация об источнике
           </h5>
@@ -39,7 +39,8 @@ content %}
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3">
-                {{ form.name.label(class="form-label fw-bold text-white") }}
+                {{ form.name.label(class="form-label fw-bold main-text-color")
+                }}
                 <span class="text-danger">*</span>
                 {{ form.name(class="form-control custom-input" + (" is-invalid"
                 if form.name.errors else ""), placeholder="Например: Google
@@ -53,7 +54,8 @@ content %}
             </div>
             <div class="col-md-6">
               <div class="mb-3">
-                {{ form.code.label(class="form-label fw-bold text-white") }}
+                {{ form.code.label(class="form-label fw-bold main-text-color")
+                }}
                 <span class="text-danger">*</span>
                 {{ form.code(class="form-control custom-input" + (" is-invalid"
                 if form.code.errors else ""), placeholder="Например:
@@ -70,7 +72,7 @@ content %}
           </div>
 
           <div class="mb-3">
-            {{ form.url.label(class="form-label fw-bold text-white") }} {{
+            {{ form.url.label(class="form-label fw-bold main-text-color") }} {{
             form.url(class="form-control custom-input" + (" is-invalid" if
             form.url.errors else ""),
             placeholder="https://www.googleapis.com/books/v1/") }} {% if
@@ -88,7 +90,8 @@ content %}
             <div class="col-md-6">
               <div class="mb-3 form-check">
                 {{ form.is_active(class="form-check-input custom-checkbox") }}
-                {{ form.is_active.label(class="form-check-label text-white") }}
+                {{ form.is_active.label(class="form-check-label
+                main-text-color") }}
                 <div class="form-text text-white-50">
                   Если активно, источник будет доступен для поиска
                 </div>
@@ -100,29 +103,30 @@ content %}
             <div class="col-md-4">
               <div class="form-check">
                 {{ form.chk_books(class="form-check-input custom-checkbox") }}
-                {{ form.chk_books.label(class="form-check-label text-white") }}
+                {{ form.chk_books.label(class="form-check-label
+                main-text-color") }}
               </div>
             </div>
             <div class="col-md-4">
               <div class="form-check">
                 {{ form.chk_authors(class="form-check-input custom-checkbox") }}
-                {{ form.chk_authors.label(class="form-check-label text-white")
-                }}
+                {{ form.chk_authors.label(class="form-check-label
+                main-text-color") }}
               </div>
             </div>
             <div class="col-md-4">
               <div class="form-check">
                 {{ form.chk_interpreters(class="form-check-input
                 custom-checkbox") }} {{
-                form.chk_interpreters.label(class="form-check-label text-white")
-                }}
+                form.chk_interpreters.label(class="form-check-label
+                main-text-color") }}
               </div>
             </div>
           </div>
 
           <div class="mb-3">
-            {{ form.comment.label(class="form-label fw-bold text-white") }} {{
-            form.comment(class="form-control custom-input", rows="3",
+            {{ form.comment.label(class="form-label fw-bold main-text-color") }}
+            {{ form.comment(class="form-control custom-input", rows="3",
             placeholder="Дополнительная информация об источнике...") }}
             <div class="form-text text-white-50">Комментарии, примечания</div>
           </div>

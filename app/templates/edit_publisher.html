@@ -5,10 +5,10 @@ content %}
     <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h2 class="text-white">
+        <h2 class="main-text-color">
           <i class="bi bi-pencil-square"></i> Редактирование издателя
         </h2>
-        <h5 class="text-white fw-bold fs-3 mt-2">{{ publisher.name }}</h5>
+        <h5 class="main-text-color fw-bold fs-3 mt-2">{{ publisher.name }}</h5>
       </div>
       <a
         href="{{url_for('main.publisher_list', page=return_page, search=return_search) }}"
@@ -64,7 +64,8 @@ content %}
             <!-- Вкладка 1: Информация об издателе -->
             <div class="tab-pane fade show active" id="main" role="tabpanel">
               <div class="mb-3">
-                {{ form.name.label(class="form-label fw-bold text-white") }}
+                {{ form.name.label(class="form-label fw-bold main-text-color")
+                }}
                 <span class="text-danger">*</span>
                 {{ form.name(class="form-control custom-input" + (" is-invalid"
                 if form.name.errors else ""), placeholder="Например: АСТ, Эксмо,
@@ -78,7 +79,7 @@ content %}
 
               <div class="mb-3">
                 {{ form.ref_publisher.label(class="form-label fw-bold
-                text-white") }}
+                main-text-color") }}
                 <div class="input-group">
                   <span class="input-group-text custom-input-group"
                     ><i class="bi bi-globe"></i
@@ -92,9 +93,10 @@ content %}
               </div>
 
               <div class="mb-3">
-                {{ form.comment.label(class="form-label fw-bold text-white") }}
-                {{ form.comment(class="form-control custom-input", rows="3",
-                placeholder="Дополнительная информация об издателе...") }}
+                {{ form.comment.label(class="form-label fw-bold
+                main-text-color") }} {{ form.comment(class="form-control
+                custom-input", rows="3", placeholder="Дополнительная информация
+                об издателе...") }}
                 <div class="form-text text-white-50">
                   Комментарии, примечания, дополнительная информация
                 </div>
@@ -103,7 +105,7 @@ content %}
 
             <!-- Вкладка 2: Книги издателя -->
             <div class="tab-pane fade" id="books" role="tabpanel">
-              <h5 class="fw-bold text-white">
+              <h5 class="fw-bold main-text-color">
                 <i class="bi bi-book"></i> Книги издателя
               </h5>
               {% if books %}
@@ -157,12 +159,12 @@ content %}
                         {% endif %}
                       </td>
                       <td>
-                        <strong class="text-white">{{ book.name }}</strong>
+                        <strong class="main-text-color">{{ book.name }}</strong>
                       </td>
                       <td>
                         {% if book.author_books %} {% for author in
                         book.author_books %}
-                        <strong class="text-white"
+                        <strong class="main-text-color"
                           >{{ author.lastname }} {% if author.firstname %} {{
                           author.firstname.0 }}.{% endif %} {% if
                           author.secondname %} {{ author.secondname.0 }}.{%
@@ -503,7 +505,7 @@ content %}
   .transparent-alert i {
     color: #0dcaf0 !important;
   }
-  .transparent-alert .text-white {
+  .transparent-alert .main-text-color {
     color: #ffffff !important;
   }
 

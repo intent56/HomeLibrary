@@ -5,10 +5,10 @@ content %}
     <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h2 class="text-white">
+        <h2 class="main-text-color">
           <i class="bi bi-pencil-square"></i> Редактирование жанра
         </h2>
-        <h5 class="text-white fw-bold fs-3 mt-2">{{ genre.name }}</h5>
+        <h5 class="main-text-color fw-bold fs-3 mt-2">{{ genre.name }}</h5>
       </div>
       <a
         href="{{url_for('main.genre_list', 
@@ -66,7 +66,8 @@ content %}
             <!-- Вкладка 1: Информация о жанре -->
             <div class="tab-pane fade show active" id="main" role="tabpanel">
               <div class="mb-3">
-                {{ form.name.label(class="form-label fw-bold text-white") }}
+                {{ form.name.label(class="form-label fw-bold main-text-color")
+                }}
                 <span class="text-danger">*</span>
                 {{ form.name(class="form-control custom-input" + (" is-invalid"
                 if form.name.errors else ""), placeholder="Например: Фантастика,
@@ -79,9 +80,10 @@ content %}
               </div>
 
               <div class="mb-3">
-                {{ form.comment.label(class="form-label fw-bold text-white") }}
-                {{ form.comment(class="form-control custom-input", rows="4",
-                placeholder="Дополнительная информация о жанре...") }}
+                {{ form.comment.label(class="form-label fw-bold
+                main-text-color") }} {{ form.comment(class="form-control
+                custom-input", rows="4", placeholder="Дополнительная информация
+                о жанре...") }}
                 <div class="form-text text-white-50">
                   Комментарии, примечания (можно использовать HTML-разметку)
                 </div>
@@ -91,7 +93,7 @@ content %}
               <div class="alert custom-alert mt-3" role="alert">
                 <i class="bi bi-info-circle"></i>
                 <strong class="text-white">Книг в этом жанре:</strong>
-                <span class="text-white">{{ genre.book_genres|length }}</span>
+                <span class="text=white">{{ genre.book_genres|length }}</span>
                 <span class="ms-3 text-white-50 small"
                   >(изменение названия жанра не влияет на связи с книгами)</span
                 >
@@ -100,7 +102,7 @@ content %}
 
             <!-- Вкладка 2: Книги в этом жанре -->
             <div class="tab-pane fade" id="books" role="tabpanel">
-              <h5 class="fw-bold text-white">
+              <h5 class="fw-bold main-text-color">
                 <i class="bi bi-book"></i> Книги в этом жанре
               </h5>
               {% if books %}
@@ -154,12 +156,12 @@ content %}
                         {% endif %}
                       </td>
                       <td>
-                        <strong class="text-white">{{ book.name }}</strong>
+                        <strong class="main-text-color">{{ book.name }}</strong>
                       </td>
                       <td>
                         {% if book.author_books %} {% for author in
                         book.author_books %}
-                        <strong class="text-white"
+                        <strong class="main-text-color"
                           >{{ author.lastname }} {% if author.firstname %} {{
                           author.firstname.0 }}.{% endif %} {% if
                           author.secondname %} {{ author.secondname.0 }}.{%
@@ -469,7 +471,7 @@ content %}
     color: var(--main-color) !important;
   }
 
-  .custom-alert .text-white {
+  .custom-alert .main-text-color {
     color: #ffffff !important;
   }
 
@@ -485,7 +487,7 @@ content %}
     color: #0dcaf0 !important;
   }
 
-  .transparent-alert .text-white {
+  .transparent-alert .main-text-color {
     color: #ffffff !important;
   }
 

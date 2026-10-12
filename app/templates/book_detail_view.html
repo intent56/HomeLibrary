@@ -5,7 +5,7 @@ content %}
     <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет для иконки, "Карточка книги" и названия -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h2 class="text-white"><i class="bi bi-book"></i> Карточка книги</h2>
+        <h2 class="main-text-color"><i class="bi bi-book"></i> Карточка книги</h2>
         <h5 class="text-white-50">"{{ book.name }}"</h5>
       </div>
       <div>
@@ -370,7 +370,7 @@ content %}
           <!-- Вкладка 2: Авторы -->
           <div class="tab-pane fade" id="authors" role="tabpanel">
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <h5 class="fw-bold text-white">
+              <h5 class="fw-bold main-text-color">
                 <i class="bi bi-people"></i> Авторы книги
               </h5>
             </div>
@@ -402,7 +402,7 @@ content %}
                     {% endif %}
                   </div>
                  <div>
-                     <strong class="text-white fs-5">{{ author.fio }}</strong>
+                     <strong class="main-text-color fs-5">{{ author.fio }}</strong>
                      <br />
                   </div>
                 </div>
@@ -420,7 +420,7 @@ content %}
           <!-- Вкладка 3: Переводчики -->
           <div class="tab-pane fade" id="interpreters" role="tabpanel">
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <h5 class="fw-bold text-white">
+              <h5 class="fw-bold main-text-color">
                 <i class="bi bi-translate"></i> Переводчики книги
               </h5>
             </div>
@@ -452,7 +452,7 @@ content %}
                     {% endif %}
                   </div>
                   <div>
-                    <strong class="text-white fs-5"
+                    <strong class="main-text-color fs-5"
                       >{{ interpreter.fio }}</strong
                     >
                     <br />
@@ -472,7 +472,7 @@ content %}
           <!-- Вкладка 4: Издатели -->
           <div class="tab-pane fade" id="publishers" role="tabpanel">
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <h5 class="fw-bold text-white">
+              <h5 class="fw-bold main-text-color">
                 <i class="bi bi-building"></i> Издатели книги
               </h5>
             </div>
@@ -504,7 +504,7 @@ content %}
                     {% endif %}
                   </div>
                   <div>
-                    <strong class="text-white fs-5"
+                    <strong class="main-text-color fs-5"
                       >{{ publisher.name }}</strong
                     >
                     <br />
@@ -524,7 +524,7 @@ content %}
           <!-- Вкладка 5: Жанры -->
           <div class="tab-pane fade" id="genres" role="tabpanel">
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <h5 class="fw-bold text-white">
+              <h5 class="fw-bold main-text-color">
                 <i class="bi bi-tags"></i> Жанры книги
               </h5>
             </div>
@@ -536,7 +536,7 @@ content %}
                 style="font-size: 1rem; padding: 0.5rem 1rem"
               >
               </div>
-                    <strong class="text-white fs-5"
+                    <strong class="main-text-color fs-5"
                       >{{ genre.name }}</strong
                     >
                     <br />
@@ -556,7 +556,7 @@ content %}
           <div class="tab-pane fade" id="content" role="tabpanel">
             {% if book.summary %}
             <div class="mb-4">
-              <h5 class="fw-bold text-white">
+              <h5 class="fw-bold main-text-color">
                 <i class="bi bi-chat"></i> Аннотация
               </h5>
               <div class="p-3 bg-transparent rounded text-white-50 fs-5">
@@ -565,7 +565,7 @@ content %}
             </div>
             {% endif %} {% if book.content %}
             <div>
-              <h5 class="fw-bold text-white">
+              <h5 class="fw-bold main-text-color">
                 <i class="bi bi-text-paragraph"></i> Содержание
               </h5>
               <div class="p-3 bg-transparent rounded text-white-50 fs-5">

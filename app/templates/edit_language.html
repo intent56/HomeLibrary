@@ -5,10 +5,10 @@ content %}
     <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
-        <h2 class="text-white">
+        <h2 class="main-text-color">
           <i class="bi bi-pencil-square"></i> Редактирование языка
         </h2>
-        <h5 class="text-white fw-bold fs-3 mt-2">{{ language.name }}</h5>
+        <h5 class="main-text-color fw-bold fs-3 mt-2">{{ language.name }}</h5>
       </div>
       <a
         href="{{url_for('main.language_list', 
@@ -68,7 +68,8 @@ content %}
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    {{ form.code.label(class="form-label fw-bold text-white") }}
+                    {{ form.code.label(class="form-label fw-bold
+                    main-text-color") }}
                     <span class="text-danger">*</span>
                     {{ form.code(class="form-control custom-input" + ("
                     is-invalid" if form.code.errors else ""),
@@ -86,7 +87,8 @@ content %}
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    {{ form.name.label(class="form-label fw-bold text-white") }}
+                    {{ form.name.label(class="form-label fw-bold
+                    main-text-color") }}
                     <span class="text-danger">*</span>
                     {{ form.name(class="form-control custom-input" + ("
                     is-invalid" if form.name.errors else ""),
@@ -103,9 +105,10 @@ content %}
               </div>
 
               <div class="mb-3">
-                {{ form.comment.label(class="form-label fw-bold text-white") }}
-                {{ form.comment(class="form-control custom-input", rows="3",
-                placeholder="Дополнительная информация о языке...") }}
+                {{ form.comment.label(class="form-label fw-bold
+                main-text-color") }} {{ form.comment(class="form-control
+                custom-input", rows="3", placeholder="Дополнительная информация
+                о языке...") }}
                 <div class="form-text text-white-50">
                   Комментарии, примечания, дополнительная информация
                 </div>
@@ -114,7 +117,7 @@ content %}
 
             <!-- Вкладка 2: Книги на этом языке -->
             <div class="tab-pane fade" id="books" role="tabpanel">
-              <h5 class="fw-bold text-white">
+              <h5 class="fw-bold main-text-color">
                 <i class="bi bi-book"></i> Книги на этом языке
               </h5>
               {% if books %}
@@ -168,12 +171,12 @@ content %}
                         {% endif %}
                       </td>
                       <td>
-                        <strong class="text-white">{{ book.name }}</strong>
+                        <strong class="main-text-color">{{ book.name }}</strong>
                       </td>
                       <td>
                         {% if book.author_books %} {% for author in
                         book.author_books %}
-                        <strong class="text-white"
+                        <strong class="main-text-color"
                           >{{ author.lastname }} {% if author.firstname %} {{
                           author.firstname.0 }}.{% endif %} {% if
                           author.secondname %} {{ author.secondname.0 }}.{%
@@ -483,7 +486,7 @@ content %}
     color: var(--main-color) !important;
   }
 
-  .custom-alert .text-white {
+  .custom-alert .main-text-color {
     color: #ffffff !important;
   }
 
@@ -497,7 +500,7 @@ content %}
   .transparent-alert i {
     color: #0dcaf0 !important;
   }
-  .transparent-alert .text-white {
+  .transparent-alert .main-text-color {
     color: #ffffff !important;
   }
 
