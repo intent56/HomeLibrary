@@ -206,20 +206,22 @@ content %}
                       {% endif %}
                     </td>
                     <td>
-                      <div class="btn-group btn-group-sm" role="group">
-                        <a
-                          href="{{ url_for('main.book_view', 
+                      <div class="text-center">
+                        <div class="btn-group btn-group-sm" role="group">
+                          <a
+                            href="{{ url_for('main.book_view', 
                                 book_id=book.id,
                                 page1=page if page else 1,
                                 id=author.id,
                                 return_search=return_search,
                                 return_page=return_page,
                                 return_to='author_card') }}"
-                          class="btn btn-outline-light"
-                          title="Просмотр книги"
-                        >
-                          <i class="bi bi-eye"></i>
-                        </a>
+                            class="btn btn-outline-light"
+                            title="Просмотр книги"
+                          >
+                            <i class="bi bi-eye main-text-color"></i>
+                          </a>
+                        </div>
                       </div>
                     </td>
                   </tr>

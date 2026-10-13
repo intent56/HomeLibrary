@@ -10,7 +10,7 @@
                         <th>Шаблон URL</th>
                         <th>Тип</th>
                         <th>Статус</th>
-                        <th style="min-width: 120px;">Действия</th>
+                        <th style="min-width: 120px;" class="text-center">Действия</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -35,10 +35,11 @@
                             {% endif %}
                         </td>
                         <td>
+                            <div class="text-center">
                             <div class="btn-group btn-group-sm" role="group">
                                 <a href="{{ url_for('main.edit_aggregator', aggregator_id=aggregator.id) }}" 
                                    class="btn btn-outline-light" title="Редактировать">
-                                    <i class="bi bi-pencil"></i>
+                                    <i class="bi bi-pencil main-text-color"></i>
                                 </a>
                                 <button type="button" 
                                         class="btn btn-outline-light toggle-btn" 
@@ -48,16 +49,18 @@
                                         hx-swap="outerHTML"
                                         hx-indicator="#loading-{{ aggregator.id }}"
                                         title="{% if aggregator.is_active %}Деактивировать{% else %}Активировать{% endif %}">
-                                    <i class="bi bi-{% if aggregator.is_active %}pause-circle{% else %}play-circle{% endif %}"></i>
+                                    <i class="bi main-text-color bi-{% if aggregator.is_active %}pause-circle{% else %}play-circle{% endif %}"></i>
                                     <span id="loading-{{ aggregator.id }}" class="htmx-indicator">
                                         <span class="spinner-border spinner-border-sm" role="status"></span>
                                     </span>
                                 </button>
                                 <button type="button" class="btn btn-outline-light btn-delete" 
                                         data-aggregator-id="{{ aggregator.id }}"
-                                        data-aggregator-name="{{ aggregator.name }}">
-                                    <i class="bi bi-trash"></i>
+                                        data-aggregator-name="{{ aggregator.name }}"
+                                        title="Удалить">
+                                    <i class="bi bi-trash main-text-color"></i>
                                 </button>
+                            </div>
                             </div>
                         </td>
                     </tr>
