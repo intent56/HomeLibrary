@@ -66,19 +66,18 @@
               {% endif %}
             </td>
             <td class="text-white-50">{{ source.comment or '-' }}</td>
-            <td>
-              <div class="text-center" >
-              <div class="btn-group btn-group-sm" role="group">
+            <td class="text-center align-middle">
+              <div class="btn-group btn-group-sm d-inline-flex" role="group">
                 <a
                   href="{{ url_for('main.edit_source', source_id=source.id) }}"
-                  class="btn btn-outline-light"
+                  class="btn btn-outline-light d-flex align-items-center justify-content-center action-btn"
                   title="Редактировать"
                 >
                   <i class="bi bi-pencil main-text-color"></i>
                 </a>
                 <button
                   type="button"
-                  class="btn btn-outline-light toggle-btn"
+                  class="btn btn-outline-light toggle-btn d-flex align-items-center justify-content-center action-btn"
                   hx-post="{{ url_for('main.toggle_source_htmx', source_id=source.id) }}"
                   hx-headers='{"X-CSRFToken": "{{ csrf_token() }}"}'
                   hx-target="#source-status-{{ source.id }}"
@@ -101,13 +100,12 @@
                 </button>
                 <button
                   type="button"
-                  class="btn btn-outline-light btn-delete"
+                  class="btn btn-outline-light btn-delete d-flex align-items-center justify-content-center action-btn"
                   data-source-id="{{ source.id }}"
                   data-source-name="{{ source.name }}"
                 >
                   <i class="bi bi-trash main-text-color"></i>
                 </button>
-              </div>
               </div>
             </td>
           </tr>
@@ -322,39 +320,51 @@
     color: rgba(255, 255, 255, 0.7) !important;
   }
 
-  /* 7. СТИЛИ ДЛЯ КНОПОК В ТАБЛИЦЕ */
-  .table .btn-group {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-  }
+/* 7. СТИЛИ ДЛЯ КНОПОК В ТАБЛИЦЕ */
+.table .btn-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
 
-  .table .btn-group .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 36px;
-    min-height: 36px;
-    padding: 0.25rem 0.5rem;
-    font-size: 0.9rem;
-  }
+/* Убираем двойные границы и скругления Bootstrap-группы, чтобы кнопки были самостоятельными */
+.table .btn-group > .btn {
+  border-radius: 6px !important;
+  margin: 0 !important;
+}
 
-  .table .btn-group .btn i {
-    font-size: 1.1rem;
-    line-height: 1;
-  }
+/* Одинаковый размер всех кнопок действий */
+.table .action-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0 !important;
+  min-width: 36px;
+  min-height: 36px;
+  font-size: 1rem;
+  line-height: 1;
+}
 
-  .table .btn-outline-light {
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-  }
+.table .action-btn i {
+  font-size: 1.1rem;
+  line-height: 1;
+}
 
-  .table .btn-outline-light:hover {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    border-color: #ffffff !important;
-    color: #ffffff !important;
-  }
+/* Спиннер внутри кнопки не должен ломать размер */
+.table .action-btn .spinner-border-sm {
+  width: 0.9rem;
+  height: 0.9rem;
+}
 
+.table .btn-outline-light {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.table .btn-outline-light:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+}
   /* 8. СТИЛИ ДЛЯ ПАГИНАЦИИ */
   #sourceTable .pagination-container {
     background-color: rgba(0, 0, 0, 0.25) !important;
@@ -445,14 +455,18 @@
   }
 
   /* 13. АДАПТИВНОСТЬ */
-  @media (max-width: 768px) {
-    .table .btn-group .btn {
-      min-width: 32px;
-      min-height: 32px;
-      padding: 0.2rem 0.4rem;
-      font-size: 0.8rem;
-    }
+@media (max-width: 768px) {
+  .table .action-btn {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    font-size: 0.85rem;
   }
+  .table .action-btn i {
+    font-size: 1rem;
+  }
+}
 </style>
 
 <!-- JAVASCRIPT -->
