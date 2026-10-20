@@ -332,20 +332,30 @@ content %}
 
   // Обновление счетчика после HTMX
   document.addEventListener("htmx:afterSwap", function (event) {
-    if (event.detail.target.id === "bookTableContainer") {
-      const totalElement = document.querySelector(
-        "#bookTableContainer .pagination-container .text-light-50",
-      );
-      if (totalElement) {
-        const match = totalElement.textContent.match(/(\d+)\s+из\s+(\d+)/);
-        if (match && match.length >= 3) {
-          const resultCount = document.getElementById("resultCount");
-          if (resultCount) {
-            resultCount.textContent = `Найдено: ${match[2]} книг`;
-          }
-        }
+    if (event.detail.target.id !== "bookTableContainer") return;
+
+    const paginationEl = document.querySelector(
+      "#bookTableContainer .pagination-container",
+    );
+    let total = paginationEl ? parseInt(paginationEl.dataset.total, 10) : null;
+
+    // Если пагинации нет — проверяем пустую строку или считаем строки
+    if (total === null || isNaN(total)) {
+      if (document.querySelector("#bookTableContainer #empty-row")) {
+        total = 0;
+      } else {
+        total = document.querySelectorAll(
+          "#bookTableContainer tbody tr:not(#empty-row)",
+        ).length;
       }
     }
+
+    const resultCount = document.getElementById("resultCount");
+    if (resultCount) {
+      resultCount.textContent = `Найдено: ${total} книг`;
+    }
+
+    updateFilterLabels();
   });
 </script>
 
