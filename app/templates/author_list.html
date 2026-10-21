@@ -104,23 +104,32 @@ content %}
     });
   }
 
-  document.body.addEventListener("htmx:afterSwap", function (evt) {
-    if (evt.detail.target.id === "authorGridContainer") {
-      const totalAuthors = evt.detail.xhr.getResponseHeader("X-Total-Count");
-      const currentPage = evt.detail.xhr.getResponseHeader("X-Current-Page");
-      const totalPages = evt.detail.xhr.getResponseHeader("X-Total-Pages");
+  // Обновление счетчика после HTMX
+  document.addEventListener("htmx:afterSwap", function (event) {
+    if (event.detail.target.id !== "authorGridContainer") return;
 
-      if (totalAuthors) {
-        document.querySelector(".text-white-50.mb-0").textContent =
-          "Всего авторов: " + totalAuthors;
+    const paginationEl = document.querySelector(
+      "#authorGridContainer .pagination-container",
+    );
+    let total = paginationEl ? parseInt(paginationEl.dataset.total, 10) : null;
+
+    // Если пагинации нет — проверяем пустую строку или считаем строки
+    if (total === null || isNaN(total)) {
+      if (document.querySelector("#authorGridContainer #empty-row")) {
+        total = 0;
+      } else {
+        total = document.querySelectorAll(
+          "#authorGridContainer tbody tr:not(#empty-row)",
+        ).length;
       }
-
-      const cards = document.querySelectorAll(
-        "#authorGridContainer .card.h-100",
-      ).length;
-      document.getElementById("resultCount").textContent =
-        "Найдено: " + (totalAuthors || cards);
     }
+
+    const resultCount = document.getElementById("resultCount");
+    if (resultCount) {
+      resultCount.textContent = `Найдено: ${total}`;
+    }
+
+    updateFilterLabels();
   });
 
   document.addEventListener("DOMContentLoaded", function () {
