@@ -139,8 +139,8 @@ def edit_book(book_id):
 
     if form.validate_on_submit():
         try:
-            # Сбрасываем FileField перед populate_obj
-            form.cover.data = None
+            current_cover = book.cover           # ← снимок из БД
+            form.cover.data = None               # ← защита от FileStorage
             form.populate_obj(book)
 
             if book.id_cover == 0:
@@ -148,12 +148,11 @@ def edit_book(book_id):
             if book.id_format == 0:
                 book.id_format = None
 
-            # Обработка загрузки новой обложки:
-            # если файл не выбран — book.cover остаётся прежним
-            if 'cover' in request.files:
-                file = request.files['cover']
-                if file and file.filename:
-                    book.cover = file.read()
+            new_file = request.files.get('cover')
+            if new_file and new_file.filename:
+                book.cover = new_file.read()
+            else:
+                book.cover = current_cover       # ← сохраняем существующую обложку
 
             db.session.commit()
             flash('Книга успешно обновлена!', 'success')
@@ -449,7 +448,6 @@ def edit_author(author_id):
     author = Author.query.get_or_404(author_id)
     form = FormAuthor(obj=author)
 
-    # Получаем параметры для возврата
     page = request.args.get('page', 1, type=int)
     search = request.args.get('search', '')
     return_page = request.args.get('return_page', 1, type=int)
@@ -465,18 +463,25 @@ def edit_author(author_id):
 
     if form.validate_on_submit():
         try:
-            # Не даём populate_obj затащить FileStorage в author.photo
+            # 1) Запоминаем текущее фото из БД (bytes или None)
+            current_photo = author.photo
+
+            # 2) Не даём populate_obj затащить FileStorage в author.photo
             form.photo.data = None
             form.populate_obj(author)
-            author.fio = f"{author.lastname} {author.firstname or ''} {author.secondname or ''}".strip(
-            )
 
-            # Обработка загрузки нового фото:
-            # если файл не выбран — author.photo остаётся прежним
-            if 'photo' in request.files:
-                file = request.files['photo']
-                if file and file.filename:
-                    author.photo = file.read()
+            author.fio = (
+                f"{author.lastname} "
+                f"{author.firstname or ''} "
+                f"{author.secondname or ''}"
+            ).strip()
+
+            # 3) Фото: новый файл — заменяем, иначе — восстанавливаем старое
+            new_file = request.files.get('photo')
+            if new_file and new_file.filename:
+                author.photo = new_file.read()
+            else:
+                author.photo = current_photo   # ← сохраняем существующее
 
             db.session.commit()
             flash('Автор успешно обновлен!', 'success')
@@ -661,18 +666,17 @@ def edit_interpreter(interpreter_id):
 
     if form.validate_on_submit():
         try:
-            # Сбрасываем FileField перед populate_obj
+            current_photo = interpreter.photo
             form.photo.data = None
             form.populate_obj(interpreter)
             interpreter.fio = f"{interpreter.lastname} {interpreter.firstname or ''} {interpreter.secondname or ''}".strip(
             )
 
-            # Обработка загрузки нового фото:
-            # если файл не выбран — interpreter.photo остаётся прежним
-            if 'photo' in request.files:
-                file = request.files['photo']
-                if file and file.filename:
-                    interpreter.photo = file.read()
+            new_file = request.files.get('photo')
+            if new_file and new_file.filename:
+                interpreter.photo = new_file.read()
+            else:
+                interpreter.photo = current_photo
 
             db.session.commit()
             flash('Переводчик успешно обновлен!', 'success')
