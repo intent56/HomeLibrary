@@ -85,6 +85,8 @@ def add_book():
     if form.validate_on_submit():
         try:
             book = Book()
+            # Сбрасываем FileField перед populate_obj
+            form.cover.data = None
             form.populate_obj(book)
 
             if book.id_cover == 0:
@@ -92,16 +94,13 @@ def add_book():
             if book.id_format == 0:
                 book.id_format = None
 
-            # === ИСПРАВЛЕННАЯ ОБРАБОТКА ОБЛОЖКИ ===
-            # Обработка загрузки обложки
+            # Обработка загрузки обложки:
+            # при добавлении новой книги, если файл не выбран — book.cover = None
             if 'cover' in request.files:
                 file = request.files['cover']
-                # Проверяем, что файл выбран и имеет имя
                 if file and file.filename:
-                    # Читаем содержимое файла в bytes
                     book.cover = file.read()
                 else:
-                    # Если файл не выбран, явно устанавливаем None
                     book.cover = None
 
             db.session.add(book)
@@ -125,7 +124,6 @@ def edit_book(book_id):
     form = FormBook(obj=book)
 
     # === ЗАПОЛНЯЕМ CHOICES ДЛЯ SELECT-ПОЛЕЙ ПЕРЕД РЕНДЕРИНГОМ ===
-    # Необходимо для корректной работы WTForms и валидации значений
     form.id_cover.choices = [(0, 'Не указан')] + [
         (c.id, f'{c.code} - {c.name}')
         for c in Cover.query.order_by(Cover.name).all()
@@ -141,6 +139,8 @@ def edit_book(book_id):
 
     if form.validate_on_submit():
         try:
+            # Сбрасываем FileField перед populate_obj
+            form.cover.data = None
             form.populate_obj(book)
 
             if book.id_cover == 0:
@@ -148,18 +148,12 @@ def edit_book(book_id):
             if book.id_format == 0:
                 book.id_format = None
 
-            # === ИСПРАВЛЕННАЯ ОБРАБОТКА ОБЛОЖКИ ===
-            # Обработка загрузки новой обложки
+            # Обработка загрузки новой обложки:
+            # если файл не выбран — book.cover остаётся прежним
             if 'cover' in request.files:
                 file = request.files['cover']
-                # Проверяем, что файл выбран и имеет имя
                 if file and file.filename:
-                    # Читаем содержимое файла в bytes
                     book.cover = file.read()
-                else:
-                    # Если файл не выбран, оставляем существующую обложку
-                    # (НЕ устанавливаем None, чтобы не удалять существующую)
-                    pass
 
             db.session.commit()
             flash('Книга успешно обновлена!', 'success')
@@ -341,11 +335,20 @@ def add_author():
     if form.validate_on_submit():
         try:
             author = Author()
-            form.populate_obj(author)
-            author.fio = f"{author.lastname} {author.firstname or ''} {author.secondname or ''}".strip(
-            )
 
-            # Обработка загрузки фото
+            # Не даём populate_obj затащить FileStorage в author.photo
+            # (photo — LargeBinary, ждёт bytes или None)
+            form.photo.data = None
+            form.populate_obj(author)
+
+            author.fio = (
+                f"{author.lastname} "
+                f"{author.firstname or ''} "
+                f"{author.secondname or ''}"
+            ).strip()
+
+            # Обработка загрузки фото:
+            # для новой записи, если файл не выбран — author.photo = None
             if 'photo' in request.files:
                 file = request.files['photo']
                 if file and file.filename:
@@ -355,12 +358,20 @@ def add_author():
             db.session.commit()
 
             flash('Автор успешно добавлен!', 'success')
-            return redirect(url_for('main.select_authors', book_id=request.args.get('book_id', 0)))
+            return redirect(
+                url_for('main.select_authors',
+                        book_id=request.args.get('book_id', 0))
+            )
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(f'Ошибка при добавлении автора: {str(e)}', 'danger')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Неожиданная ошибка: {str(e)}', 'danger')
 
-    return render_template('add_author.html', form=form, book_id=request.args.get('book_id', 0))
+    return render_template('add_author.html',
+                           form=form,
+                           book_id=request.args.get('book_id', 0))
 
 
 @bp.route('/search/authors')
@@ -454,11 +465,14 @@ def edit_author(author_id):
 
     if form.validate_on_submit():
         try:
+            # Не даём populate_obj затащить FileStorage в author.photo
+            form.photo.data = None
             form.populate_obj(author)
             author.fio = f"{author.lastname} {author.firstname or ''} {author.secondname or ''}".strip(
             )
 
-            # Обработка загрузки нового фото
+            # Обработка загрузки нового фото:
+            # если файл не выбран — author.photo остаётся прежним
             if 'photo' in request.files:
                 file = request.files['photo']
                 if file and file.filename:
@@ -470,6 +484,9 @@ def edit_author(author_id):
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(f'Ошибка при обновлении автора: {str(e)}', 'danger')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Неожиданная ошибка: {str(e)}', 'danger')
 
     return render_template('edit_author.html',
                            form=form,
@@ -644,11 +661,14 @@ def edit_interpreter(interpreter_id):
 
     if form.validate_on_submit():
         try:
+            # Сбрасываем FileField перед populate_obj
+            form.photo.data = None
             form.populate_obj(interpreter)
             interpreter.fio = f"{interpreter.lastname} {interpreter.firstname or ''} {interpreter.secondname or ''}".strip(
             )
 
-            # Обработка загрузки нового фото
+            # Обработка загрузки нового фото:
+            # если файл не выбран — interpreter.photo остаётся прежним
             if 'photo' in request.files:
                 file = request.files['photo']
                 if file and file.filename:
@@ -660,6 +680,9 @@ def edit_interpreter(interpreter_id):
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(f'Ошибка при обновлении переводчика: {str(e)}', 'danger')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Неожиданная ошибка: {str(e)}', 'danger')
 
     return render_template('edit_interpreter.html',
                            form=form,
@@ -694,6 +717,8 @@ def add_interpreter():
     if form.validate_on_submit():
         try:
             interpreter = Interpreter()
+            # Сбрасываем FileField перед populate_obj
+            form.photo.data = None
             form.populate_obj(interpreter)
             interpreter.fio = f"{interpreter.lastname} {interpreter.firstname or ''} {interpreter.secondname or ''}".strip(
             )
@@ -720,9 +745,14 @@ def add_interpreter():
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(f'Ошибка при добавлении переводчика: {str(e)}', 'danger')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Неожиданная ошибка: {str(e)}', 'danger')
 
     languages = Language.query.order_by(Language.name).all()
-    return render_template('add_interpreter.html', form=form, book_id=request.args.get('book_id', 0), languages=languages)
+    return render_template('add_interpreter.html', form=form,
+                           book_id=request.args.get('book_id', 0),
+                           languages=languages)
 
 
 @bp.route('/book/<int:book_id>/interpreters', methods=['GET'])
