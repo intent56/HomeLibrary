@@ -1244,6 +1244,9 @@ def publisher_list():
     page = request.args.get('page', 1, type=int)
     search = request.args.get('search', '').strip()
 
+    # Всего переводчиков в БД — не зависит от поиска
+    total_publishers = Publisher.query.count()
+
     query = Publisher.query
 
     if search:
@@ -1257,19 +1260,17 @@ def publisher_list():
         per_page=Config.ITEMS_PER_PAGE_PUBLISHER,
         error_out=False
     )
+    context = dict(
+        publishers=pagination.items,
+        pagination=pagination,
+        total_publishers=total_publishers,
+        search=search,
+    )
 
     if request.headers.get('HX-Request'):
-        return render_template('partials/publisher_grid.html',
-                               publishers=pagination.items,
-                               pagination=pagination,
-                               total_publishers=query.count(),
-                               search=search)
+        return render_template('partials/publisher_grid.html', **context)
 
-    return render_template('publisher_list.html',
-                           publishers=pagination.items,
-                           pagination=pagination,
-                           total_publishers=query.count(),
-                           search=search)
+    return render_template('publisher_list.html', **context)
 
 
 @bp.route('/publisher/<int:publisher_id>/edit', methods=['GET', 'POST'])

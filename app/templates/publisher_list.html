@@ -86,7 +86,7 @@ content %}
       </div>
       <div class="mt-2">
         <span class="text-white-50 small" id="resultCount">
-          Найдено: {{ total_publishers }}
+          Найдено: {{ pagination.total }}
         </span>
       </div>
     </div>
@@ -108,22 +108,27 @@ content %}
     });
   }
 
+  // Обновление счётчика «Найдено» после HTMX-свопа.
+  // Источник истины — data-total на .pagination-container внутри
+  // partials/publisher_grid.html (туда передаётся pagination.total).
   document.body.addEventListener("htmx:afterSwap", function (evt) {
-    if (evt.detail.target.id === "publisherGridContainer") {
-      const totalPublishers = evt.detail.xhr.getResponseHeader("X-Total-Count");
-      const currentPage = evt.detail.xhr.getResponseHeader("X-Current-Page");
-      const totalPages = evt.detail.xhr.getResponseHeader("X-Total-Pages");
+    if (evt.detail.target.id !== "publisherGridContainer") return;
 
-      if (totalPublishers) {
-        document.querySelector(".text-white-50.mb-0").textContent =
-          "Всего издателей: " + totalPublishers;
-      }
+    const paginationEl = document.querySelector(
+      "#publisherGridContainer .pagination-container",
+    );
+    let total = paginationEl ? parseInt(paginationEl.dataset.total, 10) : null;
 
-      const cards = document.querySelectorAll(
+    // Fallback: если пагинации нет (одна страница) — считаем карточки
+    if (total === null || isNaN(total)) {
+      total = document.querySelectorAll(
         "#publisherGridContainer .card.h-100",
       ).length;
-      document.getElementById("resultCount").textContent =
-        "Найдено: " + (totalPublishers || cards);
+    }
+
+    const resultCount = document.getElementById("resultCount");
+    if (resultCount) {
+      resultCount.textContent = `Найдено: ${total}`;
     }
   });
 
