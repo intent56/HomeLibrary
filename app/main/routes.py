@@ -407,6 +407,9 @@ def author_list():
     page = request.args.get('page', 1, type=int)
     search = request.args.get('search', '').strip()
 
+    # Общее число авторов в БД — не зависит от поиска
+    total_authors = Author.query.count()
+
     # Базовый запрос
     query = Author.query
 
@@ -427,20 +430,17 @@ def author_list():
         error_out=False
     )
 
-    # Проверяем, является ли запрос HTMX
-    if request.headers.get('HX-Request'):
-        # Возвращаем только сетку авторов и пагинацию
-        return render_template('partials/author_grid.html',
-                               authors=pagination.items,
-                               pagination=pagination,
-                               total_authors=query.count(),
-                               search=search)
+    context = dict(
+        authors=pagination.items,
+        pagination=pagination,
+        total_authors=total_authors,
+        search=search,
+    )
 
-    return render_template('author_list.html',
-                           authors=pagination.items,
-                           pagination=pagination,
-                           total_authors=query.count(),
-                           search=search)
+    if request.headers.get('HX-Request'):
+        return render_template('partials/author_grid.html', **context)
+
+    return render_template('author_list.html', **context)
 
 
 @bp.route('/author/<int:author_id>/edit', methods=['GET', 'POST'])
@@ -617,6 +617,9 @@ def interpreter_list():
     page = request.args.get('page', 1, type=int)
     search = request.args.get('search', '').strip()
 
+    # Всего переводчиков в БД — не зависит от поиска
+    total_interpreters = Interpreter.query.count()
+
     query = Interpreter.query
 
     if search:
@@ -631,18 +634,17 @@ def interpreter_list():
         error_out=False
     )
 
-    if request.headers.get('HX-Request'):
-        return render_template('partials/interpreter_grid.html',
-                               interpreters=pagination.items,
-                               pagination=pagination,
-                               total_interpreters=query.count(),
-                               search=search)
+    context = dict(
+        interpreters=pagination.items,
+        pagination=pagination,
+        total_interpreters=total_interpreters,
+        search=search,
+    )
 
-    return render_template('interpreter_list.html',
-                           interpreters=pagination.items,
-                           pagination=pagination,
-                           total_interpreters=query.count(),
-                           search=search)
+    if request.headers.get('HX-Request'):
+        return render_template('partials/interpreter_grid.html', **context)
+
+    return render_template('interpreter_list.html', **context)
 
 
 @bp.route('/interpreter/<int:interpreter_id>/edit', methods=['GET', 'POST'])
