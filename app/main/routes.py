@@ -527,6 +527,9 @@ def book_list():
     interpreter_search = request.args.get('interpreter_search', '').strip()
     genre_search = request.args.get('genre_search', '').strip()
 
+    # Всего книг в БД — не зависит от поиска
+    total_books = Book.query.count()
+
     # Базовый запрос
     query = Book.query
 
@@ -566,24 +569,20 @@ def book_list():
         error_out=False
     )
 
-    if request.headers.get('HX-Request'):
-        return render_template('partials/book_table.html',
-                               books=pagination.items,
-                               pagination=pagination,
-                               total_books=query.count(),
-                               search=search,
-                               author_search=author_search,
-                               interpreter_search=interpreter_search,
-                               genre_search=genre_search)
+    context = dict(
+        books=pagination.items,
+        pagination=pagination,
+        total_books=total_books,
+        search=search,
+        author_search=author_search,
+        interpreter_search=interpreter_search,
+        genre_search=genre_search,
+    )
 
-    return render_template('book_list.html',
-                           books=pagination.items,
-                           pagination=pagination,
-                           total_books=query.count(),
-                           search=search,
-                           author_search=author_search,
-                           interpreter_search=interpreter_search,
-                           genre_search=genre_search)
+    if request.headers.get('HX-Request'):
+        return render_template('partials/book_table.html', **context)
+
+    return render_template('book_list.html', **context)
 
 
 @bp.route('/book/<int:book_id>/delete', methods=['POST'])

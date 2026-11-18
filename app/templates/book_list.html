@@ -127,7 +127,7 @@ content %}
       </div>
       <div class="mt-2">
         <span class="text-white-50 small" id="resultCount">
-          Найдено: {{ total_books }} книг
+          Найдено: {{ pagination.total }} книг
         </span>
         {% if search %}
         <span class="text-white-50 small ms-3">
@@ -330,8 +330,10 @@ content %}
     }
   });
 
-  // Обновление счетчика после HTMX
-  document.addEventListener("htmx:afterSwap", function (event) {
+  // Обновление счётчика «Найдено» и меток фильтров после HTMX-свопа.
+  // Источник истины — data-total на .pagination-container внутри
+  // partials/book_table.html (туда передаётся pagination.total).
+  document.body.addEventListener("htmx:afterSwap", function (event) {
     if (event.detail.target.id !== "bookTableContainer") return;
 
     const paginationEl = document.querySelector(
@@ -339,7 +341,7 @@ content %}
     );
     let total = paginationEl ? parseInt(paginationEl.dataset.total, 10) : null;
 
-    // Если пагинации нет — проверяем пустую строку или считаем строки
+    // Fallback: если пагинации нет (одна страница) — считаем строки
     if (total === null || isNaN(total)) {
       if (document.querySelector("#bookTableContainer #empty-row")) {
         total = 0;
@@ -357,6 +359,58 @@ content %}
 
     updateFilterLabels();
   });
+
+  // Обновление меток активных фильтров под строкой поиска.
+  // Использует текущие значения полей ввода и актуальный URL.
+  function updateFilterLabels() {
+    const params = new URLSearchParams(window.location.search);
+
+    const labels = [
+      {
+        key: "search",
+        icon: "bi-book",
+        label: "По названию",
+        elId: "searchInput",
+      },
+      {
+        key: "author_search",
+        icon: "bi-person",
+        label: "По автору",
+        elId: "authorSearchInput",
+      },
+      {
+        key: "interpreter_search",
+        icon: "bi-translate",
+        label: "По переводчику",
+        elId: "interpreterSearchInput",
+      },
+      {
+        key: "genre_search",
+        icon: "bi-tag",
+        label: "По жанру",
+        elId: "genreSearchInput",
+      },
+    ];
+
+    // Удаляем старые метки (все, что идут после #resultCount в его контейнере)
+    const container = document.getElementById("resultCount")?.parentElement;
+    if (!container) return;
+
+    container.querySelectorAll(".filter-label").forEach((el) => el.remove());
+
+    labels.forEach(({ key, icon, label, elId }) => {
+      // Приоритет — значение из URL (актуально после hx-push-url),
+      // fallback — значение из поля ввода
+      const value =
+        params.get(key) || document.getElementById(elId)?.value || "";
+      if (!value) return;
+
+      const span = document.createElement("span");
+      span.className = "text-white-50 small ms-3 filter-label";
+      span.innerHTML = `<i class="bi ${icon}"></i> ${label}: "${value}"`;
+      container.appendChild(span);
+    });
+  }
 </script>
 
 <!-- СТИЛИ -->
