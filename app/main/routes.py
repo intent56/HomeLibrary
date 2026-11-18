@@ -1687,6 +1687,9 @@ def language_list():
     page = request.args.get('page', 1, type=int)
     search = request.args.get('search', '').strip()
 
+    # Всего языков в БД — не зависит от поиска
+    total_languages = Language.query.count()
+
     query = Language.query
 
     if search:
@@ -1706,18 +1709,17 @@ def language_list():
         error_out=False
     )
 
-    if request.headers.get('HX-Request'):
-        return render_template('partials/language_grid.html',
-                               languages=pagination.items,
-                               pagination=pagination,
-                               total_languages=query.count(),
-                               search=search)
+    context = dict(
+        languages=pagination.items,
+        pagination=pagination,
+        total_languages=total_languages,
+        search=search,
+    )
 
-    return render_template('language_list.html',
-                           languages=pagination.items,
-                           pagination=pagination,
-                           total_languages=query.count(),
-                           search=search)
+    if request.headers.get('HX-Request'):
+        return render_template('partials/language_grid.html', **context)
+
+    return render_template('language_list.html', **context)
 
 
 @bp.route('/language/<int:language_id>/card')
