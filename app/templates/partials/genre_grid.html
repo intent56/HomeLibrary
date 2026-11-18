@@ -65,7 +65,7 @@
 {% if pagination and pagination.pages > 1 %}
 <div class="row">
     <div class="col-12">
-        <div class="pagination-container mt-4">
+        <div class="pagination-container mt-4" data-total="{{ pagination.total }}">
             <nav aria-label="Навигация по страницам">
                 <ul class="pagination pagination-sm justify-content-center mb-0" id="transparentPagination">
                     <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">

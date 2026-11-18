@@ -950,6 +950,9 @@ def genre_list():
     page = request.args.get('page', 1, type=int)
     search = request.args.get('search', '').strip()
 
+    # Общее число жанров в БД — не зависит от поиска
+    total_genres = Genre.query.count()
+
     query = Genre.query
 
     if search:
@@ -964,18 +967,17 @@ def genre_list():
         error_out=False
     )
 
-    if request.headers.get('HX-Request'):
-        return render_template('partials/genre_grid.html',
-                               genres=pagination.items,
-                               pagination=pagination,
-                               total_genres=query.count(),
-                               search=search)
+    context = dict(
+        genres=pagination.items,
+        pagination=pagination,
+        total_genres=total_genres,
+        search=search,
+    )
 
-    return render_template('genre_list.html',
-                           genres=pagination.items,
-                           pagination=pagination,
-                           total_genres=query.count(),
-                           search=search)
+    if request.headers.get('HX-Request'):
+        return render_template('partials/genre_grid.html', **context)
+
+    return render_template('genre_list.html', **context)
 
 
 @bp.route('/genre/<int:genre_id>/edit', methods=['GET', 'POST'])
@@ -1244,7 +1246,7 @@ def publisher_list():
     page = request.args.get('page', 1, type=int)
     search = request.args.get('search', '').strip()
 
-    # Всего переводчиков в БД — не зависит от поиска
+    # Всего издателей в БД — не зависит от поиска
     total_publishers = Publisher.query.count()
 
     query = Publisher.query
@@ -2446,7 +2448,7 @@ def author_view(author_id):
 
 @bp.route('/publisher/<int:publisher_id>/card')
 def publisher_card(publisher_id):
-    publisher = Author.query.get_or_404(publisher_id)
+    publisher = Publisher.query.get_or_404(publisher_id)
     page = request.args.get('page', 1, type=int)
 
     # Получаем параметры для возврата
