@@ -1588,6 +1588,9 @@ def format_list():
     page = request.args.get('page', 1, type=int)
     search = request.args.get('search', '').strip()
 
+    # Всего переводчиков в БД — не зависит от поиска
+    total_formats = Format.query.count()
+
     # Базовый запрос
     query = Format.query
 
@@ -1611,25 +1614,21 @@ def format_list():
         error_out=False
     )
 
-    # Общая статистика (все форматы без пагинации)
-    total_formats = Format.query.count()
     total_books_with_formats = sum(len(f.fmt_books)
                                    for f in Format.query.all())
 
-    if request.headers.get('HX-Request'):
-        return render_template('partials/format_table.html',
-                               formats=pagination.items,
-                               pagination=pagination,
-                               total_formats=total_formats,
-                               total_books_with_formats=total_books_with_formats,
-                               search=search)
+    context = dict(
+        formats=pagination.items,
+        pagination=pagination,
+        total_formats=total_formats,
+        total_books_with_formats=total_books_with_formats,
+        search=search,
+    )
 
-    return render_template('format_list.html',
-                           formats=pagination.items,
-                           pagination=pagination,
-                           total_formats=total_formats,
-                           total_books_with_formats=total_books_with_formats,
-                           search=search)
+    if request.headers.get('HX-Request'):
+        return render_template('partials/format_table.html', **context)
+
+    return render_template('format_list.html', **context)
 
 
 @bp.route('/format/<int:format_id>/card')

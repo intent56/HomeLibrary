@@ -117,8 +117,7 @@ content %}
       </div>
       <div class="mt-2">
         <span class="text-white-50 small" id="resultCount">
-          Найдено: {{ total_formats }}
-        </span>
+          Найдено: {{ pagination.total }}
       </div>
     </div>
 
@@ -134,27 +133,32 @@ content %}
     document.getElementById("searchInput").value = "";
 
     htmx.ajax("GET", '{{ url_for("main.format_list") }}', {
-      target: "#formatTableContainer",
+      target: "#formatGridContainer",
       values: { page: 1 },
     });
   }
 
+  // Обновление счётчика «Найдено» после HTMX-свопа.
+  // Источник истины — data-total на .pagination-container внутри
+  // partials/format_grid.html (туда передаётся pagination.total).
   document.body.addEventListener("htmx:afterSwap", function (evt) {
-    if (evt.detail.target.id === "formatTableContainer") {
-      const totalFormats = evt.detail.xhr.getResponseHeader("X-Total-Count");
-      const currentPage = evt.detail.xhr.getResponseHeader("X-Current-Page");
-      const totalPages = evt.detail.xhr.getResponseHeader("X-Total-Pages");
+    if (evt.detail.target.id !== "foematGridContainer") return;
 
-      if (totalFormats) {
-        document.querySelector(".text-white-50.mb-0").textContent =
-          "Всего форматов: " + totalFormats;
-      }
+    const paginationEl = document.querySelector(
+      "#formatGridContainer .pagination-container",
+    );
+    let total = paginationEl ? parseInt(paginationEl.dataset.total, 10) : null;
 
-      const rows = document.querySelectorAll(
-        "#formatTableContainer tbody tr:not(.empty-row)",
+    // Fallback: если пагинации нет (одна страница) — считаем карточки
+    if (total === null || isNaN(total)) {
+      total = document.querySelectorAll(
+        "#formatGridContainer .card.h-100",
       ).length;
-      document.getElementById("resultCount").textContent =
-        "Найдено: " + (totalFormats || rows);
+    }
+
+    const resultCount = document.getElementById("resultCount");
+    if (resultCount) {
+      resultCount.textContent = `Найдено: ${total}`;
     }
   });
 
