@@ -118,6 +118,7 @@ content %}
       <div class="mt-2">
         <span class="text-white-50 small" id="resultCount">
           Найдено: {{ pagination.total }}
+        </span>
       </div>
     </div>
 
@@ -133,27 +134,31 @@ content %}
     document.getElementById("searchInput").value = "";
 
     htmx.ajax("GET", '{{ url_for("main.format_list") }}', {
-      target: "#formatGridContainer",
+      target: "#formatTableContainer",
       values: { page: 1 },
     });
   }
 
   // Обновление счётчика «Найдено» после HTMX-свопа.
   // Источник истины — data-total на .pagination-container внутри
-  // partials/format_grid.html (туда передаётся pagination.total).
+  // partials/format_table.html (туда передаётся pagination.total).
   document.body.addEventListener("htmx:afterSwap", function (evt) {
-    if (evt.detail.target.id !== "foematGridContainer") return;
+    if (evt.detail.target.id !== "formatTableContainer") return;
 
     const paginationEl = document.querySelector(
-      "#formatGridContainer .pagination-container",
+      "#formatTableContainer .pagination-container",
     );
     let total = paginationEl ? parseInt(paginationEl.dataset.total, 10) : null;
 
-    // Fallback: если пагинации нет (одна страница) — считаем карточки
+    // Fallback: если пагинации нет (одна страница) — считаем строки таблицы
     if (total === null || isNaN(total)) {
-      total = document.querySelectorAll(
-        "#formatGridContainer .card.h-100",
-      ).length;
+      if (document.querySelector("#formatTableContainer #empty-row")) {
+        total = 0;
+      } else {
+        total = document.querySelectorAll(
+          "#formatTableContainer tbody tr:not(#empty-row)",
+        ).length;
+      }
     }
 
     const resultCount = document.getElementById("resultCount");
