@@ -195,6 +195,7 @@ content %}
                   {% for book in books %}
                   <tr>
                     <td>
+                      <div class="text-center">
                       {% if book.cover %}
                       <img
                         src="data:image/jpeg;base64,{{ book.cover|b64encode }}"
@@ -229,6 +230,7 @@ content %}
                         ></i>
                       </div>
                       {% endif %}
+                     </div>  
                     </td>
                     <td>
                       <strong">{{ book.name }}</strong>
