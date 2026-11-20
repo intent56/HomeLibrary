@@ -82,7 +82,7 @@ content %}
                     border: 2px solid rgba(255, 255, 255, 0.3);
                   "
                 >
-                  <i class="bi bi-building display-1 text-white-50"></i>
+                  <i class="bi bi-building display-1 main-text-color"></i>
                 </div>
               </div>
               <div class="col-md-8">
@@ -106,10 +106,9 @@ content %}
                   </tr>
                   {% endif %}
                   <tr>
-                    <th class="text-white-50">Всего книг:</th>
+                    <th class="main-text-color">Всего книг:</th>
                     <td>
-                      <span
-                        class="badge bg-primary bg-opacity-75 main-text-color fs-6"
+                      <span class="badge bg-primary bg-opacity-75 fs-6"
                         >{{ publisher.book_publishers|length }}</span
                       >
                     </td>
@@ -186,12 +185,12 @@ content %}
                       {% endif %}
                     </td>
                     <td>
-                      <strong class="main-text-color">{{ book.name }}</strong>
+                      <strong>{{ book.name }}</strong>
                     </td>
                     <td>
                       {% if book.author_books %} {% for author in
                       book.author_books %}
-                      <strong class="main-text-color"
+                      <strong
                         >{{ author.lastname }} {% if author.firstname %} {{
                         author.firstname.0 }}.{% endif %} {% if
                         author.secondname %} {{ author.secondname.0 }}.{% endif
@@ -204,20 +203,22 @@ content %}
                       {% endif %}
                     </td>
                     <td>
-                      <div class="btn-group btn-group-sm" role="group">
-                        <a
-                          href="{{ url_for('main.book_view', 
+                      <div class="text-center">
+                        <div class="btn-group btn-group-sm" role="group">
+                          <a
+                            href="{{ url_for('main.book_view', 
                                 book_id=book.id,
                                 page1=page if page else 1,
                                 id=publisher.id,
                                 return_search=return_search,
                                 return_page=return_page,
                                 return_to='publisher_card') }}"
-                          class="btn btn-outline-light"
-                          title="Просмотр книги"
-                        >
-                          <i class="bi bi-eye"></i>
-                        </a>
+                            class="btn btn-outline-light"
+                            title="Просмотр книги"
+                          >
+                            <i class="bi bi-eye main-text-color"></i>
+                          </a>
+                        </div>
                       </div>
                     </td>
                   </tr>
@@ -450,7 +451,7 @@ content %}
 
   .transparent-table thead th {
     background-color: rgba(0, 0, 0, 0.5) !important;
-    color: #ffffff !important;
+    color: var(--main-color) !important;
     border-bottom: 2px solid rgba(255, 255, 255, 0.15) !important;
   }
 
@@ -467,7 +468,7 @@ content %}
     color: #ffffff !important;
   }
   .transparent-table th {
-    color: rgba(255, 255, 255, 0.7) !important;
+    color: var(--main-color) !important;
   }
 
   /* 5. ПРОЗРАЧНЫЙ КОММЕНТАРИЙ */
