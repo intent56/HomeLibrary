@@ -64,10 +64,9 @@ content %}
                 <h3 class="mb-3 main-text-color fw-bold">{{ cover.name }}</h3>
                 <table class="table table-borderless transparent-table">
                   <tr>
-                    <th style="width: 35%" class="text-white-50">Код:</th>
+                    <th style="width: 35%" class="main-text-color">Код:</th>
                     <td>
-                      <span
-                        class="badge bg-primary bg-opacity-75 main-text-color"
+                      <span class="badge bg-primary bg-opacity-75"
                         >{{ cover.code }}</span
                       >
                     </td>
@@ -79,8 +78,7 @@ content %}
                   <tr>
                     <th class="text-white-50">Книг с этим переплетом:</th>
                     <td>
-                      <span
-                        class="badge bg-info bg-opacity-75 main-text-color fs-6"
+                      <span class="badge bg-info bg-opacity-75 fs-6"
                         >{{ cover.cvr_books|length }}</span
                       >
                     </td>
@@ -122,48 +120,50 @@ content %}
                   {% for book in books %}
                   <tr>
                     <td>
-                      {% if book.cover %}
-                      <img
-                        src="data:image/jpeg;base64,{{ book.cover|b64encode }}"
-                        alt="{{ book.name }}"
-                        class="img-thumbnail book-cover-thumbnail"
-                        style="
-                          width: 40px;
-                          height: 56px;
-                          object-fit: cover;
-                          border-color: rgba(255, 255, 255, 0.2);
-                          background: transparent;
-                        "
-                        onerror="
-                          this.onerror = null;
-                          this.src =
-                            'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'56\' viewBox=\'0 0 40 56\'%3E%3Crect width=\'40\' height=\'56\' fill=\'%23f8f9fa\'/%3E%3Ctext x=\'20\' y=\'28\' font-family=\'Arial\' font-size=\'8\' fill=\'%236c757d\' text-anchor=\'middle\'%3EНет%3C/text%3E%3Ctext x=\'20\' y=\'38\' font-family=\'Arial\' font-size=\'8\' fill=\'%236c757d\' text-anchor=\'middle\'%3Eобложки%3C/text%3E%3C/svg%3E';
-                        "
-                      />
-                      {% else %}
-                      <div
-                        class="bg-transparent d-inline-flex align-items-center justify-content-center img-thumbnail"
-                        style="
-                          width: 40px;
-                          height: 56px;
-                          border-color: rgba(255, 255, 255, 0.2);
-                          background: transparent;
-                        "
-                      >
-                        <i
-                          class="bi bi-book text-white-50"
-                          style="font-size: 1.2rem"
-                        ></i>
+                      <div class="text-center">
+                        {% if book.cover %}
+                        <img
+                          src="data:image/jpeg;base64,{{ book.cover|b64encode }}"
+                          alt="{{ book.name }}"
+                          class="img-thumbnail book-cover-thumbnail"
+                          style="
+                            width: 40px;
+                            height: 56px;
+                            object-fit: cover;
+                            border-color: rgba(255, 255, 255, 0.2);
+                            background: transparent;
+                          "
+                          onerror="
+                            this.onerror = null;
+                            this.src =
+                              'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'56\' viewBox=\'0 0 40 56\'%3E%3Crect width=\'40\' height=\'56\' fill=\'%23f8f9fa\'/%3E%3Ctext x=\'20\' y=\'28\' font-family=\'Arial\' font-size=\'8\' fill=\'%236c757d\' text-anchor=\'middle\'%3EНет%3C/text%3E%3Ctext x=\'20\' y=\'38\' font-family=\'Arial\' font-size=\'8\' fill=\'%236c757d\' text-anchor=\'middle\'%3Eобложки%3C/text%3E%3C/svg%3E';
+                          "
+                        />
+                        {% else %}
+                        <div
+                          class="bg-transparent d-inline-flex align-items-center justify-content-center img-thumbnail"
+                          style="
+                            width: 40px;
+                            height: 56px;
+                            border-color: rgba(255, 255, 255, 0.2);
+                            background: transparent;
+                          "
+                        >
+                          <i
+                            class="bi bi-book text-white-50"
+                            style="font-size: 1.2rem"
+                          ></i>
+                        </div>
+                        {% endif %}
                       </div>
-                      {% endif %}
                     </td>
                     <td>
-                      <strong class="main-text-color">{{ book.name }}</strong>
+                      <strong>{{ book.name }}</strong>
                     </td>
                     <td>
                       {% if book.author_books %} {% for author in
                       book.author_books %}
-                      <strong class="main-text-color"
+                      <strong
                         >{{ author.lastname }} {% if author.firstname %} {{
                         author.firstname.0 }}.{% endif %} {% if
                         author.secondname %} {{ author.secondname.0 }}.{% endif
@@ -175,9 +175,7 @@ content %}
                     </td>
                     <td>
                       {% if book.year_edition %}
-                      <strong class="main-text-color"
-                        >{{ book.year_edition }}</strong
-                      >
+                      <strong>{{ book.year_edition }}</strong>
                       {% else %}
                       <span class="text-light-50"
                         ><i class="bi bi-tag"></i>-</span
@@ -187,9 +185,7 @@ content %}
                     <td>
                       {% if book.publisher_books %} {% for publisher in
                       book.publisher_books %}
-                      <strong class="main-text-color"
-                        >{{ publisher.name }}</strong
-                      ><br />
+                      <strong>{{ publisher.name }}</strong><br />
                       {% endfor %} {% else %}
                       <span class="text-light-50"
                         ><i class="bi bi-tag"></i> Нет издателя</span
@@ -405,7 +401,7 @@ content %}
 
   .transparent-table thead th {
     background-color: rgba(0, 0, 0, 0.5) !important;
-    color: #ffffff !important;
+    color: var(--main-color) !important;
     border-bottom: 2px solid rgba(255, 255, 255, 0.15) !important;
   }
 
@@ -465,7 +461,7 @@ content %}
     display: block; /* <-- ЭТО КЛЮЧЕВОЕ СВОЙСТВО */
   }
   .transparent-comment a {
-    color: #a8d8ff !important;
+    color: var(--main-color) !important;
   }
   .transparent-comment h1,
   .transparent-comment h2,
@@ -516,7 +512,7 @@ content %}
   }
 
   .transparent-alert i {
-    color: #0dcaf0 !important;
+    color: var(--main-color) !important;
   }
 
   /* 8. ПАГИНАЦИЯ - ИСПРАВЛЕННЫЙ СТИЛЬ */
@@ -695,6 +691,10 @@ content %}
     z-index: 1000;
     position: relative;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  }
+  /* Цвет заголовков th-полей только на вкладке "Основное" */
+  #info .transparent-table th {
+    color: var(--main-color) !important;
   }
 </style>
 {% endblock %}
