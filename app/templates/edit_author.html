@@ -253,14 +253,12 @@ content %}
                         {% endif %}
                       </td>
                       <td>
-                        <strong class="main-text-color">{{ book.name }}</strong>
+                        <strong>{{ book.name }}</strong>
                       </td>
                       <td>
                         {% if book.publisher_books %} {% for publisher in
                         book.publisher_books %}
-                        <strong class="main-text-color"
-                          >{{ publisher.name }}</strong
-                        >
+                        <strong>{{ publisher.name }}</strong>
                         {% endfor %} {% else %}
                         <span class="text-light-50"
                           ><i class="bi bi-tag"></i> Нет издателя</span
@@ -268,20 +266,22 @@ content %}
                         {% endif %}
                       </td>
                       <td>
-                        <div class="btn-group btn-group-sm" role="group">
-                          <a
-                            href="{{ url_for('main.book_view', 
+                        <div class="text-center">
+                          <div class="btn-group btn-group-sm" role="group">
+                            <a
+                              href="{{ url_for('main.book_view', 
                                 book_id=book.id,
                                 page1=page if page else 1,
                                 id=author.id,
                                 return_search=return_search,
                                 return_page=return_page,
                                 return_to='edit_author') }}"
-                            class="btn btn-outline-light"
-                            title="Просмотр книги"
-                          >
-                            <i class="bi bi-eye main-text-color"></i>
-                          </a>
+                              class="btn btn-outline-light"
+                              title="Просмотр книги"
+                            >
+                              <i class="bi bi-eye main-text-color"></i>
+                            </a>
+                          </div>
                         </div>
                       </td>
                     </tr>
@@ -696,7 +696,7 @@ content %}
 
   .transparent-table thead th {
     background-color: rgba(0, 0, 0, 0.5) !important;
-    color: #ffffff !important;
+    color: var(--main-color) !important;
     border-bottom: 2px solid rgba(255, 255, 255, 0.15) !important;
   }
 
