@@ -138,6 +138,7 @@ content %}
                   <tbody>
                     {% for book in books %}
                     <tr>
+                     <div class="text-center">
                       <td class="text-center">
                         {% if book.cover %}
                         <img
@@ -173,14 +174,15 @@ content %}
                           ></i>
                         </div>
                         {% endif %}
+                        </div> 
                       </td>
                       <td>
-                        <strong class="main-text-color">{{ book.name }}</strong>
+                        <strong>{{ book.name }}</strong>
                       </td>
                       <td>
                         {% if book.author_books %} {% for author in
                         book.author_books %}
-                        <strong class="main-text-color">{{ author.lastname }} {% if author.firstname %} {{ author.firstname.0 }}.{% endif %} {% if author.secondname %} {{ author.secondname.0 }}.{% endif %}</strong><br>
+                        <strong>{{ author.lastname }} {% if author.firstname %} {{ author.firstname.0 }}.{% endif %} {% if author.secondname %} {{ author.secondname.0 }}.{% endif %}</strong><br>
                         {% endfor %} {% else %}
                         <span class="text-light-50"
                           ><i class="bi bi-tag"></i> Нет автора</span
@@ -513,7 +515,7 @@ content %}
   }
 
   .transparent-alert i {
-    color: #0dcaf0 !important;
+    color: var(--main-color) !important;
   }
 
   .transparent-alert .main-text-color {
@@ -527,7 +529,7 @@ content %}
 
   .transparent-table thead th {
     background-color: rgba(0, 0, 0, 0.5) !important;
-    color: #ffffff !important;
+    color: var(--main-color) !important;
     border-bottom: 2px solid rgba(255, 255, 255, 0.15) !important;
   }
 
