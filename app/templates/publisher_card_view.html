@@ -99,7 +99,7 @@ content %}
                     border: 2px solid rgba(255, 255, 255, 0.3);
                   "
                 >
-                  <i class="bi bi-building display-1 text-white-50"></i>
+                  <i class="bi bi-building display-1 main-text-color"></i>
                 </div>
               </div>
               <div class="col-md-8">
@@ -110,7 +110,7 @@ content %}
                 <table class="table table-borderless transparent-table">
                   {% if publisher.ref_publisher %}
                   <tr>
-                    <th style="width: 35%" class="text-white-50">Ссылка:</th>
+                    <th style="width: 35%">Ссылка:</th>
                     <td>
                       <a
                         href="{{ publisher.ref_publisher }}"
@@ -123,10 +123,9 @@ content %}
                   </tr>
                   {% endif %}
                   <tr>
-                    <th class="text-white-50">Всего книг:</th>
+                    <th class="main-text-color">Всего книг:</th>
                     <td>
-                      <span
-                        class="badge bg-primary bg-opacity-75 main-text-color fs-6"
+                      <span class="badge bg-primary bg-opacity-75 fs-6"
                         >{{ publisher.book_publishers|length }}</span
                       >
                     </td>
@@ -512,9 +511,6 @@ content %}
   }
   .transparent-table td {
     color: #ffffff !important;
-  }
-  .transparent-table th {
-    color: rgba(255, 255, 255, 0.7) !important;
   }
 
   /* 5. ПРОЗРАЧНЫЙ КОММЕНТАРИЙ */
