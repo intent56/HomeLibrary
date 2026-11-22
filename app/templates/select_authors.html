@@ -165,47 +165,6 @@ content %}
               {% else %} Нет изменений для сохранения {% endif %}
             </span>
           </div>
-
-          <div class="d-flex gap-2">
-            <form
-              method="POST"
-              action="{{ url_for('main.save_interpreters_changes', book_id=book.id) }}"
-              class="d-inline"
-            >
-              <input
-                type="hidden"
-                name="csrf_token"
-                value="{{ csrf_token() }}"
-              />
-              <button
-                type="submit"
-                class="btn btn-edit btn-lg d-flex align-items-center"
-                id="saveBtn"
-              >
-                <i class="bi bi-check-circle me-2"></i>
-                {% if has_changes %}Сохранить{% else %}Готово{% endif %}
-              </button>
-            </form>
-            <form
-              method="POST"
-              action="{{ url_for('main.cancel_interpreters_changes', book_id=book.id) }}"
-              class="d-inline"
-            >
-              <input
-                type="hidden"
-                name="csrf_token"
-                value="{{ csrf_token() }}"
-              />
-              <button
-                type="submit"
-                class="btn btn-outline-light btn-lg d-flex align-items-center"
-                id="cancelChangesBtn"
-              >
-                <i class="bi bi-arrow-counterclockwise me-2"></i> Отмена
-              </button>
-            </form>
-          </div>
-
           <div class="d-flex gap-2">
             <a
               href="{{ url_for('main.book_detail', book_id=book.id) }}"
