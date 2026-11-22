@@ -167,22 +167,45 @@ content %}
               {% else %} Нет изменений для сохранения {% endif %}
             </span>
           </div>
+
           <div class="d-flex gap-2">
-            <a
-              href="{{ url_for('main.save_interpreters_changes', book_id=book.id) }}"
-              class="btn btn-edit btn-lg d-flex align-items-center"
-              id="saveBtn"
+            <form
+              method="POST"
+              action="{{ url_for('main.save_interpreters_changes', book_id=book.id) }}"
+              class="d-inline"
             >
-              <i class="bi bi-check-circle me-2"></i>
-              {% if has_changes %}Сохранить{% else %}Готово{% endif %}
-            </a>
-            <a
-              href="{{ url_for('main.cancel_interpreters_changes', book_id=book.id) }}"
-              class="btn btn-outline-light btn-lg d-flex align-items-center"
-              id="cancelChangesBtn"
+              <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+              />
+              <button
+                type="submit"
+                class="btn btn-edit btn-lg d-flex align-items-center"
+                id="saveBtn"
+              >
+                <i class="bi bi-check-circle me-2"></i>
+                {% if has_changes %}Сохранить{% else %}Готово{% endif %}
+              </button>
+            </form>
+            <form
+              method="POST"
+              action="{{ url_for('main.cancel_interpreters_changes', book_id=book.id) }}"
+              class="d-inline"
             >
-              <i class="bi bi-arrow-counterclockwise me-2"></i> Отмена
-            </a>
+              <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+              />
+              <button
+                type="submit"
+                class="btn btn-outline-light btn-lg d-flex align-items-center"
+                id="cancelChangesBtn"
+              >
+                <i class="bi bi-arrow-counterclockwise me-2"></i> Отмена
+              </button>
+            </form>
           </div>
         </div>
       </div>
@@ -198,6 +221,7 @@ content %}
       added: {{ pending_added|tojson }},
       removed: {{ pending_removed|tojson }}
   };
+  let isSubmitting = false;
 
   // Проверяем, есть ли реальные изменения
   function hasRealChanges() {
@@ -324,11 +348,19 @@ content %}
   }
 
   window.addEventListener('beforeunload', function(e) {
+      if (isSubmitting) return;            // ← пропускаем при явном сохранении/отмене
       if (hasRealChanges()) {
           e.preventDefault();
           e.returnValue = 'У вас есть несохраненные изменения. Вы уверены, что хотите покинуть страницу?';
           return e.returnValue;
       }
+  });
+
+  document.querySelectorAll('form[action*="interpreters/save"], form[action*="interpreters/cancel"]')
+  .forEach(form => {
+    form.addEventListener('submit', function () {
+      isSubmitting = true;
+    });
   });
 
   document.addEventListener('DOMContentLoaded', function() {

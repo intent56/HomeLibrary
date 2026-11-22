@@ -28,11 +28,11 @@
                 </p>
                 {% if interpreter.lang_interpreters %}
                     <p class="card-text">
-                        <span class="badge bg-info bg-opacity-75 text-white">
+                        <span class="badge bg-info bg-opacity-75 text-black">
                             <i class="bi bi-globe"></i> Языки:
                         </span>
                         {% for lang in interpreter.lang_interpreters %}
-                            <span class="badge bg-secondary bg-opacity-75 text-white">{{ lang.name }}</span>
+                            <span class="badge main-text-color">{{ lang.name }}</span>
                         {% endfor %}
                     </p>
                 {% else %}
@@ -295,17 +295,12 @@
 #interpreterGrid .badge.bg-success,
 #interpreterGrid .badge.bg-info,
 #interpreterGrid .badge.bg-secondary {
-    background-color: rgba(13, 110, 253, 0.7) !important;
-    color: #ffffff !important;
+    background-color: var(--main-color) !important;
+    color: #000000 !important;
 }
 
 #interpreterGrid .badge.bg-success {
     background-color: rgba(25, 135, 84, 0.7) !important;
-}
-
-#interpreterGrid .badge.bg-info {
-    background-color: rgba(13, 202, 240, 0.7) !important;
-    color: #000000 !important;
 }
 
 #interpreterGrid .badge.bg-secondary {
