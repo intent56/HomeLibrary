@@ -746,7 +746,16 @@ def add_interpreter():
                 db.session.commit()
 
             flash('Переводчик успешно добавлен!', 'success')
-            return redirect(url_for('main.select_interpreters', book_id=request.args.get('book_id', 0)))
+           # Возврат: в выбор переводчиков для книги — только если book_id валиден
+            book_id = request.args.get('book_id', type=int)
+            if book_id:
+                book = Book.query.get(book_id)
+                if book:
+                    return redirect(url_for(
+                        'main.select_interpreters', book_id=book_id))
+
+            # Иначе — в общий список переводчиков
+            return redirect(url_for('main.interpreter_list'))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(f'Ошибка при добавлении переводчика: {str(e)}', 'danger')
@@ -1524,6 +1533,16 @@ def add_publisher():
             db.session.commit()
 
             flash('Издатель успешно добавлен!', 'success')
+
+            book_id = request.args.get('book_id', type=int)
+            if book_id:
+                book = Book.query.get(book_id)
+                if book:
+                    return redirect(url_for(
+                        'main.select_publisher', book_id=book_id))
+
+            # Иначе — в общий список переводчиков
+            return redirect(url_for('main.interpreter_list'))
             return redirect(url_for('main.select_publishers', book_id=request.args.get('book_id', 0)))
         except SQLAlchemyError as e:
             db.session.rollback()
