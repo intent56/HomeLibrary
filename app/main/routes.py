@@ -665,19 +665,57 @@ def edit_interpreter(interpreter_id):
         error_out=False
     )
 
+    # Все языки из справочника — для вкладки «Языки»
+    all_languages = Language.query.order_by(Language.name).all()
+
+    # ID языков, уже связанных с переводчиком — для предустановки чекбоксов
+    # при GET-запросе (и для восстановления при ошибке валидации)
+    if request.method == 'GET':
+        selected_language_ids = {l.id for l in interpreter.lang_interpreters}
+    else:
+        # При POST берём то, что пришло в форме (если форма не прошла валидацию,
+        # нужно показать введённое пользователем, а не из БД)
+        selected_language_ids = set(
+            request.form.getlist('language_ids', type=int)
+        )
+
     if form.validate_on_submit():
         try:
+            # --- Фото: сохраняем текущее, если новый файл не выбран ---
             current_photo = interpreter.photo
             form.photo.data = None
             form.populate_obj(interpreter)
-            interpreter.fio = f"{interpreter.lastname} {interpreter.firstname or ''} {interpreter.secondname or ''}".strip(
-            )
+
+            interpreter.fio = (
+                f"{interpreter.lastname} "
+                f"{interpreter.firstname or ''} "
+                f"{interpreter.secondname or ''}"
+            ).strip()
 
             new_file = request.files.get('photo')
             if new_file and new_file.filename:
                 interpreter.photo = new_file.read()
             else:
                 interpreter.photo = current_photo
+
+            # --- Языки: синхронизируем связи в этой же транзакции ---
+            new_language_ids = set(
+                request.form.getlist('language_ids', type=int)
+            )
+            current_language_ids = {
+                l.id for l in interpreter.lang_interpreters}
+
+            # Удаляем отвязанные
+            for lang in list(interpreter.lang_interpreters):
+                if lang.id not in new_language_ids:
+                    interpreter.lang_interpreters.remove(lang)
+
+            # Добавляем новые
+            ids_to_add = new_language_ids - current_language_ids
+            if ids_to_add:
+                languages = Language.query.filter(
+                    Language.id.in_(ids_to_add)).all()
+                interpreter.lang_interpreters.extend(languages)
 
             db.session.commit()
             flash('Переводчик успешно обновлен!', 'success')
@@ -694,6 +732,8 @@ def edit_interpreter(interpreter_id):
                            interpreter=interpreter,
                            books=pagination.items,
                            pagination=pagination,
+                           all_languages=all_languages,
+                           selected_language_ids=selected_language_ids,
                            page=page,
                            search=search,
                            return_page=return_page,

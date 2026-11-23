@@ -2,7 +2,7 @@
 content %}
 <div class="row">
   <div class="col-lg-8 mx-auto">
-    <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
+    <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
         <h2 class="main-text-color">
@@ -11,18 +11,20 @@ content %}
         <h5 class="main-text-color fw-bold fs-3 mt-2">{{ interpreter.fio }}</h5>
       </div>
       <a
-        href="{{url_for('main.interpreter_list', page=return_page, search=return_search) }}"
+        href="{{ url_for('main.interpreter_list', page=return_page, search=return_search) }}"
         class="btn btn-outline-light d-flex align-items-center"
       >
-        <i class="bi bi-arrow-left"></i>  Назад
+        <i class="bi bi-arrow-left"></i> Назад
       </a>
     </div>
 
     <form
       method="POST"
-      action="{{ url_for('main.edit_interpreter', interpreter_id=interpreter.id) }}"
+      action="{{ url_for('main.edit_interpreter', interpreter_id=interpreter.id,
+                         return_page=return_page, return_search=return_search) }}"
       enctype="multipart/form-data"
       novalidate
+      id="editInterpreterForm"
     >
       {{ form.csrf_token }}
 
@@ -76,7 +78,6 @@ content %}
           <div class="tab-content" id="interpreterTabsContent">
             <!-- Вкладка 1: Основная информация -->
             <div class="tab-pane fade show active" id="main" role="tabpanel">
-              <!-- ФИО переводчика -->
               <div class="row">
                 <div class="col-md-4">
                   <div class="mb-3">
@@ -119,7 +120,6 @@ content %}
                 </div>
               </div>
 
-              <!-- ИЗМЕНЕННЫЙ АЛЕРТ - ИСПОЛЬЗУЕТ var(--main-color) -->
               <div class="alert custom-alert" role="alert">
                 <i class="bi bi-info-circle"></i>
                 <strong>ФИО будет сформировано автоматически:</strong>
@@ -130,18 +130,16 @@ content %}
                 >
               </div>
 
-              <!-- Ссылки и информация -->
               <div class="mt-3">
                 <div class="mb-3">
                   {{ form.ref_interpreter.label(class="form-label fw-bold
                   main-text-color") }}
                   <div class="input-group">
-                    <span class="input-group-text custom-input-group"
-                      ><i class="bi bi-globe main-text-color"></i
-                    ></span>
+                    <span class="input-group-text custom-input-group">
+                      <i class="bi bi-globe main-text-color"></i>
+                    </span>
                     {{ form.ref_interpreter(class="form-control custom-input",
-                    placeholder="Например:
-                    https://ru.wikipedia.org/wiki/Иванов_Иван_Иванович",
+                    placeholder="Например: https://ru.wikipedia.org/wiki/...",
                     id="interpreterRef") }}
                   </div>
                   <div class="form-text text-white-50">
@@ -153,8 +151,9 @@ content %}
                   <label
                     for="interpreterPhoto"
                     class="form-label fw-bold main-text-color"
-                    >Фото переводчика</label
                   >
+                    Фото переводчика
+                  </label>
                   {% if interpreter.photo %}
                   <div class="mb-2">
                     <img
@@ -170,7 +169,6 @@ content %}
                     <small class="text-white-50">Текущее фото</small>
                   </div>
                   {% endif %}
-                  <!-- ИЗМЕНЕННЫЙ INPUT ДЛЯ ФАЙЛА -->
                   <input
                     type="file"
                     class="form-control custom-file-input"
@@ -179,7 +177,7 @@ content %}
                     accept="image/*"
                   />
                   <div class="form-text text-white-50">
-                    Загрузите новое фото переводчика (JPG, PNG, GIF) - заменит
+                    Загрузите новое фото переводчика (JPG, PNG, GIF) — заменит
                     существующее
                   </div>
                   <div
@@ -212,45 +210,56 @@ content %}
               </div>
             </div>
 
-            <!-- Вкладка 2: Языки -->
+            <!-- Вкладка 2: Языки (теперь часть формы) -->
             <div class="tab-pane fade" id="languages" role="tabpanel">
-              <div
-                class="d-flex justify-content-between align-items-center mb-3"
-              >
-                <h5 class="fw-bold main-text-color">
-                  <i class="bi bi-globe"></i> Языки переводчика
-                </h5>
-                <a
-                  href="{{ url_for('main.select_interpreter_languages', interpreter_id=interpreter.id) }}"
-                  class="btn btn-edit-sm"
-                >
-                  <i class="bi bi-pencil"></i> Редактировать
-                </a>
-              </div>
-              {% if interpreter.lang_interpreters %}
-              <div class="d-flex flex-wrap gap-2">
-                {% for language in interpreter.lang_interpreters %}
-                <span
-                  class="badge bg-info bg-opacity-75 main-text-color"
-                  style="font-size: 1rem; padding: 0.5rem 1rem"
-                >
-                  <i class="bi bi-globe"></i> {{ language.name }}
-                  <span class="badge bg-light text-dark ms-1"
-                    >{{ language.code }}</span
-                  >
-                </span>
+              <h5 class="fw-bold main-text-color">
+                <i class="bi bi-globe"></i> Языки переводчика
+              </h5>
+              <p class="text-white-50">
+                Отметьте языки, с которыми работает переводчик. Изменения
+                сохранятся вместе с остальными полями по кнопке «Сохранить
+                изменения».
+              </p>
+
+              {% if all_languages %}
+              <div class="row g-2">
+                {% for lang in all_languages %}
+                <div class="col-md-6">
+                  <div class="form-check language-check-item p-2 rounded">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      name="language_ids"
+                      value="{{ lang.id }}"
+                      id="lang_{{ lang.id }}"
+                      {%
+                      if
+                      lang.id
+                      in
+                      selected_language_ids
+                      %}checked{%
+                      endif
+                      %}
+                    />
+                    <label
+                      class="form-check-label text-white"
+                      for="lang_{{ lang.id }}"
+                    >
+                      <i class="bi bi-globe main-text-color me-1"></i>
+                      {{ lang.name }}
+                      <span class="badge bg-light text-dark ms-1"
+                        >{{ lang.code }}</span
+                      >
+                    </label>
+                  </div>
+                </div>
                 {% endfor %}
               </div>
               {% else %}
               <div class="alert alert-warning transparent-alert">
                 <i class="bi bi-exclamation-triangle"></i>
-                У переводчика пока нет языков.
-                <a
-                  href="{{ url_for('main.select_interpreter_languages', interpreter_id=interpreter.id) }}"
-                  class="alert-link main-text-color"
-                >
-                  Добавить языки
-                </a>
+                Справочник языков пуст. Сначала добавьте языки в разделе
+                «Справочники → Языки».
               </div>
               {% endif %}
             </div>
@@ -288,11 +297,6 @@ content %}
                               border-color: rgba(255, 255, 255, 0.2);
                               background: transparent;
                             "
-                            onerror="
-                              this.onerror = null;
-                              this.src =
-                                'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'56\' viewBox=\'0 0 40 56\'%3E%3Crect width=\'40\' height=\'56\' fill=\'%23f8f9fa\'/%3E%3Ctext x=\'20\' y=\'28\' font-family=\'Arial\' font-size=\'8\' fill=\'%236c757d\' text-anchor=\'middle\'%3EНет%3C/text%3E%3Ctext x=\'20\' y=\'38\' font-family=\'Arial\' font-size=\'8\' fill=\'%236c757d\' text-anchor=\'middle\'%3Eобложки%3C/text%3E%3C/svg%3E';
-                            "
                           />
                           {% else %}
                           <div
@@ -312,9 +316,7 @@ content %}
                           {% endif %}
                         </div>
                       </td>
-                      <td>
-                        <strong>{{ book.name }}</strong>
-                      </td>
+                      <td><strong>{{ book.name }}</strong></td>
                       <td>
                         {% if book.author_books %} {% for author in
                         book.author_books %}
@@ -334,13 +336,13 @@ content %}
                         <div class="text-center">
                           <div class="btn-group btn-group-sm" role="group">
                             <a
-                              href="{{ url_for('main.book_view', 
-                                book_id=book.id,
-                                page1=page if page else 1,
-                                id=interpreter.id,
-                                return_search=return_search,
-                                return_page=return_page,
-                                return_to='edit_interpreter') }}"
+                              href="{{ url_for('main.book_view',
+                                                 book_id=book.id,
+                                                 page1=page if page else 1,
+                                                 id=interpreter.id,
+                                                 return_search=return_search,
+                                                 return_page=return_page,
+                                                 return_to='edit_interpreter') }}"
                               class="btn btn-outline-light"
                               title="Просмотр книги"
                             >
@@ -355,7 +357,6 @@ content %}
                 </table>
               </div>
 
-              <!-- ПАГИНАЦИЯ - ИСПРАВЛЕННАЯ -->
               {% if pagination and pagination.pages > 1 %}
               <div class="pagination-container mt-3">
                 <nav aria-label="Навигация по страницам">
@@ -368,11 +369,11 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('main.edit_interpreter', 
-                                  interpreter_id=interpreter.id, 
-                                  page=1, 
-                                  return_page=return_page, 
-                                  return_search=return_search) }}"
+                        href="{{ url_for('main.edit_interpreter',
+                                                              interpreter_id=interpreter.id,
+                                                              page=1,
+                                                              return_page=return_page,
+                                                              return_search=return_search) }}"
                       >
                         <i class="bi bi-chevron-double-left"></i>
                       </a>
@@ -382,19 +383,19 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('main.edit_interpreter', 
-                                  interpreter_id=interpreter.id, 
-                                  page=pagination.prev_num, 
-                                  return_page=return_page, 
-                                  return_search=return_search) }}"
+                        href="{{ url_for('main.edit_interpreter',
+                                                              interpreter_id=interpreter.id,
+                                                              page=pagination.prev_num,
+                                                              return_page=return_page,
+                                                              return_search=return_search) }}"
                       >
                         <i class="bi bi-chevron-left"></i>
                       </a>
                     </li>
 
                     {% set left = pagination.page - 2 %} {% set right =
-                    pagination.page + 2 %} {% if left < 1 %}{% set left=1 %}{%
-                    endif %} {% if right> pagination.pages %}{% set right =
+                    pagination.page + 2 %} {% if left < 1 %}{% set left = 1 %}{%
+                    endif %} {% if right > pagination.pages %}{% set right =
                     pagination.pages %}{% endif %} {% if left > 1 %}
                     <li class="page-item disabled">
                       <span class="page-link">...</span>
@@ -405,11 +406,11 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('main.edit_interpreter', 
-                                  interpreter_id=interpreter.id, 
-                                  page=p, 
-                                  return_page=return_page, 
-                                  return_search=return_search) }}"
+                        href="{{ url_for('main.edit_interpreter',
+                                                              interpreter_id=interpreter.id,
+                                                              page=p,
+                                                              return_page=return_page,
+                                                              return_search=return_search) }}"
                       >
                         {{ p }}
                       </a>
@@ -425,11 +426,11 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('main.edit_interpreter', 
-                                  interpreter_id=interpreter.id, 
-                                  page=pagination.next_num, 
-                                  return_page=return_page, 
-                                  return_search=return_search) }}"
+                        href="{{ url_for('main.edit_interpreter',
+                                                              interpreter_id=interpreter.id,
+                                                              page=pagination.next_num,
+                                                              return_page=return_page,
+                                                              return_search=return_search) }}"
                       >
                         <i class="bi bi-chevron-right"></i>
                       </a>
@@ -439,11 +440,11 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('main.edit_interpreter', 
-                                  interpreter_id=interpreter.id, 
-                                  page=pagination.pages, 
-                                  return_page=return_page, 
-                                  return_search=return_search) }}"
+                        href="{{ url_for('main.edit_interpreter',
+                                                              interpreter_id=interpreter.id,
+                                                              page=pagination.pages,
+                                                              return_page=return_page,
+                                                              return_search=return_search) }}"
                       >
                         <i class="bi bi-chevron-double-right"></i>
                       </a>
@@ -484,12 +485,16 @@ content %}
             </div>
             <div class="d-flex gap-2">
               <a
-                href="{{url_for('main.interpreter_list', page=return_page, search=return_search) }}"
+                href="{{ url_for('main.interpreter_list', page=return_page, search=return_search) }}"
                 class="btn btn-outline-light btn"
               >
                 <i class="bi bi-x-circle"></i> Отмена
               </a>
-              <button type="submit" class="btn btn-edit">
+              <button
+                type="submit"
+                class="btn btn-edit"
+                id="saveInterpreterBtn"
+              >
                 <i class="bi bi-save"></i> Сохранить изменения
               </button>
             </div>
@@ -503,9 +508,9 @@ content %}
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     // --- Предпросмотр фото ---
-    document
-      .getElementById("interpreterPhoto")
-      .addEventListener("change", function (e) {
+    const photoInput = document.getElementById("interpreterPhoto");
+    if (photoInput) {
+      photoInput.addEventListener("change", function () {
         const file = this.files[0];
         if (file) {
           const reader = new FileReader();
@@ -518,6 +523,7 @@ content %}
           reader.readAsDataURL(file);
         }
       });
+    }
 
     // --- Предпросмотр ФИО ---
     const lastname = document.getElementById("interpreterLastname");
@@ -527,12 +533,15 @@ content %}
 
     function updateFioPreview() {
       const parts = [];
-      if (lastname.value) parts.push(lastname.value);
-      if (firstname.value) parts.push(firstname.value);
-      if (secondname.value) parts.push(secondname.value);
-      preview.textContent = parts.length ? parts.join(" ") : "Не указано";
-      preview.className =
-        "fw-bold ms-2 " + (parts.length ? "main-text-color" : "text-white-50");
+      if (lastname && lastname.value) parts.push(lastname.value);
+      if (firstname && firstname.value) parts.push(firstname.value);
+      if (secondname && secondname.value) parts.push(secondname.value);
+      if (preview) {
+        preview.textContent = parts.length ? parts.join(" ") : "Не указано";
+        preview.className =
+          "fw-bold ms-2 " +
+          (parts.length ? "main-text-color" : "text-white-50");
+      }
     }
 
     if (lastname) lastname.addEventListener("input", updateFioPreview);
@@ -581,26 +590,31 @@ content %}
     }
 
     // --- Подтверждение перед выходом без сохранения ---
-    const form = document.querySelector("form");
+    const form = document.getElementById("editInterpreterForm");
     let formChanged = false;
+    let isSubmitting = false;
 
-    form.querySelectorAll("input, textarea, select").forEach((element) => {
-      element.addEventListener("change", function () {
-        formChanged = true;
+    if (form) {
+      form.querySelectorAll("input, textarea, select").forEach((element) => {
+        element.addEventListener("change", function () {
+          formChanged = true;
+        });
       });
-    });
 
-    window.addEventListener("beforeunload", function (e) {
-      if (formChanged) {
-        e.preventDefault();
-        e.returnValue =
-          "Вы не сохранили изменения. Вы уверены, что хотите покинуть страницу?";
-      }
-    });
+      window.addEventListener("beforeunload", function (e) {
+        if (isSubmitting) return;
+        if (formChanged) {
+          e.preventDefault();
+          e.returnValue =
+            "Вы не сохранили изменения. Вы уверены, что хотите покинуть страницу?";
+        }
+      });
 
-    form.addEventListener("submit", function () {
-      formChanged = false;
-    });
+      form.addEventListener("submit", function () {
+        isSubmitting = true;
+        formChanged = false;
+      });
+    }
 
     // --- Сохранение активной вкладки ---
     const tabs = document.querySelectorAll(
@@ -622,6 +636,7 @@ content %}
     }
   });
 </script>
+
 <style>
   /* 1. ПОЛНОСТЬЮ УБИРАЕМ ВСЕ ФОНЫ */
   .transparent-card,
@@ -652,7 +667,7 @@ content %}
     border-radius: 12px 12px 0 0 !important;
   }
 
-  /* 3. НОВЫЙ СТИЛЬ ДЛЯ ПОЛЕЙ ВВОДА - ЧЕРНЫЙ ФОН, БЕЛЫЙ ТЕКСТ */
+  /* 3. ПОЛЯ ВВОДА */
   .custom-input {
     background-color: #000000 !important;
     color: #ffffff !important;
@@ -661,7 +676,7 @@ content %}
   }
 
   .custom-input::placeholder {
-    color: var(--main-color) !important; /* main-color */
+    color: var(--main-color) !important;
     font-weight: 300;
   }
 
@@ -676,7 +691,7 @@ content %}
     border-color: #dc3545 !important;
   }
 
-  /* 4. НОВЫЙ СТИЛЬ ДЛЯ INPUT-GROUP */
+  /* 4. INPUT-GROUP */
   .custom-input-group {
     background-color: #000000 !important;
     color: #ffffff !important;
@@ -684,7 +699,7 @@ content %}
     border-right: none !important;
   }
 
-  /* 5. СТИЛИ ДЛЯ ВКЛАДОК */
+  /* 5. ВКЛАДКИ */
   .nav-tabs .nav-link {
     color: rgba(255, 255, 255, 0.8);
     border: none;
@@ -719,7 +734,7 @@ content %}
     padding-top: 1rem;
   }
 
-  /* 6. НОВЫЙ СТИЛЬ ДЛЯ АЛЕРТА - ИСПОЛЬЗУЕТ var(--main-color) */
+  /* 6. АЛЕРТ */
   .custom-alert {
     background-color: rgba(212, 175, 55, 0.2) !important;
     backdrop-filter: blur(5px);
@@ -737,7 +752,7 @@ content %}
     color: #ffffff !important;
   }
 
-  /* 7. ПРОЗРАЧНЫЙ АЛЕРТ (для предупреждений) */
+  /* 7. ПРОЗРАЧНЫЙ АЛЕРТ */
   .transparent-alert {
     background-color: rgba(13, 202, 240, 0.15) !important;
     backdrop-filter: blur(5px);
@@ -747,6 +762,7 @@ content %}
   .transparent-alert i {
     color: var(--main-color) !important;
   }
+
   /* 8. ПРОЗРАЧНАЯ ТАБЛИЦА */
   .transparent-table {
     width: 100% !important;
@@ -778,7 +794,7 @@ content %}
     color: rgba(255, 255, 255, 0.7) !important;
   }
 
-  /* 9. КНОПКИ В ТАБЛИЦЕ */
+  /* 9. КНОПКИ */
   .btn-group .btn {
     display: inline-flex;
     align-items: center;
@@ -804,7 +820,7 @@ content %}
     color: #ffffff !important;
   }
 
-  /* 10. ПАГИНАЦИЯ - ИСПРАВЛЕННЫЙ СТИЛЬ */
+  /* 10. ПАГИНАЦИЯ */
   .pagination-container {
     background-color: rgba(0, 0, 0, 0.25) !important;
     backdrop-filter: blur(8px);
@@ -829,7 +845,6 @@ content %}
     color: #ffffff !important;
   }
 
-  /* АКТИВНАЯ СТРАНИЦА - ЗОЛОТОЙ ФОН, ЧЕРНЫЙ ТЕКСТ */
   #transparentPagination .page-item.active .page-link,
   #transparentPagination .page-item.active .page-link:hover,
   #transparentPagination .page-item.active .page-link:focus {
@@ -846,7 +861,7 @@ content %}
     color: rgba(255, 255, 255, 0.2) !important;
   }
 
-  /* 11. НОВЫЙ СТИЛЬ ДЛЯ INPUT ФАЙЛА */
+  /* 11. ФАЙЛОВЫЙ ИНПУТ */
   .custom-file-input {
     background-color: #000000 !important;
     color: #ffffff !important;
@@ -869,7 +884,6 @@ content %}
     outline: none;
   }
 
-  /* Стилизация кнопки "Выберите файл" внутри input */
   .custom-file-input::file-selector-button {
     background-color: var(--main-color) !important;
     color: #000000 !important;
@@ -887,7 +901,7 @@ content %}
     border-color: #000000 !important;
   }
 
-  /* 12. ОБЩИЕ СТИЛИ */
+  /* 12. ОБЩИЕ */
   .text-white {
     color: #ffffff !important;
   }
@@ -936,7 +950,7 @@ content %}
     }
   }
 
-  /* 14. Стили для кнопок "Сохранить изменения" */
+  /* 14. КНОПКИ "СОХРАНИТЬ ИЗМЕНЕНИЯ" */
   .btn-edit {
     background-color: transparent !important;
     color: var(--main-color) !important;
@@ -967,19 +981,17 @@ content %}
     outline: none;
   }
 
-  /* Маленькие кнопки (для карточек) */
   .btn-edit-sm {
     padding: 0.25rem 0.8rem;
     font-size: 0.85rem;
   }
 
-  /* Большие кнопки (для основных действий) */
   .btn-edit-lg {
     padding: 0.75rem 1.5rem;
     font-size: 1.1rem;
   }
 
-  /* 15. ПЛАВНОЕ УВЕЛИЧЕНИЕ ОБЛОЖЕК ПРИ НАВЕДЕНИИ */
+  /* 15. УВЕЛИЧЕНИЕ ОБЛОЖЕК */
   .book-cover-thumbnail {
     transition:
       transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
@@ -994,6 +1006,39 @@ content %}
     z-index: 1000;
     position: relative;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  }
+
+  /* 16. ЧЕКБОКСЫ ЯЗЫКОВ */
+  .language-check-item {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    transition: all 0.2s;
+  }
+
+  .language-check-item:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+  }
+
+  .language-check-item .form-check-input {
+    background-color: #000000 !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    cursor: pointer;
+  }
+
+  .language-check-item .form-check-input:checked {
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
+  }
+
+  .language-check-item .form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255, 194, 0, 0.4);
+    border-color: var(--main-color) !important;
+  }
+
+  .language-check-item .form-check-label {
+    cursor: pointer;
+    margin-left: 0.5rem;
   }
 </style>
 {% endblock %}
