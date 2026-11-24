@@ -1260,7 +1260,15 @@ def add_genre():
             db.session.commit()
 
             flash('Жанр успешно добавлен!', 'success')
-            return redirect(url_for('main.select_genres', book_id=request.args.get('book_id', 0)))
+            book_id = request.args.get('book_id', type=int)
+            if book_id:
+                book = Book.query.get(book_id)
+                if book:
+                    return redirect(url_for(
+                        'main.select_genres', book_id=book_id))
+
+            # Иначе — в общий список жанров
+            return redirect(url_for('main.genre_list'))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(f'Ошибка при добавлении жанра: {str(e)}', 'danger')
@@ -1579,11 +1587,10 @@ def add_publisher():
                 book = Book.query.get(book_id)
                 if book:
                     return redirect(url_for(
-                        'main.select_publisher', book_id=book_id))
+                        'main.select_publishers', book_id=book_id))
 
-            # Иначе — в общий список переводчиков
-            return redirect(url_for('main.interpreter_list'))
-            return redirect(url_for('main.select_publishers', book_id=request.args.get('book_id', 0)))
+            # Иначе — в общий список издателей
+            return redirect(url_for('main.publisher_list'))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(f'Ошибка при добавлении издателя: {str(e)}', 'danger')
