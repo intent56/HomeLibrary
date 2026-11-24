@@ -70,11 +70,6 @@ content %}
                     <div class="form-text text-white-50">
                       Код языка (например: ru, en, fr, de)
                     </div>
-
-                    <!-- Визуализация кода -->
-                    <div id="codePreview" class="mt-2">
-                      <span class="badge bg-secondary" id="codeBadge">ru</span>
-                    </div>
                   </div>
                 </div>
                 <div class="col-md-6">
@@ -84,7 +79,7 @@ content %}
                     <span class="text-danger">*</span>
                     {{ form.name(class="form-control custom-input" + ("
                     is-invalid" if form.name.errors else ""),
-                    placeholder="Например: 'Русский'", id="languageName") }} {%
+                    placeholder="Например: 'русский'", id="languageName") }} {%
                     if form.name.errors %}
                     <div class="invalid-feedback d-block">
                       {% for error in form.name.errors %} {{ error }} {% endfor
@@ -93,52 +88,6 @@ content %}
                     {% endif %}
                     <div class="form-text text-white-50">Название языка</div>
                   </div>
-                </div>
-              </div>
-
-              <!-- Флаг языка (эмодзи) -->
-              <div class="mb-3">
-                <label class="form-label fw-bold main-text-color"
-                  >Флаг языка</label
-                >
-                <div class="row">
-                  <div class="col-md-8">
-                    <select class="custom-select" id="languageFlag">
-                      <option value="🇷🇺">🇷🇺 Русский</option>
-                      <option value="🇬🇧">🇬🇧 Английский</option>
-                      <option value="🇫🇷">🇫🇷 Французский</option>
-                      <option value="🇩🇪">🇩🇪 Немецкий</option>
-                      <option value="🇪🇸">🇪🇸 Испанский</option>
-                      <option value="🇮🇹">🇮🇹 Итальянский</option>
-                      <option value="🇨🇳">🇨🇳 Китайский</option>
-                      <option value="🇯🇵">🇯🇵 Японский</option>
-                      <option value="🇦🇪">🇦🇪 Арабский</option>
-                      <option value="🇵🇹">🇵🇹 Португальский</option>
-                      <option value="🇰🇷">🇰🇷 Корейский</option>
-                      <option value="🇮🇳">🇮🇳 Хинди</option>
-                      <option value="🇹🇷">🇹🇷 Турецкий</option>
-                      <option value="🇵🇱">🇵🇱 Польский</option>
-                      <option value="🇺🇦">🇺🇦 Украинский</option>
-                      <option value="🇧🇾">🇧🇾 Белорусский</option>
-                      <option value="🇰🇿">🇰🇿 Казахский</option>
-                    </select>
-                  </div>
-                  <div class="col-md-4">
-                    <div
-                      class="p-2 bg-transparent rounded text-center"
-                      style="
-                        font-size: 2rem;
-                        border: 2px solid rgba(255, 255, 255, 0.3);
-                        border-radius: 8px;
-                      "
-                      id="flagDisplay"
-                    >
-                      🇷🇺
-                    </div>
-                  </div>
-                </div>
-                <div class="form-text text-white-50">
-                  Выберите флаг для языка (для отображения в списке)
                 </div>
               </div>
 
@@ -222,18 +171,6 @@ content %}
     if (codeInput) {
       codeInput.addEventListener("input", function () {
         this.value = this.value.toLowerCase();
-      });
-    }
-
-    // Автоматическая капитализация названия языка
-    const nameInput = document.getElementById("languageName");
-    if (nameInput) {
-      nameInput.addEventListener("blur", function () {
-        if (this.value) {
-          this.value =
-            this.value.charAt(0).toUpperCase() +
-            this.value.slice(1).toLowerCase();
-        }
       });
     }
 

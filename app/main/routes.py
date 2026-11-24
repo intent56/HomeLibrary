@@ -1978,7 +1978,15 @@ def add_language():
             db.session.commit()
 
             flash('Язык успешно добавлен!', 'success')
-            return redirect(url_for('main.select_languages', book_id=request.args.get('book_id', 0)))
+            # Возврат: в выбор переводчиков для книги — только если book_id валиден
+            book_id = request.args.get('book_id', type=int)
+            if book_id:
+                book = Book.query.get(book_id)
+                if book:
+                    return redirect(url_for(
+                        'main.select_languages', book_id=book_id))
+            # Иначе — в общий список языков
+            return redirect(url_for('main.language_list'))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(f'Ошибка при добавлении языка: {str(e)}', 'danger')
