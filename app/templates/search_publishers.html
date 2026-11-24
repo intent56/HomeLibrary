@@ -30,7 +30,7 @@
     <p class="mb-0 mt-1 text-white-50">
       Попробуйте изменить поисковый запрос или
       <a
-        href="{{ url_for('main.add_publisher') }}?book_id={{ request.args.get('book_id', 0) }}"
+        href="{{ url_for('publishers.add_publisher') }}?book_id={{ request.args.get('book_id', 0) }}"
         class="alert-link"
         style="color: var(--main-color)"
       >

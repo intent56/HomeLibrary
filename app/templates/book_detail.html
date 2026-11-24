@@ -395,7 +395,7 @@ content %}
                 <i class="bi bi-building"></i> Издатели книги
               </h5>
               <a
-                href="{{ url_for('main.select_publishers', book_id=book.id) }}"
+                href="{{ url_for('publishers.select_publishers', book_id=book.id) }}"
                 class="btn btn-edit"
               >
                 <i class="bi bi-pencil"></i> Редактировать издателей
@@ -435,7 +435,7 @@ content %}
                     <br />
                     <small class="text-white-50">
                       <a
-                        href="{{ url_for('main.publisher_view', 
+                        href="{{ url_for('publishers.publisher_view', 
                               publisher_id=publisher.id,
                               book_id=book.id,
                               return_to='book_detail',
@@ -460,7 +460,7 @@ content %}
               <i class="bi bi-exclamation-triangle"></i>
               У книги пока нет издателей.
               <a
-                href="{{ url_for('main.select_publishers', book_id=book.id) }}"
+                href="{{ url_for('publishers.select_publishers', book_id=book.id) }}"
                 class="alert-link"
               >
                 Добавить издателей

@@ -13,7 +13,7 @@ content %}
       <div class="d-flex gap-2">
         <!-- КНОПКА "НАЗАД К СПИСКУ" С СОХРАНЕНИЕМ ПАРАМЕТРОВ -->
         <a
-          href="{{ url_for('main.publisher_list', 
+          href="{{ url_for('publishers.publisher_list', 
                     page=return_page, 
                     search=return_search) }}"
           class="btn btn-outline-light d-flex align-items-center"
@@ -22,7 +22,7 @@ content %}
         </a>
         <!-- КНОПКА "РЕДАКТИРОВАТЬ" -->
         <a
-          href="{{ url_for('main.edit_publisher', 
+          href="{{ url_for('publishers.edit_publisher', 
                     publisher_id=publisher.id,
                     return_page=return_page,
                     return_search=return_search) }}"
@@ -240,7 +240,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.publisher_card', 
+                      href="{{ url_for('publishers.publisher_card', 
                               publisher_id=publisher.id, 
                                page=1,
                                return_page=return_page, 
@@ -254,7 +254,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.publisher_card', 
+                      href="{{ url_for('publishers.publisher_card', 
                                publisher_id=publisher.id, 
                                page=pagination.prev_num,
                                return_page=return_page, 
@@ -277,7 +277,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.publisher_card', 
+                      href="{{ url_for('publishers.publisher_card', 
                                publisher_id=publisher.id, 
                                page=p, 
                                return_page=return_page, 
@@ -297,7 +297,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.publisher_card', 
+                      href="{{ url_for('publishers.publisher_card', 
                               publisher_id=publisher.id, 
                               page=pagination.next_num, 
                                return_page=return_page, 
@@ -311,7 +311,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.publisher_card', 
+                      href="{{ url_for('publishers.publisher_card', 
                                publisher_id=publisher.id, 
                                page=pagination.pages, 
                                return_page=return_page, 

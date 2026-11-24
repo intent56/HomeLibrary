@@ -33,6 +33,20 @@ from app.main.misc import get_html
 from config import Config
 
 
+#author_list
+#add_author
+#edit_author
+#delete_author
+#select_authors
+#search_authors
+#add_author_to_book_session
+#remove_author_from_book_session
+#save_authors_changes
+#cancel_authors_changes
+#author_card
+#author_view
+
+
 @bp.route('/authors')
 def author_list():
     page = request.args.get('page', 1, type=int)
