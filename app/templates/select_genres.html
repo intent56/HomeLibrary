@@ -37,7 +37,7 @@ content %}
             >Введите название жанра</label
           >
           <form
-            hx-get="{{ url_for('main.search_genres') }}"
+            hx-get="{{ url_for('genres.search_genres') }}"
             hx-trigger="keyup changed delay:300ms from:#genreSearch"
             hx-target="#searchResults"
             hx-indicator="#loading"
@@ -76,7 +76,7 @@ content %}
 
         <div class="mt-3">
           <a
-            href="{{ url_for('main.add_genre') }}?book_id={{ book.id }}"
+            href="{{ url_for('genres.add_genre') }}?book_id={{ book.id }}"
             class="btn btn-edit"
           >
             <i class="bi bi-plus-circle"></i> Добавить новый жанр
@@ -160,7 +160,7 @@ content %}
           <div class="d-flex gap-2">
             <form
               method="POST"
-              action="{{ url_for('main.save_genres_changes', book_id=book.id) }}"
+              action="{{ url_for('genres.save_genres_changes', book_id=book.id) }}"
               class="d-inline"
             >
               <input
@@ -179,7 +179,7 @@ content %}
             </form>
             <form
               method="POST"
-              action="{{ url_for('main.cancel_genres_changes', book_id=book.id) }}"
+              action="{{ url_for('genres.cancel_genres_changes', book_id=book.id) }}"
               class="d-inline"
             >
               <input
@@ -226,7 +226,7 @@ content %}
           button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
       }
 
-      fetch('{{ url_for("main.add_genre_to_book_session", book_id=book.id) }}', {
+      fetch('{{ url_for("genres.add_genre_to_book_session", book_id=book.id) }}', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
@@ -274,7 +274,7 @@ content %}
           button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
       }
 
-      fetch('{{ url_for("main.remove_genre_from_book_session", book_id=book.id, genre_id=0) }}'.replace('/0', '/' + genreId), {
+      fetch('{{ url_for("genres.remove_genre_from_book_session", book_id=book.id, genre_id=0) }}'.replace('/0', '/' + genreId), {
           method: 'POST',
           headers: {
               'Content-Type': 'application/x-www-form-urlencoded',

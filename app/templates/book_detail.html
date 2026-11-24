@@ -476,7 +476,7 @@ content %}
                 <i class="bi bi-tags"></i> Жанры книги
               </h5>
               <a
-                href="{{ url_for('main.select_genres', book_id=book.id) }}"
+                href="{{ url_for('genres.select_genres', book_id=book.id) }}"
                 class="btn btn-edit"
               >
                 <i class="bi bi-pencil"></i> Редактировать жанры
@@ -496,7 +496,7 @@ content %}
                     <br />
                     <small class="text-white-50">
                       <a
-                        href="{{ url_for('main.genre_view', 
+                        href="{{ url_for('genres.genre_view', 
                               genre_id=genre.id,
                               book_id=book.id,
                               return_to='book_detail',
@@ -520,7 +520,7 @@ content %}
               <i class="bi bi-exclamation-triangle"></i>
               У книги пока нет жанров.
               <a
-                href="{{ url_for('main.select_genres', book_id=book.id) }}"
+                href="{{ url_for('genres.select_genres', book_id=book.id) }}"
                 class="alert-link"
               >
                 Добавить жанры

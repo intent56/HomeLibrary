@@ -44,7 +44,7 @@ content %}
         </a>
         {% elif  return_to == 'genre_card' %}
         <a
-          href="{{ url_for('main.genre_card', 
+          href="{{ url_for('genres.genre_card', 
                      genre_id=id,
                      page=page1,
                      return_search=return_search,
@@ -121,7 +121,7 @@ content %}
         </a>
         {% elif  return_to == 'edit_genre' %}
         <a
-          href="{{ url_for('main.edit_genre', 
+          href="{{ url_for('genres.edit_genre', 
                      genre_id=id,
                      page=page1,
                      return_search=return_search,

@@ -89,7 +89,7 @@
                     <td>
                         {% if book.genre_books %}
                         {% for genre in book.genre_books %}
-                        <a href="{{ url_for('main.genre_view', 
+                        <a href="{{ url_for('genres.genre_view', 
                                  genre_id=genre.id,
                                  book_id=book.id,
                                  return_to='book_table',

@@ -26,7 +26,7 @@ content %}
         </a>
         {% elif return_to == 'genre_list' %}
         <a
-          href="{{ url_for('main.genre_list', 
+          href="{{ url_for('genres.genre_list', 
                      genre_id=genre.id,
                      page=return_page,
                      search=search) }}"
@@ -247,7 +247,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.genre_view', 
+                      href="{{ url_for('genres.genre_view', 
                               genre_id=genre.id, 
                                books_page=1,
                                book_id=book_id,
@@ -266,7 +266,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.genre_view', 
+                      href="{{ url_for('genres.genre_view', 
                               genre_id=genre.id, 
                                books_page=pagination.prev_num,
                                book_id=book_id,
@@ -294,7 +294,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.genre_view', 
+                      href="{{ url_for('genres.genre_view', 
                                genre_id=genre.id, 
                                books_page=p,
                                book_id=book_id,
@@ -319,7 +319,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.genre_view', 
+                      href="{{ url_for('genres.genre_view', 
                               genre_id=genre.id, 
                               books_page=pagination.next_num,
                                book_id=book_id,
@@ -338,7 +338,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.genre_view', 
+                      href="{{ url_for('genres.genre_view', 
                                genre_id=genre.id, 
                                books_page=pagination.pages,
                                book_id=book_id,
