@@ -40,7 +40,7 @@
                     <td>
                         {% if book.author_books %}
                         {% for author in book.author_books %}
-                        <a href="{{ url_for('main.author_view', 
+                        <a href="{{ url_for('authors.author_view', 
                                  author_id=author.id,
                                  book_id=book.id,
                                  return_to='book_table',

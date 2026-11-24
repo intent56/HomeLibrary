@@ -236,7 +236,7 @@ content %}
                 <i class="bi bi-people"></i> Авторы книги
               </h5>
               <a
-                href="{{ url_for('main.select_authors', book_id=book.id) }}"
+                href="{{ url_for('authors.select_authors', book_id=book.id) }}"
                 class="btn btn-edit"
               >
                 <i class="bi bi-pencil"></i> Редактировать авторов
@@ -273,7 +273,7 @@ content %}
                      <strong class="main-text-color fs-5">{{ author.fio }}</strong>
                      <br />
                      <small class="text-white-50">
-                     <a href="{{ url_for('main.author_view', 
+                     <a href="{{ url_for('authors.author_view', 
                               author_id=author.id,
                               book_id=book.id,
                               return_to='book_detail',
@@ -297,7 +297,7 @@ content %}
               <i class="bi bi-exclamation-triangle"></i>
               У книги пока нет авторов.
               <a
-                href="{{ url_for('main.select_authors', book_id=book.id) }}"
+                href="{{ url_for('authors.select_authors', book_id=book.id) }}"
                 class="alert-link"
               >
                 Добавить авторов

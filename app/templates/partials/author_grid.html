@@ -29,14 +29,14 @@
             </div>
             <div class="card-footer bg-transparent border-top-0 mt-auto">
                 <div class="d-flex justify-content-center gap-2">
-                    <a href="{{ url_for('main.author_card', 
+                    <a href="{{ url_for('authors.author_card', 
                                          author_id=author.id, 
                                          return_page=pagination.page if pagination else 1,
                                          return_search=search) }}" 
                        class="btn btn-outline-light btn-sm" title="Просмотр карточки">
                         <i class="bi bi-eye main-text-color"></i>
                     </a>
-                    <a href="{{ url_for('main.edit_author', 
+                    <a href="{{ url_for('authors.edit_author', 
                                          author_id=author.id, 
                                          return_page=pagination.page if pagination else 1,
                                          return_search=search) }}" 
@@ -76,7 +76,7 @@
                 </div>
                 <div class="modal-footer border-secondary">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                    <form method="POST" action="{{ url_for('main.delete_author', author_id=author.id) }}" style="display: inline;">
+                    <form method="POST" action="{{ url_for('authors.delete_author', author_id=author.id) }}" style="display: inline;">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <input type="hidden" name="page" value="{{ pagination.page }}">
                         <button type="submit" class="btn btn-danger">
@@ -92,7 +92,7 @@
         <div class="text-center py-5">
             <i class="bi bi-people display-1 text-white-50"></i>
             <p class="text-white-50 mt-3">Авторы не найдены</p>
-            <a href="{{ url_for('main.add_author') }}" class="btn btn-primary">
+            <a href="{{ url_for('authors.add_author') }}" class="btn btn-primary">
                 <i class="bi bi-plus-circle"></i> Добавить первого автора
             </a>
         </div>
@@ -109,7 +109,7 @@
                 <ul class="pagination pagination-sm justify-content-center mb-0" id="transparentPagination">
                     <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
                         <a class="page-link" href="#"
-                           hx-get="{{ url_for('main.author_list') }}"
+                           hx-get="{{ url_for('authors.author_list') }}"
                            hx-target="#authorGridContainer"
                            hx-indicator="#loadingIndicator"
                            hx-push-url="true"
@@ -119,7 +119,7 @@
                     </li>
                     <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
                         <a class="page-link" href="#"
-                           hx-get="{{ url_for('main.author_list') }}"
+                           hx-get="{{ url_for('authors.author_list') }}"
                            hx-target="#authorGridContainer"
                            hx-indicator="#loadingIndicator"
                            hx-push-url="true"
@@ -140,7 +140,7 @@
                     {% for p in range(left, right + 1) %}
                         <li class="page-item {% if p == pagination.page %}active{% endif %}">
                             <a class="page-link" href="#"
-                               hx-get="{{ url_for('main.author_list') }}"
+                               hx-get="{{ url_for('authors.author_list') }}"
                                hx-target="#authorGridContainer"
                                hx-indicator="#loadingIndicator"
                                hx-push-url="true"
@@ -156,7 +156,7 @@
 
                     <li class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}">
                         <a class="page-link" href="#"
-                           hx-get="{{ url_for('main.author_list') }}"
+                           hx-get="{{ url_for('authors.author_list') }}"
                            hx-target="#authorGridContainer"
                            hx-indicator="#loadingIndicator"
                            hx-push-url="true"
@@ -166,7 +166,7 @@
                     </li>
                     <li class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}">
                         <a class="page-link" href="#"
-                           hx-get="{{ url_for('main.author_list') }}"
+                           hx-get="{{ url_for('authors.author_list') }}"
                            hx-target="#authorGridContainer"
                            hx-indicator="#loadingIndicator"
                            hx-push-url="true"

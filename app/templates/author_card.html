@@ -13,7 +13,7 @@ content %}
       <div class="d-flex gap-2">
         <!-- КНОПКА "НАЗАД К СПИСКУ" С СОХРАНЕНИЕМ ПАРАМЕТРОВ -->
         <a
-          href="{{ url_for('main.author_list', 
+          href="{{ url_for('authors.author_list', 
                     page=return_page, 
                     search=return_search) }}"
           class="btn btn-outline-light d-flex align-items-center"
@@ -22,7 +22,7 @@ content %}
         </a>
         <!-- КНОПКА "РЕДАКТИРОВАТЬ" -->
         <a
-          href="{{ url_for('main.edit_author', 
+          href="{{ url_for('authors.edit_author', 
                     author_id=author.id,
                     return_page=return_page,
                     return_search=return_search) }}"
@@ -241,7 +241,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_card', 
+                      href="{{ url_for('authors.author_card', 
                                author_id=author.id, 
                                page=1, 
                                return_page=return_page, 
@@ -255,7 +255,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_card', 
+                      href="{{ url_for('authors.author_card', 
                                author_id=author.id, 
                                page=pagination.prev_num, 
                                return_page=return_page, 
@@ -278,7 +278,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_card', 
+                      href="{{ url_for('authors.author_card', 
                                author_id=author.id, 
                                page=p, 
                                return_page=return_page, 
@@ -298,7 +298,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_card', 
+                      href="{{ url_for('authors.author_card', 
                                 author_id=author.id, 
                                 page=pagination.next_num, 
                                 return_page=return_page, 
@@ -312,7 +312,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.author_card', 
+                      href="{{ url_for('authors.author_card', 
                                author_id=author.id, 
                                page=pagination.pages, 
                                return_page=return_page, 

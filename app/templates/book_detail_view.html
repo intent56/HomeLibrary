@@ -11,7 +11,7 @@ content %}
       <div>
         {% if return_to == 'author_card' %}
         <a
-          href="{{ url_for('main.author_card', 
+          href="{{ url_for('authors.author_card', 
                      author_id=id,
                      page=page1,
                      return_search=return_search,
@@ -88,7 +88,7 @@ content %}
         </a>
         {% elif  return_to == 'edit_author' %}
         <a
-          href="{{ url_for('main.edit_author', 
+          href="{{ url_for('authors.edit_author', 
                      author_id=id,
                      page=page1,
                      return_search=return_search,

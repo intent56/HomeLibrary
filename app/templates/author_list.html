@@ -21,7 +21,7 @@ content %}
           <i class="bi bi-house me-1"></i> На главную
         </a>
         <a
-          href="{{ url_for('main.add_author') }}"
+          href="{{ url_for('authors.add_author') }}"
           class="btn btn-edit d-flex align-items-center"
         >
           <i class="bi bi-plus-circle me-1"></i> Добавить автора
@@ -55,7 +55,7 @@ content %}
               name="search"
               placeholder="Поиск по ФИО, фамилии..."
               value="{{ search or '' }}"
-              hx-get="{{ url_for('main.author_list') }}"
+              hx-get="{{ url_for('authors.author_list') }}"
               hx-trigger="keyup changed delay:300ms"
               hx-target="#authorGridContainer"
               hx-indicator="#loadingIndicator"
@@ -98,7 +98,7 @@ content %}
   function resetSearch() {
     document.getElementById("searchInput").value = "";
 
-    htmx.ajax("GET", '{{ url_for("main.author_list") }}', {
+    htmx.ajax("GET", '{{ url_for("authors.author_list") }}', {
       target: "#authorGridContainer",
       values: { page: 1 },
     });

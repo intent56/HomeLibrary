@@ -17,7 +17,7 @@ def create_app(config_class=Config):
         if data:
             return base64.b64encode(data).decode('utf-8')
         return ''
-    
+
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
 
@@ -27,8 +27,11 @@ def create_app(config_class=Config):
     from app.main import bp as main_bp
     app.register_blueprint(main_bp)
 
-    return app
+# --- Доменные blueprint'ы ---
+    from app.authors import bp as authors_bp
+    app.register_blueprint(authors_bp)
 
+    return app
 
 from app.models.main import (
     Book,
