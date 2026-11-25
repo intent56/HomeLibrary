@@ -37,6 +37,9 @@ def create_app(config_class=Config):
     from app.genres import bp as genres_bp
     app.register_blueprint(genres_bp)
 
+    from app.covers import bp as covers_bp
+    app.register_blueprint(covers_bp)
+
     return app
 
 from app.models.main import (

@@ -24,7 +24,7 @@ content %}
         </a>
         <!-- КНОПКА "ДОБАВИТЬ ПЕРЕПЛЕТ" -->
         <a
-          href="{{ url_for('main.add_cover') }}"
+          href="{{ url_for('covers.add_cover') }}"
           class="btn btn-edit d-flex align-items-center"
         >
           <i class="bi bi-plus-circle me-1"></i> Добавить переплет
@@ -89,14 +89,14 @@ content %}
             <div class="card-footer bg-transparent border-top-0 mt-auto">
               <div class="d-flex justify-content-center gap-2">
                 <a
-                  href="{{ url_for('main.cover_view', cover_id=cover.id, return_page=pagination.page if pagination else 1) }}"
+                  href="{{ url_for('covers.cover_view', cover_id=cover.id, return_page=pagination.page if pagination else 1) }}"
                   class="btn btn-outline-light btn-sm"
                   title="Просмотр карточки"
                 >
                   <i class="bi bi-eye main-text-color"></i>
                 </a>
                 <a
-                  href="{{ url_for('main.edit_cover', cover_id=cover.id, return_page=pagination.page if pagination else 1) }}"
+                  href="{{ url_for('covers.edit_cover', cover_id=cover.id, return_page=pagination.page if pagination else 1) }}"
                   class="btn btn-outline-light btn-sm"
                   title="Редактировать"
                 >
@@ -162,7 +162,7 @@ content %}
                 {% if not cover.cvr_books %}
                 <form
                   method="POST"
-                  action="{{ url_for('main.delete_cover', cover_id=cover.id) }}"
+                  action="{{ url_for('covers.delete_cover', cover_id=cover.id) }}"
                   style="display: inline"
                 >
                   <input
@@ -193,7 +193,7 @@ content %}
           <div class="text-center py-5">
             <i class="bi bi-bookmark display-1 text-white-50"></i>
             <p class="text-white-50 mt-3">Переплеты не найдены</p>
-            <a href="{{ url_for('main.add_cover') }}" class="btn btn-edit">
+            <a href="{{ url_for('covers.add_cover') }}" class="btn btn-edit">
               <i class="bi bi-plus-circle"></i> Добавить первый переплет
             </a>
           </div>
@@ -217,7 +217,7 @@ content %}
               >
                 <a
                   class="page-link"
-                  href="{{ url_for('main.cover_list', page=1) }}"
+                  href="{{ url_for('covers.cover_list', page=1) }}"
                 >
                   <i class="bi bi-chevron-double-left"></i>
                 </a>
@@ -227,7 +227,7 @@ content %}
               >
                 <a
                   class="page-link"
-                  href="{{ url_for('main.cover_list', page=pagination.prev_num) }}"
+                  href="{{ url_for('covers.cover_list', page=pagination.prev_num) }}"
                 >
                   <i class="bi bi-chevron-left"></i>
                 </a>
@@ -246,7 +246,7 @@ content %}
               >
                 <a
                   class="page-link"
-                  href="{{ url_for('main.cover_list', page=p) }}"
+                  href="{{ url_for('covers.cover_list', page=p) }}"
                 >
                   {{ p }}
                 </a>
@@ -262,7 +262,7 @@ content %}
               >
                 <a
                   class="page-link"
-                  href="{{ url_for('main.cover_list', page=pagination.next_num) }}"
+                  href="{{ url_for('covers.cover_list', page=pagination.next_num) }}"
                 >
                   <i class="bi bi-chevron-right"></i>
                 </a>
@@ -272,7 +272,7 @@ content %}
               >
                 <a
                   class="page-link"
-                  href="{{ url_for('main.cover_list', page=pagination.pages) }}"
+                  href="{{ url_for('covers.cover_list', page=pagination.pages) }}"
                 >
                   <i class="bi bi-chevron-double-right"></i>
                 </a>

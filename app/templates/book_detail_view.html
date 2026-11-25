@@ -55,7 +55,7 @@ content %}
         </a>
         {% elif  return_to == 'cover_card' %}
         <a
-          href="{{ url_for('main.cover_card', 
+          href="{{ url_for('covers.cover_card', 
                      cover_id=id,
                      page=page1,
                      return_search=return_search,
@@ -77,7 +77,7 @@ content %}
         </a>
         {% elif  return_to == 'format_card' %}
         <a
-          href="{{ url_for('main.format_card', 
+          href="{{ url_for('covers.format_card', 
                      format_id=id,
                      page=page1,
                      return_search=return_search,
@@ -99,7 +99,7 @@ content %}
         </a>
         {% elif  return_to == 'edit_cover' %}
         <a
-          href="{{ url_for('main.edit_cover', 
+          href="{{ url_for('covers.edit_cover', 
                      cover_id=id,
                      page=page1,
                      return_search=return_search,
