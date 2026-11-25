@@ -43,6 +43,9 @@ def create_app(config_class=Config):
     from app.formats import bp as formats_bp
     app.register_blueprint(formats_bp)
 
+    from app.interpreters import bp as interpreters_bp
+    app.register_blueprint(interpreters_bp)
+
     return app
 
 from app.models.main import (

@@ -21,32 +21,10 @@ from flask import (
 from app.extensions import db
 from app.models.main import (
     Book,
-    Author,
-    Genre,
-    Cover,
-    Publisher,
     Format,
-    Language,
-    Interpreter,
-    book_genres,
-    book_authors,
-    book_interpreters,
-    book_publishers,
-    interpreter_languages,
-    Source,
-    Aggregator,
 )
 from app.main.forms import (
-    FormAuthor,
-    FormInterpreter,
-    FormPublisher,
     FormFormat,
-    FormGenre,
-    FormCover,
-    FormLanguage,
-    FormBook,
-    FormSource,
-    FormAggregator,
 )
 from app.formats import bp
 
@@ -54,13 +32,13 @@ from app.main.misc import get_html
 from config import Config
 
 
-#cover_list
-#add_cover
-#edit_cover
-#delete_cover
+#format_list
+#add_format
+#edit_format
+#delete_format
 #search_formats_ajax
-#cover_card
-#cover_view
+#format_card
+#format_view
 
 @bp.route('/formats')
 def format_list():

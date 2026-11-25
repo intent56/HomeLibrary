@@ -37,7 +37,7 @@ content %}
             >Введите фамилию, имя или ФИО переводчика</label
           >
           <form
-            hx-get="{{ url_for('main.search_interpreters') }}"
+            hx-get="{{ url_for('interpreters.search_interpreters') }}"
             hx-trigger="keyup changed delay:300ms from:#interpreterSearch"
             hx-target="#searchResults"
             hx-indicator="#loading"
@@ -76,7 +76,7 @@ content %}
 
         <div class="mt-3">
           <a
-            href="{{ url_for('main.add_interpreter') }}?book_id={{ book.id }}"
+            href="{{ url_for('interpreters.add_interpreter') }}?book_id={{ book.id }}"
             class="btn btn-edit"
           >
             <i class="bi bi-plus-circle"></i> Добавить нового переводчика
@@ -171,7 +171,7 @@ content %}
           <div class="d-flex gap-2">
             <form
               method="POST"
-              action="{{ url_for('main.save_interpreters_changes', book_id=book.id) }}"
+              action="{{ url_for('interpreters.save_interpreters_changes', book_id=book.id) }}"
               class="d-inline"
             >
               <input
@@ -190,7 +190,7 @@ content %}
             </form>
             <form
               method="POST"
-              action="{{ url_for('main.cancel_interpreters_changes', book_id=book.id) }}"
+              action="{{ url_for('interpreters.cancel_interpreters_changes', book_id=book.id) }}"
               class="d-inline"
             >
               <input
@@ -237,7 +237,7 @@ content %}
           button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
       }
 
-      fetch('{{ url_for("main.add_interpreter_to_book_session", book_id=book.id) }}', {
+      fetch('{{ url_for("interpreters.add_interpreter_to_book_session", book_id=book.id) }}', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
@@ -285,7 +285,7 @@ content %}
           button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
       }
 
-      fetch('{{ url_for("main.remove_interpreter_from_book_session", book_id=book.id, interpreter_id=0) }}'.replace('/0', '/' + interpreterId), {
+      fetch('{{ url_for("interpreters.remove_interpreter_from_book_session", book_id=book.id, interpreter_id=0) }}'.replace('/0', '/' + interpreterId), {
           method: 'POST',
           headers: {
               'Content-Type': 'application/x-www-form-urlencoded',

@@ -22,7 +22,7 @@ content %}
         </a>
         {% elif  return_to == 'interpreter_card' %}
         <a
-          href="{{ url_for('main.interpreter_card', 
+          href="{{ url_for('interpreters.interpreter_card', 
                      interpreter_id=id,
                      page=page1,
                      return_search=return_search,
@@ -143,7 +143,7 @@ content %}
         </a>
         {% elif  return_to == 'edit_interpreter' %}
         <a
-          href="{{ url_for('main.edit_interpreter', 
+          href="{{ url_for('interpreters.edit_interpreter', 
                      interpreter_id=id,
                      page=page1,
                      return_search=return_search,

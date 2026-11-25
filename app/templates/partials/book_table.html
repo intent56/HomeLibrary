@@ -65,7 +65,7 @@
                     <td>
                         {% if book.interpreter_books %}
                         {% for interpreter in book.interpreter_books %}
-                        <a href="{{ url_for('main.interpreter_view', 
+                        <a href="{{ url_for('interpreters.interpreter_view', 
                                  interpreter_id=interpreter.id, 
                                  book_id=book.id,
                                  return_to='book_table',

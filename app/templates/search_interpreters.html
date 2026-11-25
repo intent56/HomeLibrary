@@ -34,7 +34,7 @@
     <p class="mb-0 mt-1 text-white-50">
       Попробуйте изменить поисковый запрос или
       <a
-        href="{{ url_for('main.add_interpreter') }}?book_id={{ request.args.get('book_id', 0) }}"
+        href="{{ url_for('interpreters.add_interpreter') }}?book_id={{ request.args.get('book_id', 0) }}"
         class="alert-link"
         style="color: var(--main-color)"
       >

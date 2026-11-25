@@ -314,7 +314,7 @@ content %}
               </h5>
               <!-- 2. КНОПКА "Редактировать переводчиков" ТЕПЕРЬ ТОЖЕ СИНЯЯ (btn-primary) -->
               <a
-                href="{{ url_for('main.select_interpreters', book_id=book.id) }}"
+                href="{{ url_for('interpreters.select_interpreters', book_id=book.id) }}"
                 class="btn btn-edit"
               >
                 <i class="bi bi-pencil"></i> Редактировать переводчиков
@@ -354,7 +354,7 @@ content %}
                     <br />
                     <small class="text-white-50">
                       <a
-                        href="{{ url_for('main.interpreter_view', 
+                        href="{{ url_for('interpreters.interpreter_view', 
                               interpreter_id=interpreter.id,
                               book_id=book.id,
                               return_to='book_detail',
@@ -379,7 +379,7 @@ content %}
               <i class="bi bi-exclamation-triangle"></i>
               У книги пока нет переводчиков.
               <a
-                href="{{ url_for('main.select_interpreters', book_id=book.id) }}"
+                href="{{ url_for('interpreters.select_interpreters', book_id=book.id) }}"
                 class="alert-link"
               >
                 Добавить переводчиков

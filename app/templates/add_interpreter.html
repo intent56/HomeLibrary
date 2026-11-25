@@ -14,7 +14,7 @@ content %}
       </div>
       <div class="d-flex gap-2">
         <a
-          href="{{ url_for('main.interpreter_list') }}"
+          href="{{ url_for('interpreters.interpreter_list') }}"
           class="btn btn-outline-light"
         >
           <i class="bi bi-arrow-left"></i> Назад к списку
@@ -132,7 +132,7 @@ content %}
 
     <form
       method="POST"
-      action="{{ url_for('main.add_interpreter') }}"
+      action="{{ url_for('interpreters.add_interpreter') }}"
       enctype="multipart/form-data"
       novalidate
     >
@@ -377,7 +377,7 @@ content %}
             </div>
             <div class="d-flex gap-2">
               <a
-                href="{{ url_for('main.interpreter_list') }}"
+                href="{{ url_for('interpreters.interpreter_list') }}"
                 class="btn btn-outline-light btn-lg"
               >
                 <i class="bi bi-x-circle"></i> Отмена
