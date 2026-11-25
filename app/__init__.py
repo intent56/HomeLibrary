@@ -46,6 +46,9 @@ def create_app(config_class=Config):
     from app.interpreters import bp as interpreters_bp
     app.register_blueprint(interpreters_bp)
 
+    from app.languages import bp as languages_bp
+    app.register_blueprint(languages_bp)
+
     return app
 
 from app.models.main import (

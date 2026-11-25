@@ -12,7 +12,7 @@ content %}
       </div>
       <div>
         <a
-          href="{{ url_for('main.interpreter_list') }}"
+          href="{{ url_for('interpreters.interpreter_list') }}"
           class="btn btn-outline-light"
           id="cancelBtn"
         >
@@ -34,7 +34,7 @@ content %}
             >Введите название или код языка</label
           >
           <form
-            hx-get="{{ url_for('main.search_interpreter_languages') }}"
+            hx-get="{{ url_for('languages.search_interpreter_languages') }}"
             hx-trigger="keyup changed delay:300ms from:#languageSearch"
             hx-target="#searchResults"
             hx-indicator="#loading"
@@ -111,7 +111,7 @@ content %}
             </div>
             <form
               method="POST"
-              action="{{ url_for('main.remove_language_from_interpreter', interpreter_id=interpreter.id, language_id=language.id) }}"
+              action="{{ url_for('languages.remove_language_from_interpreter', interpreter_id=interpreter.id, language_id=language.id) }}"
               style="display: inline"
             >
               <input
@@ -152,13 +152,13 @@ content %}
           </div>
           <div class="d-flex gap-2">
             <a
-              href="{{ url_for('main.interpreter_list') }}"
+              href="{{ url_for('interpreters.interpreter_list') }}"
               class="btn btn-edit btn-lg d-flex align-items-center"
             >
               <i class="bi bi-check-circle me-2"></i> Готово
             </a>
             <a
-              href="{{ url_for('main.interpreter_list') }}"
+              href="{{ url_for('interpreters.interpreter_list') }}"
               class="btn btn-outline-light btn-lg d-flex align-items-center"
             >
               <i class="bi bi-arrow-counterclockwise me-2"></i> Отмена
@@ -182,7 +182,7 @@ content %}
     }
 
     fetch(
-      '{{ url_for("main.add_language_to_interpreter", interpreter_id=interpreter.id) }}',
+      '{{ url_for("languages.add_language_to_interpreter", interpreter_id=interpreter.id) }}',
       {
         method: "POST",
         headers: {

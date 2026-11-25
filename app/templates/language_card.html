@@ -12,7 +12,7 @@ content %}
 
       <div class="d-flex gap-2">
         <a
-          href="{{ url_for('main.language_list', 
+          href="{{ url_for('languages.language_list', 
                     page=return_page,
                     search=return_search) }}"
           class="btn btn-outline-light"
@@ -253,7 +253,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.language_card', 
+                      href="{{ url_for('languages.language_card', 
                                language_id=language.id, 
                                page_books=1, 
                                page_interpreters=pagination_interpreters.page if pagination_interpreters else 1,
@@ -267,7 +267,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.language_card', 
+                      href="{{ url_for('languages.language_card', 
                                language_id=language.id, 
                                page_books=pagination_books.prev_num, 
                                page_interpreters=pagination_interpreters.page if pagination_interpreters else 1,
@@ -290,7 +290,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.language_card', 
+                      href="{{ url_for('languages.language_card', 
                                language_id=language.id, 
                                page_books=p, 
                                page_interpreters=pagination_interpreters.page if pagination_interpreters else 1,
@@ -310,7 +310,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.language_card', 
+                      href="{{ url_for('languages.language_card', 
                                 language_id=language.id, 
                                 page_books=pagination_books.next_num, 
                                 page_interpreters=pagination_interpreters.page if pagination_interpreters else 1,
@@ -324,7 +324,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.language_card', 
+                      href="{{ url_for('languages.language_card', 
                                language_id=language.id, 
                                page_books=pagination_books.pages, 
                                page_interpreters=pagination_interpreters.page if pagination_interpreters else 1,
@@ -405,7 +405,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.language_card', 
+                      href="{{ url_for('languages.language_card', 
                                language_id=language.id, 
                                page_interpreters=1,
                                page_books=pagination_books.page if pagination_books else 1,
@@ -419,7 +419,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.language_card', 
+                      href="{{ url_for('languages.language_card', 
                                language_id=language.id, 
                                page_interpreters=pagination_interpreters.prev_num,
                                page_books=pagination_books.page if pagination_books else 1,
@@ -443,7 +443,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.language_card', 
+                      href="{{ url_for('languages.language_card', 
                                language_id=language.id, 
                                page_interpreters=p,
                                page_books=pagination_books.page if pagination_books else 1,
@@ -463,7 +463,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.language_card', 
+                      href="{{ url_for('languages.language_card', 
                                 language_id=language.id, 
                                 page_interpreters=pagination_interpreters.next_num,
                                 page_books=pagination_books.page if pagination_books else 1,
@@ -477,7 +477,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.language_card', 
+                      href="{{ url_for('languages.language_card', 
                                language_id=language.id, 
                                page_interpreters=pagination_interpreters.pages,
                                page_books=pagination_books.page if pagination_books else 1,

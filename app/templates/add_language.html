@@ -14,7 +14,7 @@ content %}
       </div>
       <div class="d-flex gap-2">
         <a
-          href="{{ url_for('main.language_list') }}"
+          href="{{ url_for('languages.language_list') }}"
           class="btn btn-outline-light"
         >
           <i class="bi bi-arrow-left"></i> Назад к списку
@@ -22,7 +22,11 @@ content %}
       </div>
     </div>
 
-    <form method="POST" action="{{ url_for('main.add_language') }}" novalidate>
+    <form
+      method="POST"
+      action="{{ url_for('languages.add_language') }}"
+      novalidate
+    >
       {{ form.csrf_token }}
       <input type="hidden" name="book_id" value="{{ book_id }}" />
 
@@ -130,7 +134,7 @@ content %}
             </div>
             <div class="d-flex gap-2">
               <a
-                href="{{ url_for('main.language_list') }}"
+                href="{{ url_for('languages.language_list') }}"
                 class="btn btn-outline-light btn-lg"
               >
                 <i class="bi bi-x-circle"></i> Отмена
