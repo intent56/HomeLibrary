@@ -37,7 +37,6 @@ from config import Config
 #toggle_aggregator
 #toggle_aggregator_htmx
 #delete_aggregator_htmx
-#go_alib
 
 
 @bp.route('/aggregators')
@@ -158,35 +157,5 @@ def delete_aggregator_htmx(aggregator_id):
     except SQLAlchemyError as e:
         db.session.rollback()
         return f'<div class="alert alert-danger">Ошибка при удалении: {str(e)}</div>', 500
-
-
-@bp.route('/aggreg')
-def get_aggregators():
-    """Получить список активных агрегаторов"""
-    aggregators = Aggregator.query.filter_by(is_active=True).order_by(Aggregator.name).all()
-    return jsonify([{
-        'id': a.id,
-        'name': a.name,
-        'code': a.code,
-        'url_template': a.url_template,
-        'icon': a.icon or 'bi-box-seam',
-        'search_type': a.search_type or 'standard'
-    } for a in aggregators])
-
-
-@bp.route('/go/alib')
-def go_alib():
-    """Перенаправление на alib.ru с корректной кодировкой запроса"""
-    query = request.args.get('q', '').strip()
-
-    if not query:
-        flash('Пожалуйста, введите запрос для поиска на Alib.ru.', 'warning')
-        return redirect(url_for('main.add_book'))
-
-    # Перекодируем запрос в Windows-1251
-    encoded_query = urllib.parse.quote(query, encoding='windows-1251')
-    alib_url = f'https://www.alib.ru/find3.php4?tfind={encoded_query}'
-
-    return redirect(alib_url)
 
 
