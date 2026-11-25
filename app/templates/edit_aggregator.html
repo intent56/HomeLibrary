@@ -12,7 +12,7 @@ content %}
       </div>
       <!-- ИЗМЕНЕННАЯ КНОПКА "НАЗАД" -->
       <a
-        href="{{ request.args.get('next') or url_for('main.aggregator_list') }}"
+        href="{{ request.args.get('next') or url_for('aggregators.aggregator_list') }}"
         class="btn btn-outline-light d-flex align-items-center"
         id="backButton"
       >
@@ -22,7 +22,7 @@ content %}
 
     <form
       method="POST"
-      action="{{ url_for('main.edit_aggregator', aggregator_id=aggregator.id) }}"
+      action="{{ url_for('aggregators.edit_aggregator', aggregator_id=aggregator.id) }}"
       novalidate
     >
       {{ form.csrf_token }}
@@ -188,7 +188,7 @@ content %}
             <div class="d-flex gap-2">
               <!-- ИЗМЕНЕННАЯ КНОПКА "ОТМЕНА" -->
               <a
-                href="{{ request.args.get('next') or url_for('main.aggregator_list') }}"
+                href="{{ request.args.get('next') or url_for('aggregators.aggregator_list') }}"
                 class="btn btn-outline-light btn"
               >
                 <i class="bi bi-x-circle"></i> Отмена

@@ -594,15 +594,3 @@ def test():
     })
 
 
-@api.route('/aggregators')
-def get_aggregators():
-    """Получить список активных агрегаторов"""
-    aggregators = Aggregator.query.filter_by(is_active=True).order_by(Aggregator.name).all()
-    return jsonify([{
-        'id': a.id,
-        'name': a.name,
-        'code': a.code,
-        'url_template': a.url_template,
-        'icon': a.icon or 'bi-box-seam',
-        'search_type': a.search_type or 'standard'
-    } for a in aggregators])

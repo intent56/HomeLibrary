@@ -37,13 +37,13 @@
                         <td>
                             <div class="text-center">
                             <div class="btn-group btn-group-sm" role="group">
-                                <a href="{{ url_for('main.edit_aggregator', aggregator_id=aggregator.id) }}" 
+                                <a href="{{ url_for('aggregators.edit_aggregator', aggregator_id=aggregator.id) }}" 
                                    class="btn btn-outline-light" title="Редактировать">
                                     <i class="bi bi-pencil main-text-color"></i>
                                 </a>
                                 <button type="button" 
                                         class="btn btn-outline-light toggle-btn" 
-                                        hx-post="{{ url_for('main.toggle_aggregator_htmx', aggregator_id=aggregator.id) }}"
+                                        hx-post="{{ url_for('aggregators.toggle_aggregator_htmx', aggregator_id=aggregator.id) }}"
                                         hx-headers='{"X-CSRFToken": "{{ csrf_token() }}"}'
                                         hx-target="#status-{{ aggregator.id }}"
                                         hx-swap="outerHTML"
@@ -69,7 +69,7 @@
                         <td colspan="7" class="text-center text-white-50 py-4">
                             <i class="bi bi-link-45deg display-4 text-white-50 d-block"></i>
                             <p class="text-white-50 mt-2">Агрегаторы не найдены</p>
-                            <a href="{{ url_for('main.add_aggregator') }}" class="btn btn-primary">
+                            <a href="{{ url_for('aggregators.add_aggregator') }}" class="btn btn-primary">
                                 <i class="bi bi-plus-circle"></i> Добавить первый агрегатор
                             </a>
                         </td>
@@ -88,7 +88,7 @@
                 <!-- Первая страница -->
                 <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
                     <a class="page-link" href="#"
-                       hx-get="{{ url_for('main.aggregator_list') }}"
+                       hx-get="{{ url_for('aggregators.aggregator_list') }}"
                        hx-target="#aggregatorTable"
                        hx-indicator="#loadingIndicator"
                        hx-push-url="true"
@@ -99,7 +99,7 @@
                 <!-- Предыдущая страница -->
                 <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
                     <a class="page-link" href="#"
-                       hx-get="{{ url_for('main.aggregator_list') }}"
+                       hx-get="{{ url_for('aggregators.aggregator_list') }}"
                        hx-target="#aggregatorTable"
                        hx-indicator="#loadingIndicator"
                        hx-push-url="true"
@@ -121,7 +121,7 @@
                 {% for p in range(left, right + 1) %}
                     <li class="page-item {% if p == pagination.page %}active{% endif %}">
                         <a class="page-link" href="#"
-                           hx-get="{{ url_for('main.aggregator_list') }}"
+                           hx-get="{{ url_for('aggregators.aggregator_list') }}"
                            hx-target="#aggregatorTable"
                            hx-indicator="#loadingIndicator"
                            hx-push-url="true"
@@ -138,7 +138,7 @@
                 <!-- Следующая страница -->
                 <li class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}">
                     <a class="page-link" href="#"
-                       hx-get="{{ url_for('main.aggregator_list') }}"
+                       hx-get="{{ url_for('aggregators.aggregator_list') }}"
                        hx-target="#aggregatorTable"
                        hx-indicator="#loadingIndicator"
                        hx-push-url="true"
@@ -149,7 +149,7 @@
                 <!-- Последняя страница -->
                 <li class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}">
                     <a class="page-link" href="#"
-                       hx-get="{{ url_for('main.aggregator_list') }}"
+                       hx-get="{{ url_for('aggregators.aggregator_list') }}"
                        hx-target="#aggregatorTable"
                        hx-indicator="#loadingIndicator"
                        hx-push-url="true"

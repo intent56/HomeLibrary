@@ -18,7 +18,10 @@ content %}
           <i class="bi bi-house"></i> На главную
         </a>
         <!-- ИЗМЕНЕННАЯ КНОПКА "ДОБАВИТЬ АГРЕГАТОР" -->
-        <a href="{{ url_for('main.add_aggregator') }}" class="btn btn-edit">
+        <a
+          href="{{ url_for('aggregators.add_aggregator') }}"
+          class="btn btn-edit"
+        >
           <i class="bi bi-plus-circle"></i> Добавить агрегатор
         </a>
       </div>

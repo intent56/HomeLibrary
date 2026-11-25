@@ -49,6 +49,9 @@ def create_app(config_class=Config):
     from app.languages import bp as languages_bp
     app.register_blueprint(languages_bp)
 
+    from app.aggregators import bp as aggregators_bp
+    app.register_blueprint(aggregators_bp)
+
     return app
 
 from app.models.main import (
@@ -60,4 +63,6 @@ from app.models.main import (
     Genre,
     Publisher,
     Interpreter,
+    Aggregator,
+    Source,
 )
