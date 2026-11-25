@@ -432,7 +432,7 @@ content %}
                         class="form-control custom-input"
                         id="formatSearchInput"
                         placeholder="Начните вводить формат книги..."
-                        hx-get="{{ url_for('main.search_formats_ajax') }}"
+                        hx-get="{{ url_for('formats.search_formats_ajax') }}"
                         hx-trigger="keyup changed delay:300ms, search"
                         hx-target="#formatResults"
                         hx-indicator="#formatSearchSpinner"
@@ -1281,7 +1281,7 @@ content %}
       if (query.length >= 1) {
         htmx.ajax(
           "GET",
-          '{{ url_for("main.search_formats_ajax") }}?q=' +
+          '{{ url_for("formats.search_formats_ajax") }}?q=' +
             encodeURIComponent(query),
           "#modalFormatResults",
         );

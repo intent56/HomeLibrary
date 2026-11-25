@@ -14,7 +14,7 @@ content %}
       </div>
       <div class="d-flex gap-2">
         <a
-          href="{{ url_for('main.format_list') }}"
+          href="{{ url_for('formats.format_list') }}"
           class="btn btn-outline-light"
         >
           <i class="bi bi-arrow-left"></i> Назад к списку
@@ -22,7 +22,7 @@ content %}
       </div>
     </div>
 
-    <form method="POST" action="{{ url_for('main.add_format') }}" novalidate>
+    <form method="POST" action="{{ url_for('formats.add_format') }}" novalidate>
       {{ form.csrf_token }}
 
       <!-- Вкладки -->
@@ -165,7 +165,7 @@ content %}
             </div>
             <div class="d-flex gap-2">
               <a
-                href="{{ url_for('main.format_list') }}"
+                href="{{ url_for('formats.format_list') }}"
                 class="btn btn-outline-light btn-lg"
               >
                 <i class="bi bi-x-circle"></i> Отмена

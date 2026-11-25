@@ -21,32 +21,10 @@ from flask import (
 from app.extensions import db
 from app.models.main import (
     Book,
-    Author,
-    Genre,
     Cover,
-    Publisher,
-    Format,
-    Language,
-    Interpreter,
-    book_genres,
-    book_authors,
-    book_interpreters,
-    book_publishers,
-    interpreter_languages,
-    Source,
-    Aggregator,
 )
 from app.main.forms import (
-    FormAuthor,
-    FormInterpreter,
-    FormPublisher,
-    FormFormat,
-    FormGenre,
     FormCover,
-    FormLanguage,
-    FormBook,
-    FormSource,
-    FormAggregator,
 )
 from app.covers import bp
 

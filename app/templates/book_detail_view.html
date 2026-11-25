@@ -77,7 +77,7 @@ content %}
         </a>
         {% elif  return_to == 'format_card' %}
         <a
-          href="{{ url_for('covers.format_card', 
+          href="{{ url_for('formats.format_card', 
                      format_id=id,
                      page=page1,
                      return_search=return_search,
@@ -110,7 +110,7 @@ content %}
         </a>
         {% elif  return_to == 'edit_format' %}
         <a
-          href="{{ url_for('main.edit_format', 
+          href="{{ url_for('formats.edit_format', 
                      format_id=id,
                      page=page1,
                      return_search=return_search,

@@ -40,6 +40,9 @@ def create_app(config_class=Config):
     from app.covers import bp as covers_bp
     app.register_blueprint(covers_bp)
 
+    from app.formats import bp as formats_bp
+    app.register_blueprint(formats_bp)
+
     return app
 
 from app.models.main import (

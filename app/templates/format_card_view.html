@@ -11,7 +11,7 @@ content %}
       </div>
       <div class="d-flex gap-2">
         <a
-          href="{{ url_for('main.format_list', 
+          href="{{ url_for('formats.format_list', 
                     page=return_page) }}"
           class="btn btn-outline-light"
         >
@@ -233,7 +233,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.format_card', format_id=format.id, page=1, return_page=return_page) }}"
+                      href="{{ url_for('formats.format_card', format_id=format.id, page=1, return_page=return_page) }}"
                     >
                       <i class="bi bi-chevron-double-left"></i>
                     </a>
@@ -243,7 +243,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.format_card', format_id=format.id, page=pagination.prev_num, return_page=return_page) }}"
+                      href="{{ url_for('formats.format_card', format_id=format.id, page=pagination.prev_num, return_page=return_page) }}"
                     >
                       <i class="bi bi-chevron-left"></i>
                     </a>
@@ -262,7 +262,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.format_card', format_id=format.id, page=p, return_page=return_page) }}"
+                      href="{{ url_for('formats.format_card', format_id=format.id, page=p, return_page=return_page) }}"
                     >
                       {{ p }}
                     </a>
@@ -278,7 +278,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.format_card', format_id=format.id, page=pagination.next_num, return_page=return_page) }}"
+                      href="{{ url_for('formats.format_card', format_id=format.id, page=pagination.next_num, return_page=return_page) }}"
                     >
                       <i class="bi bi-chevron-right"></i>
                     </a>
@@ -288,7 +288,7 @@ content %}
                   >
                     <a
                       class="page-link"
-                      href="{{ url_for('main.format_card', format_id=format.id, page=pagination.pages, return_page=return_page) }}"
+                      href="{{ url_for('formats.format_card', format_id=format.id, page=pagination.pages, return_page=return_page) }}"
                     >
                       <i class="bi bi-chevron-double-right"></i>
                     </a>

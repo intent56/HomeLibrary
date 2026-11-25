@@ -24,13 +24,13 @@
                     <td class="text-white">{{ format.fmt_books|length }}</td>
                     <td>
                         <div class="btn-group btn-group-sm">
-                            <a href="{{ url_for('main.format_card', 
+                            <a href="{{ url_for('formats.format_card', 
                                          format_id=format.id, 
                                          return_page=pagination.page if pagination else 1,
                                          return_search=search) }}" class="btn btn-outline-light"  title="Просмотр">
                                 <i class="bi bi-eye main-text-color"></i>
                             </a>
-                            <a href="{{ url_for('main.edit_format', 
+                            <a href="{{ url_for('formats.edit_format', 
                                          format_id=format.id, 
                                          return_page=pagination.page if pagination else 1,
                                          return_search=search) }}" class="btn btn-outline-light"  title="Редактировать">
@@ -63,7 +63,7 @@
             <ul class="pagination pagination-sm justify-content-center mb-0" id="transparentPagination">
                 <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
                     <a class="page-link" href="#"
-                       hx-get="{{ url_for('main.format_list') }}"
+                       hx-get="{{ url_for('formats.format_list') }}"
                        hx-target="#formatTableContainer"
                        hx-indicator="#loadingIndicator"
                        hx-push-url="true"
@@ -73,7 +73,7 @@
                 </li>
                 <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
                     <a class="page-link" href="#"
-                       hx-get="{{ url_for('main.format_list') }}"
+                       hx-get="{{ url_for('formats.format_list') }}"
                        hx-target="#formatTableContainer"
                        hx-indicator="#loadingIndicator"
                        hx-push-url="true"
@@ -94,7 +94,7 @@
                 {% for p in range(left, right + 1) %}
                     <li class="page-item {% if p == pagination.page %}active{% endif %}">
                         <a class="page-link" href="#"
-                           hx-get="{{ url_for('main.format_list') }}"
+                           hx-get="{{ url_for('formats.format_list') }}"
                            hx-target="#formatTableContainer"
                            hx-indicator="#loadingIndicator"
                            hx-push-url="true"
@@ -110,7 +110,7 @@
 
                 <li class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}">
                     <a class="page-link" href="#"
-                       hx-get="{{ url_for('main.format_list') }}"
+                       hx-get="{{ url_for('formats.format_list') }}"
                        hx-target="#formatTableContainer"
                        hx-indicator="#loadingIndicator"
                        hx-push-url="true"
@@ -120,7 +120,7 @@
                 </li>
                 <li class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}">
                     <a class="page-link" href="#"
-                       hx-get="{{ url_for('main.format_list') }}"
+                       hx-get="{{ url_for('formats.format_list') }}"
                        hx-target="#formatTableContainer"
                        hx-indicator="#loadingIndicator"
                        hx-push-url="true"
@@ -166,7 +166,7 @@
             <div class="modal-footer border-secondary">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
                 {% if not format.fmt_books %}
-                <form method="POST" action="{{ url_for('main.delete_format', format_id=format.id) }}" style="display: inline;">
+                <form method="POST" action="{{ url_for('formats.delete_format', format_id=format.id) }}" style="display: inline;">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit" class="btn btn-danger">
                         <i class="bi bi-trash"></i> Удалить
