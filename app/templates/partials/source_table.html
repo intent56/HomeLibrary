@@ -69,7 +69,7 @@
             <td class="text-center align-middle">
               <div class="btn-group btn-group-sm d-inline-flex" role="group">
                 <a
-                  href="{{ url_for('main.edit_source', source_id=source.id) }}"
+                  href="{{ url_for('sources.edit_source', source_id=source.id) }}"
                   class="btn btn-outline-light d-flex align-items-center justify-content-center action-btn"
                   title="Редактировать"
                 >
@@ -78,7 +78,7 @@
                 <button
                   type="button"
                   class="btn btn-outline-light toggle-btn d-flex align-items-center justify-content-center action-btn"
-                  hx-post="{{ url_for('main.toggle_source_htmx', source_id=source.id) }}"
+                  hx-post="{{ url_for('sources.toggle_source_htmx', source_id=source.id) }}"
                   hx-headers='{"X-CSRFToken": "{{ csrf_token() }}"}'
                   hx-target="#source-status-{{ source.id }}"
                   hx-swap="outerHTML"
@@ -115,7 +115,7 @@
               <i class="bi bi-database display-4 text-white-50 d-block"></i>
               <p class="text-white-50 mt-2">Источники не найдены</p>
               <a
-                href="{{ url_for('main.add_source') }}"
+                href="{{ url_for('sources.add_source') }}"
                 class="btn btn-primary"
               >
                 <i class="bi bi-plus-circle"></i> Добавить первый источник
@@ -136,7 +136,7 @@
         <ul class="pagination pagination-sm justify-content-center mb-0" id="transparentPagination">
           <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
             <a class="page-link" href="#"
-               hx-get="{{ url_for('main.source_list') }}"
+               hx-get="{{ url_for('sources.source_list') }}"
                hx-target="#sourceTable"
                hx-indicator="#loadingIndicator"
                hx-push-url="true"
@@ -146,7 +146,7 @@
           </li>
           <li class="page-item {% if pagination.page == 1 %}disabled{% endif %}">
             <a class="page-link" href="#"
-               hx-get="{{ url_for('main.source_list') }}"
+               hx-get="{{ url_for('sources.source_list') }}"
                hx-target="#sourceTable"
                hx-indicator="#loadingIndicator"
                hx-push-url="true"
@@ -167,7 +167,7 @@
           {% for p in range(left, right + 1) %}
             <li class="page-item {% if p == pagination.page %}active{% endif %}">
               <a class="page-link" href="#"
-                 hx-get="{{ url_for('main.source_list') }}"
+                 hx-get="{{ url_for('sources.source_list') }}"
                  hx-target="#sourceTable"
                  hx-indicator="#loadingIndicator"
                  hx-push-url="true"
@@ -183,7 +183,7 @@
 
           <li class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}">
             <a class="page-link" href="#"
-               hx-get="{{ url_for('main.source_list') }}"
+               hx-get="{{ url_for('sources.source_list') }}"
                hx-target="#sourceTable"
                hx-indicator="#loadingIndicator"
                hx-push-url="true"
@@ -193,7 +193,7 @@
           </li>
           <li class="page-item {% if pagination.page == pagination.pages %}disabled{% endif %}">
             <a class="page-link" href="#"
-               hx-get="{{ url_for('main.source_list') }}"
+               hx-get="{{ url_for('sources.source_list') }}"
                hx-target="#sourceTable"
                hx-indicator="#loadingIndicator"
                hx-push-url="true"

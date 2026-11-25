@@ -12,7 +12,7 @@ content %}
       </div>
       <!-- 2. ИЗМЕНЕННАЯ КНОПКА "НАЗАД" -->
       <a
-        href="{{ request.args.get('next') or url_for('main.source_list') }}"
+        href="{{ request.args.get('next') or url_for('sources.source_list') }}"
         class="btn btn-outline-light d-flex align-items-center"
         id="backButton"
       >
@@ -22,7 +22,7 @@ content %}
 
     <form
       method="POST"
-      action="{{ url_for('main.edit_source', source_id=source.id) }}"
+      action="{{ url_for('sources.edit_source', source_id=source.id) }}"
       novalidate
     >
       {{ form.csrf_token }}
@@ -149,7 +149,7 @@ content %}
             <div class="d-flex gap-2">
               <!-- ИЗМЕНЕННАЯ КНОПКА "ОТМЕНА" -->
               <a
-                href="{{ request.args.get('next') or url_for('main.source_list') }}"
+                href="{{ request.args.get('next') or url_for('sources.source_list') }}"
                 class="btn btn-outline-light btn"
               >
                 <i class="bi bi-x-circle"></i> Отмена

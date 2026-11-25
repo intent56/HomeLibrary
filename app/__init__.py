@@ -52,6 +52,9 @@ def create_app(config_class=Config):
     from app.aggregators import bp as aggregators_bp
     app.register_blueprint(aggregators_bp)
 
+    from app.sources import bp as sources_bp
+    app.register_blueprint(sources_bp)
+
     return app
 
 from app.models.main import (

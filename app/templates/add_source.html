@@ -14,7 +14,7 @@ content %}
       </div>
       <div class="d-flex gap-2">
         <a
-          href="{{ url_for('main.source_list') }}"
+          href="{{ url_for('sources.source_list') }}"
           class="btn btn-outline-light"
         >
           <i class="bi bi-arrow-left"></i> Назад к списку
@@ -22,7 +22,7 @@ content %}
       </div>
     </div>
 
-    <form method="POST" action="{{ url_for('main.add_source') }}" novalidate>
+    <form method="POST" action="{{ url_for('sources.add_source') }}" novalidate>
       {{ form.csrf_token }}
 
       <!-- Вкладки -->
@@ -175,7 +175,7 @@ content %}
             </div>
             <div class="d-flex gap-2">
               <a
-                href="{{ url_for('main.source_list') }}"
+                href="{{ url_for('sources.source_list') }}"
                 class="btn btn-outline-light btn-lg"
               >
                 <i class="bi bi-x-circle"></i> Отмена

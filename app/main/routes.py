@@ -70,6 +70,72 @@ def index():
                            total_books=total_books)
 
 
+@bp.route('/books')
+def book_list():
+    page = request.args.get('page', 1, type=int)
+    search = request.args.get('search', '').strip()
+    author_search = request.args.get('author_search', '').strip()
+    interpreter_search = request.args.get('interpreter_search', '').strip()
+    genre_search = request.args.get('genre_search', '').strip()
+
+    # Всего книг в БД — не зависит от поиска
+    total_books = Book.query.count()
+
+    # Базовый запрос
+    query = Book.query
+
+    # Поиск по названию
+    if search:
+        search_pattern = f'%{search}%'
+        query = query.filter(Book.name.ilike(search_pattern))
+
+    # Поиск по автору
+    if author_search:
+        author_pattern = f'%{author_search}%'
+        query = query.filter(Book.author_books.any(
+            Author.lastname.ilike(author_pattern)))
+
+    # Поиск по переводчику
+    if interpreter_search:
+        interpreter_pattern = f'%{interpreter_search}%'
+        query = query.filter(Book.interpreter_books.any(
+            Interpreter.lastname.ilike(interpreter_pattern)))
+
+    # Поиск по жанру
+    if genre_search:
+        genre_pattern = f'%{genre_search}%'
+        query = query.filter(
+            Book.genre_books.any(
+                Genre.name.ilike(genre_pattern)
+            )
+        )
+
+    # Сортировка по названию книги
+    query = query.order_by(Book.name.asc())
+
+    # Пагинация
+    pagination = query.paginate(
+        page=page,
+        per_page=Config.ITEMS_PER_PAGE_BOOK,
+        error_out=False
+    )
+
+    context = dict(
+        books=pagination.items,
+        pagination=pagination,
+        total_books=total_books,
+        search=search,
+        author_search=author_search,
+        interpreter_search=interpreter_search,
+        genre_search=genre_search,
+    )
+
+    if request.headers.get('HX-Request'):
+        return render_template('partials/book_table.html', **context)
+
+    return render_template('book_list.html', **context)
+
+
 @bp.route('/book/add', methods=['GET', 'POST'])
 def add_book():
     form = FormBook()
@@ -167,72 +233,6 @@ def edit_book(book_id):
     return render_template('edit_book.html', form=form, book=book)
 
 
-@bp.route('/books')
-def book_list():
-    page = request.args.get('page', 1, type=int)
-    search = request.args.get('search', '').strip()
-    author_search = request.args.get('author_search', '').strip()
-    interpreter_search = request.args.get('interpreter_search', '').strip()
-    genre_search = request.args.get('genre_search', '').strip()
-
-    # Всего книг в БД — не зависит от поиска
-    total_books = Book.query.count()
-
-    # Базовый запрос
-    query = Book.query
-
-    # Поиск по названию
-    if search:
-        search_pattern = f'%{search}%'
-        query = query.filter(Book.name.ilike(search_pattern))
-
-    # Поиск по автору
-    if author_search:
-        author_pattern = f'%{author_search}%'
-        query = query.filter(Book.author_books.any(
-            Author.lastname.ilike(author_pattern)))
-
-    # Поиск по переводчику
-    if interpreter_search:
-        interpreter_pattern = f'%{interpreter_search}%'
-        query = query.filter(Book.interpreter_books.any(
-            Interpreter.lastname.ilike(interpreter_pattern)))
-
-    # Поиск по жанру
-    if genre_search:
-        genre_pattern = f'%{genre_search}%'
-        query = query.filter(
-            Book.genre_books.any(
-                Genre.name.ilike(genre_pattern)
-            )
-        )
-
-    # Сортировка по названию книги
-    query = query.order_by(Book.name.asc())
-
-    # Пагинация
-    pagination = query.paginate(
-        page=page,
-        per_page=Config.ITEMS_PER_PAGE_BOOK,
-        error_out=False
-    )
-
-    context = dict(
-        books=pagination.items,
-        pagination=pagination,
-        total_books=total_books,
-        search=search,
-        author_search=author_search,
-        interpreter_search=interpreter_search,
-        genre_search=genre_search,
-    )
-
-    if request.headers.get('HX-Request'):
-        return render_template('partials/book_table.html', **context)
-
-    return render_template('book_list.html', **context)
-
-
 @bp.route('/book/<int:book_id>/delete', methods=['POST'])
 def delete_book(book_id):
     book = Book.query.get_or_404(book_id)
@@ -297,118 +297,6 @@ def book_view(book_id):
                            return_search=return_search,
                            return_page=return_page,
                            return_to=return_to)
-
-
-@bp.route('/sources')
-def source_list():
-    page = request.args.get('page', 1, type=int)
-    search = request.args.get('search', '').strip()
-
-    # Базовый запрос
-    query = Source.query
-
-    # Поиск по названию или коду
-    if search:
-        search_pattern = f'%{search}%'
-        query = query.filter(
-            or_(
-                Source.name.ilike(search_pattern),
-                Source.code.ilike(search_pattern)
-            )
-        )
-
-    # Сортировка по названию
-    query = query.order_by(Source.name)
-
-    # Пагинация
-    pagination = query.paginate(
-        page=page,
-        # Убедитесь, что эта константа определена в config.py
-        per_page=Config.ITEMS_PER_PAGE_SOURCE,
-        error_out=False
-    )
-
-    # Проверяем, является ли запрос HTMX
-    if request.headers.get('HX-Request'):
-        return render_template('partials/source_table.html',
-                               sources=pagination.items,
-                               pagination=pagination,
-                               total_sources=query.count(),
-                               search=search)
-
-    return render_template('source_list.html',
-                           sources=pagination.items,
-                           pagination=pagination,
-                           total_sources=query.count(),
-                           search=search)
-
-
-@bp.route('/source/<int:source_id>/toggle-htmx', methods=['POST'])
-def toggle_source_htmx(source_id):
-    """HTMX-версия переключения статуса источника"""
-    source = Source.query.get_or_404(source_id)
-    try:
-        source.is_active = not source.is_active
-        db.session.commit()
-
-        # Возвращаем только обновленный статус
-        if source.is_active:
-            return '<span class="badge bg-success">Активен</span>'
-        else:
-            return '<span class="badge bg-danger">Неактивен</span>'
-    except SQLAlchemyError as e:
-        db.session.rollback()
-        return '<span class="badge bg-danger">Ошибка</span>', 500
-
-
-@bp.route('/source/<int:source_id>/delete-htmx', methods=['DELETE'])
-def delete_source_htmx(source_id):
-    """HTMX-версия удаления источника"""
-    source = Source.query.get_or_404(source_id)
-    try:
-        db.session.delete(source)
-        db.session.commit()
-        return '', 200
-    except SQLAlchemyError as e:
-        db.session.rollback()
-        return f'<div class="alert alert-danger">Ошибка при удалении: {str(e)}</div>', 500
-
-
-@bp.route('/source/add', methods=['GET', 'POST'])
-def add_source():
-    form = FormSource()
-    if form.validate_on_submit():
-        try:
-            source = Source()
-            form.populate_obj(source)
-            source.created_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            db.session.add(source)
-            db.session.commit()
-            flash('Источник успешно добавлен!', 'success')
-            return redirect(url_for('main.source_list'))
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            flash(f'Ошибка при добавлении источника: {str(e)}', 'danger')
-
-    return render_template('add_source.html', form=form)
-
-
-@bp.route('/source/<int:source_id>/edit', methods=['GET', 'POST'])
-def edit_source(source_id):
-    source = Source.query.get_or_404(source_id)
-    form = FormSource(obj=source)
-
-    if form.validate_on_submit():
-        try:
-            form.populate_obj(source)
-            db.session.commit()
-            flash('Источник успешно обновлен!', 'success')
-            return redirect(url_for('main.source_list'))
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            flash(f'Ошибка при обновлении источника: {str(e)}', 'danger')
-
-    return render_template('edit_source.html', form=form, source=source)
 
 
 @bp.route('/init_db')
