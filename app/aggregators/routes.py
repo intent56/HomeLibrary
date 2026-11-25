@@ -25,7 +25,7 @@ from app.models.main import (
 from app.main.forms import (
     FormAggregator,
 )
-from app.main import bp
+from app.aggregators import bp
 
 from app.main.misc import get_html
 from config import Config
