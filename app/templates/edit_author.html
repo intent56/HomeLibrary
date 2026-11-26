@@ -2,7 +2,7 @@
 content %}
 <div class="row">
   <div class="col-lg-8 mx-auto">
-    <!-- 1. ЗАГОЛОВОК СТРАНИЦЫ: белый цвет -->
+    <!-- Заголовок страницы -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
         <h2 class="main-text-color">
@@ -10,10 +10,9 @@ content %}
         </h2>
         <h5 class="main-text-color fw-bold fs-3 mt-2">{{ author.fio }}</h5>
       </div>
-      <!-- 2. ИЗМЕНЕННАЯ КНОПКА "НАЗАД" С СОХРАНЕНИЕМ ПАРАМЕТРОВ -->
       <a
-        href="{{ url_for('authors.author_list', 
-                 page=return_page, 
+        href="{{ url_for('authors.author_list',
+                 page=return_page,
                  search=return_search) }}"
         class="btn btn-outline-light d-flex align-items-center"
       >
@@ -26,6 +25,7 @@ content %}
       action="{{ url_for('authors.edit_author', author_id=author.id) }}"
       enctype="multipart/form-data"
       novalidate
+      id="editAuthorForm"
     >
       {{ form.csrf_token }}
 
@@ -67,7 +67,6 @@ content %}
           <div class="tab-content" id="authorTabsContent">
             <!-- Вкладка 1: Основная информация -->
             <div class="tab-pane fade show active" id="main" role="tabpanel">
-              <!-- ФИО автора -->
               <div class="row">
                 <div class="col-md-4">
                   <div class="mb-3">
@@ -106,7 +105,6 @@ content %}
                 </div>
               </div>
 
-              <!-- ИЗМЕНЕННЫЙ АЛЕРТ - ИСПОЛЬЗУЕТ var(--main-color) -->
               <div class="alert custom-alert" role="alert">
                 <i class="bi bi-info-circle"></i>
                 <strong>ФИО будет сформировано автоматически:</strong>
@@ -115,15 +113,14 @@ content %}
                 >
               </div>
 
-              <!-- Ссылки и информация -->
               <div class="mt-3">
                 <div class="mb-3">
                   {{ form.ref_author.label(class="form-label fw-bold
                   main-text-color") }}
                   <div class="input-group">
-                    <span class="input-group-text custom-input-group"
-                      ><i class="bi bi-globe main-text-color"></i
-                    ></span>
+                    <span class="input-group-text custom-input-group">
+                      <i class="bi bi-globe main-text-color"></i>
+                    </span>
                     {{ form.ref_author(class="form-control custom-input",
                     placeholder="Например:
                     https://ru.wikipedia.org/wiki/Иванов_Иван_Иванович",
@@ -138,8 +135,9 @@ content %}
                   <label
                     for="authorPhoto"
                     class="form-label fw-bold main-text-color"
-                    >Фото автора</label
                   >
+                    Фото автора
+                  </label>
                   {% if author.photo %}
                   <div class="mb-2">
                     <img
@@ -155,7 +153,6 @@ content %}
                     <small class="text-white-50">Текущее фото</small>
                   </div>
                   {% endif %}
-                  <!-- ИЗМЕНЕННЫЙ INPUT ДЛЯ ФАЙЛА -->
                   <input
                     type="file"
                     class="form-control custom-file-input"
@@ -164,7 +161,7 @@ content %}
                     accept="image/*"
                   />
                   <div class="form-text text-white-50">
-                    Загрузите новое фото автора (JPG, PNG, GIF) - заменит
+                    Загрузите новое фото автора (JPG, PNG, GIF) — заменит
                     существующее
                   </div>
                   <div
@@ -230,11 +227,6 @@ content %}
                               border-color: rgba(255, 255, 255, 0.2);
                               background: transparent;
                             "
-                            onerror="
-                              this.onerror = null;
-                              this.src =
-                                'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'56\' viewBox=\'0 0 40 56\'%3E%3Crect width=\'40\' height=\'56\' fill=\'%23f8f9fa\'/%3E%3Ctext x=\'20\' y=\'28\' font-family=\'Arial\' font-size=\'8\' fill=\'%236c757d\' text-anchor=\'middle\'%3EНет%3C/text%3E%3Ctext x=\'20\' y=\'38\' font-family=\'Arial\' font-size=\'8\' fill=\'%236c757d\' text-anchor=\'middle\'%3Eобложки%3C/text%3E%3C/svg%3E';
-                            "
                           />
                           {% else %}
                           <div
@@ -254,9 +246,7 @@ content %}
                           {% endif %}
                         </div>
                       </td>
-                      <td>
-                        <strong>{{ book.name }}</strong>
-                      </td>
+                      <td><strong>{{ book.name }}</strong></td>
                       <td>
                         {% if book.publisher_books %} {% for publisher in
                         book.publisher_books %}
@@ -271,13 +261,13 @@ content %}
                         <div class="text-center">
                           <div class="btn-group btn-group-sm" role="group">
                             <a
-                              href="{{ url_for('main.book_view', 
-                                book_id=book.id,
-                                page1=page if page else 1,
-                                id=author.id,
-                                return_search=return_search,
-                                return_page=return_page,
-                                return_to='edit_author') }}"
+                              href="{{ url_for('main.book_view',
+                                                 book_id=book.id,
+                                                 page1=page if page else 1,
+                                                 id=author.id,
+                                                 return_search=return_search,
+                                                 return_page=return_page,
+                                                 return_to='edit_author') }}"
                               class="btn btn-outline-light"
                               title="Просмотр книги"
                             >
@@ -292,7 +282,6 @@ content %}
                 </table>
               </div>
 
-              <!-- ПАГИНАЦИЯ С СОХРАНЕНИЕМ ПАРАМЕТРОВ -->
               {% if pagination and pagination.pages > 1 %}
               <div class="pagination-container mt-3">
                 <nav aria-label="Навигация по страницам">
@@ -305,11 +294,11 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('authors.edit_author', 
-                                 author_id=author.id, 
-                                 page=1, 
-                                 return_page=return_page, 
-                                 return_search=return_search) }}"
+                        href="{{ url_for('authors.edit_author',
+                                                              author_id=author.id,
+                                                              page=1,
+                                                              return_page=return_page,
+                                                              return_search=return_search) }}"
                       >
                         <i class="bi bi-chevron-double-left"></i>
                       </a>
@@ -319,11 +308,11 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('authors.edit_author', 
-                                 author_id=author.id, 
-                                 page=pagination.prev_num, 
-                                 return_page=return_page, 
-                                 return_search=return_search) }}"
+                        href="{{ url_for('authors.edit_author',
+                                                              author_id=author.id,
+                                                              page=pagination.prev_num,
+                                                              return_page=return_page,
+                                                              return_search=return_search) }}"
                       >
                         <i class="bi bi-chevron-left"></i>
                       </a>
@@ -342,11 +331,11 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('authors.edit_author', 
-                                 author_id=author.id, 
-                                 page=p, 
-                                 return_page=return_page, 
-                                 return_search=return_search) }}"
+                        href="{{ url_for('authors.edit_author',
+                                                              author_id=author.id,
+                                                              page=p,
+                                                              return_page=return_page,
+                                                              return_search=return_search) }}"
                       >
                         {{ p }}
                       </a>
@@ -362,11 +351,11 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('authors.edit_author', 
-                                 author_id=author.id, 
-                                 page=pagination.next_num, 
-                                 return_page=return_page, 
-                                 return_search=return_search) }}"
+                        href="{{ url_for('authors.edit_author',
+                                                              author_id=author.id,
+                                                              page=pagination.next_num,
+                                                              return_page=return_page,
+                                                              return_search=return_search) }}"
                       >
                         <i class="bi bi-chevron-right"></i>
                       </a>
@@ -376,11 +365,11 @@ content %}
                     >
                       <a
                         class="page-link"
-                        href="{{ url_for('authors.edit_author', 
-                                 author_id=author.id, 
-                                 page=pagination.pages, 
-                                 return_page=return_page, 
-                                 return_search=return_search) }}"
+                        href="{{ url_for('authors.edit_author',
+                                                              author_id=author.id,
+                                                              page=pagination.pages,
+                                                              return_page=return_page,
+                                                              return_search=return_search) }}"
                       >
                         <i class="bi bi-chevron-double-right"></i>
                       </a>
@@ -420,7 +409,6 @@ content %}
               </span>
             </div>
             <div class="d-flex gap-2">
-              <!-- Кнопка "Отмена" с сохранением параметров -->
               <a
                 href="{{ url_for('authors.author_list', page=return_page, search=return_search) }}"
                 class="btn btn-outline-light btn"
@@ -441,9 +429,9 @@ content %}
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     // --- Предпросмотр фото ---
-    document
-      .getElementById("authorPhoto")
-      .addEventListener("change", function (e) {
+    const photoInput = document.getElementById("authorPhoto");
+    if (photoInput) {
+      photoInput.addEventListener("change", function () {
         const file = this.files[0];
         if (file) {
           const reader = new FileReader();
@@ -456,6 +444,7 @@ content %}
           reader.readAsDataURL(file);
         }
       });
+    }
 
     // --- Предпросмотр ФИО ---
     const lastname = document.getElementById("authorLastname");
@@ -465,12 +454,15 @@ content %}
 
     function updateFioPreview() {
       const parts = [];
-      if (lastname.value) parts.push(lastname.value);
-      if (firstname.value) parts.push(firstname.value);
-      if (secondname.value) parts.push(secondname.value);
-      preview.textContent = parts.length ? parts.join(" ") : "Не указано";
-      preview.className =
-        "fw-bold ms-2 " + (parts.length ? "main-text-color" : "text-white-50");
+      if (lastname && lastname.value) parts.push(lastname.value);
+      if (firstname && firstname.value) parts.push(firstname.value);
+      if (secondname && secondname.value) parts.push(secondname.value);
+      if (preview) {
+        preview.textContent = parts.length ? parts.join(" ") : "Не указано";
+        preview.className =
+          "fw-bold ms-2 " +
+          (parts.length ? "main-text-color" : "text-white-50");
+      }
     }
 
     if (lastname) lastname.addEventListener("input", updateFioPreview);
@@ -478,33 +470,33 @@ content %}
     if (secondname) secondname.addEventListener("input", updateFioPreview);
 
     // --- Валидация URL ---
-    const urlInputs = document.querySelectorAll(
-      'input[type="text"][name*="ref_"]',
-    );
-    urlInputs.forEach((input) => {
-      input.addEventListener("blur", function () {
-        if (
-          this.value &&
-          !this.value.startsWith("http://") &&
-          !this.value.startsWith("https://")
-        ) {
-          this.classList.add("is-invalid");
-          let feedback = this.parentElement.querySelector(".invalid-feedback");
-          if (!feedback) {
-            feedback = document.createElement("div");
-            feedback.className = "invalid-feedback d-block";
-            feedback.textContent =
-              "Введите корректный URL (начинается с http:// или https://)";
-            this.parentElement.appendChild(feedback);
+    document
+      .querySelectorAll('input[type="text"][name*="ref_"]')
+      .forEach((input) => {
+        input.addEventListener("blur", function () {
+          if (
+            this.value &&
+            !this.value.startsWith("http://") &&
+            !this.value.startsWith("https://")
+          ) {
+            this.classList.add("is-invalid");
+            let feedback =
+              this.parentElement.querySelector(".invalid-feedback");
+            if (!feedback) {
+              feedback = document.createElement("div");
+              feedback.className = "invalid-feedback d-block";
+              feedback.textContent =
+                "Введите корректный URL (начинается с http:// или https://)";
+              this.parentElement.appendChild(feedback);
+            }
+          } else {
+            this.classList.remove("is-invalid");
+            const feedback =
+              this.parentElement.querySelector(".invalid-feedback");
+            if (feedback) feedback.remove();
           }
-        } else {
-          this.classList.remove("is-invalid");
-          const feedback =
-            this.parentElement.querySelector(".invalid-feedback");
-          if (feedback) feedback.remove();
-        }
+        });
       });
-    });
 
     // --- Автоматическая капитализация фамилии ---
     if (lastname) {
@@ -519,26 +511,31 @@ content %}
     }
 
     // --- Подтверждение перед выходом без сохранения ---
-    const form = document.querySelector("form");
+    const form = document.getElementById("editAuthorForm");
     let formChanged = false;
+    let isSubmitting = false;
 
-    form.querySelectorAll("input, textarea, select").forEach((element) => {
-      element.addEventListener("change", function () {
-        formChanged = true;
+    if (form) {
+      form.querySelectorAll("input, textarea, select").forEach((element) => {
+        element.addEventListener("change", function () {
+          formChanged = true;
+        });
       });
-    });
 
-    window.addEventListener("beforeunload", function (e) {
-      if (formChanged) {
-        e.preventDefault();
-        e.returnValue =
-          "Вы не сохранили изменения. Вы уверены, что хотите покинуть страницу?";
-      }
-    });
+      window.addEventListener("beforeunload", function (e) {
+        if (isSubmitting) return;
+        if (formChanged) {
+          e.preventDefault();
+          e.returnValue =
+            "Вы не сохранили изменения. Вы уверены, что хотите покинуть страницу?";
+        }
+      });
 
-    form.addEventListener("submit", function () {
-      formChanged = false;
-    });
+      form.addEventListener("submit", function () {
+        isSubmitting = true;
+        formChanged = false;
+      });
+    }
 
     // --- Сохранение активной вкладки ---
     const tabs = document.querySelectorAll(
@@ -560,377 +557,4 @@ content %}
     }
   });
 </script>
-
-<!-- СТИЛИ -->
-<style>
-  /* 1. ПОЛНОСТЬЮ УБИРАЕМ ВСЕ ФОНЫ */
-  .transparent-card,
-  .transparent-card *,
-  .transparent-card .card-body,
-  .transparent-card .card-header,
-  .transparent-card .card-footer,
-  .transparent-card .table,
-  .transparent-card .table-responsive,
-  .transparent-card thead,
-  .transparent-card tbody,
-  .transparent-card tr,
-  .transparent-card td,
-  .transparent-card th {
-    background: transparent !important;
-    background-color: transparent !important;
-  }
-
-  /* 2. КАРТОЧКА - ТОЛЬКО РАМКА */
-  .transparent-card {
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
-  }
-
-  .transparent-card-header {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 12px 12px 0 0 !important;
-  }
-
-  /* 3. НОВЫЙ СТИЛЬ ДЛЯ ПОЛЕЙ ВВОДА - ЧЕРНЫЙ ФОН, БЕЛЫЙ ТЕКСТ */
-  .custom-input {
-    background-color: #000000 !important;
-    color: #ffffff !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    transition: all 0.2s;
-  }
-
-  .custom-input::placeholder {
-    color: var(--main-color) !important; /* main-color */
-    font-weight: 300;
-  }
-
-  .custom-input:focus {
-    background-color: #000000 !important;
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.6) !important;
-    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
-  }
-
-  .custom-input.is-invalid {
-    border-color: #dc3545 !important;
-  }
-
-  /* 4. НОВЫЙ СТИЛЬ ДЛЯ INPUT-GROUP */
-  .custom-input-group {
-    background-color: #000000 !important;
-    color: #ffffff !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    border-right: none !important;
-  }
-
-  /* 5. СТИЛИ ДЛЯ ВКЛАДОК */
-  .nav-tabs .nav-link {
-    color: rgba(255, 255, 255, 0.8);
-    border: none;
-    padding: 0.5rem 1rem;
-    transition: all 0.2s;
-  }
-
-  .nav-tabs .nav-link:hover {
-    border-color: transparent;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #fff;
-  }
-
-  .nav-tabs .nav-link.active {
-    color: #fff;
-    background-color: rgba(255, 255, 255, 0.2);
-    border-bottom: 2px solid #fff;
-  }
-
-  .nav-tabs .nav-link i {
-    margin-right: 6px;
-  }
-
-  .card-header-tabs {
-    margin-right: -0.625rem;
-    margin-bottom: -0.75rem;
-    margin-left: -0.625rem;
-    border-bottom: 0;
-  }
-
-  .tab-pane {
-    padding-top: 1rem;
-  }
-
-  /* 6. НОВЫЙ СТИЛЬ ДЛЯ АЛЕРТА - ИСПОЛЬЗУЕТ var(--main-color) */
-  .custom-alert {
-    background-color: rgba(212, 175, 55, 0.2) !important;
-    backdrop-filter: blur(5px);
-    border: 1px solid var(--main-color) !important;
-    color: #ffffff !important;
-    padding: 0.75rem 1.25rem;
-    border-radius: 8px;
-  }
-
-  .custom-alert i {
-    color: var(--main-color) !important;
-  }
-
-  .custom-alert .main-text-color {
-    color: #ffffff !important;
-  }
-
-  /* 7. ПРОЗРАЧНЫЙ АЛЕРТ (для предупреждений) */
-  .transparent-alert {
-    background-color: rgba(13, 202, 240, 0.15) !important;
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(13, 202, 240, 0.3) !important;
-    color: #ffffff !important;
-  }
-  .transparent-alert i {
-    color: #0dcaf0 !important;
-  }
-  .transparent-alert .main-text-color {
-    color: #ffffff !important;
-  }
-
-  /* 8. ПРОЗРАЧНАЯ ТАБЛИЦА */
-  .transparent-table {
-    width: 100% !important;
-  }
-
-  .transparent-table thead th {
-    background-color: rgba(0, 0, 0, 0.5) !important;
-    color: var(--main-color) !important;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.15) !important;
-  }
-
-  .transparent-table tbody tr {
-    background-color: rgba(255, 255, 255, 0.04) !important;
-  }
-  .transparent-table tbody tr:nth-of-type(odd) {
-    background-color: rgba(255, 255, 255, 0.02) !important;
-  }
-  .transparent-table tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-  }
-  .transparent-table td {
-    color: #ffffff !important;
-  }
-  .transparent-table th {
-    color: rgba(255, 255, 255, 0.7) !important;
-  }
-
-  /* 9. КНОПКИ В ТАБЛИЦЕ */
-  .btn-group .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 36px;
-    min-height: 36px;
-    padding: 0.25rem 0.5rem;
-    font-size: 0.9rem;
-  }
-  .btn-group .btn i {
-    font-size: 1.1rem;
-  }
-  .btn-outline-light {
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-  }
-  .btn-outline-light:hover {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    border-color: #ffffff !important;
-    color: #ffffff !important;
-  }
-
-  /* 10. ПАГИНАЦИЯ - ИСПРАВЛЕННЫЙ СТИЛЬ */
-  .pagination-container {
-    background-color: rgba(0, 0, 0, 0.25) !important;
-    backdrop-filter: blur(8px);
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  #transparentPagination .page-link,
-  #transparentPagination .page-link:focus,
-  #transparentPagination .page-link:visited {
-    background-color: transparent !important;
-    background: transparent !important;
-    border-color: rgba(255, 255, 255, 0.15) !important;
-    color: #ffffff !important;
-    transition: all 0.3s ease;
-  }
-
-  #transparentPagination .page-item:not(.active) .page-link:hover {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-    color: #ffffff !important;
-  }
-
-  /* АКТИВНАЯ СТРАНИЦА - ЗОЛОТОЙ ФОН, ЧЕРНЫЙ ТЕКСТ */
-  #transparentPagination .page-item.active .page-link,
-  #transparentPagination .page-item.active .page-link:hover,
-  #transparentPagination .page-item.active .page-link:focus {
-    background-color: var(--main-color) !important;
-    border-color: var(--main-color) !important;
-    color: #000000 !important;
-    box-shadow: none !important;
-  }
-
-  #transparentPagination .page-item.disabled .page-link,
-  #transparentPagination .page-item.disabled .page-link:hover {
-    background-color: transparent !important;
-    border-color: rgba(255, 255, 255, 0.05) !important;
-    color: rgba(255, 255, 255, 0.2) !important;
-  }
-
-  /* 11. НОВЫЙ СТИЛЬ ДЛЯ INPUT ФАЙЛА */
-  .custom-file-input {
-    background-color: #000000 !important;
-    color: #ffffff !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    border-radius: 8px;
-    padding: 0.5rem 0.75rem;
-    transition: all 0.3s ease;
-    cursor: pointer;
-  }
-
-  .custom-file-input:hover {
-    background-color: #1a1a1a !important;
-    border-color: rgba(255, 255, 255, 0.5) !important;
-  }
-
-  .custom-file-input:focus {
-    background-color: #000000 !important;
-    border-color: rgba(255, 255, 255, 0.6) !important;
-    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
-    outline: none;
-  }
-
-  /* Стилизация кнопки "Выберите файл" внутри input */
-  .custom-file-input::file-selector-button {
-    background-color: var(--main-color) !important;
-    color: #000000 !important;
-    border: 2px solid var(--main-color) !important;
-    border-radius: 6px;
-    padding: 0.3rem 0.8rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    cursor: pointer;
-  }
-
-  .custom-file-input::file-selector-button:hover {
-    background-color: #000000 !important;
-    color: #ffffff !important;
-    border-color: #000000 !important;
-  }
-
-  /* 12. ОБЩИЕ СТИЛИ */
-  .text-white {
-    color: #ffffff !important;
-  }
-  .text-white-50 {
-    color: rgba(255, 255, 255, 0.7) !important;
-  }
-  .bg-opacity-75 {
-    --bs-bg-opacity: 0.75;
-  }
-
-  /* 13. АДАПТИВНОСТЬ */
-  @media (max-width: 768px) {
-    .card-body {
-      padding: 1rem !important;
-    }
-    .d-flex.justify-content-between {
-      flex-direction: column;
-      align-items: stretch !important;
-      gap: 1rem;
-    }
-    .btn-lg {
-      width: 100%;
-    }
-    .nav-tabs .nav-link {
-      font-size: 0.85rem;
-      padding: 0.4rem 0.7rem;
-    }
-    .nav-tabs .nav-link i {
-      margin-right: 4px;
-    }
-    .transparent-table td,
-    .transparent-table th {
-      padding: 0.3rem 0.4rem;
-      font-size: 0.85rem;
-    }
-    .btn-group .btn {
-      min-width: 32px;
-      min-height: 32px;
-      padding: 0.2rem 0.4rem;
-      font-size: 0.8rem;
-    }
-    .pagination-container {
-      flex-direction: column;
-      gap: 0.75rem;
-      align-items: center !important;
-    }
-  }
-
-  /* 14. Стили для кнопок "Сохранить изменения" */
-  .btn-edit {
-    background-color: transparent !important;
-    color: var(--main-color) !important;
-    border: 2px solid var(--main-color) !important;
-    transition: all 0.3s ease !important;
-    font-weight: 500 !important;
-    padding: 0.5rem 1.2rem;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    letter-spacing: 0.3px;
-  }
-
-  .btn-edit:hover {
-    background-color: var(--main-color) !important;
-    color: #000000 !important;
-    border-color: #000000 !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(255, 194, 0, 0.3);
-  }
-
-  .btn-edit:active {
-    transform: translateY(0px);
-    box-shadow: 0 2px 6px rgba(255, 194, 0, 0.2);
-  }
-
-  .btn-edit:focus {
-    box-shadow: 0 0 0 3px rgba(255, 194, 0, 0.4);
-    outline: none;
-  }
-
-  /* Маленькие кнопки (для карточек) */
-  .btn-edit-sm {
-    padding: 0.25rem 0.8rem;
-    font-size: 0.85rem;
-  }
-
-  /* Большие кнопки (для основных действий) */
-  .btn-edit-lg {
-    padding: 0.75rem 1.5rem;
-    font-size: 1.1rem;
-  }
-
-  /* 15. ПЛАВНОЕ УВЕЛИЧЕНИЕ ОБЛОЖЕК ПРИ НАВЕДЕНИИ */
-  .book-cover-thumbnail {
-    transition:
-      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
-    border-radius: 4px;
-    will-change: transform;
-  }
-
-  .book-cover-thumbnail:hover {
-    transform: scale(2.5);
-    z-index: 1000;
-    position: relative;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-  }
-</style>
 {% endblock %}

@@ -1,4 +1,25 @@
-/* Основные стили для библиотеки */
+/* ============================================================
+   Основные стили для библиотеки HomeLibrary
+   Структура:
+   1. Переменные и база
+   2. Навигация
+   3. Карточки
+   4. Формы
+   5. Кнопки
+   6. Списки
+   7. Уведомления
+   8. Таблицы
+   9. Пагинация
+   10. Модальные окна, dropdown, badge
+   11. HTMX-индикаторы
+   12. Анимации
+   13. Компоненты форм (transparent-card, custom-input, btn-edit, ...)
+   14. Специфичные компоненты (обложки, комментарии, карточки)
+   15. Фоны страниц
+   16. Адаптивность
+   ============================================================ */
+
+/* ===== 1. Переменные и база ===== */
 :root {
   --primary-color: #0d6efd;
   --success-color: #198754;
@@ -14,6 +35,12 @@ body {
   min-height: 100vh;
 }
 
+/* Основной цвет текста (акцентный) */
+.main-text-color {
+  color: #d4af37 !important;
+}
+
+/* ===== 2. Навигация ===== */
 .navbar-brand {
   font-weight: bold;
   font-size: 1.5rem;
@@ -23,7 +50,7 @@ body {
   margin-right: 8px;
 }
 
-/* Стили для карточек */
+/* ===== 3. Карточки ===== */
 .card {
   border: none;
   border-radius: 12px;
@@ -53,7 +80,7 @@ body {
   padding: 1.5rem;
 }
 
-/* Стили для форм */
+/* ===== 4. Формы ===== */
 .form-label {
   font-weight: 500;
   margin-bottom: 0.25rem;
@@ -83,7 +110,51 @@ body {
   margin-top: 0.25rem;
 }
 
-/* Стили для кнопок */
+.form-control::placeholder {
+  color: #adb5bd;
+  font-style: italic;
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+.form-control:not(:placeholder-shown) {
+  color: #212529;
+  font-weight: 500;
+  border-color: #86b7fe;
+  background-color: #f8f9fa;
+}
+
+.form-control:not(:placeholder-shown):focus {
+  background-color: #ffffff;
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+textarea.form-control::placeholder {
+  color: #adb5bd;
+  font-style: italic;
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+textarea.form-control:not(:placeholder-shown) {
+  color: #212529;
+  font-weight: 500;
+  border-color: #86b7fe;
+  background-color: #f8f9fa;
+}
+
+.form-control:focus::placeholder {
+  opacity: 0.4;
+  transition: opacity 0.2s ease;
+}
+
+/* Поля с файлами */
+.input-group-text {
+  background-color: #f8f9fa;
+}
+
+/* ===== 5. Кнопки ===== */
 .btn {
   border-radius: 8px;
   font-weight: 500;
@@ -100,7 +171,7 @@ body {
   padding: 0.75rem 2rem;
 }
 
-/* Стили для списков */
+/* ===== 6. Списки ===== */
 .list-group-item {
   border: none;
   border-bottom: 1px solid #e9ecef;
@@ -117,7 +188,7 @@ body {
   transform: translateX(4px);
 }
 
-/* Стили для уведомлений */
+/* ===== 7. Уведомления ===== */
 .alert {
   border-radius: 12px;
   border: none;
@@ -128,200 +199,7 @@ body {
   margin-right: 8px;
 }
 
-/* Адаптивность */
-@media (max-width: 768px) {
-  .container {
-    padding: 0 10px;
-  }
-
-  .card-body {
-    padding: 1rem;
-  }
-
-  .btn-lg {
-    width: 100%;
-    margin-bottom: 0.5rem;
-  }
-
-  .d-flex.justify-content-between {
-    flex-direction: column;
-    align-items: stretch !important;
-    gap: 1rem;
-  }
-
-  .table-responsive {
-    font-size: 0.9rem;
-  }
-}
-
-/* Анимации */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.fade-in {
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-/* Стили для прогресс-бара */
-.progress-container {
-  height: 4px;
-  background: #e9ecef;
-  border-radius: 2px;
-  margin-bottom: 1.5rem;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--primary-color), var(--info-color));
-  border-radius: 2px;
-  transition: width 0.5s ease;
-  width: 0%;
-}
-
-/* Стили для поиска */
-#searchResults {
-  min-height: 50px;
-  transition: all 0.3s ease;
-}
-
-#searchResults .list-group-item {
-  border-left: 4px solid var(--warning-color);
-}
-
-#searchResults .list-group-item:hover {
-  border-left-color: var(--primary-color);
-}
-
-/* Стили для иконок в карточках */
-.card-header .badge {
-  font-size: 0.8rem;
-  padding: 0.35rem 0.65rem;
-}
-
-/* Стили для пустых состояний */
-.text-center.py-4 i {
-  opacity: 0.5;
-}
-
-.text-center.py-4 {
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  padding: 2rem !important;
-}
-
-/* Дополнительные стили для авторов */
-.author-info {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.author-info i {
-  font-size: 1.2rem;
-}
-
-/* Стили для индикатора загрузки */
-#loading {
-  min-width: 40px;
-  justify-content: center;
-}
-
-/* Стили для ховеров */
-.hover-lift {
-  transition:
-    transform 0.2s ease-in-out,
-    box-shadow 0.2s ease-in-out;
-}
-
-.hover-lift:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
-}
-
-/* Стили для бейджей */
-.badge {
-  padding: 0.35rem 0.65rem;
-  font-weight: 500;
-}
-
-/* Стили для модальных окон */
-.modal-content {
-  border-radius: 12px;
-  border: none;
-}
-
-.modal-header {
-  border-bottom: none;
-  padding: 1.25rem 1.5rem;
-}
-
-.modal-footer {
-  border-top: none;
-  padding: 1.25rem 1.5rem;
-}
-
-/* HTMX индикатор */
-.htmx-indicator {
-  opacity: 0;
-  transition: opacity 500ms ease-in;
-}
-
-.htmx-request .htmx-indicator {
-  opacity: 1;
-}
-
-.htmx-request.htmx-indicator {
-  opacity: 1;
-}
-
-/* Анимация для обновления контента */
-#bookTableContainer,
-#authorGridContainer,
-#interpreterGridContainer,
-#genreGridContainer,
-#publisherGridContainer {
-  transition: opacity 0.3s ease;
-}
-
-#bookTableContainer.htmx-request,
-#authorGridContainer.htmx-request,
-#interpreterGridContainer.htmx-request,
-#genreGridContainer.htmx-request,
-#publisherGridContainer.htmx-request {
-  opacity: 0.5;
-}
-
-/* Стили для пагинации */
-.page-link {
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.page-link:hover {
-  background-color: #e9ecef;
-  transform: translateY(-1px);
-}
-
-.page-item.active .page-link {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
-}
-
-.page-item.disabled .page-link {
-  cursor: not-allowed;
-}
-
-/* Стили для таблицы */
+/* ===== 8. Таблицы ===== */
 .table thead th {
   font-weight: 600;
   color: #495057;
@@ -343,35 +221,613 @@ body {
   transform: translateX(2px);
 }
 
-/* Стили для миниатюр обложек */
+.table td .badge {
+  font-weight: 500;
+  margin-right: 2px;
+  margin-bottom: 2px;
+}
+
+.table td .badge.d-block {
+  display: block !important;
+  margin-bottom: 3px;
+  text-align: left;
+}
+
+.table td small.text-muted {
+  font-size: 0.75rem;
+  display: block;
+  margin-top: 2px;
+}
+
+.table td a.badge {
+  transition: all 0.2s ease;
+}
+
+.table td a.badge:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.table td a.badge.bg-primary:hover {
+  background-color: #0b5ed7 !important;
+}
+
+.table td a.badge.bg-secondary:hover {
+  background-color: #5a6268 !important;
+}
+
+/* ===== 9. Пагинация ===== */
+.page-link {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.page-link:hover {
+  background-color: #e9ecef;
+  transform: translateY(-1px);
+}
+
+.page-item.active .page-link {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.page-item.disabled .page-link {
+  cursor: not-allowed;
+}
+
+/* ===== 10. Модальные окна, dropdown, badge ===== */
+.modal-content {
+  border-radius: 12px;
+  border: none;
+}
+
+.modal-header {
+  border-bottom: none;
+  padding: 1.25rem 1.5rem;
+}
+
+.modal-footer {
+  border-top: none;
+  padding: 1.25rem 1.5rem;
+}
+
+.modal-header .modal-title i {
+  margin-right: 8px;
+}
+
+.dropdown-menu {
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem 0;
+}
+
+.dropdown-item {
+  padding: 0.5rem 1.5rem;
+  transition: all 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+  transform: translateX(4px);
+}
+
+.dropdown-item i {
+  margin-right: 8px;
+  width: 20px;
+  text-align: center;
+}
+
+.dropdown-divider {
+  margin: 0.3rem 0;
+}
+
+.badge {
+  padding: 0.35rem 0.65rem;
+  font-weight: 500;
+}
+
+.badge i {
+  margin-right: 4px;
+}
+
+.badge.bg-warning {
+  color: #212529 !important;
+}
+
+/* ===== 11. HTMX-индикаторы ===== */
+.htmx-indicator {
+  opacity: 0;
+  transition: opacity 500ms ease-in;
+}
+
+.htmx-request .htmx-indicator {
+  opacity: 1;
+}
+
+.htmx-request.htmx-indicator {
+  opacity: 1;
+}
+
+#bookTableContainer,
+#authorGridContainer,
+#interpreterGridContainer,
+#genreGridContainer,
+#publisherGridContainer {
+  transition: opacity 0.3s ease;
+}
+
+#bookTableContainer.htmx-request,
+#authorGridContainer.htmx-request,
+#interpreterGridContainer.htmx-request,
+#genreGridContainer.htmx-request,
+#publisherGridContainer.htmx-request {
+  opacity: 0.5;
+}
+
+/* ===== 12. Анимации ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeInRow {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.table tbody tr {
+  animation: fadeInRow 0.3s ease;
+}
+
+/* ===== 13. Компоненты форм (общие для edit/add/select) ===== */
+
+/* Прозрачная карточка — убираем все фоны у неё и вложенных элементов.
+   !important нужен, чтобы перебить .bg-page1 .card (специфичность 0,2,0)
+   и .card-body / .card-header из Bootstrap. */
+.transparent-card,
+.transparent-card .card-body,
+.transparent-card .card-header,
+.transparent-card .card-footer,
+.transparent-card .table,
+.transparent-card .table-responsive,
+.transparent-card thead,
+.transparent-card tbody,
+.transparent-card tr,
+.transparent-card td,
+.transparent-card th {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Прозрачная карточка — только рамка */
+.transparent-card {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Отключаем hover-подъём у прозрачных карточек (форма не «прыгает») */
+.card.transparent-card:hover {
+  transform: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+.transparent-card-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 12px 12px 0 0 !important;
+}
+
+/* Поля ввода — чёрный фон, белый текст */
+.custom-input {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  transition: all 0.2s;
+}
+
+.custom-input::placeholder {
+  color: var(--main-color) !important;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.custom-input:focus {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+}
+
+.custom-input.is-invalid {
+  border-color: #dc3545 !important;
+}
+
+.custom-input-group {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-right: none !important;
+}
+
+/* Файловый инпут */
+.custom-file-input {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.custom-file-input:hover {
+  background-color: #1a1a1a !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.custom-file-input:focus {
+  background-color: #000000 !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+  outline: none;
+}
+
+.custom-file-input::file-selector-button {
+  background-color: var(--main-color) !important;
+  color: #000000 !important;
+  border: 2px solid var(--main-color) !important;
+  border-radius: 6px;
+  padding: 0.3rem 0.8rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.custom-file-input::file-selector-button:hover {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border-color: #000000 !important;
+}
+
+/* Вкладки */
+.nav-tabs .nav-link {
+  color: rgba(255, 255, 255, 0.8);
+  border: none;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s;
+}
+
+.nav-tabs .nav-link:hover {
+  border-color: transparent;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.nav-tabs .nav-link.active {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-bottom: 2px solid #fff;
+}
+
+.nav-tabs .nav-link i {
+  margin-right: 6px;
+}
+
+.card-header-tabs {
+  margin-right: -0.625rem;
+  margin-bottom: -0.75rem;
+  margin-left: -0.625rem;
+  border-bottom: 0;
+}
+
+.tab-pane {
+  padding-top: 1rem;
+}
+
+/* Алерты */
+.custom-alert {
+  background-color: rgba(212, 175, 55, 0.2) !important;
+  backdrop-filter: blur(5px);
+  border: 1px solid var(--main-color) !important;
+  color: #ffffff !important;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+}
+
+.custom-alert i {
+  color: var(--main-color) !important;
+}
+
+.custom-alert .main-text-color {
+  color: #ffffff !important;
+}
+
+.transparent-alert {
+  background-color: rgba(13, 202, 240, 0.15) !important;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(13, 202, 240, 0.3) !important;
+  color: #ffffff !important;
+}
+
+.transparent-alert i {
+  color: var(--main-color) !important;
+}
+
+.transparent-alert .main-text-color {
+  color: #ffffff !important;
+}
+
+/* Прозрачная таблица */
+.transparent-table {
+  width: 100% !important;
+}
+
+.transparent-table thead th {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  color: var(--main-color) !important;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+.transparent-table tbody tr {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+.transparent-table tbody tr:nth-of-type(odd) {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+.transparent-table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.transparent-table td {
+  color: #ffffff !important;
+}
+
+.transparent-table th {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Кнопки в таблицах */
+.btn-group .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.9rem;
+}
+
+.btn-group .btn i {
+  font-size: 1.1rem;
+}
+
+.btn-group-sm .btn {
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.btn-group-sm .btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn-outline-light {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.btn-outline-light:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+}
+
+/* Кнопки «Сохранить изменения» */
+.btn-edit {
+  background-color: transparent !important;
+  color: var(--main-color) !important;
+  border: 2px solid var(--main-color) !important;
+  transition: all 0.3s ease !important;
+  font-weight: 500 !important;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+}
+
+.btn-edit:hover {
+  background-color: var(--main-color) !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 194, 0, 0.3);
+}
+
+.btn-edit:active {
+  transform: translateY(0px);
+  box-shadow: 0 2px 6px rgba(255, 194, 0, 0.2);
+}
+
+.btn-edit:focus {
+  box-shadow: 0 0 0 3px rgba(255, 194, 0, 0.4);
+  outline: none;
+}
+
+.btn-edit-sm {
+  padding: 0.25rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+.btn-edit-lg {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.1rem;
+}
+
+/* Пагинация в формах */
+.pagination-container {
+  background-color: rgba(0, 0, 0, 0.25) !important;
+  backdrop-filter: blur(8px);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#transparentPagination .page-link,
+#transparentPagination .page-link:focus,
+#transparentPagination .page-link:visited {
+  background-color: transparent !important;
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+  transition: all 0.3s ease;
+}
+
+#transparentPagination .page-item:not(.active) .page-link:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  color: #ffffff !important;
+}
+
+#transparentPagination .page-item.active .page-link,
+#transparentPagination .page-item.active .page-link:hover,
+#transparentPagination .page-item.active .page-link:focus {
+  background-color: var(--main-color) !important;
+  border-color: var(--main-color) !important;
+  color: #000000 !important;
+  box-shadow: none !important;
+}
+
+#transparentPagination .page-item.disabled .page-link,
+#transparentPagination .page-item.disabled .page-link:hover {
+  background-color: transparent !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+  color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Чекбоксы языков (edit/add interpreter) */
+.language-check-item {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  transition: all 0.2s;
+}
+
+.language-check-item:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.language-check-item .form-check-input {
+  background-color: #000000 !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  cursor: pointer;
+}
+
+.language-check-item .form-check-input:checked {
+  background-color: var(--main-color) !important;
+  border-color: var(--main-color) !important;
+}
+
+.language-check-item .form-check-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(255, 194, 0, 0.4);
+  border-color: var(--main-color) !important;
+}
+
+.language-check-item .form-check-label {
+  cursor: pointer;
+  margin-left: 0.5rem;
+}
+
+/* Код языка — чёрный на золотом */
+.lang-code-badge {
+  background-color: var(--main-color) !important;
+  color: #000000 !important;
+  font-weight: 500;
+}
+/* Обложки в таблицах (объединено с .book-cover) */
+.book-cover,
+.book-cover-thumbnail {
+  transition:
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border-radius: 4px;
+  will-change: transform;
+}
+
+.book-cover:hover,
+.book-cover-thumbnail:hover {
+  transform: scale(2.5);
+  z-index: 1000;
+  position: relative;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+/* Миниатюры */
 .img-thumbnail {
   border-radius: 4px;
   border: 1px solid #dee2e6;
   padding: 2px;
 }
 
-.book-cover {
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-.book-cover:hover {
-  transform: scale(2.5);
-  z-index: 1000;
-  position: relative;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  border-radius: 4px;
-}
-
-/* Стили для пустых строк таблицы */
+/* Пустые строки таблицы */
 .empty-row td {
   padding: 3rem 0 !important;
 }
 
-/* Стили для карточек статистики на главной */
+/* Счётчик результатов */
+#resultCount {
+  font-weight: 500;
+  color: #495057;
+}
+
+/* Предпросмотр ФИО */
+#fioPreview,
+#fioPreviewInterpreter {
+  transition: all 0.3s ease;
+  min-width: 100px;
+  display: inline-block;
+}
+
+/* Индикатор загрузки */
+#loading {
+  min-width: 40px;
+  justify-content: center;
+}
+
+/* Стили для ховеров карточек */
+.hover-lift {
+  transition:
+    transform 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ===== 14. Специфичные компоненты ===== */
+
+/* Карточки статистики на главной */
 .card .card-body {
   padding: 1rem 1.25rem;
 }
@@ -389,7 +845,6 @@ body {
   margin-bottom: 0;
 }
 
-/* Стили для карточек статистики с цветами */
 .card.bg-primary .card-body {
   background: linear-gradient(135deg, #0d6efd, #0a58ca);
 }
@@ -418,153 +873,41 @@ body {
   background: linear-gradient(135deg, #dc3545, #c82333);
 }
 
-/* Стили для бейджей в таблице */
-.table td .badge {
-  font-weight: 500;
-  margin-right: 2px;
-  margin-bottom: 2px;
+/* Пустые состояния */
+.text-center.py-4 i {
+  opacity: 0.5;
 }
 
-.table td .badge.d-block {
-  display: block !important;
-  margin-bottom: 3px;
-  text-align: left;
-}
-
-/* Стили для информации о книге */
-.table td small.text-muted {
-  font-size: 0.75rem;
-  display: block;
-  margin-top: 2px;
-}
-
-/* Стили для иконок в бейджах */
-.badge i {
-  margin-right: 4px;
-}
-
-/* Стили для выпадающего меню справочников */
-.dropdown-menu {
-  border-radius: 12px;
-  border: none;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  padding: 0.5rem 0;
-}
-
-.dropdown-item {
-  padding: 0.5rem 1.5rem;
-  transition: all 0.2s;
-}
-
-.dropdown-item:hover {
+.text-center.py-4 {
   background-color: #f8f9fa;
-  transform: translateX(4px);
+  border-radius: 8px;
+  padding: 2rem !important;
 }
 
-.dropdown-item i {
-  margin-right: 8px;
-  width: 20px;
-  text-align: center;
+/* Авторы */
+.author-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.dropdown-divider {
-  margin: 0.3rem 0;
+.author-info i {
+  font-size: 1.2rem;
 }
 
-/* Стили для адаптивности обложек на мобильных */
-@media (max-width: 768px) {
-  .book-cover {
-    width: 35px !important;
-    height: 50px !important;
-  }
-
-  .book-cover:hover {
-    transform: scale(2);
-  }
-
-  .table td .bg-light {
-    width: 35px !important;
-    height: 50px !important;
-  }
-
-  .table td .bg-light i {
-    font-size: 1rem !important;
-  }
-
-  .badge {
-    font-size: 0.7rem;
-    padding: 0.2rem 0.4rem;
-  }
-
-  .btn-group-sm .btn {
-    padding: 0.15rem 0.3rem;
-    font-size: 0.7rem;
-  }
-
-  .dropdown-menu {
-    border-radius: 8px;
-  }
-}
-
-/* Стили для карточки книги */
+/* Карточка книги */
 .book-detail-cover {
   max-height: 300px;
   width: auto;
   object-fit: contain;
 }
 
-/* Стили для тегов в карточке книги */
 .book-detail-tag {
   font-size: 1rem;
   padding: 0.5rem 1rem;
 }
 
-/* Стили для счетчика результатов */
-#resultCount {
-  font-weight: 500;
-  color: #495057;
-}
-
-/* Стили для анимации строк при загрузке */
-@keyframes fadeInRow {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.table tbody tr {
-  animation: fadeInRow 0.3s ease;
-}
-
-/* Стили для кнопок действий в карточке книги */
-.btn-group-sm .btn {
-  border-radius: 4px;
-  transition: all 0.2s ease;
-}
-
-.btn-group-sm .btn:hover {
-  transform: translateY(-1px);
-}
-
-/* Стили для форм с файлами */
-.input-group-text {
-  background-color: #f8f9fa;
-}
-
-/* Стили для предпросмотра ФИО */
-#fioPreview {
-  transition: all 0.3s ease;
-  min-width: 100px;
-  display: inline-block;
-}
-
-/* Стили для страницы со списком форматов */
+/* Формат (визуальное представление) */
 .format-visual {
   background: rgba(13, 110, 253, 0.1);
   border: 1px solid var(--primary-color);
@@ -577,36 +920,7 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Стили для модальных окон подтверждения */
-.modal-header .modal-title i {
-  margin-right: 8px;
-}
-
-/* Стили для бейджей издателей */
-.badge.bg-secondary i {
-  margin-right: 4px;
-}
-
-/* Стили для бейджей жанров */
-.badge.bg-warning {
-  color: #212529 !important;
-}
-
-.badge.bg-warning i {
-  margin-right: 4px;
-}
-
-/* Стили для бейджей переводчиков */
-.badge.bg-success i {
-  margin-right: 4px;
-}
-
-/* Стили для бейджей авторов */
-.badge.bg-primary i {
-  margin-right: 4px;
-}
-
-/* Стили для карточек авторов и переводчиков */
+/* Карточки авторов и переводчиков (инфо-страницы) */
 .card .btn-outline-info {
   transition: all 0.2s ease;
 }
@@ -616,7 +930,6 @@ body {
   box-shadow: 0 4px 8px rgba(13, 110, 253, 0.2);
 }
 
-/* Стили для информационных карточек */
 .author-card .card-header,
 .interpreter-card .card-header {
   border-radius: 12px 12px 0 0 !important;
@@ -634,14 +947,12 @@ body {
   color: #495057;
 }
 
-/* Стили для фотографий в карточках */
 .author-card,
 .interpreter-card {
   border: 4px solid #fff;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Стили для списка книг в карточках */
 .author-card .badge,
 .interpreter-card .badge {
   transition: all 0.2s ease;
@@ -655,52 +966,33 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
+/* Размеры изображений */
 .img-large-size {
   width: 300px;
-  /* устанавливаем ширину */
   height: 450px;
-  /* устанавливаем высоту */
   object-fit: cover;
-  /* сохраняем пропорции изображения */
 }
 
 .img-same-size {
   width: 150px;
-  /* устанавливаем ширину */
   height: 200px;
-  /* устанавливаем высоту */
   object-fit: cover;
-  /* сохраняем пропорции изображения */
 }
 
 .img-small-size {
   width: 100px;
-  /* устанавливаем ширину */
   height: 150px;
-  /* устанавливаем высоту */
   object-fit: cover;
-  /* сохраняем пропорции изображения */
 }
 
-.img-list-size {
-  width: 70px;
-  /* устанавливаем ширину */
-  height: 100px;
-  /* устанавливаем высоту */
-  object-fit: cover;
-  /* сохраняем пропорции изображения */
-}
-
+.img-list-size,
 .img-mini-size {
   width: 70px;
-  /* устанавливаем ширину */
   height: 100px;
-  /* устанавливаем высоту */
   object-fit: cover;
-  /* сохраняем пропорции изображения */
 }
 
-/* Стили для карточки переплета */
+/* Комментарии в карточке переплета */
 .cover-comment {
   border-left: 4px solid #0d6efd;
   border-radius: 4px;
@@ -765,7 +1057,7 @@ body {
   background-color: #f8f9fa;
 }
 
-/* Стили для карточки жанра */
+/* Комментарии в карточке жанра */
 .genre-comment {
   border-left: 4px solid #ffc107;
   border-radius: 4px;
@@ -830,65 +1122,7 @@ body {
   background-color: #f8f9fa;
 }
 
-/* Стили для ссылок в таблице книг */
-.table td a.badge {
-  transition: all 0.2s ease;
-}
-
-.table td a.badge:hover {
-  transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.table td a.badge.bg-primary:hover {
-  background-color: #0b5ed7 !important;
-}
-
-.table td a.badge.bg-secondary:hover {
-  background-color: #5a6268 !important;
-}
-
-/* Стили для полей ввода с placeholder */
-.form-control::placeholder {
-  color: #adb5bd;
-  font-style: italic;
-  font-size: 0.9rem;
-  opacity: 0.7;
-}
-
-.form-control:not(:placeholder-shown) {
-  color: #212529;
-  font-weight: 500;
-  border-color: #86b7fe;
-  background-color: #f8f9fa;
-}
-
-.form-control:not(:placeholder-shown):focus {
-  background-color: #ffffff;
-  border-color: #86b7fe;
-  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-}
-
-textarea.form-control::placeholder {
-  color: #adb5bd;
-  font-style: italic;
-  font-size: 0.9rem;
-  opacity: 0.7;
-}
-
-textarea.form-control:not(:placeholder-shown) {
-  color: #212529;
-  font-weight: 500;
-  border-color: #86b7fe;
-  background-color: #f8f9fa;
-}
-
-.form-control:focus::placeholder {
-  opacity: 0.4;
-  transition: opacity 0.2s ease;
-}
-
-/* Фон для страницы bg_page1 */
+/* ===== 15. Фоны страниц ===== */
 .bg-page1 {
   background-image: url("/static/jpg/bg_page1.jpg");
   background-size: cover;
@@ -898,7 +1132,6 @@ textarea.form-control:not(:placeholder-shown) {
   min-height: 100vh;
 }
 
-/* Остальной контент должен быть читаемым */
 .bg-page1 .container-fluid,
 .bg-page1 .card,
 .bg-page1 .table {
@@ -906,7 +1139,6 @@ textarea.form-control:not(:placeholder-shown) {
   backdrop-filter: blur(2px);
 }
 
-/* Фон для страницы bg_page2 */
 .bg-page2 {
   background-image: url("/static/jpg/bg_page2.jpg");
   background-size: cover;
@@ -916,7 +1148,6 @@ textarea.form-control:not(:placeholder-shown) {
   min-height: 100vh;
 }
 
-/* Остальной контент должен быть читаемым */
 .bg-page2 .container-fluid,
 .bg-page2 .card,
 .bg-page2 .table {
@@ -924,7 +1155,6 @@ textarea.form-control:not(:placeholder-shown) {
   backdrop-filter: blur(2px);
 }
 
-/* Фон для страницы bg_page3 */
 .bg-page3 {
   background-image: url("/static/jpg/bg_page3.jpg");
   background-size: cover;
@@ -934,7 +1164,6 @@ textarea.form-control:not(:placeholder-shown) {
   min-height: 100vh;
 }
 
-/* Остальной контент должен быть читаемым */
 .bg-page3 .container-fluid,
 .bg-page3 .card,
 .bg-page3 .table {
@@ -942,7 +1171,6 @@ textarea.form-control:not(:placeholder-shown) {
   backdrop-filter: blur(2px);
 }
 
-/* Фон для страницы bg_page4 */
 .bg-page4 {
   background-image: url("/static/jpg/bg_page4.jpg");
   background-size: cover;
@@ -952,7 +1180,6 @@ textarea.form-control:not(:placeholder-shown) {
   min-height: 100vh;
 }
 
-/* Остальной контент должен быть читаемым */
 .bg-page4 .container-fluid,
 .bg-page4 .card,
 .bg-page4 .table {
@@ -960,7 +1187,92 @@ textarea.form-control:not(:placeholder-shown) {
   backdrop-filter: blur(2px);
 }
 
-/* Основной цвет */
-.main-text-color {
-  color: #d4af37 !important;
+/* ===== 16. Адаптивность ===== */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 10px;
+  }
+
+  .card-body {
+    padding: 1rem;
+  }
+
+  .btn-lg {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .d-flex.justify-content-between {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 1rem;
+  }
+
+  .table-responsive {
+    font-size: 0.9rem;
+  }
+
+  /* Компоненты форм на мобильных */
+  .nav-tabs .nav-link {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.7rem;
+  }
+
+  .nav-tabs .nav-link i {
+    margin-right: 4px;
+  }
+
+  .transparent-table td,
+  .transparent-table th {
+    padding: 0.3rem 0.4rem;
+    font-size: 0.85rem;
+  }
+
+  .btn-group .btn {
+    min-width: 32px;
+    min-height: 32px;
+    padding: 0.2rem 0.4rem;
+    font-size: 0.8rem;
+  }
+
+  .pagination-container {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center !important;
+  }
+
+  /* Обложки на мобильных */
+  .book-cover,
+  .book-cover-thumbnail {
+    width: 35px !important;
+    height: 50px !important;
+  }
+
+  .book-cover:hover,
+  .book-cover-thumbnail:hover {
+    transform: scale(2);
+  }
+
+  .table td .bg-light {
+    width: 35px !important;
+    height: 50px !important;
+  }
+
+  .table td .bg-light i {
+    font-size: 1rem !important;
+  }
+
+  .badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .btn-group-sm .btn {
+    padding: 0.15rem 0.3rem;
+    font-size: 0.7rem;
+  }
+
+  .dropdown-menu {
+    border-radius: 8px;
+  }
 }
