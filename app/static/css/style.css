@@ -501,7 +501,7 @@ textarea.form-control:not(:placeholder-shown) {
 }
 
 /* Выбранная/наведённая опция — чёрный текст на золотом */
-.custom-select option:checked,
+/*.custom-select option:checked,*/
 .custom-select option:hover,
 .custom-select option:focus {
   background-color: var(--main-color) !important;
