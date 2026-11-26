@@ -17,6 +17,7 @@
    14. Специфичные компоненты (обложки, комментарии, карточки)
    15. Фоны страниц
    16. Адаптивность
+   17. Модалки поиска
    ============================================================ */
 
 /* ===== 1. Переменные и база ===== */
@@ -1320,4 +1321,74 @@ textarea.form-control:not(:placeholder-shown) {
   .dropdown-menu {
     border-radius: 8px;
   }
+}
+
+/* ===== МОДАЛКИ ПОИСКА ===== */
+/* ===== Модальные окна поиска (язык, формат) ===== */
+
+/* Список результатов внутри модалок — прозрачный фон */
+#modalLanguageResults,
+#modalFormatResults,
+#languageResults,
+#formatResults {
+  background-color: transparent !important;
+}
+
+/* Элементы списка результатов — золотой текст на чёрном */
+#modalLanguageResults .list-group-item,
+#modalFormatResults .list-group-item,
+#languageResults .list-group-item,
+#formatResults .list-group-item {
+  background-color: #000000 !important;
+  color: var(--main-color) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 6px;
+  margin-bottom: 0.25rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+/* Курсор (hover) — чёрный текст на золотом, хорошо виден */
+#modalLanguageResults .list-group-item:hover,
+#modalFormatResults .list-group-item:hover,
+#languageResults .list-group-item:hover,
+#formatResults .list-group-item:hover,
+#modalLanguageResults .list-group-item:focus,
+#modalFormatResults .list-group-item:focus,
+#languageResults .list-group-item:focus,
+#formatResults .list-group-item:focus {
+  background-color: var(--main-color) !important;
+  color: #000000 !important;
+  border-color: var(--main-color) !important;
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+}
+
+/* Вложенные элементы (если внутри list-group-item есть strong/small) */
+#modalLanguageResults .list-group-item strong,
+#modalFormatResults .list-group-item strong,
+#languageResults .list-group-item strong,
+#formatResults .list-group-item strong {
+  color: inherit !important;
+}
+
+#modalLanguageResults .list-group-item small,
+#modalFormatResults .list-group-item small,
+#languageResults .list-group-item small,
+#formatResults .list-group-item small {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* При hover на элементе — small тоже становится тёмным (читаемым на золотом) */
+#modalLanguageResults .list-group-item:hover small,
+#modalFormatResults .list-group-item:hover small,
+#languageResults .list-group-item:hover small,
+#formatResults .list-group-item:hover small {
+  color: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Пустое состояние («Введите минимум 2 символа…») */
+#modalLanguageResults .text-white-50,
+#modalFormatResults .text-white-50 {
+  padding: 0.75rem;
 }
