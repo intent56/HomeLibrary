@@ -21,33 +21,10 @@ from flask import (
 )
 from app.extensions import db
 from app.models.main import (
-    Book,
-    Author,
-    Genre,
-    Cover,
-    Publisher,
-    Format,
-    Language,
-    Interpreter,
-    book_genres,
-    book_authors,
-    book_interpreters,
-    book_publishers,
-    interpreter_languages,
     Source,
-    Aggregator,
 )
 from app.main.forms import (
-    FormAuthor,
-    FormInterpreter,
-    FormPublisher,
-    FormFormat,
-    FormGenre,
-    FormCover,
-    FormLanguage,
-    FormBook,
     FormSource,
-    FormAggregator,
 )
 import urllib.parse
 
@@ -63,24 +40,6 @@ from config import Config
 #delete_source
 #toggle_source_htmx
 #delete_source_htmx
-
-#get_sources
-#universal_search
-#search_google_books
-#search_google_books_by_title
-#search_open_library
-#search_books_universal
-#search_authors_universal
-#search_interpreters_universal
-#search_google_books_api
-#search_open_library_api
-#search_author_google_books
-#search_author_open_library
-#search_interpreter_google_books
-#autocomplete_authors
-#autocomplete_publishers
-#autocomplete_genres
-#autocomplete_languages
 
 
 @bp.route('/sources')
