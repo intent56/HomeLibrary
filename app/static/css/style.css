@@ -467,6 +467,51 @@ textarea.form-control:not(:placeholder-shown) {
   border-right: none !important;
 }
 
+/* Выпадающие списки — чёрный фон, белый текст */
+.custom-select {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='%23d4af37' d='M8 11L3 6h10z'/%3e%3c/svg%3e") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 0.75rem center !important;
+  background-size: 16px 12px !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  padding-right: 2.5rem !important;
+  transition: all 0.2s;
+}
+
+.custom-select:focus {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+}
+
+.custom-select.is-invalid {
+  border-color: #dc3545 !important;
+}
+
+/* Опции выпадающего списка — золотой текст на чёрном */
+.custom-select option {
+  background-color: #000000 !important;
+  color: var(--main-color) !important;
+}
+
+/* Выбранная/наведённая опция — чёрный текст на золотом */
+.custom-select option:checked,
+.custom-select option:hover,
+.custom-select option:focus {
+  background-color: var(--main-color) !important;
+  color: #000000 !important;
+}
+
+.custom-select::-ms-expand {
+  display: none !important;
+}
+
 /* Файловый инпут */
 .custom-file-input {
   background-color: #000000 !important;
