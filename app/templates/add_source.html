@@ -111,8 +111,7 @@ content %}
                 <div class="col-md-6">
                   <div class="mb-3 form-check">
                     {{ form.is_active(class="form-check-input custom-checkbox")
-                    }} {{ form.is_active.label(class="form-check-label
-                    main-text-color") }}
+                    }} {{ form.is_active.label(class="form-check-label") }}
                     <div class="form-text text-white-50">
                       Если активно, источник будет доступен для поиска
                     </div>
@@ -500,7 +499,7 @@ content %}
   }
 
   .form-check-label {
-    color: #ffffff !important;
+    color: var(--main-color) !important;
   }
 
   /* 13. АДАПТИВНОСТЬ */
