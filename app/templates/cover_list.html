@@ -89,7 +89,7 @@ content %}
             <div class="card-footer bg-transparent border-top-0 mt-auto">
               <div class="d-flex justify-content-center gap-2">
                 <a
-                  href="{{ url_for('covers.cover_view', cover_id=cover.id, return_page=pagination.page if pagination else 1) }}"
+                  href="{{ url_for('covers.cover_card', cover_id=cover.id, return_page=pagination.page if pagination else 1) }}"
                   class="btn btn-outline-light btn-sm"
                   title="Просмотр карточки"
                 >
