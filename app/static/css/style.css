@@ -132,6 +132,48 @@ body {
   box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
 }
 
+/* Поле поиска в списках (author_list, interpreter_list, ...) — 
+   чёрный фон, белый текст при вводе, золотой placeholder */
+.form-control.bg-transparent {
+  background-color: #000000 !important;
+  color: #ffffff !important; /* ← белый текст при вводе */
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  transition: background-color 0.2s;
+  font-weight: normal;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.form-control.bg-transparent::placeholder {
+  color: var(--main-color) !important; /* ← золотой placeholder */
+  font-weight: normal;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+.form-control.bg-transparent:focus {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  font-weight: bold !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 0 0 0.25rem rgba(255, 194, 0, 0.3);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Обводка полей в блоке поиска */
+.search-fields-container .border-light,
+.search-fields-container .form-control.border-light {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Иконка в input-group внутри поиска — прозрачный фон, золотой цвет */
+.search-fields-container .input-group-text.bg-transparent {
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
 textarea.form-control::placeholder {
   color: #adb5bd;
   font-style: italic;
