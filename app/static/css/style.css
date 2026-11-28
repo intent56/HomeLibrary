@@ -550,7 +550,7 @@ textarea.form-control:not(:placeholder-shown) {
 
 .custom-search-input:focus {
   background-color: #000000 !important;
-  color: var(--main-color) !important;
+  color: #ffffff !important;
   font-weight: bold !important;
   border-color: rgba(255, 255, 255, 0.6) !important;
   box-shadow: 0 0 0 0.25rem rgba(255, 194, 0, 0.3);
