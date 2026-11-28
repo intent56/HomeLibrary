@@ -190,6 +190,18 @@ textarea.form-control:not(:placeholder-shown) {
   transform: translateX(4px);
 }
 
+/*  ПРОЗРАЧНЫЙ LIST-GROUP */
+.transparent-list-group-item {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+  transition: all 0.2s;
+}
+
+.transparent-list-group-item:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
 /* ===== 7. Уведомления ===== */
 .alert {
   border-radius: 12px;
@@ -335,7 +347,11 @@ textarea.form-control:not(:placeholder-shown) {
 }
 
 .badge.bg-warning {
-  color: #212529 !important;
+  background-color: rgba(255, 193, 7, 0.7);
+}
+
+.badge.bg-danger {
+  background-color: rgba(220, 53, 69, 0.7);
 }
 
 /* ===== 11. HTMX-индикаторы ===== */
@@ -512,6 +528,34 @@ textarea.form-control:not(:placeholder-shown) {
 
 .custom-select::-ms-expand {
   display: none !important;
+}
+
+/* Стиль для поля поиска */
+.custom-search-input {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  transition: background-color 0.2s;
+  font-weight: normal;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.custom-search-input::placeholder {
+  color: var(--main-color) !important;
+  font-weight: normal;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+.custom-search-input:focus {
+  background-color: #000000 !important;
+  color: var(--main-color) !important;
+  font-weight: bold !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 0 0 0.25rem rgba(255, 194, 0, 0.3);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 /* Файловый инпут */
