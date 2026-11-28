@@ -19,7 +19,7 @@ content %}
           class="btn btn-outline-light"
           id="cancelBtn"
         >
-          <i class="bi bi-book"></i> Карточка книги
+          <i class="bi bi-book"></i><span class="main-text-color">Карточка книги</span>
         </a>
       </div>
     </div>
@@ -33,7 +33,7 @@ content %}
       </div>
       <div class="card-body transparent-card-body">
         <div class="mb-3">
-          <label for="publisherSearch" class="form-label fw-bold text-white"
+          <label for="publisherSearch" class="form-label fw-bold main-text-color"
             >Введите название издателя</label
           >
           <form
@@ -90,11 +90,11 @@ content %}
       <div
         class="card-header transparent-card-header d-flex justify-content-between align-items-center"
       >
-        <h5 class="mb-0 text-white">
+        <h5 class="mb-0 main-text-color">
           <i class="bi bi-building-check"></i> Выбранные издатели
         </h5>
-        <span class="badge bg-light bg-opacity-75 text-dark" id="publisherCount"
-          >{{ selected_publishers|length }} издателей</span
+        <span class="badge main-text-color" id="publisherCount"
+          >Издателей: {{ selected_publishers|length }}</span
         >
       </div>
       <div class="card-body transparent-card-body" id="publisherList">
@@ -403,151 +403,4 @@ document.querySelectorAll('form[action*="interpreters/save"], form[action*="inte
   });
 </script>
 
-<style>
-  /* 1. ПОЛНОСТЬЮ УБИРАЕМ ВСЕ ФОНЫ */
-  .transparent-card,
-  .transparent-card *,
-  .transparent-card .card-body,
-  .transparent-card .card-header,
-  .transparent-card .card-footer,
-  .transparent-card .table,
-  .transparent-card .table-responsive,
-  .transparent-card .list-group,
-  .transparent-card .list-group-item {
-    background: transparent !important;
-    background-color: transparent !important;
-  }
-
-  /* 2. КАРТОЧКА - ТОЛЬКО РАМКА */
-  .transparent-card {
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
-  }
-
-  .transparent-card-header {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 12px 12px 0 0 !important;
-  }
-
-  /* 3. ПРОЗРАЧНЫЙ LIST-GROUP */
-  .transparent-list-group-item {
-    background-color: rgba(255, 255, 255, 0.05) !important;
-    border-color: rgba(255, 255, 255, 0.08) !important;
-    color: #ffffff !important;
-    transition: all 0.2s;
-  }
-
-  .transparent-list-group-item:hover {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-  }
-
-  /* 4. ТЕКСТЫ БЕЛЫМ */
-  .text-white {
-    color: #ffffff !important;
-  }
-  .text-white-50 {
-    color: rgba(255, 255, 255, 0.7) !important;
-  }
-
-  /* 5. СТИЛЬ ДЛЯ INPUT-GROUP (иконки в поле поиска) - как в author_list.html */
-  .custom-input-group {
-    background-color: transparent !important;
-    color: #ffffff !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    border-right: none !important;
-  }
-
-  /* 6. СТИЛЬ ДЛЯ ПОЛЯ ПОИСКА - как в author_list.html */
-  .custom-search-input {
-    background-color: #000000 !important;
-    color: var(--main-color) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    transition: background-color 0.2s;
-    font-weight: normal;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
-
-  .custom-search-input::placeholder {
-    color: var(--main-color) !important;
-    font-weight: normal;
-    text-shadow: none !important;
-    opacity: 1 !important;
-  }
-
-  .custom-search-input:focus {
-    background-color: #000000 !important;
-    color: var(--main-color) !important;
-    font-weight: bold !important;
-    border-color: rgba(255, 255, 255, 0.6) !important;
-    box-shadow: 0 0 0 0.25rem rgba(255, 194, 0, 0.3);
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
-
-  /* 7. КНОПКИ */
-  .btn-outline-light {
-    color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.3) !important;
-  }
-
-  .btn-outline-light:hover {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    border-color: #ffffff !important;
-    color: #ffffff !important;
-  }
-
-  /* 8. НОВЫЙ СТИЛЬ ДЛЯ КНОПОК "ДОБАВИТЬ НОВОГО ИЗДАТЕЛЯ" И "ГОТОВО" */
-  .btn-edit {
-    background-color: transparent !important;
-    color: var(--main-color) !important;
-    border: 2px solid var(--main-color) !important;
-    transition: all 0.3s ease !important;
-    font-weight: 500 !important;
-    padding: 0.5rem 1.2rem;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    letter-spacing: 0.3px;
-  }
-
-  .btn-edit:hover {
-    background-color: var(--main-color) !important;
-    color: #000000 !important;
-    border-color: #000000 !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(255, 194, 0, 0.3);
-  }
-
-  .btn-edit:active {
-    transform: translateY(0px);
-    box-shadow: 0 2px 6px rgba(255, 194, 0, 0.2);
-  }
-
-  .btn-edit:focus {
-    box-shadow: 0 0 0 3px rgba(255, 194, 0, 0.4);
-    outline: none;
-  }
-
-  .btn-edit-lg {
-    padding: 0.75rem 1.5rem;
-    font-size: 1.1rem;
-  }
-
-  /* 9. БЕЙДЖИ */
-  .badge.bg-warning {
-    background-color: rgba(255, 193, 7, 0.7) !important;
-  }
-
-  .badge.bg-danger {
-    background-color: rgba(220, 53, 69, 0.7) !important;
-  }
-
-  /* 10. АДАПТИВНОСТЬ */
-  @media (max-width: 768px) {
-    .card-body {
-      padding: 1rem !important;
-    }
-  }
-</style>
 {% endblock %} {% endblock %}
